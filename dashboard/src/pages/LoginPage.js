@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
-import placeholder2 from './assets/NVLOGO.png'; // Adjust path if needed
+import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ const LoginPage = () => {
             <img 
               src={placeholder2} 
               alt="Placeholder 2" 
-              className="w-24 h-24 object-cover  border-gray-300"
+              className="w-24 h-24 object-cover border-gray-300"
             />
           </div>
           <h2 className="text-3xl font-bold text-[#1b5b40]">Portable Assistant for Animal Welfare</h2>
