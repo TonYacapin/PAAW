@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import axios for HTTP requests
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Main fields state
+  const [municipality, setMunicipality] = useState('');
+  const [dateReported, setDateReported] = useState('');
+  const [vaccineUsed, setVaccineUsed] = useState('');
+  const [batchLotNo, setBatchLotNo] = useState('');
+  const [vaccineSource, setVaccineSource] = useState('');
 
   const addEntry = () => {
     setEntries([
@@ -59,35 +67,75 @@ function RabiesVaccinationReport() {
     setIsModalOpen(false);
   };
 
+  // Function to save all entries
+  const saveEntries = async () => {
+    try {
+
+        console.log(entries)
+      // Replace with your backend API URL
+      const response = await axios.post('http://192.168.100.12:5000/api/entries', {
+        municipality,
+        dateReported,
+        vaccineUsed,
+        batchLotNo,
+        vaccineSource,
+        entries
+      });
+      if (response.status === 201) {
+        alert('Entries saved successfully');
+        setEntries([]); // Clear entries after successful save
+        // Clear main fields after successful save
+        setMunicipality('');
+        setDateReported('');
+        setVaccineUsed('');
+        setBatchLotNo('');
+        setVaccineSource('');
+      }
+    } catch (error) {
+      console.error('Error saving entries:', error);
+      alert('Failed to save entries');
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Rabies Vaccination Report</h2>
-      
+
       {/* Main fields */}
       <div className="grid grid-cols-1 gap-4 mb-4">
         <input
           type="text"
           placeholder="Municipality"
+          value={municipality}
+          onChange={(e) => setMunicipality(e.target.value)}
           className="border p-2 rounded w-full"
         />
         <input
           type="date"
           placeholder="Date Reported"
+          value={dateReported}
+          onChange={(e) => setDateReported(e.target.value)}
           className="border p-2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Vaccine Used"
+          value={vaccineUsed}
+          onChange={(e) => setVaccineUsed(e.target.value)}
           className="border p-2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Batch/Lot No."
+          value={batchLotNo}
+          onChange={(e) => setBatchLotNo(e.target.value)}
           className="border p-2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Vaccine Source"
+          value={vaccineSource}
+          onChange={(e) => setVaccineSource(e.target.value)}
           className="border p-2 rounded w-full"
         />
       </div>
@@ -119,6 +167,17 @@ function RabiesVaccinationReport() {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Save Entries Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          type="button"
+          onClick={saveEntries}
+          className="px-4 py-2 bg-green-500 text-white rounded"
+        >
+          Save Entries
+        </button>
       </div>
 
       {/* Modal */}
