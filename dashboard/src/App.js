@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DiseaseIncidenceReport from './pages/Livestock and Poultry DRRM/DiseaseIncidenceReport';
+import RabiesVaccinationReport from './pages/RABIES/RabiesVaccinationReport';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dif" element={<DiseaseIncidenceReport />} />
+          <Route path="/Rabies" element={<RabiesVaccinationReport />} />
           {/* Add more routes here if needed */}
         </Routes>
       </div>
