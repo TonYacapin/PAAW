@@ -1,20 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 
+// SplashScreen Component
+const SplashScreen = ({ onFinish }) => {
+  const [currentScreen, setCurrentScreen] = useState(0);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setCurrentScreen(1), 1000), // Show second logo after 1 second
+      setTimeout(() => setFadeOut(true), 2000), // Start fading out after 2 seconds
+      setTimeout(() => onFinish(), 2500), // Finish splash screen after 2.5 seconds
+    ];
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, [onFinish]);
+
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center bg-[#FFFAFA] transition-opacity duration-500 ${
+        fadeOut ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
+      {currentScreen === 0 && (
+        <img src={placeholder1} alt="Logo 1" className="w-24 h-24 object-cover" />
+      )}
+      {currentScreen === 1 && (
+        <img src={placeholder2} alt="Logo 2" className="w-24 h-24 object-cover" />
+      )}
+    </div>
+  );
+};
+
+// LoginPage Component
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Handle login logic here
     console.log('Logging in with:', { email, password });
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FFFAFA]">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
+      <div className="w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10">
         <div className="text-center">
           <div className="flex justify-center space-x-4 mb-6">
             <img 
@@ -59,9 +90,6 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            {/* Additional content can be added here if needed */}
-          </div>
           <div className="flex gap-4">
             <button
               type="submit"
@@ -70,7 +98,7 @@ const LoginPage = () => {
               Login
             </button>
             <button
-              type="button" // Use type="button" to prevent form submission
+              type="button"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
             >
               Sign up
@@ -82,4 +110,29 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+// App Component
+const App = () => {
+  const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // 768px is a common breakpoint for mobile
+    };
+
+    handleResize(); // Check on mount
+    window.addEventListener('resize', handleResize);
+
+    // Start splash screen only on mobile
+    if (isMobile) {
+      setLoading(true);
+      setTimeout(() => setLoading(false), 2500); // 2.5 seconds for splash screen
+    }
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobile]);
+
+  return loading ? <SplashScreen onFinish={() => setLoading(false)} /> : <LoginPage />;
+};
+
+export default App;
