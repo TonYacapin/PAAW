@@ -1,0 +1,70 @@
+/* DiseaseIncidenceReport.css */
+
+/* Container for the table */
+.table-container {
+  margin: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #e8f5e9; /* Light green background for the container */
+}
+
+/* Table styling */
+.table {
+  min-width: 800px; /* Ensure the table has enough width */
+  border-collapse: collapse; /* Collapse borders to avoid double borders */
+}
+
+/* Table header styling */
+.table-head {
+  background-color: #a5d6a7; /* Light green background for the table head */
+}
+
+/* Table header cells */
+.table-cell {
+  font-weight: bold;
+  color: #004d40; /* Dark green text color */
+  border: 1px solid #004d40; /* Dark green border for header cells */
+}
+
+/* Body cells styling */
+.table-cell-body {
+  background-color: #ffffff; /* White background for table body cells */
+  color: #00796b; /* Slightly lighter dark green for text */
+  border: 1px solid #b2dfdb; /* Light green border for body cells */
+}
+
+/* Table rows for alternating row colors */
+.table-row:nth-of-type(even) .table-cell-body {
+  background-color: #c8e6c9; /* Light green for even rows */
+}
+
+/* Bold rows styling */
+.table-cell-body[style*="font-weight: bold;"] {
+  background-color: #81c784; /* Slightly darker green for bold rows */
+  color: #ffffff; /* White text for better contrast */
+}
+
+/* Cell alignment */
+.table-cell,
+.table-cell-body {
+  text-align: center; /* Center align text */
+  padding: 8px; /* Add padding to cells */
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .table {
+    font-size: 12px; /* Smaller font size on small screens */
+  }
+}
+
+.title {
+  text-align: center;
+  margin: 0px 0px 0 400px;
+  font-size: 24px;
+  font-weight: bold;
+  max-width: 100%;
+  display: flex;
+  height: 0%;
+
+}
