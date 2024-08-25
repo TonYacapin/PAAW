@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
-
+import { useNavigate } from 'react-router-dom';
 // SplashScreen Component
 const SplashScreen = ({ onFinish }) => {
   const [currentScreen, setCurrentScreen] = useState(0);
@@ -37,10 +38,31 @@ const SplashScreen = ({ onFinish }) => {
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Logging in with:', { email, password });
+    try {
+      const response = await axios.post('http://localhost:5000/login', {
+        email,
+        password,
+      });
+
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+
+      console.log('Logged in successfully:', response.data);
+
+      // Redirect to another page after successful login
+      // e.g., window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error logging in:', error.response?.data?.message || error.message);
+      setError('Invalid email or password');
+    }
+  };
+  const handleSignup = () => {
+    navigate('/signup');
   };
 
   return (
@@ -90,6 +112,7 @@ const LoginPage = () => {
               />
             </div>
           </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <div className="flex gap-4">
             <button
               type="submit"
@@ -99,6 +122,7 @@ const LoginPage = () => {
             </button>
             <button
               type="button"
+              onClick={handleSignup}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
             >
               Sign up

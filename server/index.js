@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const rabiesVaccinationReportRoutes = require('./routes/rabiesVaccinationReport.routes');
-
+const user = require('./routes/userRoutes')
+const auth = require('./routes/loginRoute')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -21,6 +22,9 @@ app.use(cors());
 
 // Use routes
 app.use('/', rabiesVaccinationReportRoutes);
+app.use('/', user);
+app.use('/', auth);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
