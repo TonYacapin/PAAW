@@ -20,7 +20,7 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
-import "./DiseaseInvestigationForm.css"; // Import the CSS file
+import "./DiseaseInvestigationForm.css"; 
 
 const DiseaseInvestigationForm = () => {
   // State for each table
