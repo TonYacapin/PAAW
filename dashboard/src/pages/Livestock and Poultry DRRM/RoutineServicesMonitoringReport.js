@@ -22,6 +22,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import "./RoutineServicesMonitoringReport.css"; // Import CSS file
 
 const RoutineServicesMonitoringReport = () => {
   const [rows, setRows] = useState([]);
@@ -65,9 +66,9 @@ const RoutineServicesMonitoringReport = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-        <br />
-        <p><b>Routine Services Monitoring Report</b></p>
-        <br />
+      <Typography variant="h5" className="underlined-title">
+        Routine Services Monitoring Report
+      </Typography>
       <Grid container spacing={2}>
         {/* Text Fields */}
         <Grid item xs={12} md={6}>
@@ -140,24 +141,13 @@ const RoutineServicesMonitoringReport = () => {
       {/* Signature Section */}
       <Box sx={{ marginTop: 4 }}>
         <Grid item xs={12}>
-          <div
-            style={{
-              borderTop: "1px solid black",
-              paddingTop: "4px",
-              marginBottom: "8px",
-            }}
-          >
-            <strong>Signature Over Printed Name</strong>
+          <div className="underlined-title">
+            Signature Over Printed Name
           </div>
         </Grid>
         <Grid item xs={12}>
-          <div
-            style={{
-              borderTop: "1px solid black",
-              paddingTop: "4px",
-            }}
-          >
-            <strong>Head/Supervisor</strong>
+          <div className="underlined-title">
+            Head/Supervisor
           </div>
         </Grid>
       </Box>

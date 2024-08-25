@@ -1,0 +1,45 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Roboto, Arial, sans-serif;
+  }
+  
+  .MuiTypography-root {
+    margin-bottom: 16px;
+  }
+  
+  /* Green Theme for Buttons */
+  .MuiButton-contained {
+    background-color: #4caf50; /* Green */
+    color: #fff;
+  }
+  
+  .MuiButton-contained:hover {
+    background-color: #45a049; /* Darker Green */
+  }
+  
+  /* Underlined Title */
+  .underlined-title {
+    border-top: 2px solid #4caf50;
+    padding-top: 4px;
+    margin-bottom: 8px;
+    color: #4caf50;
+    font-weight: bold;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 600px) {
+    .MuiGrid-item {
+      padding: 8px;
+    }
+  
+    .MuiDialogContent-root {
+      padding: 8px;
+    }
+  }
+  
+  /* Modal Styles */
+  .MuiDialog-paper {
+    padding: 16px;
+  }
+  
