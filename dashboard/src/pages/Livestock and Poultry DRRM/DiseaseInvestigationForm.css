@@ -1,0 +1,81 @@
+/* DiseaseInvestigationForm.css */
+
+/* General Styles */
+.form-container {
+    padding: 20px;
+  }
+  
+  /* Grid Layout */
+  .MuiGrid-item {
+    padding: 10px;
+  }
+  
+  /* Text Fields */
+  .MuiTextField-root {
+    margin-bottom: 16px;
+  }
+  
+  /* Buttons */
+  .MuiButton-root {
+    margin-top: 10px;
+  }
+  
+  /* Table Styles */
+  .MuiTableContainer-root {
+    margin-bottom: 20px;
+  }
+  
+  .MuiTable-root {
+    min-width: 700px; /* Ensure table doesn't get too narrow */
+  }
+  
+  /* Dialog Styles */
+  .MuiDialog-paper {
+    width: 90%;
+    max-width: 600px;
+  }
+  
+  /* Signature Section */
+  .signature-section {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 600px) {
+    .MuiGrid-item {
+      padding: 5px;
+    }
+  
+    .MuiTextField-root {
+      margin-bottom: 8px;
+    }
+  
+    .MuiTableContainer-root {
+      overflow-x: auto; /* Allows horizontal scrolling for tables on small screens */
+    }
+  
+    .MuiTable-root {
+      min-width: 500px; /* Reduce min-width for smaller screens */
+    }
+  
+    .MuiDialog-paper {
+      width: 100%;
+      max-width: none;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .form-container {
+      padding: 10px;
+    }
+  
+    .MuiTextField-root {
+      font-size: 14px; /* Adjust font size for very small screens */
+    }
+  
+    .MuiButton-root {
+      font-size: 12px; /* Adjust button font size for very small screens */
+    }
+  }
+  
