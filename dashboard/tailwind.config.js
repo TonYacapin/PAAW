@@ -16,7 +16,7 @@ module.exports = {
       'darkgreen': '#1b5b40',
       'white': '#fffafa',
       'nero': '#252525',
-      'pastelyellow': '#ffe459'
+      'pastelyellow': '#ffe459',
     },
     extend: {},
   },
