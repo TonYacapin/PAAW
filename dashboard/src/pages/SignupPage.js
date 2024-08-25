@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 
@@ -13,6 +14,7 @@ const SignupForm = () => {
   });
 
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -36,6 +38,10 @@ const SignupForm = () => {
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
+  };
+
+  const handleBack = () => {
+    navigate(-1); // Navigate back to the previous page
   };
 
   return (
@@ -124,12 +130,19 @@ const SignupForm = () => {
             </div>
           </div>
           {message && <p className="text-red-500 text-sm mt-2">{message}</p>}
-          <div>
+          <div className="flex flex-col gap-4">
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
             >
               Sign Up
+            </button>
+            <button
+              type="button"
+              onClick={handleBack}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-[#1b5b40] bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
+            >
+              Back
             </button>
           </div>
         </form>
