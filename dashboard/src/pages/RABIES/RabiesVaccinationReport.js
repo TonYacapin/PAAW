@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
+import ConfirmationModal from '../../component/ConfiramtionModal'; // Import the ConfirmationModal component
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [entryToRemove, setEntryToRemove] = useState(null);
 
   // Main fields state
   const [municipality, setMunicipality] = useState('');
@@ -37,30 +39,39 @@ function RabiesVaccinationReport() {
       }
     ]);
     setSelectedEntry(entries.length);
-    setIsModalOpen(true);
   };
 
-  const removeEntry = (index) => {
-    const confirmDelete = window.confirm('Are you sure you want to remove this entry?');
-    if (confirmDelete) {
+  const openConfirmationModal = (index) => {
+    setEntryToRemove(index);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (entryToRemove !== null) {
       // Remove the entry
-      const newEntries = entries.filter((_, i) => i !== index);
-      
+      const newEntries = entries.filter((_, i) => i !== entryToRemove);
+
       // Update entry numbers
       const updatedEntries = newEntries.map((entry, i) => ({
         ...entry,
         no: i + 1
       }));
-      
+
       setEntries(updatedEntries);
 
-      if (selectedEntry === index) {
+      if (selectedEntry === entryToRemove) {
         setSelectedEntry(null);
-        setIsModalOpen(false);
-      } else if (selectedEntry > index) {
+      } else if (selectedEntry > entryToRemove) {
         setSelectedEntry(selectedEntry - 1);
       }
     }
+    setIsConfirmationModalOpen(false);
+    setEntryToRemove(null);
+  };
+
+  const handleCancelRemove = () => {
+    setIsConfirmationModalOpen(false);
+    setEntryToRemove(null);
   };
 
   const handleEntryChange = (index, field, value) => {
@@ -83,11 +94,10 @@ function RabiesVaccinationReport() {
 
   const openModal = (index) => {
     setSelectedEntry(index);
-    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setSelectedEntry(null);
   };
 
   // Function to save all entries
@@ -189,7 +199,7 @@ function RabiesVaccinationReport() {
             </button>
             <button
               type="button"
-              onClick={() => removeEntry(index)}
+              onClick={() => openConfirmationModal(index)}
               className="px-4 py-2 bg-red-500 text-white rounded"
             >
               Remove
@@ -209,8 +219,8 @@ function RabiesVaccinationReport() {
         </button>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && selectedEntry !== null && (
+      {/* Modal for Editing Entries */}
+      {selectedEntry !== null && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
             <h3 className="text-2xl font-bold mb-4">Edit Entry {entries[selectedEntry].no}</h3>
@@ -237,7 +247,7 @@ function RabiesVaccinationReport() {
             </div>
 
             <h4 className="text-lg font-semibold mb-2">Client Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <input
                 type="text"
                 placeholder="First Name"
@@ -353,6 +363,14 @@ function RabiesVaccinationReport() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
+        message="Are you sure you want to remove this entry?"
+      />
     </div>
   );
 }
