@@ -41,13 +41,25 @@ function RabiesVaccinationReport() {
   };
 
   const removeEntry = (index) => {
-    const newEntries = entries.filter((_, i) => i !== index);
-    setEntries(newEntries);
-    if (selectedEntry === index) {
-      setSelectedEntry(null);
-      setIsModalOpen(false);
-    } else if (selectedEntry > index) {
-      setSelectedEntry(selectedEntry - 1);
+    const confirmDelete = window.confirm('Are you sure you want to remove this entry?');
+    if (confirmDelete) {
+      // Remove the entry
+      const newEntries = entries.filter((_, i) => i !== index);
+      
+      // Update entry numbers
+      const updatedEntries = newEntries.map((entry, i) => ({
+        ...entry,
+        no: i + 1
+      }));
+      
+      setEntries(updatedEntries);
+
+      if (selectedEntry === index) {
+        setSelectedEntry(null);
+        setIsModalOpen(false);
+      } else if (selectedEntry > index) {
+        setSelectedEntry(selectedEntry - 1);
+      }
     }
   };
 
@@ -254,8 +266,8 @@ function RabiesVaccinationReport() {
                 className="border p-2 rounded w-full"
               />
               <input
-                type="text"
-                placeholder="Birthday (MM/DD/YYYY)"
+                type="date"
+                placeholder="Birthday"
                 value={entries[selectedEntry].clientInfo.birthday}
                 onChange={(e) =>
                   handleClientInfoChange(selectedEntry, 'birthday', e.target.value)
