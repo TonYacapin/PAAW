@@ -40,6 +40,17 @@ function RabiesVaccinationReport() {
     setIsModalOpen(true);
   };
 
+  const removeEntry = (index) => {
+    const newEntries = entries.filter((_, i) => i !== index);
+    setEntries(newEntries);
+    if (selectedEntry === index) {
+      setSelectedEntry(null);
+      setIsModalOpen(false);
+    } else if (selectedEntry > index) {
+      setSelectedEntry(selectedEntry - 1);
+    }
+  };
+
   const handleEntryChange = (index, field, value) => {
     const newEntries = [...entries];
     newEntries[index][field] = value;
@@ -70,8 +81,7 @@ function RabiesVaccinationReport() {
   // Function to save all entries
   const saveEntries = async () => {
     try {
-
-        console.log(entries)
+      console.log(entries);
       // Replace with your backend API URL
       const response = await axios.post('http://192.168.100.12:5000/api/entries', {
         municipality,
@@ -161,9 +171,16 @@ function RabiesVaccinationReport() {
             <button
               type="button"
               onClick={() => openModal(index)}
-              className="px-4 py-2 bg-yellow-500 text-white rounded"
+              className="px-4 py-2 bg-yellow-500 text-white rounded mr-2"
             >
               Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => removeEntry(index)}
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Remove
             </button>
           </div>
         ))}
