@@ -1,0 +1,77 @@
+/* Container styling */
+.vet-report-container {
+    padding: 20px;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Header styling */
+  .vet-report-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  /* Button styling */
+  .add-button {
+    display: block;
+    margin: 0 auto;
+    background-color: #1abc9c;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .add-button:hover {
+    background-color: #16a085;
+  }
+  
+  /* Modal styling */
+  .modal-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background-color: #ecf0f1;
+    border: 2px solid #7f8c8d;
+    box-shadow: 24px;
+    padding: 24px;
+    border-radius: 8px;
+  }
+  
+  /* TextField styling */
+  .modal-box .MuiTextField-root {
+    margin-bottom: 16px;
+  }
+  
+  /* Table styling */
+  .table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  
+  .MuiTableHead-root {
+    background-color: #34495e;
+  }
+  
+  .MuiTableCell-head {
+    color: #ecf0f1;
+    font-weight: bold;
+  }
+  
+  .MuiTableCell-body {
+    color: #2c3e50;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .modal-box {
+      width: 100%;
+      padding: 16px;
+    }
+  
+    .add-button {
+      width: 100%;
+    }
+  }
+  
