@@ -32,16 +32,34 @@ const initialFormState = {
   others: "",
 };
 
+const initialProductState = {
+  beef: "",
+  carabeef: "",
+  pork: "",
+  cheval: "",
+  chevon: "",
+  mutton: "",
+  poultryMeat: "",
+  tableEggs: "",
+  embryonatedEgg: "",
+  dung: "",
+  others: "",
+};
+
 function VeterinaryQuarantineInspectionReport() {
   const [rows, setRows] = useState([]);
+  const [productRows, setProductRows] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openProductModal, setOpenProductModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [editProductMode, setEditProductMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [currentProductIndex, setCurrentProductIndex] = useState(null);
   const [formData, setFormData] = useState(initialFormState);
+  const [productData, setProductData] = useState(initialProductState);
 
   const handleOpen = (index = null) => {
     if (index !== null) {
-      // Set formData to the row data if editing
       setFormData(rows[index]);
       setCurrentIndex(index);
       setEditMode(true);
@@ -55,6 +73,21 @@ function VeterinaryQuarantineInspectionReport() {
 
   const handleClose = () => setOpen(false);
 
+  const handleOpenProductModal = (index = null) => {
+    if (index !== null) {
+      setProductData(productRows[index]);
+      setCurrentProductIndex(index);
+      setEditProductMode(true);
+    } else {
+      setProductData(initialProductState);
+      setCurrentProductIndex(null);
+      setEditProductMode(false);
+    }
+    setOpenProductModal(true);
+  };
+
+  const handleCloseProductModal = () => setOpenProductModal(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const numericValue =
@@ -66,14 +99,18 @@ function VeterinaryQuarantineInspectionReport() {
     setFormData({ ...formData, [name]: numericValue });
   };
 
+  const handleProductChange = (e) => {
+    const { name, value } = e.target;
+    const numericValue = isNaN(value) ? "" : value;
+    setProductData({ ...productData, [name]: numericValue });
+  };
+
   const handleSave = () => {
     if (editMode && currentIndex !== null) {
-      // Update existing row
       const updatedRows = [...rows];
       updatedRows[currentIndex] = formData;
       setRows(updatedRows);
     } else {
-      // Add new row
       const existingRowIndex = rows.findIndex(
         (row) => row.classification === formData.classification
       );
@@ -83,55 +120,12 @@ function VeterinaryQuarantineInspectionReport() {
         const existingRow = updatedRows[existingRowIndex];
         updatedRows[existingRowIndex] = {
           ...existingRow,
-          carabao: (
-            parseFloat(existingRow.carabao || 0) +
-            parseFloat(formData.carabao || 0)
-          ).toString(),
-          cattle: (
-            parseFloat(existingRow.cattle || 0) +
-            parseFloat(formData.cattle || 0)
-          ).toString(),
-          horse: (
-            parseFloat(existingRow.horse || 0) + parseFloat(formData.horse || 0)
-          ).toString(),
-          goat: (
-            parseFloat(existingRow.goat || 0) + parseFloat(formData.goat || 0)
-          ).toString(),
-          sheep: (
-            parseFloat(existingRow.sheep || 0) + parseFloat(formData.sheep || 0)
-          ).toString(),
-          swine: (
-            parseFloat(existingRow.swine || 0) + parseFloat(formData.swine || 0)
-          ).toString(),
-          doc: (
-            parseFloat(existingRow.doc || 0) + parseFloat(formData.doc || 0)
-          ).toString(),
-          pullet: (
-            parseFloat(existingRow.pullet || 0) +
-            parseFloat(formData.pullet || 0)
-          ).toString(),
-          culled: (
-            parseFloat(existingRow.culled || 0) +
-            parseFloat(formData.culled || 0)
-          ).toString(),
-          broiler: (
-            parseFloat(existingRow.broiler || 0) +
-            parseFloat(formData.broiler || 0)
-          ).toString(),
-          gameFowl: (
-            parseFloat(existingRow.gameFowl || 0) +
-            parseFloat(formData.gameFowl || 0)
-          ).toString(),
-          duck: (
-            parseFloat(existingRow.duck || 0) + parseFloat(formData.duck || 0)
-          ).toString(),
-          dog: (
-            parseFloat(existingRow.dog || 0) + parseFloat(formData.dog || 0)
-          ).toString(),
-          others: (
-            parseFloat(existingRow.others || 0) +
-            parseFloat(formData.others || 0)
-          ).toString(),
+          ...Object.keys(initialFormState).reduce((acc, key) => {
+            acc[key] = (
+              parseFloat(existingRow[key] || 0) + parseFloat(formData[key] || 0)
+            ).toString();
+            return acc;
+          }, {}),
         };
         setRows(updatedRows);
       } else {
@@ -143,13 +137,24 @@ function VeterinaryQuarantineInspectionReport() {
     handleClose();
   };
 
-  const handleCancel = () => {
-    handleClose();
+  const handleSaveProduct = () => {
+    if (editProductMode && currentProductIndex !== null) {
+      const updatedProductRows = [...productRows];
+      updatedProductRows[currentProductIndex] = productData;
+      setProductRows(updatedProductRows);
+    } else {
+      setProductRows([...productRows, productData]);
+    }
+
+    setProductData(initialProductState);
+    handleCloseProductModal();
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1 align="center"><b>Veterinary Quarantine Inspection Report</b></h1>
+      <h1 align="center">
+        <b>Veterinary Quarantine Inspection Report</b>
+      </h1>
 
       <TextField
         label="Total Fees Collected/Remitted"
@@ -166,7 +171,7 @@ function VeterinaryQuarantineInspectionReport() {
       />
 
       <Button variant="contained" color="primary" onClick={() => handleOpen()}>
-        Add
+        Add For Live Animals
       </Button>
 
       <TableContainer component={Paper} style={{ marginTop: "20px" }}>
@@ -258,13 +263,21 @@ function VeterinaryQuarantineInspectionReport() {
         </Table>
       </TableContainer>
 
-      <TableContainer>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => handleOpenProductModal()}
+        style={{ marginLeft: "10px" }}
+      >
+        Add For Animal By-Product
+      </Button>
+
+      <TableContainer component={Paper} style={{ marginTop: "20px" }}>
         <Table>
           <TableHead>
-            <TableCell align="center" colSpan={14}>
+            <TableCell align="center" colSpan={12}>
               Animal By-Products
             </TableCell>
-
             <TableRow>
               <TableCell>Beef (kg)</TableCell>
               <TableCell>Carabeef (kg)</TableCell>
@@ -276,33 +289,46 @@ function VeterinaryQuarantineInspectionReport() {
               <TableCell>Table Eggs (pcs)</TableCell>
               <TableCell>Embryonated Egg (pcs)</TableCell>
               <TableCell>Dung (bags)</TableCell>
-              <TableCell>Others(Please Specify)</TableCell>
+              <TableCell>Others (Please Specify)</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
           </TableHead>
+          <TableBody>
+            {productRows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{row.beef}</TableCell>
+                <TableCell>{row.carabeef}</TableCell>
+                <TableCell>{row.pork}</TableCell>
+                <TableCell>{row.cheval}</TableCell>
+                <TableCell>{row.chevon}</TableCell>
+                <TableCell>{row.mutton}</TableCell>
+                <TableCell>{row.poultryMeat}</TableCell>
+                <TableCell>{row.tableEggs}</TableCell>
+                <TableCell>{row.embryonatedEgg}</TableCell>
+                <TableCell>{row.dung}</TableCell>
+                <TableCell>{row.others}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleOpenProductModal(index)}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
-
-        <TextField
-          label="Total No. of Incoming Shipment"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-        />
       </TableContainer>
+
+      
+      <TextField
+        label="Total No. of Incoming Shipment"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
 
       <Modal open={open} onClose={handleClose}>
         <Box
@@ -350,7 +376,61 @@ function VeterinaryQuarantineInspectionReport() {
             <Button
               variant="contained"
               color="primary"
-              onClick={handleCancel}
+              onClick={handleClose}
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Cancel
+            </Button>
+          </form>
+        </Box>
+      </Modal>
+
+      <Modal open={openProductModal} onClose={handleCloseProductModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "50%",
+            maxHeight: "80%",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            overflow: "auto",
+          }}
+        >
+          <h2>
+            {editProductMode ? "Edit Product Entry" : "Add New Product Entry"}
+          </h2>
+          <form>
+            {Object.keys(initialProductState).map((key) => (
+              <TextField
+                key={key}
+                label={key.replace(/([A-Z])/g, " $1").toUpperCase()}
+                name={key}
+                value={productData[key]}
+                onChange={handleProductChange}
+                fullWidth
+                margin="normal"
+                inputProps={{ pattern: "[0-9]*" }}
+              />
+            ))}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveProduct}
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCloseProductModal}
               fullWidth
               sx={{ mt: 2 }}
             >
