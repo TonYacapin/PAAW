@@ -21,7 +21,7 @@ const App = () => {
           <Route path="/diform" element={<DiseaseInvestigationForm />} />
           <Route path="/Signup" element={<SignupForm/>} />
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport/>} />
-          <Route path="/vqrs" element={<VeterinaryQuarantineInspectionReport/>} />
+          <Route path="/vqir" element={<VeterinaryQuarantineInspectionReport/>} />
           {/* Add more routes here if needed */}
         </Routes>
       </div>
