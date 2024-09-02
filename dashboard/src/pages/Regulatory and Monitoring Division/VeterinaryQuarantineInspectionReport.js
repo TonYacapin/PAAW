@@ -57,7 +57,12 @@ function VeterinaryQuarantineInspectionReport() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const numericValue = name !== 'classification' && name !== 'others' ? (isNaN(value) ? "" : value) : value;
+    const numericValue =
+      name !== "classification" && name !== "others"
+        ? isNaN(value)
+          ? ""
+          : value
+        : value;
     setFormData({ ...formData, [name]: numericValue });
   };
 
@@ -78,20 +83,55 @@ function VeterinaryQuarantineInspectionReport() {
         const existingRow = updatedRows[existingRowIndex];
         updatedRows[existingRowIndex] = {
           ...existingRow,
-          carabao: (parseFloat(existingRow.carabao || 0) + parseFloat(formData.carabao || 0)).toString(),
-          cattle: (parseFloat(existingRow.cattle || 0) + parseFloat(formData.cattle || 0)).toString(),
-          horse: (parseFloat(existingRow.horse || 0) + parseFloat(formData.horse || 0)).toString(),
-          goat: (parseFloat(existingRow.goat || 0) + parseFloat(formData.goat || 0)).toString(),
-          sheep: (parseFloat(existingRow.sheep || 0) + parseFloat(formData.sheep || 0)).toString(),
-          swine: (parseFloat(existingRow.swine || 0) + parseFloat(formData.swine || 0)).toString(),
-          doc: (parseFloat(existingRow.doc || 0) + parseFloat(formData.doc || 0)).toString(),
-          pullet: (parseFloat(existingRow.pullet || 0) + parseFloat(formData.pullet || 0)).toString(),
-          culled: (parseFloat(existingRow.culled || 0) + parseFloat(formData.culled || 0)).toString(),
-          broiler: (parseFloat(existingRow.broiler || 0) + parseFloat(formData.broiler || 0)).toString(),
-          gameFowl: (parseFloat(existingRow.gameFowl || 0) + parseFloat(formData.gameFowl || 0)).toString(),
-          duck: (parseFloat(existingRow.duck || 0) + parseFloat(formData.duck || 0)).toString(),
-          dog: (parseFloat(existingRow.dog || 0) + parseFloat(formData.dog || 0)).toString(),
-          others: (parseFloat(existingRow.others || 0) + parseFloat(formData.others || 0)).toString(),
+          carabao: (
+            parseFloat(existingRow.carabao || 0) +
+            parseFloat(formData.carabao || 0)
+          ).toString(),
+          cattle: (
+            parseFloat(existingRow.cattle || 0) +
+            parseFloat(formData.cattle || 0)
+          ).toString(),
+          horse: (
+            parseFloat(existingRow.horse || 0) + parseFloat(formData.horse || 0)
+          ).toString(),
+          goat: (
+            parseFloat(existingRow.goat || 0) + parseFloat(formData.goat || 0)
+          ).toString(),
+          sheep: (
+            parseFloat(existingRow.sheep || 0) + parseFloat(formData.sheep || 0)
+          ).toString(),
+          swine: (
+            parseFloat(existingRow.swine || 0) + parseFloat(formData.swine || 0)
+          ).toString(),
+          doc: (
+            parseFloat(existingRow.doc || 0) + parseFloat(formData.doc || 0)
+          ).toString(),
+          pullet: (
+            parseFloat(existingRow.pullet || 0) +
+            parseFloat(formData.pullet || 0)
+          ).toString(),
+          culled: (
+            parseFloat(existingRow.culled || 0) +
+            parseFloat(formData.culled || 0)
+          ).toString(),
+          broiler: (
+            parseFloat(existingRow.broiler || 0) +
+            parseFloat(formData.broiler || 0)
+          ).toString(),
+          gameFowl: (
+            parseFloat(existingRow.gameFowl || 0) +
+            parseFloat(formData.gameFowl || 0)
+          ).toString(),
+          duck: (
+            parseFloat(existingRow.duck || 0) + parseFloat(formData.duck || 0)
+          ).toString(),
+          dog: (
+            parseFloat(existingRow.dog || 0) + parseFloat(formData.dog || 0)
+          ).toString(),
+          others: (
+            parseFloat(existingRow.others || 0) +
+            parseFloat(formData.others || 0)
+          ).toString(),
         };
         setRows(updatedRows);
       } else {
@@ -109,7 +149,21 @@ function VeterinaryQuarantineInspectionReport() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Veterinary Quarantine Inspection Report</h1>
+      <h1 align="center"><b>Veterinary Quarantine Inspection Report</b></h1>
+
+      <TextField
+        label="Total Fees Collected/Remitted"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+
+      <TextField
+        label="Total No. of Outgoing Shipment"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
 
       <Button variant="contained" color="primary" onClick={() => handleOpen()}>
         Add
@@ -118,7 +172,9 @@ function VeterinaryQuarantineInspectionReport() {
       <TableContainer component={Paper} style={{ marginTop: "20px" }}>
         <Table>
           <TableHead>
-            <TableCell colSpan={16}>Live Animals</TableCell>
+            <TableCell align="center" colSpan={16}>
+              Live Animals
+            </TableCell>
             <TableRow>
               <TableCell rowSpan={2}>Classification</TableCell>
               <TableCell rowSpan={2}>Carabao (hds)</TableCell>
@@ -174,14 +230,78 @@ function VeterinaryQuarantineInspectionReport() {
             ))}
             <TableRow>
               <TableCell>Total</TableCell>
-              {['carabao', 'cattle', 'horse', 'goat', 'sheep', 'swine', 'doc', 'pullet', 'culled', 'broiler', 'gameFowl', 'duck', 'dog', 'others'].map((key, index) => (
+              {[
+                "carabao",
+                "cattle",
+                "horse",
+                "goat",
+                "sheep",
+                "swine",
+                "doc",
+                "pullet",
+                "culled",
+                "broiler",
+                "gameFowl",
+                "duck",
+                "dog",
+                "others",
+              ].map((key, index) => (
                 <TableCell key={index}>
-                  {rows.reduce((sum, row) => sum + parseFloat(row[key] || 0), 0)}
+                  {rows.reduce(
+                    (sum, row) => sum + parseFloat(row[key] || 0),
+                    0
+                  )}
                 </TableCell>
               ))}
             </TableRow>
           </TableBody>
         </Table>
+      </TableContainer>
+
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableCell align="center" colSpan={14}>
+              Animal By-Products
+            </TableCell>
+
+            <TableRow>
+              <TableCell>Beef (kg)</TableCell>
+              <TableCell>Carabeef (kg)</TableCell>
+              <TableCell>Pork (kg)</TableCell>
+              <TableCell>Cheval (kg)</TableCell>
+              <TableCell>Chevon (kg)</TableCell>
+              <TableCell>Mutton (kg)</TableCell>
+              <TableCell>Poultry Meat (kg)</TableCell>
+              <TableCell>Table Eggs (pcs)</TableCell>
+              <TableCell>Embryonated Egg (pcs)</TableCell>
+              <TableCell>Dung (bags)</TableCell>
+              <TableCell>Others(Please Specify)</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+        </Table>
+
+        <TextField
+          label="Total No. of Incoming Shipment"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
       </TableContainer>
 
       <Modal open={open} onClose={handleClose}>
@@ -205,13 +325,17 @@ function VeterinaryQuarantineInspectionReport() {
             {Object.keys(initialFormState).map((key) => (
               <TextField
                 key={key}
-                label={key.replace(/([A-Z])/g, ' $1').toUpperCase()}
+                label={key.replace(/([A-Z])/g, " $1").toUpperCase()}
                 name={key}
                 value={formData[key]}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                inputProps={key !== 'classification' && key !== 'others' ? { pattern: "[0-9]*" } : {}}
+                inputProps={
+                  key !== "classification" && key !== "others"
+                    ? { pattern: "[0-9]*" }
+                    : {}
+                }
               />
             ))}
             <Button
