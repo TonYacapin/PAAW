@@ -93,41 +93,93 @@ function Home() {
             )}
             {userRole === "user" && (
               <>
-                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  User Form 1
+                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Requisition Form
                 </button>
                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  User Form 2
+                  Animal Production Services Request Form
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Veterinary Information Services Request Form
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Animal Health Care Services Request Form
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Regulatory Care Services Request Form
                 </button>
               </>
             )}
             {userRole === "regulatory" && (
               <>
-                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Regulatory Form 1
+                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Requisition Form
                 </button>
                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Regulatory Form 2
+                  Manage Veterinary Shipment
                 </button>
+
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Slaughter Shipment
+                </button>
+
+              
+                
               </>
             )}
             {userRole === "animalhealth" && (
               <>
-                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Animal Health Form 1
+                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Requisition Form
+                </button>
+               <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Rabies Vacination
                 </button>
                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Animal Health Form 2
+                  Manage Vacination Report
                 </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                 Generate Accomplishment Report
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                 Routine Service Monitoring Reports
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                 Disease Investigation Form
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                 Disease Surveilance and Incident Report
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                 Manage Rabies History
+                </button>
+              
+              
+              
               </>
             )}
             {userRole === "livestock" && (
               <>
-                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Livestock Form 1
+                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Requisition Form
                 </button>
                 <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
-                  Livestock Form 2
+                  Manage Artificial Insemination
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Offpring Monitoring
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Estrus syncronization
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Generate Monthly Accomplishment Reports
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Vitamin ADE Supplement
+                </button>
+                <button className="bg-[#1b5b40] text-white py-3 px-4 rounded-md shadow-md hover:bg-[#174932] transition-all">
+                  Manage Pregnancy Diagnostics
                 </button>
               </>
             )}
