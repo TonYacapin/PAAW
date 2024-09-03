@@ -8,6 +8,8 @@ import DiseaseInvestigationForm from './pages/Livestock and Poultry DRRM/Disease
 import SignupForm from './pages/SignupPage';
 import RoutineServicesMonitoringReport from './pages/Livestock and Poultry DRRM/RoutineServicesMonitoringReport';
 import VeterinaryQuarantineInspectionReport from './pages/Regulatory and Monitoring Division/VeterinaryQuarantineInspectionReport';
+import VaccinationReport from './pages/Animal Disease Prevention Control and Eradication/VaccinationReport';
+import RabiesHistoryForm from './pages/RABIES/RabiesHistoryForm';
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
           <Route path="/Signup" element={<SignupForm/>} />
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport/>} />
           <Route path="/vqir" element={<VeterinaryQuarantineInspectionReport/>} />
+          <Route path="/Vr" element={<VaccinationReport/>} />
+          <Route path="/rhf" element={<RabiesHistoryForm/>} />
         </Routes>
       </div>
     </Router>
