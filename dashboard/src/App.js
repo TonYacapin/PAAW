@@ -7,6 +7,7 @@ import Home from "./pages/Home/Home";
 import DiseaseInvestigationForm from './pages/Livestock and Poultry DRRM/DiseaseInvestigationForm';
 import SignupForm from './pages/SignupPage';
 import RoutineServicesMonitoringReport from './pages/Livestock and Poultry DRRM/RoutineServicesMonitoringReport';
+import VeterinaryQuarantineInspectionReport from './pages/Regulatory and Monitoring Division/VeterinaryQuarantineInspectionReport';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/diform" element={<DiseaseInvestigationForm />} />
           <Route path="/Signup" element={<SignupForm/>} />
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport/>} />
+          <Route path="/vqir" element={<VeterinaryQuarantineInspectionReport/>} />
           {/* Add more routes here if needed */}
         </Routes>
       </div>
