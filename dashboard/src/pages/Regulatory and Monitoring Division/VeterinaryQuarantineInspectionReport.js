@@ -170,7 +170,11 @@ function VeterinaryQuarantineInspectionReport() {
         margin="normal"
       />
 
-      <Button variant="contained" color="primary" onClick={() => handleOpen()}>
+      <Button variant="contained" style={{ 
+    backgroundColor: "#11821c", /* Corrected color prop */
+    color: "#fff", /* Adjust text color to be visible on dark background */
+    marginLeft: "10px"
+  }} onClick={() => handleOpen()}>
         Add For Live Animals
       </Button>
 
@@ -264,13 +268,17 @@ function VeterinaryQuarantineInspectionReport() {
       </TableContainer>
 
       <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => handleOpenProductModal()}
-        style={{ marginLeft: "10px" }}
-      >
-        Add For Animal By-Product
-      </Button>
+  variant="contained"
+  style={{ 
+    backgroundColor: "#11821c", /* Corrected color prop */
+    color: "#fff", /* Adjust text color to be visible on dark background */
+    marginLeft: "10px"
+  }}
+  onClick={() => handleOpenProductModal()}
+>
+  Add For Animal By-Product
+</Button>
+
 
       <TableContainer component={Paper} style={{ marginTop: "20px" }}>
         <Table>
