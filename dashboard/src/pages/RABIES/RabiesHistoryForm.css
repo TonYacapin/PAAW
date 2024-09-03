@@ -1,0 +1,102 @@
+/* Container styles */
+form {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Grid spacing adjustments */
+  .MuiGrid-item {
+    padding: 10px !important;
+  }
+  
+  /* Typography styles */
+  .MuiTypography-h6 {
+    margin-bottom: 15px;
+    color: #3f51b5;
+    font-weight: 600;
+  }
+  
+  /* TextField styles */
+  .MuiTextField-root {
+    margin-bottom: 15px;
+  }
+  
+  .MuiInputLabel-outlined {
+    color: #3f51b5;
+  }
+  
+  .MuiOutlinedInput-root {
+    fieldset {
+      border-color: #3f51b5;
+    }
+    &:hover fieldset {
+      border-color: #303f9f;
+    }
+    &.Mui-focused fieldset {
+      border-color: #1a237e;
+    }
+  }
+  
+  /* Radio and Checkbox styles */
+  .MuiFormControlLabel-label {
+    color: #3f51b5;
+  }
+  
+  .MuiRadio-root, .MuiCheckbox-root {
+    color: #3f51b5;
+  }
+  
+  .MuiRadio-root.Mui-checked, .MuiCheckbox-root.Mui-checked {
+    color: #1a237e;
+  }
+  
+  /* Select input styles */
+  .MuiSelect-outlined {
+    margin-bottom: 15px;
+  }
+  
+  .MuiInputLabel-root {
+    color: #3f51b5;
+  }
+  
+  .MuiSelect-icon {
+    color: #3f51b5;
+  }
+  
+  /* Date and Time Picker styles */
+  .MuiInputBase-input {
+    color: #3f51b5;
+  }
+  
+  .MuiInputLabel-shrink {
+    color: #3f51b5 !important;
+  }
+  
+  /* Form Label styles */
+  .MuiFormLabel-root {
+    color: #3f51b5;
+  }
+  
+  /* Adding custom margin to FormControl */
+  .MuiFormControl-root {
+    margin-bottom: 15px;
+  }
+  
+  /* Responsive design adjustments */
+  @media (max-width: 600px) {
+    form {
+      padding: 10px;
+    }
+  
+    .MuiGrid-item {
+      padding: 5px !important;
+    }
+  
+    .MuiTypography-h6 {
+      font-size: 1.2rem;
+    }
+  }
+  

@@ -236,9 +236,6 @@ const DiseaseInvestigationForm = () => {
             onChange={(e) => setInvestigator(e.target.value)}
           />
         </Grid>
-
-        {/* Tables */}
-        {/* Details Table */}
         <Grid item xs={12}>
           <TableContainer component={Paper}>
             <Table aria-label="details table">

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
 import ConfirmationModal from '../../component/ConfiramtionModal'; // Import the ConfirmationModal component
 
-function RabiesVaccinationReport() {
+function VaccinationReport() {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -375,4 +375,4 @@ function RabiesVaccinationReport() {
   );
 }
 
-export default RabiesVaccinationReport;
+export default VaccinationReport;
