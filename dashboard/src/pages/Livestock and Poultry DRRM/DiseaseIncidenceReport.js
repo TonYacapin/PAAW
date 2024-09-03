@@ -12,7 +12,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import "./DiseaseIncidenceReport.css"; // Ensure this file exists and is styled correctly
+import "./DiseaseIncidenceReport.css"; 
+import Navbar from "../../component/Navbar";
 
 const DiseaseIncidenceReport = () => {
   const [name, setName] = useState("");
@@ -31,6 +32,7 @@ const DiseaseIncidenceReport = () => {
 
   return (
     <>
+    <Navbar/>
       <div className="title">Disease Surveillance and Incidence Report</div>
       <TableContainer component={Paper} className="table-container">
         <Table

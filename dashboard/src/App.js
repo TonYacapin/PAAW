@@ -15,14 +15,13 @@ const App = () => {
       <div className="App">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dif" element={<DiseaseIncidenceReport />} />
+          <Route path="/dir" element={<DiseaseIncidenceReport />} />
           <Route path="/Rabies" element={<RabiesVaccinationReport />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/diform" element={<DiseaseInvestigationForm />} />
           <Route path="/Signup" element={<SignupForm/>} />
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport/>} />
           <Route path="/vqir" element={<VeterinaryQuarantineInspectionReport/>} />
-          {/* Add more routes here if needed */}
         </Routes>
       </div>
     </Router>
