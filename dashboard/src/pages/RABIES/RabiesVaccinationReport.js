@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
-import ConfirmationModal from '../../component/ConfiramtionModal'; // Import the ConfirmationModal component
+import ConfirmationModal from '../../component/ConfirmationModal'; // Import the ConfirmationModal component
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);

@@ -3,6 +3,7 @@ import axios from 'axios';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 import { useNavigate } from 'react-router-dom';
+
 // SplashScreen Component
 const SplashScreen = ({ onFinish }) => {
   const [currentScreen, setCurrentScreen] = useState(0);
@@ -49,18 +50,18 @@ const LoginPage = () => {
         password,
       });
 
-      const { token } = response.data;
+      const { token, userRole } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('userRole', userRole);
 
       console.log('Logged in successfully:', response.data);
-      navigate('/Home')
-      // Redirect to another page after successful login
-      // e.g., window.location.href = '/dashboard';
+      navigate('/Home');
     } catch (error) {
       console.error('Error logging in:', error.response?.data?.message || error.message);
       setError('Invalid email or password');
     }
   };
+
   const handleSignup = () => {
     navigate('/signup');
   };
@@ -129,6 +130,16 @@ const LoginPage = () => {
             </button>
           </div>
         </form>
+        <div className="mt-8 bg-gray-100 p-4 rounded-md">
+          <h3 className="text-lg font-semibold text-gray-800">Users for Debugging:</h3>
+          <ul className="mt-2 space-y-1 text-sm text-gray-600">
+            <li>Email: user@gmail.com | Password: user</li>
+            <li>Email: admin@gmail.com | Password: admin</li>
+            <li>Email: regulatory@gmail.com | Password: regulatory</li>
+            <li>Email: animalhealth@gmail.com | Password: animalhealth</li>
+            <li>Email: livestock@gmail.com | Password: livestock</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
