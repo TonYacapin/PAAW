@@ -27,6 +27,7 @@ function Navbar() {
       case 'regulatory':
         return (
           <>
+            <button className="text-white">Clients</button>
             <button className="text-white">Regulatory</button>
             <button className="text-white" onClick={handleLogout}>Logout</button>
           </>
@@ -34,6 +35,7 @@ function Navbar() {
       case 'animalhealth':
         return (
           <>
+           <button className="text-white">Clients</button>
             <button className="text-white">Animal Health</button>
             <button className="text-white" onClick={handleLogout}>Logout</button>
           </>
@@ -41,6 +43,7 @@ function Navbar() {
       case 'livestock':
         return (
           <>
+           <button className="text-white">Clients</button>
             <button className="text-white">Livestock</button>
             <button className="text-white" onClick={handleLogout}>Logout</button>
           </>
@@ -49,6 +52,7 @@ function Navbar() {
       default:
         return (
           <>
+          
             <button className="text-white">Clients</button>
             <button className="text-white" onClick={handleLogout}>Logout</button>
           </>
