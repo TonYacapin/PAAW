@@ -53,7 +53,7 @@ const LoginPage = () => {
       localStorage.setItem('token', token);
 
       console.log('Logged in successfully:', response.data);
-
+      navigate('/Home')
       // Redirect to another page after successful login
       // e.g., window.location.href = '/dashboard';
     } catch (error) {
