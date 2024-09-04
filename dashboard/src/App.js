@@ -10,6 +10,7 @@ import RoutineServicesMonitoringReport from './pages/Livestock and Poultry DRRM/
 import VeterinaryQuarantineInspectionReport from './pages/Regulatory and Monitoring Division/VeterinaryQuarantineInspectionReport';
 import VaccinationReport from './pages/Animal Disease Prevention Control and Eradication/VaccinationReport';
 import RabiesHistoryForm from './pages/RABIES/RabiesHistoryForm';
+import ChartComponent from './component/ChartComponent';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/vqir" element={<VeterinaryQuarantineInspectionReport/>} />
           <Route path="/Vr" element={<VaccinationReport/>} />
           <Route path="/rhf" element={<RabiesHistoryForm/>} />
+
         </Routes>
       </div>
     </Router>

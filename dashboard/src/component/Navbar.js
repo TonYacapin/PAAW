@@ -14,8 +14,8 @@ function Navbar() {
   };
 
   const renderButtons = () => {
-    const baseClasses = "px-4 py-2 rounded-md text-white hover:bg-[#174932] transition-colors";
-    
+    const baseClasses = "px-6 py-3 text-xl rounded-md text-white bg-[#154e34] hover:bg-[#123c29] transition-colors";
+
     switch (role) {
       case 'admin':
         return (
@@ -75,13 +75,13 @@ function Navbar() {
   }, []);
 
   return (
-    <div className="h-16 w-full bg-[#1b5b40] flex items-center justify-between px-6 py-2 shadow-lg">
+    <div className="h-20 w-full bg-[#1b5b40] flex items-center justify-between px-8 py-4 shadow-lg">
       {/* Logo */}
-      <img src={Logo} alt="Logo" className="h-12" />
+      <img src={Logo} alt="Logo" className="h-16" />
 
       {/* Desktop Menu */}
       <div className="hidden md:flex flex-1 justify-center">
-        <div className="flex space-x-4 bg-gray-800 p-2 rounded-md border border-gray-700">
+        <div className="flex space-x-6 bg-[#14452f] p-3 rounded-md border border-[#123c29]">
           {renderButtons()}
         </div>
       </div>
@@ -90,15 +90,15 @@ function Navbar() {
       <div className="md:hidden flex items-center">
         <button 
           onClick={() => setIsMenuOpen(!isMenuOpen)} 
-          className="text-white text-2xl"
+          className="text-white text-3xl"
         >
           {isMenuOpen ? '✖️' : '☰'}
         </button>
       </div>
 
       {/* Mobile Menu */}
-      <div ref={menuRef} className={`md:hidden fixed top-0 right-0 w-64 bg-[#1b5b40] h-full p-4 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex flex-col space-y-4">
+      <div ref={menuRef} className={`md:hidden fixed top-0 right-0 w-72 bg-[#1b5b40] h-full p-6 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex flex-col space-y-6">
           {renderButtons()}
         </div>
       </div>
