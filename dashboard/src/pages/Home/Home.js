@@ -18,7 +18,6 @@ function Home() {
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
-
   useEffect(() => {
     const role = localStorage.getItem("userRole");
     console.log("userRole:", role);
@@ -36,7 +35,8 @@ function Home() {
   };
 
   const renderCharts = () => {
-    const chartClasses = "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
+    const chartClasses =
+      "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
     const chartTextClasses = "text-gray-700 font-semibold text-lg";
 
     if (selectedDivision) {
@@ -52,7 +52,9 @@ function Home() {
         default:
           return (
             <div className={chartClasses}>
-              <p className={chartTextClasses}>No charts available for this division.</p>
+              <p className={chartTextClasses}>
+                No charts available for this division.
+              </p>
             </div>
           );
       }
@@ -63,7 +65,7 @@ function Home() {
 
   const renderForms = () => {
     const buttonClasses =
-      "w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors";
+      "w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
 
     switch (selectedDivision) {
       case "user":
@@ -74,19 +76,32 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Animal Production Services Request Form</button>
-              <button className={buttonClasses}>Veterinary Information Services Request Form</button>
-              <button className={buttonClasses}>Animal Health Care Services Request Form</button>
-              <button className={buttonClasses}>Regulatory Care Services Request Form</button>
+              <button className={buttonClasses}>
+                Animal Production Services Request Form
+              </button>
+              <button className={buttonClasses}>
+                Veterinary Information Services Request Form
+              </button>
+              <button className={buttonClasses}>
+                Animal Health Care Services Request Form
+              </button>
+              <button className={buttonClasses}>
+                Regulatory Care Services Request Form
+              </button>
             </div>
           </>
         );
       case "admin":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Admin Actions</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Admin Actions
+            </h3>
             <div className="space-y-2">
-              <button className={buttonClasses} onClick={() => setSelectedDivision("user")}>
+              <button
+                className={buttonClasses}
+                onClick={() => setSelectedDivision("user")}
+              >
                 Manage Users
               </button>
             </div>
@@ -100,16 +115,28 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button onClick={openModal} className={buttonClasses}>Manage Rabies Vaccination</button>
+              <button onClick={openModal} className={buttonClasses}>
+                Manage Rabies Vaccination
+              </button>
               <Modal isOpen={isModalOpen} onClose={closeModal}>
-               <RabiesVaccinationReport></RabiesVaccinationReport>
+                <RabiesVaccinationReport></RabiesVaccinationReport>
               </Modal>
-              <button className={buttonClasses}>Manage Vaccination Report</button>
-              
-              <button className={buttonClasses}>Generate Accomplishment Report</button>
-              <button className={buttonClasses}>Routine Service Monitoring Reports</button>
-              <button className={buttonClasses}>Disease Investigation Form</button>
-              <button className={buttonClasses}>Disease Surveillance and Incident Report</button>
+              <button className={buttonClasses}>
+                Manage Vaccination Report
+              </button>
+
+              <button className={buttonClasses}>
+                Generate Accomplishment Report
+              </button>
+              <button className={buttonClasses}>
+                Routine Service Monitoring Reports
+              </button>
+              <button className={buttonClasses}>
+                Disease Investigation Form
+              </button>
+              <button className={buttonClasses}>
+                Disease Surveillance and Incident Report
+              </button>
               <button className={buttonClasses}>Manage Rabies History</button>
             </div>
           </>
@@ -122,12 +149,24 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Manage Artificial Insemination</button>
-              <button className={buttonClasses}>Manage Offspring Monitoring</button>
-              <button className={buttonClasses}>Manage Estrus Synchronization</button>
-              <button className={buttonClasses}>Generate Monthly Accomplishment Reports</button>
-              <button className={buttonClasses}>Manage Vitamin ADE Supplement</button>
-              <button className={buttonClasses}>Manage Pregnancy Diagnostics</button>
+              <button className={buttonClasses}>
+                Manage Artificial Insemination
+              </button>
+              <button className={buttonClasses}>
+                Manage Offspring Monitoring
+              </button>
+              <button className={buttonClasses}>
+                Manage Estrus Synchronization
+              </button>
+              <button className={buttonClasses}>
+                Generate Monthly Accomplishment Reports
+              </button>
+              <button className={buttonClasses}>
+                Manage Vitamin ADE Supplement
+              </button>
+              <button className={buttonClasses}>
+                Manage Pregnancy Diagnostics
+              </button>
             </div>
           </>
         );
@@ -139,8 +178,12 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Manage Veterinary Shipment</button>
-              <button className={buttonClasses}>Manage Slaughter Shipment</button>
+              <button className={buttonClasses}>
+                Manage Veterinary Shipment
+              </button>
+              <button className={buttonClasses}>
+                Manage Slaughter Shipment
+              </button>
             </div>
           </>
         );
@@ -151,51 +194,49 @@ function Home() {
 
   return (
     <>
-       
-      <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
-
-        <div className="flex flex-col lg:flex-row lg:space-x-8">
-        <Navbar onDivisionChange={handleDivisionChange} />
+      <Navbar onDivisionChange={handleDivisionChange} />
+      <div className="flex lg:ml-80 p-4 md:p-8 bg-gray-50 min-h-screen">
+        <div className="flex flex-col lg:flex-row lg:space-x-8 ">
           {/* Left Side - Charts */}
-          <div className="flex-1 space-y-6">
-            {renderCharts()}
-          </div>
+          <div className="flex-1 space-y-6">{renderCharts()}</div>
 
           {/* Right Side - Buttons and Forms */}
           <div className="mt-8 lg:mt-0 lg:w-1/3 space-y-6">
             {userRole === "admin" && (
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Browse Divisions</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Browse Divisions
+              </h2>
             )}
 
             <div className="space-y-4">
               {userRole === "admin" && (
                 <>
                   <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
+                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                     onClick={() => setSelectedDivision("admin")}
                   >
                     Admin
                   </button>
                   <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
+                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                     onClick={() => setSelectedDivision("user")}
                   >
                     Clients
                   </button>
                   <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
+                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                     onClick={() => setSelectedDivision("animalhealth")}
                   >
                     Animal Health
                   </button>
                   <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
+                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                     onClick={() => setSelectedDivision("livestock")}
                   >
                     Livestock
                   </button>
                   <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
+                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                     onClick={() => setSelectedDivision("regulatory")}
                   >
                     Regulatory
