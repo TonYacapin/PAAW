@@ -18,18 +18,38 @@ const App = () => {
       <div className="App">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dir" element={<DiseaseIncidenceReport />} />
-          <Route path="/Rabies" element={<RabiesVaccinationReport />} />
           <Route path="/Home" element={<Home />} />
-          <Route path="/diform" element={<DiseaseInvestigationForm />} />
           <Route path="/Signup" element={<SignupForm />} />
+          {/* Manage Animal Health Division */}
+          {/* Rabies Prevention, Control, and Eradication */}
+          <Route path="/Rabies" element={<RabiesVaccinationReport />} />
+          <Route path="/rhf" element={<RabiesHistoryForm />} />
+          {/* Animal Disease, Prevention, Control, and Eradication */}
+          <Route path="/Vr" element={<VaccinationReport />} />
+
+          {/* Livestock and Poultry DRRM */}
+          <Route path="/diform" element={<DiseaseInvestigationForm />} />
+          <Route path="/dir" element={<DiseaseIncidenceReport />} />
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport />} />
+
+          {/* Livestock Division */}
+          {/* Upgrading Services */}
+          {/*  */}
+          {/* Regulatory Division */}
+          {/* Veterinary Quarantine Operation */}
           <Route
             path="/vqir"
             element={<VeterinaryQuarantineInspectionReport />}
           />
-          <Route path="/Vr" element={<VaccinationReport />} />
-          <Route path="/rhf" element={<RabiesHistoryForm />} />
+          {/* Meat Inspection Operation */}
+
+          {/* Client */}
+          {/* Submitted Forms */}
+
+          {/* Admin Division */}
+          {/* Records (import/export data) */}
+          {/* Supplies and Equipment */}
+          {/* Knowledge */}
         </Routes>
       </div>
     </Router>
