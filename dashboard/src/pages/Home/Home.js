@@ -194,59 +194,15 @@ function Home() {
 
   return (
     <>
-      <Navbar onDivisionChange={handleDivisionChange} />
-      <div className="flex lg:ml-80 p-4 md:p-8 bg-gray-50 min-h-screen">
-        <div className="flex flex-col lg:flex-row lg:space-x-8 ">
+      <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          <Navbar onDivisionChange={handleDivisionChange} />
           {/* Left Side - Charts */}
           <div className="flex-1 space-y-6">{renderCharts()}</div>
 
           {/* Right Side - Buttons and Forms */}
           <div className="mt-8 lg:mt-0 lg:w-1/3 space-y-6">
-            {userRole === "admin" && (
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                Browse Divisions
-              </h2>
-            )}
-
             <div className="space-y-4">
-              {userRole === "admin" && (
-                <>
-                  <button
-                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                    onClick={() => setSelectedDivision("admin")}
-                  >
-                    Admin
-                  </button>
-                  <button
-                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                    onClick={() => setSelectedDivision("user")}
-                  >
-                    Clients
-                  </button>
-                  <button
-                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                    onClick={() => setSelectedDivision("animalhealth")}
-                  >
-                    Animal Health
-                  </button>
-                  <button
-                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                    onClick={() => setSelectedDivision("livestock")}
-                  >
-                    Livestock
-                  </button>
-                  <button
-                    className="w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                    onClick={() => setSelectedDivision("regulatory")}
-                  >
-                    Regulatory
-                  </button>
-                </>
-              )}
-
-              {/* Separator */}
-              <hr className="border-t-2 border-gray-300 my-4" />
-
               {/* Render forms based on the selected division */}
               {renderForms()}
             </div>
