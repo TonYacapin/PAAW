@@ -18,7 +18,6 @@ function Home() {
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
-
   useEffect(() => {
     const role = localStorage.getItem("userRole");
     console.log("userRole:", role);
@@ -105,7 +104,6 @@ function Home() {
                <RabiesVaccinationReport></RabiesVaccinationReport>
               </Modal>
               <button className={buttonClasses}>Manage Vaccination Report</button>
-              
               <button className={buttonClasses}>Generate Accomplishment Report</button>
               <button className={buttonClasses}>Routine Service Monitoring Reports</button>
               <button className={buttonClasses}>Disease Investigation Form</button>
@@ -151,11 +149,9 @@ function Home() {
 
   return (
     <>
-       
       <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
-
         <div className="flex flex-col lg:flex-row lg:space-x-8">
-        <Navbar onDivisionChange={handleDivisionChange} />
+          <Navbar onDivisionChange={handleDivisionChange} />
           {/* Left Side - Charts */}
           <div className="flex-1 space-y-6">
             {renderCharts()}
@@ -163,49 +159,7 @@ function Home() {
 
           {/* Right Side - Buttons and Forms */}
           <div className="mt-8 lg:mt-0 lg:w-1/3 space-y-6">
-            {userRole === "admin" && (
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Browse Divisions</h2>
-            )}
-
             <div className="space-y-4">
-              {userRole === "admin" && (
-                <>
-                  <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
-                    onClick={() => setSelectedDivision("admin")}
-                  >
-                    Admin
-                  </button>
-                  <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
-                    onClick={() => setSelectedDivision("user")}
-                  >
-                    Clients
-                  </button>
-                  <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
-                    onClick={() => setSelectedDivision("animalhealth")}
-                  >
-                    Animal Health
-                  </button>
-                  <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
-                    onClick={() => setSelectedDivision("livestock")}
-                  >
-                    Livestock
-                  </button>
-                  <button
-                    className="w-full bg-green-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-800 transition-colors"
-                    onClick={() => setSelectedDivision("regulatory")}
-                  >
-                    Regulatory
-                  </button>
-                </>
-              )}
-
-              {/* Separator */}
-              <hr className="border-t-2 border-gray-300 my-4" />
-
               {/* Render forms based on the selected division */}
               {renderForms()}
             </div>
