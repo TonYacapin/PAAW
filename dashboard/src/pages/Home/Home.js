@@ -14,7 +14,6 @@ function Home() {
   const [selectedDivision, setSelectedDivision] = useState(null);
   const [selectedCharts, setSelectedCharts] = useState([]);
   const navigate = useNavigate();
-
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => setModalOpen(true);
@@ -22,7 +21,6 @@ function Home() {
 
   useEffect(() => {
     const role = localStorage.getItem("userRole");
-    console.log("userRole:", role);
     setUserRole(role);
   }, []);
 
@@ -40,7 +38,6 @@ function Home() {
     setSelectedCharts(selectedOptions.map(option => option.value));
   };
 
-  // Define all possible chart options
   const allChartOptions = [
     { value: "admin", label: "Admin Chart" },
     { value: "animalhealth", label: "Animal Health Chart" },
@@ -48,11 +45,10 @@ function Home() {
     { value: "regulatory", label: "Regulatory Chart" },
   ];
 
-  // Filter chart options based on userRole
   const getChartOptions = () => {
     switch (userRole) {
       case "admin":
-        return allChartOptions; // Admin can see all charts
+        return allChartOptions;
       case "animalhealth":
         return allChartOptions.filter(option => option.value === "animalhealth");
       case "livestock":
@@ -60,13 +56,12 @@ function Home() {
       case "regulatory":
         return allChartOptions.filter(option => option.value === "regulatory");
       default:
-        return []; // If no role matches, return empty array
+        return [];
     }
   };
 
   const renderCharts = () => {
-    const chartClasses =
-      "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
+    const chartClasses = "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
     const chartTextClasses = "text-gray-700 font-semibold text-lg";
 
     if (selectedCharts.length > 0) {
@@ -88,8 +83,7 @@ function Home() {
   };
 
   const renderForms = () => {
-    const buttonClasses =
-      "w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
+    const buttonClasses = "w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
 
     switch (selectedDivision) {
       case "user":
@@ -100,18 +94,10 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>
-                Animal Production Services Request Form
-              </button>
-              <button className={buttonClasses}>
-                Veterinary Information Services Request Form
-              </button>
-              <button className={buttonClasses}>
-                Animal Health Care Services Request Form
-              </button>
-              <button className={buttonClasses}>
-                Regulatory Care Services Request Form
-              </button>
+              <button className={buttonClasses}>Animal Production Services Request Form</button>
+              <button className={buttonClasses}>Veterinary Information Services Request Form</button>
+              <button className={buttonClasses}>Animal Health Care Services Request Form</button>
+              <button className={buttonClasses}>Regulatory Care Services Request Form</button>
             </div>
           </>
         );
@@ -122,12 +108,7 @@ function Home() {
               Admin Actions
             </h3>
             <div className="space-y-2">
-              <button
-                className={buttonClasses}
-                onClick={() => setSelectedDivision("user")}
-              >
-                Manage Users
-              </button>
+              <button className={buttonClasses} onClick={() => setSelectedDivision("user")}>Manage Users</button>
             </div>
           </>
         );
@@ -139,28 +120,15 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button onClick={openModal} className={buttonClasses}>
-                Manage Rabies Vaccination
-              </button>
+              <button onClick={openModal} className={buttonClasses}>Manage Rabies Vaccination</button>
               <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <RabiesVaccinationReport></RabiesVaccinationReport>
               </Modal>
-              <button className={buttonClasses}>
-                Manage Vaccination Report
-              </button>
-
-              <button className={buttonClasses}>
-                Generate Accomplishment Report
-              </button>
-              <button className={buttonClasses}>
-                Routine Service Monitoring Reports
-              </button>
-              <button className={buttonClasses}>
-                Disease Investigation Form
-              </button>
-              <button className={buttonClasses}>
-                Disease Surveillance and Incident Report
-              </button>
+              <button className={buttonClasses}>Manage Vaccination Report</button>
+              <button className={buttonClasses}>Generate Accomplishment Report</button>
+              <button className={buttonClasses}>Routine Service Monitoring Reports</button>
+              <button className={buttonClasses}>Disease Investigation Form</button>
+              <button className={buttonClasses}>Disease Surveillance and Incident Report</button>
               <button className={buttonClasses}>Manage Rabies History</button>
             </div>
           </>
@@ -173,24 +141,12 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>
-                Manage Artificial Insemination
-              </button>
-              <button className={buttonClasses}>
-                Manage Offspring Monitoring
-              </button>
-              <button className={buttonClasses}>
-                Manage Estrus Synchronization
-              </button>
-              <button className={buttonClasses}>
-                Generate Monthly Accomplishment Reports
-              </button>
-              <button className={buttonClasses}>
-                Manage Vitamin ADE Supplement
-              </button>
-              <button className={buttonClasses}>
-                Manage Pregnancy Diagnostics
-              </button>
+              <button className={buttonClasses}>Manage Artificial Insemination</button>
+              <button className={buttonClasses}>Manage Offspring Monitoring</button>
+              <button className={buttonClasses}>Manage Estrus Synchronization</button>
+              <button className={buttonClasses}>Generate Monthly Accomplishment Reports</button>
+              <button className={buttonClasses}>Manage Vitamin ADE Supplement</button>
+              <button className={buttonClasses}>Manage Pregnancy Diagnostics</button>
             </div>
           </>
         );
@@ -202,12 +158,8 @@ function Home() {
             </h3>
             <div className="space-y-2">
               <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>
-                Manage Veterinary Shipment
-              </button>
-              <button className={buttonClasses}>
-                Manage Slaughter Shipment
-              </button>
+              <button className={buttonClasses}>Manage Veterinary Shipment</button>
+              <button className={buttonClasses}>Manage Slaughter Shipment</button>
             </div>
           </>
         );
@@ -216,7 +168,6 @@ function Home() {
     }
   };
 
-  // Custom styles for react-select component
   const customSelectStyles = {
     control: (provided) => ({
       ...provided,
@@ -226,6 +177,7 @@ function Home() {
       padding: "0.5rem",
       fontSize: "1rem",
       boxShadow: "none",
+      zIndex: 1, // Ensure the select is behind the navbar
       "&:hover": {
         borderColor: "#1b5b40",
       },
@@ -266,70 +218,46 @@ function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
-      <div className="flex flex-col lg:flex-row lg:space-x-8">
-        {/* Navbar */}
-        <Navbar onDivisionChange={handleDivisionChange} />
+    <>
+      <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen relative"> {/* Add relative positioning */}
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          {/* Navbar */}
+          <Navbar onDivisionChange={handleDivisionChange} />
   
-        {/* Left Side - Charts */}
-        <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-center lg:text-left">
-            Select Charts to Display
-          </h3>
+          {/* Main Content Wrapper */}
+          <div className="flex flex-col lg:flex-row w-full">
+            {/* Left Side - Charts */}
+            <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-center lg:text-left">
+                Select Charts to Display
+              </h3>
   
-          {/* Chart Selection Dropdown */}
-          <div className="w-full">
-            <Select
-              isMulti
-              options={getChartOptions()}
-              onChange={handleChartSelect}
-              styles={customSelectStyles}
-              placeholder="Select charts..."
-              className="text-sm sm:text-base"
-            />
-          </div>
-  
-          {/* Conditional Rendering for Charts */}
-          <div className="w-full">
-            {selectedCharts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-                {selectedCharts.includes("admin") && (
-                  <div className="bg-white shadow-md rounded-lg p-6 lg:p-8 w-full h-72 sm:h-80 lg:h-[30rem] xl:h-[35rem]">
-                    <ChartComponent />
-                  </div>
-                )}
-                {selectedCharts.includes("animalhealth") && (
-                  <div className="bg-white shadow-md rounded-lg p-6 lg:p-8 w-full h-72 sm:h-80 lg:h-[30rem] xl:h-[35rem]">
-                    <AnimalHealthChartComponent />
-                  </div>
-                )}
-                {selectedCharts.includes("livestock") && (
-                  <div className="bg-white shadow-md rounded-lg p-6 lg:p-8 w-full h-72 sm:h-80 lg:h-[30rem] xl:h-[35rem]">
-                    <LivestockChartComponent />
-                  </div>
-                )}
-                {selectedCharts.includes("regulatory") && (
-                  <div className="bg-white shadow-md rounded-lg p-6 lg:p-8 w-full h-72 sm:h-80 lg:h-[30rem] xl:h-[35rem]">
-                    <RegulatoryChartComponent />
-                  </div>
-                )}
+              {/* Chart Selection Dropdown */}
+              <div className="w-full z-10"> {/* Increase z-index for dropdown */}
+                <Select
+                  isMulti
+                  options={getChartOptions()}
+                  onChange={handleChartSelect}
+                  styles={customSelectStyles}
+                  placeholder="Select charts..."
+                  className="text-sm sm:text-base"
+                />
               </div>
-            ) : (
-              <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center">
-                <p className="text-gray-700 font-semibold text-base">
-                  Please select charts to display.
-                </p>
-              </div>
-            )}
-          </div>
   
-        </div>
-        {/* Right Side - Forms */}
-        <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8">
-          {renderForms()}
+              {/* Conditional Rendering for Charts */}
+              <div className="w-full">
+                {renderCharts()}
+              </div>
+            </div>
+  
+            {/* Right Side - Forms */}
+            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0">
+              {renderForms()}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

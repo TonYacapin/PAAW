@@ -22,7 +22,6 @@ function Navbar({ onDivisionChange }) {
     navigate("/login");
   };
 
-  // Define baseClasses for consistency
   const baseClasses =
     "px-6 py-3 text-xl rounded-md text-white flex items-center space-x-3 cursor-pointer bg-darkgreen hover:bg-darkergreen transition-colors";
 
@@ -31,34 +30,20 @@ function Navbar({ onDivisionChange }) {
       case "admin":
         return (
           <>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
-            >
-              <People /> <span>Clients</span>
-            </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("admin")}
-            >
+           <div className={baseClasses} onClick={() => onDivisionChange("admin")}>
               <People /> <span>Admin</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("animalhealth")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("user")}>
+              <People /> <span>Clients</span>
+            </div>
+           
+            <div className={baseClasses} onClick={() => onDivisionChange("animalhealth")}>
               <Pets /> <span>Animal Health</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("livestock")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("livestock")}>
               <Agriculture /> <span>Livestock</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("regulatory")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("regulatory")}>
               <Gavel /> <span>Regulatory</span>
             </div>
           </>
@@ -66,16 +51,10 @@ function Navbar({ onDivisionChange }) {
       case "regulatory":
         return (
           <>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("user")}>
               <People /> <span>Clients</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("regulatory")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("regulatory")}>
               <Gavel /> <span>Regulatory</span>
             </div>
           </>
@@ -83,16 +62,10 @@ function Navbar({ onDivisionChange }) {
       case "animalhealth":
         return (
           <>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("user")}>
               <People /> <span>Clients</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("animalhealth")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("animalhealth")}>
               <Pets /> <span>Animal Health</span>
             </div>
           </>
@@ -100,16 +73,10 @@ function Navbar({ onDivisionChange }) {
       case "livestock":
         return (
           <>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("user")}>
               <People /> <span>Clients</span>
             </div>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("livestock")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("livestock")}>
               <Agriculture /> <span>Livestock</span>
             </div>
           </>
@@ -118,10 +85,7 @@ function Navbar({ onDivisionChange }) {
       default:
         return (
           <>
-            <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
-            >
+            <div className={baseClasses} onClick={() => onDivisionChange("user")}>
               <People /> <span>Clients</span>
             </div>
           </>
@@ -142,17 +106,16 @@ function Navbar({ onDivisionChange }) {
 
   return (
     <>
-      <div className="flex h-full">
+      <div className="flex h-full relative"> {/* Add relative positioning */}
         {/* Side Navbar */}
         <div
           ref={menuRef}
           className={`fixed top-0 left-0 h-full w-64 bg-[#1b5b40] flex flex-col items-center shadow-lg p-6 transition-transform duration-300 ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
+          } md:translate-x-0 z-20`} 
         >
           {/* Logo */}
-          <img src={Logo} alt="Logo" className="h-32 mb-10" />{" "}
-          {/* Bigger logo */}
+          <img src={Logo} alt="Logo" className="h-32 mb-10" />
           {/* Buttons */}
           <div className="space-y-4 w-full flex-grow justify-center flex flex-col lg:gap-6 md:gap-2 sm:gap-1">
             {renderButtons()}
@@ -169,7 +132,7 @@ function Navbar({ onDivisionChange }) {
         {/* Main Content */}
       </div>
       {/* Mobile Menu Button */}
-      <div className="md:hidden w-full bg-darkgreen fixed z-auto">
+      <div className="md:hidden w-full fixed top-0 right-0 z-30"> {/* Ensure it is above the sidebar */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-white text-3xl"
