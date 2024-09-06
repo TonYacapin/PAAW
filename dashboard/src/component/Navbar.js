@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from '../pages/assets/PAAW.png';
+import { People, Pets, Agriculture, Gavel } from '@mui/icons-material'; // MUI icons
 
-function Navbar() {
+function Navbar({ onDivisionChange }) {
   const role = localStorage.getItem('userRole');
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,51 +14,71 @@ function Navbar() {
     navigate('/login');
   };
 
-  const renderButtons = () => {
-    const baseClasses = "px-6 py-3 text-xl rounded-md text-white bg-[#154e34] hover:bg-[#123c29] transition-colors";
+  // Define baseClasses for consistency
+  const baseClasses = "px-6 py-3 text-xl rounded-md text-white flex items-center space-x-3 cursor-pointer bg-[#154e34] hover:bg-[#123c29] transition-colors";
 
+  const renderButtons = () => {
     switch (role) {
       case 'admin':
         return (
           <>
-            <button className={baseClasses}>Clients</button>
-            <button className={baseClasses}>Admin</button>
-            <button className={baseClasses}>Animal Health</button>
-            <button className={baseClasses}>Livestock</button>
-            <button className={baseClasses}>Regulatory</button>
-            <button className={`${baseClasses} bg-red-600`} onClick={handleLogout}>Logout</button>
+            <div className={baseClasses} onClick={() => onDivisionChange('user')}>
+              <People /> <span>Clients</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('admin')}>
+              <People /> <span>Admin</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('animalhealth')}>
+              <Pets /> <span>Animal Health</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('livestock')}>
+              <Agriculture /> <span>Livestock</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('regulatory')}>
+              <Gavel /> <span>Regulatory</span>
+            </div>
           </>
         );
       case 'regulatory':
         return (
           <>
-            <button className={baseClasses}>Clients</button>
-            <button className={baseClasses}>Regulatory</button>
-            <button className={`${baseClasses} bg-red-600`} onClick={handleLogout}>Logout</button>
+            <div className={baseClasses} onClick={() => onDivisionChange('user')}>
+              <People /> <span>Clients</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('regulatory')}>
+              <Gavel /> <span>Regulatory</span>
+            </div>
           </>
         );
       case 'animalhealth':
         return (
           <>
-            <button className={baseClasses}>Clients</button>
-            <button className={baseClasses}>Animal Health</button>
-            <button className={`${baseClasses} bg-red-600`} onClick={handleLogout}>Logout</button>
+            <div className={baseClasses} onClick={() => onDivisionChange('user')}>
+              <People /> <span>Clients</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('animalhealth')}>
+              <Pets /> <span>Animal Health</span>
+            </div>
           </>
         );
       case 'livestock':
         return (
           <>
-            <button className={baseClasses}>Clients</button>
-            <button className={baseClasses}>Livestock</button>
-            <button className={`${baseClasses} bg-red-600`} onClick={handleLogout}>Logout</button>
+            <div className={baseClasses} onClick={() => onDivisionChange('user')}>
+              <People /> <span>Clients</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionChange('livestock')}>
+              <Agriculture /> <span>Livestock</span>
+            </div>
           </>
         );
       case 'user':
       default:
         return (
           <>
-            <button className={baseClasses}>Clients</button>
-            <button className={`${baseClasses} bg-red-600`} onClick={handleLogout}>Logout</button>
+            <div className={baseClasses} onClick={() => onDivisionChange('user')}>
+              <People /> <span>Clients</span>
+            </div>
           </>
         );
     }
@@ -75,19 +96,27 @@ function Navbar() {
   }, []);
 
   return (
-    <div className="h-20 w-full bg-[#1b5b40] flex items-center justify-between px-8 py-4 shadow-lg">
-      {/* Logo */}
-      <img src={Logo} alt="Logo" className="h-16" />
+    <div className="flex h-full">
+      {/* Side Navbar */}
+      <div ref={menuRef} className={`fixed top-0 left-0 h-full w-64 bg-[#1b5b40] flex flex-col items-center shadow-lg p-6 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        {/* Logo */}
+        <img src={Logo} alt="Logo" className="h-32 mb-10" /> {/* Bigger logo */}
 
-      {/* Desktop Menu */}
-      <div className="hidden md:flex flex-1 justify-center">
-        <div className="flex space-x-6 bg-[#14452f] p-3 rounded-md border border-[#123c29]">
+        {/* Buttons */}
+        <div className="space-y-4 w-full flex-grow">
           {renderButtons()}
+        </div>
+
+        {/* Logout button at the bottom */}
+        <div className="mt-auto w-full">
+          <div className={`${baseClasses} bg-red-600`} onClick={handleLogout}>
+            <span>Logout</span>
+          </div>
         </div>
       </div>
 
       {/* Mobile Menu Button */}
-      <div className="md:hidden flex items-center">
+      <div className="md:hidden fixed top-4 left-4 z-50">
         <button 
           onClick={() => setIsMenuOpen(!isMenuOpen)} 
           className="text-white text-3xl"
@@ -96,12 +125,8 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      <div ref={menuRef} className={`md:hidden fixed top-0 right-0 w-72 bg-[#1b5b40] h-full p-6 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex flex-col space-y-6">
-          {renderButtons()}
-        </div>
-      </div>
+      {/* Main Content */}
+   
     </div>
   );
 }

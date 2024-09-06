@@ -31,6 +31,10 @@ function Home() {
     }
   }, [userRole]);
 
+  const handleDivisionChange = (division) => {
+    setSelectedDivision(division);
+  };
+
   const renderCharts = () => {
     const chartClasses = "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
     const chartTextClasses = "text-gray-700 font-semibold text-lg";
@@ -101,6 +105,7 @@ function Home() {
                <RabiesVaccinationReport></RabiesVaccinationReport>
               </Modal>
               <button className={buttonClasses}>Manage Vaccination Report</button>
+              
               <button className={buttonClasses}>Generate Accomplishment Report</button>
               <button className={buttonClasses}>Routine Service Monitoring Reports</button>
               <button className={buttonClasses}>Disease Investigation Form</button>
@@ -146,9 +151,11 @@ function Home() {
 
   return (
     <>
-      <Navbar />
+       
       <div className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
+
         <div className="flex flex-col lg:flex-row lg:space-x-8">
+        <Navbar onDivisionChange={handleDivisionChange} />
           {/* Left Side - Charts */}
           <div className="flex-1 space-y-6">
             {renderCharts()}
