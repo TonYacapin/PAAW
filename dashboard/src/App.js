@@ -34,7 +34,8 @@ const App = () => {
 
           {/* Livestock Division */}
           {/* Upgrading Services */}
-          {/*  */}
+          {/* (need dito yung lahat ng upgrading service na nakalagay sa usecase) */}
+
           {/* Regulatory Division */}
           {/* Veterinary Quarantine Operation */}
           <Route
@@ -42,6 +43,7 @@ const App = () => {
             element={<VeterinaryQuarantineInspectionReport />}
           />
           {/* Meat Inspection Operation */}
+          {/* (kulang to) */}
 
           {/* Client */}
           {/* Submitted Forms */}
@@ -49,7 +51,9 @@ const App = () => {
           {/* Admin Division */}
           {/* Records (import/export data) */}
           {/* Supplies and Equipment */}
+          {/* (need dito inventory management system plus yung mga manage requsition forms) */}
           {/* Knowledge */}
+          {/* (mga charts, up to you kung need ng separate view/page) */}
         </Routes>
       </div>
     </Router>
