@@ -6,8 +6,24 @@ import AnimalHealthChartComponent from "../../component/AnimalHealthChartCompone
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
 import Modal from "../../component/Modal";
-import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
 import Select from 'react-select';
+
+
+import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
+import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
+import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
+import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
+
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import VaccinesIcon from '@mui/icons-material/Vaccines';
+import ReportIcon from '@mui/icons-material/Report';
+import HealingIcon from '@mui/icons-material/Healing';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import PetsIcon from '@mui/icons-material/Pets';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+
+
+
 
 function Home() {
   const [userRole, setUserRole] = useState("");
@@ -15,6 +31,34 @@ function Home() {
   const [selectedCharts, setSelectedCharts] = useState([]);
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const [modalContent, setModalContent] = useState(null);
+
+  const renderModalContent = () => {
+    switch (modalContent) {
+      case "RabiesVaccinationReport":
+        return <RabiesVaccinationReport />;
+      case "VaccinationReport":
+        return <VaccinationReport />;
+      case "RoutineServicesMonitoringReport":
+        return <RoutineServicesMonitoringReport />;
+        case "DiseaseInvestigationForm":
+          return <DiseaseInvestigationForm />;
+  
+
+
+
+      default:
+        return null;
+    }
+  };
+
+  const openModalWithContent = (content) => {
+    setModalContent(content);
+    openModal();
+  };
+
+
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
@@ -83,7 +127,8 @@ function Home() {
   };
 
   const renderForms = () => {
-    const buttonClasses = "w-full bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
+    const buttonClasses =
+      "w-full flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
 
     switch (selectedDivision) {
       case "user":
@@ -92,23 +137,43 @@ function Home() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Browse Forms from Client Forms
             </h3>
-            <div className="space-y-2">
-              <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Animal Production Services Request Form</button>
-              <button className={buttonClasses}>Veterinary Information Services Request Form</button>
-              <button className={buttonClasses}>Animal Health Care Services Request Form</button>
-              <button className={buttonClasses}>Regulatory Care Services Request Form</button>
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Request Services Forms</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <VaccinesIcon className="mr-2" /> Animal Production Services Request Form
+                  </button>
+                  <button className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Veterinary Information Services Request Form
+                  </button>
+                  <button className={buttonClasses}>
+                    <HealingIcon className="mr-2" /> Animal Health Care Services Request Form
+                  </button>
+                  <button className={buttonClasses}>
+                    <LocalShippingIcon className="mr-2" /> Regulatory Care Services Request Form
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         );
       case "admin":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Admin Actions
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Admin Actions</h3>
             <div className="space-y-2">
-              <button className={buttonClasses} onClick={() => setSelectedDivision("user")}>Manage Users</button>
+              <button className={buttonClasses} onClick={() => setSelectedDivision("user")}>
+                <ManageAccountsIcon className="mr-2" /> Manage Users
+              </button>
             </div>
           </>
         );
@@ -118,18 +183,44 @@ function Home() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Browse Forms from Animal Health
             </h3>
-            <div className="space-y-2">
-              <button className={buttonClasses}>Manage Requisition Form</button>
-              <button onClick={openModal} className={buttonClasses}>Manage Rabies Vaccination</button>
-              <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <RabiesVaccinationReport></RabiesVaccinationReport>
-              </Modal>
-              <button className={buttonClasses}>Manage Vaccination Report</button>
-              <button className={buttonClasses}>Generate Accomplishment Report</button>
-              <button className={buttonClasses}>Routine Service Monitoring Reports</button>
-              <button className={buttonClasses}>Disease Investigation Form</button>
-              <button className={buttonClasses}>Disease Surveillance and Incident Report</button>
-              <button className={buttonClasses}>Manage Rabies History</button>
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Vaccination Forms</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Requisition Form
+                  </button>
+                  <button onClick={() => openModalWithContent("RabiesVaccinationReport")} className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Manage Rabies Vaccination
+                  </button>
+                  {/* <Modal isOpen={isModalOpen} onClose={closeModal}>
+                    <RabiesVaccinationReport />
+                  </Modal> */}
+                  <button onClick={() => openModalWithContent("VaccinationReport")} className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Manage Vaccination Report
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Reports</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
+                  </button>
+                  <button onClick={() => openModalWithContent("RoutineServicesMonitoringReport")}className={buttonClasses}>
+                    <AssignmentIcon className="mr-2" /> Routine Service Monitoring Reports
+                  </button>
+                  <button onClick={() => openModalWithContent("DiseaseInvestigationForm")}  className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Disease Investigation Form
+                  </button>
+                  <button className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Disease Surveillance and Incident Report
+                  </button>
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Rabies History
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         );
@@ -139,14 +230,38 @@ function Home() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Browse Forms from Livestock
             </h3>
-            <div className="space-y-2">
-              <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Manage Artificial Insemination</button>
-              <button className={buttonClasses}>Manage Offspring Monitoring</button>
-              <button className={buttonClasses}>Manage Estrus Synchronization</button>
-              <button className={buttonClasses}>Generate Monthly Accomplishment Reports</button>
-              <button className={buttonClasses}>Manage Vitamin ADE Supplement</button>
-              <button className={buttonClasses}>Manage Pregnancy Diagnostics</button>
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Livestock Management</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Artificial Insemination
+                  </button>
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Offspring Monitoring
+                  </button>
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Estrus Synchronization
+                  </button>
+                  <button className={buttonClasses}>
+                    <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
+                  </button>
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Vitamin ADE Supplement
+                  </button>
+                  <button className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Manage Pregnancy Diagnostics
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         );
@@ -156,10 +271,26 @@ function Home() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Browse Forms from Regulatory
             </h3>
-            <div className="space-y-2">
-              <button className={buttonClasses}>Manage Requisition Form</button>
-              <button className={buttonClasses}>Manage Veterinary Shipment</button>
-              <button className={buttonClasses}>Manage Slaughter Shipment</button>
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">Shipment</h4>
+                <div className="space-y-2">
+                  <button className={buttonClasses}>
+                    <LocalShippingIcon className="mr-2" /> Manage Veterinary Shipment
+                  </button>
+                  <button className={buttonClasses}>
+                    <LocalShippingIcon className="mr-2" /> Manage Slaughter Shipment
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         );
@@ -223,7 +354,7 @@ function Home() {
         <div className="flex flex-col lg:flex-row lg:space-x-8">
           {/* Navbar */}
           <Navbar onDivisionChange={handleDivisionChange} />
-  
+
           {/* Main Content Wrapper */}
           <div className="flex flex-col lg:flex-row w-full">
             {/* Left Side - Charts */}
@@ -231,7 +362,7 @@ function Home() {
               <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-center lg:text-left">
                 Select Charts to Display
               </h3>
-  
+
               {/* Chart Selection Dropdown */}
               <div className="w-full z-10"> {/* Increase z-index for dropdown */}
                 <Select
@@ -243,13 +374,13 @@ function Home() {
                   className="text-sm sm:text-base"
                 />
               </div>
-  
+
               {/* Conditional Rendering for Charts */}
               <div className="w-full">
                 {renderCharts()}
               </div>
             </div>
-  
+
             {/* Right Side - Forms */}
             <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0">
               {renderForms()}
@@ -257,6 +388,12 @@ function Home() {
           </div>
         </div>
       </div>
+      {/* Modal Component */}
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          {renderModalContent()}
+        </Modal>
+      )}
     </>
   );
 }
