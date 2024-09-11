@@ -12,11 +12,14 @@ import VaccinationReport from "./pages/Animal Disease Prevention Control and Era
 import RabiesHistoryForm from "./pages/RABIES/RabiesHistoryForm";
 import ChartComponent from "./component/ChartComponent";
 
+import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
+
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/requisionslip"  element={<RequisitionIssueSlip />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/Signup" element={<SignupForm />} />

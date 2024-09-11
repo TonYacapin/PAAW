@@ -34,7 +34,7 @@ const RabiesHistoryForm = () => {
 
   return (
     <>
-    <Navbar/>
+  
     <form>
       <Grid container spacing={2}>
         {/* Animal Details Form */}

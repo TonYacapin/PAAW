@@ -3,7 +3,7 @@ import Papa from "papaparse";
 
 const DiseaseInvestigationForm = () => {
   const [detailsRows, setDetailsRows] = useState([
-    { species: "", sex: "", age: "", popn: "", cases: "", deaths: "", destroyed: "", slaughtered: "", vaccHistory: "", remarks: "" }
+    { species: "", sex: "", age: "", population: "", cases: "", deaths: "", destroyed: "", slaughtered: "", vaccineHistory: "", remarks: "" }
   ]);
 
   const [clinicalSignsRows, setClinicalSignsRows] = useState([{ description: "" }]);
@@ -22,12 +22,19 @@ const DiseaseInvestigationForm = () => {
     latitude: "",
     longitude: "",
     farmerName: "",
-    farmType: []
+    farmType: [],
+    propablesourceofinfection: "",
+    controlmeasures: "",
+    remarks: "",
+    tentativediagnosis: "",
+    finaldiagnosis: "",
+    natureofdiagnosis: "",
+
   });
 
   // Function to add a new row to Details table
   const addDetailsRow = () => {
-    setDetailsRows([...detailsRows, { species: "", sex: "", age: "", popn: "", cases: "", deaths: "", destroyed: "", slaughtered: "", vaccHistory: "", remarks: "" }]);
+    setDetailsRows([...detailsRows, { species: "", sex: "", age: "", population: "", cases: "", deaths: "", destroyed: "", slaughtered: "", vaccineHistory: "", remarks: "" }]);
   };
 
   // Function to add a new row to Clinical Signs table
@@ -79,40 +86,52 @@ const DiseaseInvestigationForm = () => {
 
     // Header row
     csvRows.push([
-      "Status", "No. of Visit", "Date Reported", "Date of Visit", "Investigator", "Place Affected", "Latitude", "Longitude", "Farmer's Name", "Farm Type",
+      "Status", "No. of Visit", "Date Reported", "Date of Visit", "Investigator", "Place Affected", "Latitude", "Longitude", "Farmer's Name", "Farm Type", "Probable Source of Infection", "Control Measures", "Remarks", "Tentative Diagnosis", "Final Diagnosis", "Nature of Diagnosis",
       "Details - Species", "Details - Sex", "Details - Age", "Details - Population", "Details - Cases", "Details - Deaths", "Details - Destroyed", "Details - Slaughtered", "Details - Vaccination History", "Details - Remarks",
       "Clinical Signs - Description",
       "Movement - Date", "Movement - Mode", "Movement - Type", "Movement - Barangay", "Movement - Municipality", "Movement - Province"
     ].join(","));
 
-    // Add data rows
-    const rowCount = Math.max(detailsRows.length, clinicalSignsRows.length, movementRows.length);
+    // Find the maximum row count
+    const rowCount = Math.max(
+      formData.farmType.length,
+      detailsRows.length,
+      clinicalSignsRows.length,
+      movementRows.length
+    );
 
+    // Add data rows
     for (let i = 0; i < rowCount; i++) {
       const details = detailsRows[i] || {};
       const clinicalSigns = clinicalSignsRows[i] || {};
       const movement = movementRows[i] || {};
 
       csvRows.push([
-        formData.status,
-        formData.noOfVisit,
-        formData.dateReported,
-        formData.dateOfVisit,
-        formData.investigator,
-        formData.placeAffected,
-        formData.latitude,
-        formData.longitude,
-        formData.farmerName,
-        formData.farmType.join(";"),
+        formData.status || "",
+        formData.noOfVisit || "",
+        formData.dateReported || "",
+        formData.dateOfVisit || "",
+        formData.investigator || "",
+        formData.placeAffected || "",
+        formData.latitude || "",
+        formData.longitude || "",
+        formData.farmerName || "",
+        formData.farmType[i] || "", // Ensure we access farmType by index
+        formData.propablesourceofinfection || "",
+        formData.controlmeasures || "",
+        formData.remarks || "",
+        formData.tentativediagnosis || "",
+        formData.finaldiagnosis || "",
+        formData.natureofdiagnosis || "",
         details.species || "",
         details.sex || "",
         details.age || "",
-        details.popn || "",
+        details.population || "",
         details.cases || "",
         details.deaths || "",
         details.destroyed || "",
         details.slaughtered || "",
-        details.vaccHistory || "",
+        details.vaccineHistory || "",
         details.remarks || "",
         clinicalSigns.description || "",
         movement.date || "",
@@ -133,6 +152,7 @@ const DiseaseInvestigationForm = () => {
     a.click();
     URL.revokeObjectURL(url);
   };
+
 
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];
@@ -157,6 +177,12 @@ const DiseaseInvestigationForm = () => {
               latitude: firstRow["Latitude"] || "",
               longitude: firstRow["Longitude"] || "",
               farmerName: firstRow["Farmer's Name"] || "",
+              propablesourceofinfection: firstRow["Probable Source of Infection"] || "",
+              controlmeasures: firstRow["Control Measures"] || "",
+              remarks: firstRow["Remarks"] || "",
+              tentativediagnosis: firstRow["Tentative Diagnosis"] || "",
+              finaldiagnosis: firstRow["Final Diagnosis"] || "",
+              natureofdiagnosis: firstRow["Nature of Diagnosis"] || "",
               farmType: firstRow["Farm Type"] ? firstRow["Farm Type"].split(";") : []
             };
 
@@ -172,12 +198,12 @@ const DiseaseInvestigationForm = () => {
                   species: row["Details - Species"] || "",
                   sex: row["Details - Sex"] || "",
                   age: row["Details - Age"] || "",
-                  popn: row["Details - Population"] || "",
+                  population: row["Details - Population"] || "",
                   cases: row["Details - Cases"] || "",
                   deaths: row["Details - Deaths"] || "",
                   destroyed: row["Details - Destroyed"] || "",
                   slaughtered: row["Details - Slaughtered"] || "",
-                  vaccHistory: row["Details - Vaccination History"] || "",
+                  vaccineHistory: row["Details - Vaccination History"] || "",
                   remarks: row["Details - Remarks"] || ""
                 });
               }
@@ -286,7 +312,31 @@ const DiseaseInvestigationForm = () => {
 
           <div>
             <label className="block mb-2 font-medium">Farm Type:</label>
-            <input type="text" name="farmType" value={formData.farmType.join(";")} className="border w-full p-2 rounded" onChange={(e) => setFormData({ ...formData, farmType: e.target.value.split(";") })} />
+            <select
+              name="farmType"
+              value={formData.farmType}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setFormData({ ...formData, farmType: [e.target.value] })}
+            >
+              <option value="" disabled>Select farm type</option>
+              <option value="Backyard farm">Backyard farm</option>
+              <option value="Commercial farm">Commercial farm</option>
+              <option value="Semi commercial">Semi commercial</option>
+              <option value="Holding yard">Holding yard</option>
+              <option value="Slaughter house">Slaughter house</option>
+              <option value="Auction market">Auction market</option>
+              <option value="Stockyard">Stockyard</option>
+              <option value="Others">Others</option>
+            </select>
+            {formData.farmType.includes("Others") && (
+              <input
+                type="text"
+                name="customFarmType"
+                placeholder="Please specify"
+                className="border w-full p-2 mt-2 rounded"
+                onChange={(e) => setFormData({ ...formData, farmType: [e.target.value] })}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -296,7 +346,7 @@ const DiseaseInvestigationForm = () => {
         {detailsRows.map((row, index) => (
           <div key={index} className="mb-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {["species", "sex", "age", "popn", "cases", "deaths", "destroyed", "slaughtered", "vaccHistory", "remarks"].map(field => (
+              {["species", "sex", "age", "population", "cases", "deaths", "destroyed", "slaughtered", "vaccineHistory", "remarks"].map(field => (
                 <div key={field}>
                   <label className="block mb-2 font-medium capitalize">{field}:</label>
                   <input
@@ -350,6 +400,77 @@ const DiseaseInvestigationForm = () => {
         ))}
         <button type="button" onClick={addMovementRow} className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Movement Row</button>
       </div>
+
+      <div>
+        <label className="block mb-2 font-medium">Probable Source of Infection:</label>
+        <select
+          name="propablesourceofinfection"
+          value={formData.propablesourceofinfection}
+          className="border w-full p-2 rounded"
+          onChange={handleFormChange}
+        >
+          <option value="" disabled>Select probable source of infection</option>
+          <option value="Unknown or inconclusive">Unknown or inconclusive</option>
+          <option value="Swill Feeding">Swill Feeding</option>
+          <option value="Introduction of new animals">Introduction of new animals</option>
+          <option value="Fomites (humans, vehicles, feed, etc.)">Fomites (humans, vehicles, feed, etc.)</option>
+          <option value="Contact with infected animal">Contact with infected animal</option>
+          <option value="Vectors (flies, insects, rodents, etc.)">Vectors (flies, insects, rodents, etc.)</option>
+        </select>
+      </div>
+
+      <div>
+  <label className="block mb-2 font-medium">Control Measures:</label>
+  <select
+    name="controlmeasures"
+    value={formData.controlmeasures}
+    className="border w-full p-2 rounded"
+    onChange={handleFormChange}
+  >
+    <option value="" disabled>Select control measures</option>
+    <option value="No Control Measures">No Control Measures</option>
+    <option value="Quarantine/Movement Control">Quarantine/Movement Control</option>
+    <option value="Vaccine in response to outbreak">Vaccine in response to outbreak</option>
+    <option value="Disinfection of infected premises">Disinfection of infected premises</option>
+    <option value="Stamping out">Stamping out</option>
+    <option value="Modified stamping out">Modified stamping out</option>
+    <option value="Control of vectors">Control of vectors</option>
+  </select>
+</div>
+
+
+      <div>
+        <label className="block mb-2 font-medium">Remarks:</label>
+        <input type="text" name="remarks" value={formData.remarks} className="border w-full p-2 rounded" onChange={handleFormChange} />
+      </div>
+
+      <div>
+        <label className="block mb-2 font-medium">Tentative Diagnosis:</label>
+        <input type="text" name="tentativediagnosis" value={formData.tentativediagnosis} className="border w-full p-2 rounded" onChange={handleFormChange} />
+      </div>
+
+      <div>
+        <label className="block mb-2 font-medium">Final Diagnosis:</label>
+        <input type="text" name="finaldiagnosis" value={formData.finaldiagnosis} className="border w-full p-2 rounded" onChange={handleFormChange} />
+      </div>
+      <div>
+  <label className="block mb-2 font-medium">Nature of Diagnosis:</label>
+  <select
+    name="natureofdiagnosis"
+    value={formData.natureofdiagnosis}
+    className="border w-full p-2 rounded"
+    onChange={handleFormChange}
+  >
+    <option value="" disabled>Select nature of diagnosis</option>
+    <option value="Farmer's Report">Farmer's Report</option>
+    <option value="Clinical Signs/lesions">Clinical Signs/lesions</option>
+    <option value="History">History</option>
+    <option value="Laboratory test">Laboratory test</option>
+  </select>
+</div>
+
+
+
 
       <div className="flex justify-end space-x-4">
         <button onClick={handleSave} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Save Form</button>

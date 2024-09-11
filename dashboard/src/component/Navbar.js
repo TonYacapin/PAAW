@@ -30,13 +30,12 @@ function Navbar({ onDivisionChange }) {
       case "admin":
         return (
           <>
-           <div className={baseClasses} onClick={() => onDivisionChange("admin")}>
+            <div className={baseClasses} onClick={() => onDivisionChange("admin")}>
               <People /> <span>Admin</span>
             </div>
             <div className={baseClasses} onClick={() => onDivisionChange("user")}>
               <People /> <span>Clients</span>
             </div>
-           
             <div className={baseClasses} onClick={() => onDivisionChange("animalhealth")}>
               <Pets /> <span>Animal Health</span>
             </div>
@@ -106,16 +105,16 @@ function Navbar({ onDivisionChange }) {
 
   return (
     <>
-      <div className="flex h-full relative"> {/* Add relative positioning */}
+      <div className="flex h-full relative">
         {/* Side Navbar */}
         <div
           ref={menuRef}
           className={`fixed top-0 left-0 h-full w-64 bg-[#1b5b40] flex flex-col items-center shadow-lg p-6 transition-transform duration-300 ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 z-20`} 
+          } md:translate-x-0 z-20`}
         >
           {/* Logo */}
-          <img src={Logo} alt="Logo" className="h-32 mb-10" />
+          <img src={Logo} alt="Logo" className="h-auto w-auto mt-10 drop-shadow-lg" />
           {/* Buttons */}
           <div className="space-y-4 w-full flex-grow justify-center flex flex-col lg:gap-6 md:gap-2 sm:gap-1">
             {renderButtons()}
@@ -132,12 +131,12 @@ function Navbar({ onDivisionChange }) {
         {/* Main Content */}
       </div>
       {/* Mobile Menu Button */}
-      <div className="md:hidden w-full fixed top-0 right-0 z-30"> {/* Ensure it is above the sidebar */}
+      <div className="md:hidden w-full fixed top-0 right-0 z-30">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-white text-3xl"
+          className="text-white text-4xl" 
         >
-          {isMenuOpen ? <Close /> : <Menu />}
+          {isMenuOpen ? <Close sx={{ color: '#FFFAFA', fontSize: 40 }} /> : <Menu sx={{ color: '#1b5b40', fontSize: 40 }} />}
         </button>
       </div>
     </>

@@ -13,6 +13,8 @@ import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
 import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
 import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
+import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
+
 
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import VaccinesIcon from '@mui/icons-material/Vaccines';
@@ -21,6 +23,8 @@ import HealingIcon from '@mui/icons-material/Healing';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PetsIcon from '@mui/icons-material/Pets';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+
+import RequisitionIssueSlip from "../RequisitionIssueSlip ";
 
 
 
@@ -42,11 +46,15 @@ function Home() {
         return <VaccinationReport />;
       case "RoutineServicesMonitoringReport":
         return <RoutineServicesMonitoringReport />;
-        case "DiseaseInvestigationForm":
-          return <DiseaseInvestigationForm />;
-  
+      case "DiseaseInvestigationForm":
+        return <DiseaseInvestigationForm />;
+      case "RequisisionSlip":
+        return <RequisitionIssueSlip />;
+        case "RabiesHistoryForm":
+          return <RabiesHistoryForm />;
 
 
+        
 
       default:
         return null;
@@ -128,8 +136,8 @@ function Home() {
 
   const renderForms = () => {
     const buttonClasses =
-      "w-full flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
-
+      "w-full   flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
+    // hendre: sm:w-3/6 sm:h-40 sm:flex-col sm:flex-wrap
     switch (selectedDivision) {
       case "user":
         return (
@@ -138,14 +146,16 @@ function Home() {
               Browse Forms from Client Forms
             </h3>
             <div className="space-y-6">
-              <div>
+              {/* <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
                 <div className="space-y-2">
                   <button className={buttonClasses}>
-                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                    <ManageAccountsIcon className="mr-2" />  Requisition Form
+
+
                   </button>
                 </div>
-              </div>
+              </div> */}
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Request Services Forms</h4>
                 <div className="space-y-2">
@@ -187,17 +197,17 @@ function Home() {
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Vaccination Forms</h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Requisition Form
+                  <button onClick={() => openModalWithContent("RequisisionSlip")} className={buttonClasses}>
+                    <PetsIcon className="mr-2" />  Requisition Form
                   </button>
                   <button onClick={() => openModalWithContent("RabiesVaccinationReport")} className={buttonClasses}>
-                    <ReportIcon className="mr-2" /> Manage Rabies Vaccination
+                    <ReportIcon className="mr-2" />  Rabies Vaccination
                   </button>
                   {/* <Modal isOpen={isModalOpen} onClose={closeModal}>
                     <RabiesVaccinationReport />
                   </Modal> */}
                   <button onClick={() => openModalWithContent("VaccinationReport")} className={buttonClasses}>
-                    <ReportIcon className="mr-2" /> Manage Vaccination Report
+                    <ReportIcon className="mr-2" />  Vaccination Report
                   </button>
                 </div>
               </div>
@@ -207,17 +217,17 @@ function Home() {
                   <button className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
                   </button>
-                  <button onClick={() => openModalWithContent("RoutineServicesMonitoringReport")}className={buttonClasses}>
+                  <button onClick={() => openModalWithContent("RoutineServicesMonitoringReport")} className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Routine Service Monitoring Reports
                   </button>
-                  <button onClick={() => openModalWithContent("DiseaseInvestigationForm")}  className={buttonClasses}>
+                  <button onClick={() => openModalWithContent("DiseaseInvestigationForm")} className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Disease Investigation Form
                   </button>
                   <button className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Disease Surveillance and Incident Report
                   </button>
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Rabies History
+                  <button onClick={() => openModalWithContent("RabiesHistoryForm")}className={buttonClasses}>
+                    <PetsIcon className="mr-2" />  Rabies History
                   </button>
                 </div>
               </div>
@@ -235,7 +245,7 @@ function Home() {
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
                 <div className="space-y-2">
                   <button className={buttonClasses}>
-                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                    <ManageAccountsIcon className="mr-2" />  Requisition Form
                   </button>
                 </div>
               </div>
@@ -243,22 +253,22 @@ function Home() {
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Livestock Management</h4>
                 <div className="space-y-2">
                   <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Artificial Insemination
+                    <PetsIcon className="mr-2" />  Artificial Insemination
                   </button>
                   <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Offspring Monitoring
+                    <PetsIcon className="mr-2" />  Offspring Monitoring
                   </button>
                   <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Estrus Synchronization
+                    <PetsIcon className="mr-2" />  Estrus Synchronization
                   </button>
                   <button className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
                   </button>
                   <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Vitamin ADE Supplement
+                    <PetsIcon className="mr-2" />  Vitamin ADE Supplement
                   </button>
                   <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Manage Pregnancy Diagnostics
+                    <PetsIcon className="mr-2" />  Pregnancy Diagnostics
                   </button>
                 </div>
               </div>
@@ -276,7 +286,7 @@ function Home() {
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
                 <div className="space-y-2">
                   <button className={buttonClasses}>
-                    <ManageAccountsIcon className="mr-2" /> Manage Requisition Form
+                    <ManageAccountsIcon className="mr-2" />  Requisition Form
                   </button>
                 </div>
               </div>
@@ -284,10 +294,10 @@ function Home() {
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Shipment</h4>
                 <div className="space-y-2">
                   <button className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Manage Veterinary Shipment
+                    <LocalShippingIcon className="mr-2" />  Veterinary Shipment
                   </button>
                   <button className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Manage Slaughter Shipment
+                    <LocalShippingIcon className="mr-2" />  Slaughter Shipment
                   </button>
                 </div>
               </div>
