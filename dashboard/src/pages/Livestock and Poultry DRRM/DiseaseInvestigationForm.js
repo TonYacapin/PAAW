@@ -340,66 +340,85 @@ const DiseaseInvestigationForm = () => {
           </div>
         </div>
       </div>
-
-      <div className="border p-4 rounded-lg mb-6 shadow-md bg-white">
-        <h2 className="text-xl font-semibold mb-4">Details of Investigation</h2>
-        {detailsRows.map((row, index) => (
-          <div key={index} className="mb-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {["species", "sex", "age", "population", "cases", "deaths", "destroyed", "slaughtered", "vaccineHistory", "remarks"].map(field => (
-                <div key={field}>
-                  <label className="block mb-2 font-medium capitalize">{field}:</label>
-                  <input
-                    type="text"
-                    value={row[field]}
-                    onChange={(e) => handleDetailsChange(index, field, e.target.value)}
-                    className="border w-full p-2 rounded"
-                  />
-                </div>
-              ))}
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8">
+  {/* Investigation Details */}
+  <div>
+    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Details of Investigation</h2>
+    {detailsRows.map((row, index) => (
+      <div key={index} className="mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {["species", "sex", "age", "population", "cases", "deaths", "destroyed", "slaughtered", "vaccineHistory", "remarks"].map(field => (
+            <div key={field} className="flex flex-col">
+              <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
+              <input
+                type="text"
+                value={row[field]}
+                onChange={(e) => handleDetailsChange(index, field, e.target.value)}
+                className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
+              />
             </div>
-          </div>
-        ))}
-        <button type="button" onClick={addDetailsRow} className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Details Row</button>
+          ))}
+        </div>
+        <div className="my-4">
+          <hr className="border-t border-gray-300" /> {/* Divider */}
+        </div>
       </div>
+    ))}
+    <button type="button" onClick={addDetailsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+      Add Details Row
+    </button>
+  </div>
 
-      <div className="border p-4 rounded-lg mb-6 shadow-md bg-white">
-        <h2 className="text-xl font-semibold mb-4">Clinical Signs</h2>
-        {clinicalSignsRows.map((row, index) => (
-          <div key={index} className="mb-4">
-            <label className="block mb-2 font-medium">Description:</label>
-            <input
-              type="text"
-              value={row.description}
-              onChange={(e) => handleClinicalSignsChange(index, e.target.value)}
-              className="border w-full p-2 rounded"
-            />
-          </div>
-        ))}
-        <button type="button" onClick={addClinicalSignsRow} className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Clinical Signs Row</button>
+  {/* Clinical Signs */}
+  <div>
+    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Clinical Signs</h2>
+    {clinicalSignsRows.map((row, index) => (
+      <div key={index} className="mb-6">
+        <label className="block mb-2 font-medium text-gray-700">Description:</label>
+        <input
+          type="text"
+          value={row.description}
+          onChange={(e) => handleClinicalSignsChange(index, e.target.value)}
+          className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
+        />
+        <div className="my-4">
+          <hr className="border-t border-gray-300" /> {/* Divider */}
+        </div>
       </div>
+    ))}
+    <button type="button" onClick={addClinicalSignsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+      Add Clinical Signs Row
+    </button>
+  </div>
 
-      <div className="border p-4 rounded-lg mb-6 shadow-md bg-white">
-        <h2 className="text-xl font-semibold mb-4">Movement</h2>
-        {movementRows.map((row, index) => (
-          <div key={index} className="mb-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {["date", "mode", "type", "barangay", "municipality", "province"].map(field => (
-                <div key={field}>
-                  <label className="block mb-2 font-medium capitalize">{field}:</label>
-                  <input
-                    type="text"
-                    value={row[field]}
-                    onChange={(e) => handleMovementChange(index, field, e.target.value)}
-                    className="border w-full p-2 rounded"
-                  />
-                </div>
-              ))}
+  {/* Movement */}
+  <div>
+    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Movement</h2>
+    {movementRows.map((row, index) => (
+      <div key={index} className="mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {["date", "mode", "type", "barangay", "municipality", "province"].map(field => (
+            <div key={field} className="flex flex-col">
+              <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
+              <input
+                type="text"
+                value={row[field]}
+                onChange={(e) => handleMovementChange(index, field, e.target.value)}
+                className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
+              />
             </div>
-          </div>
-        ))}
-        <button type="button" onClick={addMovementRow} className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Add Movement Row</button>
+          ))}
+        </div>
+        <div className="my-4">
+          <hr className="border-t border-gray-300" /> {/* Divider */}
+        </div>
       </div>
+    ))}
+    <button type="button" onClick={addMovementRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+      Add Movement Row
+    </button>
+  </div>
+</div>
 
       <div>
         <label className="block mb-2 font-medium">Probable Source of Infection:</label>

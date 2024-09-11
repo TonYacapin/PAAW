@@ -105,7 +105,7 @@ function RabiesVaccinationReport() {
     try {
       console.log(entries);
       // Replace with your backend API URL
-      const response = await axios.post('http://192.168.100.12:5000/api/entries', {
+      const response = await axios.post('http://192.168.0.112:5000/api/entries', {
         municipality,
         dateReported,
         vaccineUsed,
@@ -135,13 +135,29 @@ function RabiesVaccinationReport() {
 
       {/* Main fields */}
       <div className="grid grid-cols-1 gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Municipality"
+        <select
           value={municipality}
           onChange={(e) => setMunicipality(e.target.value)}
           className="border p-2 rounded w-full"
-        />
+        >
+          <option value="">Select Municipality</option>
+          <option value="Ambaguio">Ambaguio</option>
+          <option value="Bagabag">Bagabag</option>
+          <option value="Bayombong">Bayombong</option>
+          <option value="Diadi">Diadi</option>
+          <option value="Quezon">Quezon</option>
+          <option value="Solano">Solano</option>
+          <option value="Villaverde">Villaverde</option>
+          <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+          <option value="Aritao">Aritao</option>
+          <option value="Bambang">Bambang</option>
+          <option value="Dupax del Norte">Dupax del Norte</option>
+          <option value="Dupax del Sur">Dupax del Sur</option>
+          <option value="Kayapa">Kayapa</option>
+          <option value="Kasibu">Kasibu</option>
+          <option value="Santa Fe">Santa Fe</option>
+        </select>
+
         <input
           type="date"
           placeholder="Date Reported"
@@ -315,15 +331,18 @@ function RabiesVaccinationReport() {
                 }
                 className="border p-2 rounded w-full"
               />
-              <input
-                type="text"
-                placeholder="Sex"
+              <select
                 value={entries[selectedEntry].animalInfo.sex}
                 onChange={(e) =>
                   handleAnimalInfoChange(selectedEntry, 'sex', e.target.value)
                 }
                 className="border p-2 rounded w-full"
-              />
+              >
+                <option value="" disabled>Select Sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+
               <input
                 type="text"
                 placeholder="Age/Age Group"
