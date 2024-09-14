@@ -99,7 +99,7 @@ function RoutineServicesMonitoringReport() {
   const saveEntries = async () => {
     try {
       // Replace with your backend API URL
-      const response = await axios.post('http://localhost:5000/api/entries', {
+      const response = await axios.post('http://localhost:5000/RSM', {
         province,
         municipality,
         reportingPeriod,

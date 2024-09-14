@@ -100,7 +100,7 @@ function VaccinationReport() {
   const saveEntries = async () => {
     try {
       console.log(entries);
-      const response = await axios.post('http://192.168.100.12:5000/api/entries', {
+      const response = await axios.post('http://localhost:5000/api/reports', {
         municipality,
         province,
         dateReported,
@@ -133,13 +133,28 @@ function VaccinationReport() {
 
       {/* Main fields */}
       <div className="grid grid-cols-1 gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Municipality"
+      <select
           value={municipality}
           onChange={(e) => setMunicipality(e.target.value)}
           className="border p-2 rounded w-full"
-        />
+        >
+          <option value="">Select Municipality</option>
+          <option value="Ambaguio">Ambaguio</option>
+          <option value="Bagabag">Bagabag</option>
+          <option value="Bayombong">Bayombong</option>
+          <option value="Diadi">Diadi</option>
+          <option value="Quezon">Quezon</option>
+          <option value="Solano">Solano</option>
+          <option value="Villaverde">Villaverde</option>
+          <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+          <option value="Aritao">Aritao</option>
+          <option value="Bambang">Bambang</option>
+          <option value="Dupax del Norte">Dupax del Norte</option>
+          <option value="Dupax del Sur">Dupax del Sur</option>
+          <option value="Kayapa">Kayapa</option>
+          <option value="Kasibu">Kasibu</option>
+          <option value="Santa Fe">Santa Fe</option>
+        </select>
         <input
           type="date"
           placeholder="Date Reported"
