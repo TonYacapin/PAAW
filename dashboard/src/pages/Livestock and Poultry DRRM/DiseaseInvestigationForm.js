@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
+import axios from 'axios';
 
 const DiseaseInvestigationForm = () => {
   const [detailsRows, setDetailsRows] = useState([
@@ -75,9 +76,30 @@ const DiseaseInvestigationForm = () => {
   };
 
   // Function to handle form submission
-  const handleSave = () => {
-    // Add your save functionality here
-    alert("Form saved successfully!");
+  const handleSave = async () => {
+    try {
+      // Ensure the fields are arrays of objects
+      const data = {
+        ...formData,
+        movementRows: Array.isArray(movementRows) ? movementRows : [],
+        detailsRows: Array.isArray(detailsRows) ? detailsRows : [],
+        clinicalSignsRows: Array.isArray(clinicalSignsRows) ? clinicalSignsRows : []
+      };
+
+      console.log(data);
+      // Send data to backend API
+      const response = await axios.post('http://localhost:5000/disease-investigation', data);
+
+      // Handle successful response
+      if (response.status === 201) {
+        alert('Form saved successfully!');
+      } else {
+        alert('Failed to save the form. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error saving the form:', error);
+      alert('An error occurred while saving the form.');
+    }
   };
 
   // Function to export form data to CSV
@@ -341,84 +363,85 @@ const DiseaseInvestigationForm = () => {
         </div>
       </div>
       <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8">
-  {/* Investigation Details */}
-  <div>
-    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Details of Investigation</h2>
-    {detailsRows.map((row, index) => (
-      <div key={index} className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {["species", "sex", "age", "population", "cases", "deaths", "destroyed", "slaughtered", "vaccineHistory", "remarks"].map(field => (
-            <div key={field} className="flex flex-col">
-              <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
-              <input
-                type="text"
-                value={row[field]}
-                onChange={(e) => handleDetailsChange(index, field, e.target.value)}
-                className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
-              />
+        {/* Investigation Details */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Details of Investigation</h2>
+          {detailsRows.map((row, index) => (
+            <div key={index} className="mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {["species", "sex", "age", "population", "cases", "deaths", "destroyed", "slaughtered", "vaccineHistory", "remarks"].map(field => (
+                  <div key={field} className="flex flex-col">
+                    <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
+                    <input
+                      type="text"
+                      value={row[field]}
+                      onChange={(e) => handleDetailsChange(index, field, e.target.value)}
+                      className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="my-4">
+                <hr className="border-t border-gray-300" /> {/* Divider */}
+              </div>
             </div>
           ))}
+          <button type="button" onClick={addDetailsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+            Add Details Row
+          </button>
         </div>
-        <div className="my-4">
-          <hr className="border-t border-gray-300" /> {/* Divider */}
-        </div>
-      </div>
-    ))}
-    <button type="button" onClick={addDetailsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
-      Add Details Row
-    </button>
-  </div>
 
-  {/* Clinical Signs */}
-  <div>
-    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Clinical Signs</h2>
-    {clinicalSignsRows.map((row, index) => (
-      <div key={index} className="mb-6">
-        <label className="block mb-2 font-medium text-gray-700">Description:</label>
-        <input
-          type="text"
-          value={row.description}
-          onChange={(e) => handleClinicalSignsChange(index, e.target.value)}
-          className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
-        />
-        <div className="my-4">
-          <hr className="border-t border-gray-300" /> {/* Divider */}
-        </div>
-      </div>
-    ))}
-    <button type="button" onClick={addClinicalSignsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
-      Add Clinical Signs Row
-    </button>
-  </div>
-
-  {/* Movement */}
-  <div>
-    <h2 className="text-2xl font-semibold mb-6 text-gray-800">Movement</h2>
-    {movementRows.map((row, index) => (
-      <div key={index} className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {["date", "mode", "type", "barangay", "municipality", "province"].map(field => (
-            <div key={field} className="flex flex-col">
-              <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
+        {/* Clinical Signs */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Clinical Signs</h2>
+          {clinicalSignsRows.map((row, index) => (
+            <div key={index} className="mb-6">
+              <label className="block mb-2 font-medium text-gray-700">Description:</label>
               <input
                 type="text"
-                value={row[field]}
-                onChange={(e) => handleMovementChange(index, field, e.target.value)}
+                value={row.description}
+                onChange={(e) => handleClinicalSignsChange(index, e.target.value)}
                 className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
               />
+              <div className="my-4">
+                <hr className="border-t border-gray-300" /> {/* Divider */}
+              </div>
             </div>
           ))}
+          <button type="button" onClick={addClinicalSignsRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+            Add Clinical Signs Row
+          </button>
         </div>
-        <div className="my-4">
-          <hr className="border-t border-gray-300" /> {/* Divider */}
+
+        {/* Movement */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Movement</h2>
+          {movementRows.map((row, index) => (
+            <div key={index} className="mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {["date", "mode", "type", "barangay", "municipality", "province"].map(field => (
+                  <div key={field} className="flex flex-col">
+                    <label className="block mb-2 font-medium capitalize text-gray-700">{field}:</label>
+                    <input
+                      type={field === "date" ? "date" : "text"} // Change type to "date" for the date field
+                      value={row[field]}
+                      onChange={(e) => handleMovementChange(index, field, e.target.value)}
+                      className="border w-full p-2 rounded focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="my-4">
+                <hr className="border-t border-gray-300" /> {/* Divider */}
+              </div>
+            </div>
+          ))}
+          <button type="button" onClick={addMovementRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
+            Add Movement Row
+          </button>
         </div>
+
       </div>
-    ))}
-    <button type="button" onClick={addMovementRow} className="mt-6 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition ease-in-out duration-200">
-      Add Movement Row
-    </button>
-  </div>
-</div>
 
       <div>
         <label className="block mb-2 font-medium">Probable Source of Infection:</label>
@@ -439,23 +462,23 @@ const DiseaseInvestigationForm = () => {
       </div>
 
       <div>
-  <label className="block mb-2 font-medium">Control Measures:</label>
-  <select
-    name="controlmeasures"
-    value={formData.controlmeasures}
-    className="border w-full p-2 rounded"
-    onChange={handleFormChange}
-  >
-    <option value="" disabled>Select control measures</option>
-    <option value="No Control Measures">No Control Measures</option>
-    <option value="Quarantine/Movement Control">Quarantine/Movement Control</option>
-    <option value="Vaccine in response to outbreak">Vaccine in response to outbreak</option>
-    <option value="Disinfection of infected premises">Disinfection of infected premises</option>
-    <option value="Stamping out">Stamping out</option>
-    <option value="Modified stamping out">Modified stamping out</option>
-    <option value="Control of vectors">Control of vectors</option>
-  </select>
-</div>
+        <label className="block mb-2 font-medium">Control Measures:</label>
+        <select
+          name="controlmeasures"
+          value={formData.controlmeasures}
+          className="border w-full p-2 rounded"
+          onChange={handleFormChange}
+        >
+          <option value="" disabled>Select control measures</option>
+          <option value="No Control Measures">No Control Measures</option>
+          <option value="Quarantine/Movement Control">Quarantine/Movement Control</option>
+          <option value="Vaccine in response to outbreak">Vaccine in response to outbreak</option>
+          <option value="Disinfection of infected premises">Disinfection of infected premises</option>
+          <option value="Stamping out">Stamping out</option>
+          <option value="Modified stamping out">Modified stamping out</option>
+          <option value="Control of vectors">Control of vectors</option>
+        </select>
+      </div>
 
 
       <div>
@@ -473,20 +496,20 @@ const DiseaseInvestigationForm = () => {
         <input type="text" name="finaldiagnosis" value={formData.finaldiagnosis} className="border w-full p-2 rounded" onChange={handleFormChange} />
       </div>
       <div>
-  <label className="block mb-2 font-medium">Nature of Diagnosis:</label>
-  <select
-    name="natureofdiagnosis"
-    value={formData.natureofdiagnosis}
-    className="border w-full p-2 rounded"
-    onChange={handleFormChange}
-  >
-    <option value="" disabled>Select nature of diagnosis</option>
-    <option value="Farmer's Report">Farmer's Report</option>
-    <option value="Clinical Signs/lesions">Clinical Signs/lesions</option>
-    <option value="History">History</option>
-    <option value="Laboratory test">Laboratory test</option>
-  </select>
-</div>
+        <label className="block mb-2 font-medium">Nature of Diagnosis:</label>
+        <select
+          name="natureofdiagnosis"
+          value={formData.natureofdiagnosis}
+          className="border w-full p-2 rounded"
+          onChange={handleFormChange}
+        >
+          <option value="" disabled>Select nature of diagnosis</option>
+          <option value="Farmer's Report">Farmer's Report</option>
+          <option value="Clinical Signs/lesions">Clinical Signs/lesions</option>
+          <option value="History">History</option>
+          <option value="Laboratory test">Laboratory test</option>
+        </select>
+      </div>
 
 
 

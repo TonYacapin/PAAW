@@ -243,6 +243,15 @@ function RabiesVaccinationReport() {
 
   return (
     <div className="container mx-auto p-4">
+         {/* Import CSV Input */}
+         <div className="flex justify-end mb-4">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={importCSV}
+              className="px-4 py-2 bg-yellow-500 text-white rounded"
+            />
+          </div>
       <h2 className="text-2xl font-bold mb-4">Rabies Vaccination Report</h2>
 
       {/* Main fields */}
@@ -516,15 +525,7 @@ function RabiesVaccinationReport() {
             </button>
           </div>
 
-          {/* Import CSV Input */}
-          <div className="flex justify-end mb-4">
-            <input
-              type="file"
-              accept=".csv"
-              onChange={importCSV}
-              className="px-4 py-2 bg-yellow-500 text-white rounded"
-            />
-          </div>
+       
     </div>
   );
 }

@@ -14,6 +14,7 @@ import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/Routi
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
 import RabiesReportChart from "../../component/RabiesReportChart ";
+import DiseaseInvestigationChart from "../../component/DiseaseInvestigationChart";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
 import ReportIcon from "@mui/icons-material/Report";
@@ -87,6 +88,7 @@ function Home() {
     { value: "livestock", label: "Livestock Chart" },
     { value: "regulatory", label: "Regulatory Chart" },
     { value: "rabies", label: "Rabies Chart" },
+    { value: "disease", label: "Disease Investigation Chart" },
   ];
 
   const getChartOptions = () => {
@@ -123,6 +125,7 @@ function Home() {
           {selectedCharts.includes("livestock") && <LivestockChartComponent />}
           {selectedCharts.includes("regulatory") && <RegulatoryChartComponent />}
           {selectedCharts.includes("rabies") && <RabiesReportChart />}
+          {selectedCharts.includes("disease") && <DiseaseInvestigationChart />}
         </div>
       );
     }
