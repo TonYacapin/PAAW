@@ -25,7 +25,7 @@ const RabiesReportChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://192.168.0.112:5000/api/entries');
+                const response = await axios.get('http://localhost:5000/api/entries');
                 const reports = response.data;
 
                 // Apply filters

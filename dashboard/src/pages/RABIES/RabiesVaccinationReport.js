@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
 import ConfirmationModal from '../../component/ConfirmationModal'; // Import the ConfirmationModal component
+import Papa from 'papaparse'; // Import PapaParse for CSV handling
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -105,7 +106,7 @@ function RabiesVaccinationReport() {
     try {
       console.log(entries);
       // Replace with your backend API URL
-      const response = await axios.post('http://192.168.0.112:5000/api/entries', {
+      const response = await axios.post('http://localhost:5000/api/entries', {
         municipality,
         dateReported,
         vaccineUsed,
@@ -127,6 +128,117 @@ function RabiesVaccinationReport() {
       console.error('Error saving entries:', error);
       alert('Failed to save entries');
     }
+  };
+
+  const exportAsCSV = () => {
+    // Create an array to hold all the data
+    const data = [];
+  
+    // Add the header row with main information
+    data.push({
+      Municipality: municipality,
+      DateReported: dateReported,
+      VaccineUsed: vaccineUsed,
+      BatchLotNo: batchLotNo,
+      VaccineSource: vaccineSource,
+      no: '',
+      Date: '',
+      Barangay: '',
+      ClientFirstName: '',
+      ClientLastName: '',
+      ClientGender: '',
+      ClientBirthday: '',
+      ClientContactNo: '',
+      AnimalName: '',
+      AnimalSpecies: '',
+      AnimalSex: '',
+      AnimalAge: '',
+      AnimalColor: ''
+    });
+  
+    // Add each entry as a new row
+    entries.forEach((entry) => {
+      data.push({
+        Municipality: '',
+        DateReported: '',
+        VaccineUsed: '',
+        BatchLotNo: '',
+        VaccineSource: '',
+        no: entry.no,
+        Date: entry.date,
+        Barangay: entry.barangay,
+        ClientFirstName: entry.clientInfo?.firstName || '',
+        ClientLastName: entry.clientInfo?.lastName || '',
+        ClientGender: entry.clientInfo?.gender || '',
+        ClientBirthday: entry.clientInfo?.birthday || '',
+        ClientContactNo: entry.clientInfo?.contactNo || '',
+        AnimalName: entry.animalInfo?.name || '',
+        AnimalSpecies: entry.animalInfo?.species || '',
+        AnimalSex: entry.animalInfo?.sex || '',
+        AnimalAge: entry.animalInfo?.age || '',
+        AnimalColor: entry.animalInfo?.color || ''
+      });
+    });
+  
+    console.log("Data before CSV conversion:", data);
+  
+    // Convert data to CSV using Papa.unparse()
+    const csv = Papa.unparse(data);
+    console.log("Generated CSV:", csv);
+  
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'rabies_vaccination_report.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  // Function to import CSV
+  const importCSV = (event) => {
+    const file = event.target.files[0];
+    Papa.parse(file, {
+      header: true,
+      complete: (results) => {
+        const importedData = results.data;
+  
+        // Separate the main fields from the entries
+        const mainFields = importedData[0];
+        setMunicipality(mainFields.Municipality);
+        setDateReported(mainFields.DateReported);
+        setVaccineUsed(mainFields.VaccineUsed);
+        setBatchLotNo(mainFields.BatchLotNo);
+        setVaccineSource(mainFields.VaccineSource);
+  
+        // Filter out entries and set them properly
+        const importedEntries = importedData.slice(1).map((entry, index) => ({
+          no: index + 1,
+          date: entry.Date,
+          barangay: entry.Barangay,
+          clientInfo: {
+            firstName: entry.ClientFirstName,
+            lastName: entry.ClientLastName,
+            gender: entry.ClientGender,
+            birthday: entry.ClientBirthday,
+            contactNo: entry.ClientContactNo
+          },
+          animalInfo: {
+            name: entry.AnimalName,
+            species: entry.AnimalSpecies,
+            sex: entry.AnimalSex,
+            age: entry.AnimalAge,
+            color: entry.AnimalColor
+          }
+        }));
+  
+        setEntries(importedEntries);
+      },
+      error: (error) => {
+        console.error('Error parsing CSV:', error);
+        alert('Failed to import CSV file.');
+      }
+    });
   };
 
   return (
@@ -380,6 +492,8 @@ function RabiesVaccinationReport() {
               </button>
             </div>
           </div>
+
+      
         </div>
       )}
 
@@ -390,6 +504,27 @@ function RabiesVaccinationReport() {
         onCancel={handleCancelRemove}
         message="Are you sure you want to remove this entry?"
       />
+
+          {/* Export as CSV Button */}
+          <div className="flex justify-end mb-4">
+            <button
+              type="button"
+              onClick={exportAsCSV}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Export as CSV
+            </button>
+          </div>
+
+          {/* Import CSV Input */}
+          <div className="flex justify-end mb-4">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={importCSV}
+              className="px-4 py-2 bg-yellow-500 text-white rounded"
+            />
+          </div>
     </div>
   );
 }
