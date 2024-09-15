@@ -4,15 +4,108 @@ const RabiesHistory = require('../models/RabiesHistoryModel'); // Adjust the pat
 
 // Create a new RabiesHistory entry
 router.post('/RH', async (req, res) => {
+  const {
+    ownershipType,
+    petManagement,
+    causeOfDeath,
+    vaccinationHistory,
+    bitchVaccinated,
+    contactWithAnimals,
+    contactLocation,
+    siteOfBite,
+    biteProvoked,
+    locationOfBite,
+    treatmentReceived,
+    animalResidence,
+    species,
+    breed,
+    sex,
+    age,
+    dateOfDeath,
+    timeOfDeath,
+    typeOfVaccine,
+    dateOfLastVaccination,
+    durationIllnessFrom,
+    durationIllnessTo,
+    behavioralChanges,
+    victimName,
+    victimAge,
+    victimSex,
+    victimAddress,
+    dateOfBite,
+    timeOfBite,
+    siteOfBiteOther,
+    natureOfBite,
+    biteProvokedSpecify,
+    locationOfBiteOther,
+    otherVictims,
+    treatmentReceivedOther,
+    dateOfTreatmentReceived
+  } = req.body;
+
+  console.log(req.body);
+
+  // Validate that required fields are present
+  if (!ownershipType || !species || !victimName || !causeOfDeath || !dateOfDeath || !treatmentReceived) {
+    return res.status(400).json({ message: 'All required fields must be filled.' });
+  }
+
   try {
-    const rabiesHistory = new RabiesHistory(req.body);
+    // Create a new RabiesHistory object, mapping fields to match the schema
+    const rabiesHistory = new RabiesHistory({
+      ownershipType,
+      petManagement,
+      causeOfDeath,
+      vaccinationHistory,
+      bitchVaccinated,
+      contactWithAnimals,
+      contactLocation,
+      treatmentReceived,
+      animalProfile: {
+        residence: animalResidence,
+        species,
+        breed,
+        sex,
+        age: parseInt(age, 10) // Convert to number
+      },
+      dateOfDeath: new Date(dateOfDeath),
+      timeOfDeath,
+      typeOfVaccine,
+      dateOfLastVaccination: new Date(dateOfLastVaccination),
+      durationOfIllness: {
+        from: new Date(durationIllnessFrom),
+        to: new Date(durationIllnessTo)
+      },
+      behavioralChanges: {
+        ...behavioralChanges,
+        specify: behavioralChanges.specify || ''
+      },
+      victimProfile: {
+        name: victimName,
+        age: parseInt(victimAge, 10), // Convert to number
+        sex: victimSex,
+        address: victimAddress,
+        dateOfBite: new Date(dateOfBite),
+        timeOfBite,
+        siteOfBite,
+        siteOfBiteOther,
+        natureOfBite,
+        biteProvoked,
+        biteProvokedSpecify,
+        locationOfBite,
+        locationOfBiteOther,
+        otherVictims
+      },
+      treatmentReceivedOther,
+      dateOfTreatmentReceived: new Date(dateOfTreatmentReceived)
+    });
+
     await rabiesHistory.save();
     res.status(201).json(rabiesHistory);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
-
 // Get all RabiesHistory entries
 router.get('/RH', async (req, res) => {
   try {
