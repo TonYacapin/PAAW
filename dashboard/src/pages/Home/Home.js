@@ -13,7 +13,16 @@ import VaccinationReport from "../Animal Disease Prevention Control and Eradicat
 import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
+
+//Charts
+
 import RabiesReportChart from "../../component/RabiesReportChart ";
+import DiseaseInvestigationChart from "../../component/DiseaseInvestigationChart";
+import VaccinationReportChart from "../../component/VaccinationReportChart";
+import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
+import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
+
+
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
 import ReportIcon from "@mui/icons-material/Report";
@@ -87,6 +96,14 @@ function Home() {
     { value: "livestock", label: "Livestock Chart" },
     { value: "regulatory", label: "Regulatory Chart" },
     { value: "rabies", label: "Rabies Chart" },
+    { value: "disease", label: "Disease Investigation Chart" },
+    { value: "vaccination", label: "Vaccination Report Chart" },
+    { value: "routine", label: "Routine Services Monitoring Report Chart" },
+    { value: "rabiesHistory", label: "Rabies History Charts" },
+
+
+    
+    
   ];
 
   const getChartOptions = () => {
@@ -123,6 +140,12 @@ function Home() {
           {selectedCharts.includes("livestock") && <LivestockChartComponent />}
           {selectedCharts.includes("regulatory") && <RegulatoryChartComponent />}
           {selectedCharts.includes("rabies") && <RabiesReportChart />}
+          {selectedCharts.includes("disease") && <DiseaseInvestigationChart />}
+          {selectedCharts.includes("vaccination") && <VaccinationReportChart />}
+          {selectedCharts.includes("routine") && <RoutineServicesMonitoringReportChart />}
+          {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
+          
+          
         </div>
       );
     }

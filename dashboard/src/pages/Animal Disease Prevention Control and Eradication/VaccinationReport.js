@@ -100,7 +100,7 @@ function VaccinationReport() {
   const saveEntries = async () => {
     try {
       console.log(entries);
-      const response = await axios.post('http://192.168.100.12:5000/api/entries', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/reports`, {
         municipality,
         province,
         dateReported,
@@ -133,54 +133,95 @@ function VaccinationReport() {
 
       {/* Main fields */}
       <div className="grid grid-cols-1 gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Municipality"
-          value={municipality}
-          onChange={(e) => setMunicipality(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          type="date"
-          placeholder="Date Reported"
-          value={dateReported}
-          onChange={(e) => setDateReported(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <select
-          value={vaccineType}
-          onChange={(e) => setVaccineType(e.target.value)}
-          className="border p-2 rounded w-full"
-        >
-          <option value="" disabled>Select Vaccine Type</option>
-          <option value="Live">Live</option>
-          <option value="Killed">Killed</option>
-          <option value="Attenuated">Attenuated</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Batch/Lot No."
-          value={batchLotNo}
-          onChange={(e) => setBatchLotNo(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <select
-          value={vaccineSource}
-          onChange={(e) => setVaccineSource(e.target.value)}
-          className="border p-2 rounded w-full"
-        >
-          <option value="" disabled>Select Vaccine Source</option>
-          <option value="MLGU">MLGU</option>
-          <option value="PLGU">PLGU</option>
-          <option value="RFU">RFU</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Agricultural Extension Worker"
-          value={agriculturalExtensionWorker}
-          onChange={(e) => setAgriculturalExtensionWorker(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
+        <div>
+          <label htmlFor="municipality" className="block mb-1">Municipality</label>
+          <select
+            id="municipality"
+            value={municipality}
+            onChange={(e) => setMunicipality(e.target.value)}
+            className="border p-2 rounded w-full"
+          >
+            <option value="">Select Municipality</option>
+            <option value="Ambaguio">Ambaguio</option>
+            <option value="Bagabag">Bagabag</option>
+            <option value="Bayombong">Bayombong</option>
+            <option value="Diadi">Diadi</option>
+            <option value="Quezon">Quezon</option>
+            <option value="Solano">Solano</option>
+            <option value="Villaverde">Villaverde</option>
+            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+            <option value="Aritao">Aritao</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Dupax del Norte">Dupax del Norte</option>
+            <option value="Dupax del Sur">Dupax del Sur</option>
+            <option value="Kayapa">Kayapa</option>
+            <option value="Kasibu">Kasibu</option>
+            <option value="Santa Fe">Santa Fe</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="dateReported" className="block mb-1">Date Reported</label>
+          <input
+            id="dateReported"
+            type="date"
+            value={dateReported}
+            onChange={(e) => setDateReported(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="vaccineType" className="block mb-1">Vaccine Type</label>
+          <select
+            id="vaccineType"
+            value={vaccineType}
+            onChange={(e) => setVaccineType(e.target.value)}
+            className="border p-2 rounded w-full"
+          >
+            <option value="" disabled>Select Vaccine Type</option>
+            <option value="Live">Live</option>
+            <option value="Killed">Killed</option>
+            <option value="Attenuated">Attenuated</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="batchLotNo" className="block mb-1">Batch/Lot No.</label>
+          <input
+            id="batchLotNo"
+            type="text"
+            value={batchLotNo}
+            onChange={(e) => setBatchLotNo(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="vaccineSource" className="block mb-1">Vaccine Source</label>
+          <select
+            id="vaccineSource"
+            value={vaccineSource}
+            onChange={(e) => setVaccineSource(e.target.value)}
+            className="border p-2 rounded w-full"
+          >
+            <option value="" disabled>Select Vaccine Source</option>
+            <option value="MLGU">MLGU</option>
+            <option value="PLGU">PLGU</option>
+            <option value="RFU">RFU</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="agriculturalExtensionWorker" className="block mb-1">Agricultural Extension Worker</label>
+          <input
+            id="agriculturalExtensionWorker"
+            type="text"
+            value={agriculturalExtensionWorker}
+            onChange={(e) => setAgriculturalExtensionWorker(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
       </div>
 
       {/* Entries section */}
@@ -237,158 +278,159 @@ function VaccinationReport() {
             <h3 className="text-2xl font-bold mb-4">Edit Entry {entries[selectedEntry].no}</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <input
-                type="date"
-                placeholder="Date"
-                value={entries[selectedEntry].date}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'date', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Barangay"
-                value={entries[selectedEntry].barangay}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'barangay', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              {/* <select
-                value={entries[selectedEntry].category}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'category', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="" disabled>Select Category</option>
-                <option value="Owner">Owner</option>
-                <option value="Client">Client</option>
-              </select> */}
-              <select
-                value={entries[selectedEntry].reason}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'reason', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="" disabled>Select Reason</option>
-                <option value="Mass">Mass</option>
-                <option value="Routine">Routine</option>
-                <option value="Outbreak">Outbreak</option>
-              </select>
-
-
+              <div>
+                <label htmlFor="entryDate" className="block mb-1">Date</label>
+                <input
+                  id="entryDate"
+                  type="date"
+                  value={entries[selectedEntry].date}
+                  onChange={(e) => handleEntryChange(selectedEntry, 'date', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="entryBarangay" className="block mb-1">Barangay</label>
+                <input
+                  id="entryBarangay"
+                  type="text"
+                  value={entries[selectedEntry].barangay}
+                  onChange={(e) => handleEntryChange(selectedEntry, 'barangay', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="entryReason" className="block mb-1">Reason</label>
+                <select
+                  id="entryReason"
+                  value={entries[selectedEntry].reason}
+                  onChange={(e) => handleEntryChange(selectedEntry, 'reason', e.target.value)}
+                  className="border p-2 rounded w-full"
+                >
+                  <option value="" disabled>Select Reason</option>
+                  <option value="Mass">Mass</option>
+                  <option value="Routine">Routine</option>
+                  <option value="Outbreak">Outbreak</option>
+                </select>
+              </div>
             </div>
 
             {/* Client Information */}
             <h4 className="text-xl font-semibold mb-2">Client Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="First Name"
-                value={entries[selectedEntry].clientInfo.firstName}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'firstName', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={entries[selectedEntry].clientInfo.lastName}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'lastName', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <select
-                value={entries[selectedEntry].clientInfo.gender}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'gender', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="" disabled>Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <input
-                type="date"
-                placeholder="Birthday"
-                value={entries[selectedEntry].clientInfo.birthday}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'birthday', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Contact No."
-                value={entries[selectedEntry].clientInfo.contactNo}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'contactNo', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
+              <div>
+                <label htmlFor="clientFirstName" className="block mb-1">First Name</label>
+                <input
+                  id="clientFirstName"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.firstName}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'firstName', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="clientLastName" className="block mb-1">Last Name</label>
+                <input
+                  id="clientLastName"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.lastName}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'lastName', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="clientGender" className="block mb-1">Gender</label>
+                <select
+                  id="clientGender"
+                  value={entries[selectedEntry].clientInfo.gender}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'gender', e.target.value)}
+                  className="border p-2 rounded w-full"
+                >
+                  <option value="" disabled>Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="clientBirthday" className="block mb-1">Birthday</label>
+                <input
+                  id="clientBirthday"
+                  type="date"
+                  value={entries[selectedEntry].clientInfo.birthday}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'birthday', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="clientContactNo" className="block mb-1">Contact No.</label>
+                <input
+                  id="clientContactNo"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.contactNo}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'contactNo', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
             </div>
 
             {/* Animal Information */}
             <h4 className="text-xl font-semibold mb-2">Animal Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-
-              <input
-                type="text"
-                placeholder="Species"
-                value={entries[selectedEntry].animalInfo.species}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'species', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <select
-                value={entries[selectedEntry].animalInfo.sex}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'sex', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="" disabled>Select Sex</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Age"
-                value={entries[selectedEntry].animalInfo.age}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'age', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <select
-                value={entries[selectedEntry].animalInfo.registered}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'registered', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="" disabled>Animal Registered</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-
-              <input
-                type="text"
-                placeholder="Remarks"
-                value={entries[selectedEntry].animalInfo.remarks}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'remarks', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-
+              <div>
+                <label htmlFor="animalSpecies" className="block mb-1">Species</label>
+                <input
+                  id="animalSpecies"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.species}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'species', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="animalSex" className="block mb-1">Sex</label>
+                <select
+                  id="animalSex"
+                  value={entries[selectedEntry].animalInfo.sex}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'sex', e.target.value)}
+                  className="border p-2 rounded w-full"
+                >
+                  <option value="" disabled>Select Sex</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="animalAge" className="block mb-1">Age</label>
+                <input
+                  id="animalAge"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.age}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'age', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="animalRegistered" className="block mb-1">Animal Registered</label>
+                <select
+                  id="animalRegistered"
+                  value={entries[selectedEntry].animalInfo.registered}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'registered', e.target.value)}
+                  className="border p-2 rounded w-full"
+                >
+                  <option value="" disabled>Animal Registered</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="animalRemarks" className="block mb-1">Remarks</label>
+                <input
+                  id="animalRemarks"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.remarks}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'remarks', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
             </div>
 
             <div className="flex justify-end">
