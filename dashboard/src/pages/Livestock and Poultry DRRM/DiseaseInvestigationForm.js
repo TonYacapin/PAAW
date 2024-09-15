@@ -88,7 +88,7 @@ const DiseaseInvestigationForm = () => {
 
       console.log(data);
       // Send data to backend API
-      const response = await axios.post('http://localhost:5000/disease-investigation', data);
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/disease-investigation`, data);
 
       // Handle successful response
       if (response.status === 201) {

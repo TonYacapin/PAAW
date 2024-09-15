@@ -4,6 +4,7 @@ import ConfirmationModal from '../../component/ConfirmationModal'; // Import the
 import Papa from 'papaparse'; // Import PapaParse for CSV handling
 
 function RabiesVaccinationReport() {
+  const [errors, setErrors] = useState({});
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -15,6 +16,36 @@ function RabiesVaccinationReport() {
   const [vaccineUsed, setVaccineUsed] = useState('');
   const [batchLotNo, setBatchLotNo] = useState('');
   const [vaccineSource, setVaccineSource] = useState('');
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    // Validate main fields
+    if (!municipality) newErrors.municipality = "Municipality is required";
+    if (!dateReported) newErrors.dateReported = "Date reported is required";
+    if (!vaccineUsed) newErrors.vaccineUsed = "Vaccine used is required";
+    if (!batchLotNo) newErrors.batchLotNo = "Batch/Lot No. is required";
+    if (!vaccineSource) newErrors.vaccineSource = "Vaccine source is required";
+
+    // Validate entries
+    let entryErrors = entries.map(entry => {
+      let entryError = {};
+      if (!entry.date) entryError.date = "Date is required";
+      if (!entry.barangay) entryError.barangay = "Barangay is required";
+      if (!entry.clientInfo.firstName) entryError.clientFirstName = "First name is required";
+      if (!entry.clientInfo.lastName) entryError.clientLastName = "Last name is required";
+      if (!entry.animalInfo.name) entryError.animalName = "Animal name is required";
+      if (!entry.animalInfo.species) entryError.animalSpecies = "Species is required";
+      return entryError;
+    });
+
+    if (entryErrors.some(error => Object.keys(error).length > 0)) {
+      newErrors.entries = entryErrors;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const addEntry = () => {
     setEntries([
@@ -106,7 +137,7 @@ function RabiesVaccinationReport() {
     try {
       console.log(entries);
       // Replace with your backend API URL
-      const response = await axios.post('http://localhost:5000/api/entries', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/entries`, {
         municipality,
         dateReported,
         vaccineUsed,
@@ -133,7 +164,7 @@ function RabiesVaccinationReport() {
   const exportAsCSV = () => {
     // Create an array to hold all the data
     const data = [];
-  
+
     // Add the header row with main information
     data.push({
       Municipality: municipality,
@@ -155,7 +186,7 @@ function RabiesVaccinationReport() {
       AnimalAge: '',
       AnimalColor: ''
     });
-  
+
     // Add each entry as a new row
     entries.forEach((entry) => {
       data.push({
@@ -179,13 +210,13 @@ function RabiesVaccinationReport() {
         AnimalColor: entry.animalInfo?.color || ''
       });
     });
-  
+
     console.log("Data before CSV conversion:", data);
-  
+
     // Convert data to CSV using Papa.unparse()
     const csv = Papa.unparse(data);
     console.log("Generated CSV:", csv);
-  
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -202,7 +233,7 @@ function RabiesVaccinationReport() {
       header: true,
       complete: (results) => {
         const importedData = results.data;
-  
+
         // Separate the main fields from the entries
         const mainFields = importedData[0];
         setMunicipality(mainFields.Municipality);
@@ -210,7 +241,7 @@ function RabiesVaccinationReport() {
         setVaccineUsed(mainFields.VaccineUsed);
         setBatchLotNo(mainFields.BatchLotNo);
         setVaccineSource(mainFields.VaccineSource);
-  
+
         // Filter out entries and set them properly
         const importedEntries = importedData.slice(1).map((entry, index) => ({
           no: index + 1,
@@ -231,7 +262,7 @@ function RabiesVaccinationReport() {
             color: entry.AnimalColor
           }
         }));
-  
+
         setEntries(importedEntries);
       },
       error: (error) => {
@@ -266,7 +297,20 @@ function RabiesVaccinationReport() {
           >
             <option value="">Select Municipality</option>
             <option value="Ambaguio">Ambaguio</option>
-            {/* ... (other options remain the same) */}
+            <option value="Bagabag">Bagabag</option>
+            <option value="Bayombong">Bayombong</option>
+            <option value="Diadi">Diadi</option>
+            <option value="Quezon">Quezon</option>
+            <option value="Solano">Solano</option>
+            <option value="Villaverde">Villaverde</option>
+            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+            <option value="Aritao">Aritao</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Dupax del Norte">Dupax del Norte</option>
+            <option value="Dupax del Sur">Dupax del Sur</option>
+            <option value="Kayapa">Kayapa</option>
+            <option value="Kasibu">Kasibu</option>
+            <option value="Santa Fe">Santa Fe</option>
           </select>
         </div>
 

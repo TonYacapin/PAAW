@@ -100,7 +100,7 @@ function VaccinationReport() {
   const saveEntries = async () => {
     try {
       console.log(entries);
-      const response = await axios.post('http://localhost:5000/api/reports', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/reports`, {
         municipality,
         province,
         dateReported,
@@ -143,7 +143,20 @@ function VaccinationReport() {
           >
             <option value="">Select Municipality</option>
             <option value="Ambaguio">Ambaguio</option>
-            {/* ... (other options remain the same) */}
+            <option value="Bagabag">Bagabag</option>
+            <option value="Bayombong">Bayombong</option>
+            <option value="Diadi">Diadi</option>
+            <option value="Quezon">Quezon</option>
+            <option value="Solano">Solano</option>
+            <option value="Villaverde">Villaverde</option>
+            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+            <option value="Aritao">Aritao</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Dupax del Norte">Dupax del Norte</option>
+            <option value="Dupax del Sur">Dupax del Sur</option>
+            <option value="Kayapa">Kayapa</option>
+            <option value="Kasibu">Kasibu</option>
+            <option value="Santa Fe">Santa Fe</option>
           </select>
         </div>
 

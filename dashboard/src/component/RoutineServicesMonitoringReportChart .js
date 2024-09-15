@@ -17,7 +17,7 @@ const RoutineServicesMonitoringReportChart = () => {
     const fetchReports = async () => {
       try {
 
-        const response = await axios.get('http://localhost:5000/RSM');
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/RSM`);
         const reports = response.data;
         console.log(reports)
         // 1. Bar Chart: Number of Entries by Municipality

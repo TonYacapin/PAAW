@@ -120,7 +120,7 @@ const RabiesHistoryForm = () => {
     
     try {
       console.log(formData)
-      const response = await axios.post('http://localhost:5000/RH', formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/RH`, formData);
       console.log('Form submitted successfully:', response.data);
       // Handle success (e.g., show a success message or redirect)
     } catch (error) {

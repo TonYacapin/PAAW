@@ -17,7 +17,7 @@ const RabiesHistoryCharts = () => {
   useEffect(() => {
     const fetchRabiesHistory = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/RH');
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/RH`);
         const rabiesHistories = response.data;
 
         // 1. Pie Chart: Species Distribution

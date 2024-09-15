@@ -9,7 +9,7 @@ function RoutineServicesMonitoringReport() {
   const [entryToRemove, setEntryToRemove] = useState(null);
 
   // Main fields state
-  const [province, setProvince] = useState('');
+  const [province, setProvince] = useState('Nueva Vizcaya');
   const [municipality, setMunicipality] = useState('');
   const [reportingPeriod, setReportingPeriod] = useState('');
   const [livestockTechnician, setLivestockTechnician] = useState('');
@@ -99,7 +99,7 @@ function RoutineServicesMonitoringReport() {
   const saveEntries = async () => {
     try {
       // Replace with your backend API URL
-      const response = await axios.post('http://localhost:5000/RSM', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/RSM`, {
         province,
         municipality,
         reportingPeriod,
@@ -134,17 +134,34 @@ function RoutineServicesMonitoringReport() {
             value={province}
             onChange={(e) => setProvince(e.target.value)}
             className="border p-2 rounded w-full"
+            disabled
           />
         </div>
         <div>
           <label htmlFor="municipality" className="block mb-1">Municipality</label>
-          <input
+          <select
             id="municipality"
-            type="text"
             value={municipality}
             onChange={(e) => setMunicipality(e.target.value)}
             className="border p-2 rounded w-full"
-          />
+          >
+            <option value="">Select Municipality</option>
+            <option value="Ambaguio">Ambaguio</option>
+            <option value="Bagabag">Bagabag</option>
+            <option value="Bayombong">Bayombong</option>
+            <option value="Diadi">Diadi</option>
+            <option value="Quezon">Quezon</option>
+            <option value="Solano">Solano</option>
+            <option value="Villaverde">Villaverde</option>
+            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+            <option value="Aritao">Aritao</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Dupax del Norte">Dupax del Norte</option>
+            <option value="Dupax del Sur">Dupax del Sur</option>
+            <option value="Kayapa">Kayapa</option>
+            <option value="Kasibu">Kasibu</option>
+            <option value="Santa Fe">Santa Fe</option>
+          </select>
         </div>
         <div>
           <label htmlFor="reportingPeriod" className="block mb-1">Reporting Period</label>

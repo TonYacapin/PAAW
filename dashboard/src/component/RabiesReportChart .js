@@ -1,8 +1,7 @@
-// src/components/AdvancedRabiesReportChart.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Line, Bar, Pie, Doughnut, Bubble, Scatter } from 'react-chartjs-2';
-import { Chart as ChartJS, Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale, ArcElement, BubbleController, ScatterController, PointElement } from 'chart.js';
+import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale, ArcElement } from 'chart.js';
 
 ChartJS.register(
     Tooltip,
@@ -11,35 +10,34 @@ ChartJS.register(
     BarElement,
     CategoryScale,
     LinearScale,
-    ArcElement,
-    BubbleController,
-    ScatterController,
-    PointElement
+    ArcElement
 );
 
 const RabiesReportChart = () => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({ dateRange: [null, null], municipality: '' });
+    const [showAll, setShowAll] = useState(false); // State to toggle between all data and filtered data
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/entries');
-                const reports = response.data;
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/entries`);
+                let reports = response.data;
 
-                // Apply filters
-                let filteredReports = reports;
+                // If "Show All" is selected, skip applying filters
+                if (!showAll) {
+                    // Apply filters
+                    if (filters.dateRange[0] && filters.dateRange[1]) {
+                        reports = reports.filter(report => {
+                            const reportDate = new Date(report.dateReported).getTime();
+                            return reportDate >= new Date(filters.dateRange[0]).getTime() && reportDate <= new Date(filters.dateRange[1]).getTime();
+                        });
+                    }
 
-                if (filters.dateRange[0] && filters.dateRange[1]) {
-                    filteredReports = filteredReports.filter(report => {
-                        const reportDate = new Date(report.dateReported).getTime();
-                        return reportDate >= new Date(filters.dateRange[0]).getTime() && reportDate <= new Date(filters.dateRange[1]).getTime();
-                    });
-                }
-
-                if (filters.municipality) {
-                    filteredReports = filteredReports.filter(report => report.municipality === filters.municipality);
+                    if (filters.municipality) {
+                        reports = reports.filter(report => report.municipality === filters.municipality);
+                    }
                 }
 
                 // Data structures for charts
@@ -47,11 +45,9 @@ const RabiesReportChart = () => {
                 const vaccineCounts = {};
                 const dateCounts = {};
                 const sexCounts = {};
-                const bubbleData = [];
-                const scatterData = [];
 
                 // Process each filtered report
-                filteredReports.forEach((report) => {
+                reports.forEach((report) => {
                     const { municipality, vaccineUsed, entries } = report;
 
                     // Municipality and vaccine data
@@ -75,20 +71,6 @@ const RabiesReportChart = () => {
                         // Sex-based data
                         if (!sexCounts[sex]) sexCounts[sex] = 0;
                         sexCounts[sex] += 1;
-
-                        // Bubble chart data
-                        bubbleData.push({
-                            x: new Date(entry.date).getTime(), // Date in timestamp
-                            y: municipalityCounts[municipality],
-                            r: 5 // Bubble radius
-                        });
-
-                        // Scatter chart data
-                        scatterData.push({
-                            x: new Date(entry.date).getTime(), // X-axis: Date
-                            y: Object.keys(municipalityCounts).indexOf(municipality), // Y-axis: Municipality
-                            r: 5 // Radius to simulate density
-                        });
                     });
                 });
 
@@ -139,38 +121,6 @@ const RabiesReportChart = () => {
                             }
                         ],
                     },
-                    bubbleChart: {
-                        datasets: [
-                            {
-                                label: 'Vaccinations Over Time',
-                                data: bubbleData,
-                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                borderWidth: 1,
-                            }
-                        ],
-                    },
-                    scatterChart: {
-                        datasets: [
-                            {
-                                label: 'Vaccination Frequency',
-                                data: scatterData,
-                                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                                borderWidth: 1,
-                            }
-                        ],
-                        options: {
-                            scales: {
-                                x: {
-                                    type: 'linear',
-                                    position: 'bottom',
-                                },
-                                y: {
-                                    type: 'category',
-                                    labels: Object.keys(municipalityCounts),
-                                },
-                            },
-                        }
-                    }
                 });
 
                 setLoading(false);
@@ -181,7 +131,7 @@ const RabiesReportChart = () => {
         };
 
         fetchData();
-    }, [filters]);
+    }, [filters, showAll]); // Reload data if filters or showAll changes
 
     const handleDateChange = (e) => {
         const { name, value } = e.target;
@@ -197,6 +147,10 @@ const RabiesReportChart = () => {
         setFilters(prev => ({ ...prev, municipality: e.target.value }));
     };
 
+    const toggleShowAll = () => {
+        setShowAll(prevShowAll => !prevShowAll); // Toggle between all data and filtered data
+    };
+
     if (loading) {
         return <div>Loading chart data...</div>;
     }
@@ -209,16 +163,19 @@ const RabiesReportChart = () => {
             <div>
                 <label>
                     Start Date:
-                    <input type="date" name="startDate" onChange={handleDateChange} />
+                    <input type="date" name="startDate" onChange={handleDateChange} disabled={showAll} />
                 </label>
                 <label>
                     End Date:
-                    <input type="date" name="endDate" onChange={handleDateChange} />
+                    <input type="date" name="endDate" onChange={handleDateChange} disabled={showAll} />
                 </label>
                 <label>
                     Municipality:
-                    <input type="text" value={filters.municipality} onChange={handleMunicipalityChange} />
+                    <input type="text" value={filters.municipality} onChange={handleMunicipalityChange} disabled={showAll} />
                 </label>
+                <button onClick={toggleShowAll}>
+                    {showAll ? 'Apply Filters' : 'Show All Data'}
+                </button>
             </div>
 
             {/* Line Chart */}
@@ -244,9 +201,7 @@ const RabiesReportChart = () => {
                 <h3>Vaccine Distribution</h3>
                 <Doughnut data={data.doughnutChart} />
             </div>
-
         </div>
-
     );
 };
 
