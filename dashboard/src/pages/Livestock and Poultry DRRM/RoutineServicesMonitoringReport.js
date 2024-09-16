@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
 import ConfirmationModal from '../../component/ConfirmationModal'; // Import the ConfirmationModal component
+import { Add, Save } from '@mui/icons-material';
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -190,9 +191,10 @@ function RoutineServicesMonitoringReport() {
         <button
           type="button"
           onClick={addEntry}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
         >
-          + Add Entry
+          
+          <Add /> Add Entry
         </button>
 
         {entries.map((entry, index) => (
@@ -226,9 +228,9 @@ function RoutineServicesMonitoringReport() {
         <button
           type="button"
           onClick={saveEntries}
-          className="px-4 py-2 bg-green-500 text-white rounded"
+          className="px-4 py-2 bg-darkgreen text-white rounded"
         >
-          Save Entries
+         <Save /> Save Entries
         </button>
       </div>
 

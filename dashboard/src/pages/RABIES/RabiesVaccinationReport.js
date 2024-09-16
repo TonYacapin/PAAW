@@ -364,7 +364,7 @@ function RabiesVaccinationReport() {
         <button
           type="button"
           onClick={addEntry}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
         >
           + Add Entry
         </button>
@@ -400,7 +400,7 @@ function RabiesVaccinationReport() {
         <button
           type="button"
           onClick={saveEntries}
-          className="px-4 py-2 bg-green-500 text-white rounded"
+          className="px-4 py-2 bg-darkgreen text-white rounded"
         >
           Save Entries
         </button>
@@ -579,7 +579,7 @@ function RabiesVaccinationReport() {
         <button
           type="button"
           onClick={exportAsCSV}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-darkgreen text-white rounded"
         >
           Export as CSV
         </button>
