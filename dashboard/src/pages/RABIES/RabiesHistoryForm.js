@@ -580,7 +580,7 @@ const RabiesHistoryForm = () => {
                 onChange={(e) => setVictimAddress(e.target.value)}
               />
             </Grid>
-              </>
+              </>   
             )
 
             case 5:
