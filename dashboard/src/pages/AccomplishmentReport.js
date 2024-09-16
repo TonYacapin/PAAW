@@ -22,7 +22,6 @@ function AccomplishmentReport() {
   const vaccineTypes = Object.keys(vaccineGroups);
 
   useEffect(() => {
-    // Fetch the data from the API
     axios
       .get(`${process.env.REACT_APP_API_BASE_URL}/api/reports`)
       .then((response) => {
@@ -31,7 +30,6 @@ function AccomplishmentReport() {
         const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const speciesReport = {};
 
-        // Helper function to add count by species
         function addSpeciesCount(species, isThisMonth) {
           if (!speciesReport[species]) {
             speciesReport[species] = {
@@ -48,7 +46,6 @@ function AccomplishmentReport() {
           speciesReport[species].total++;
         }
 
-        // Traverse through all entries and count species
         data.forEach((report) => {
           report.entries.forEach((entry) => {
             const species = entry.animalInfo.species;
@@ -58,7 +55,6 @@ function AccomplishmentReport() {
           });
         });
 
-        // Convert the species report to an array format with vaccine groups
         const speciesArray = Object.keys(speciesReport).map((species) => {
           const vaccineType = Object.keys(vaccineGroups).find((vaccine) =>
             vaccineGroups[vaccine].includes(species)
@@ -72,7 +68,6 @@ function AccomplishmentReport() {
           };
         });
 
-        // Sort the array by vaccine type and then by species
         speciesArray.sort((a, b) => {
           if (a.vaccineType !== b.vaccineType) {
             return a.vaccineType.localeCompare(b.vaccineType);
@@ -81,13 +76,11 @@ function AccomplishmentReport() {
         });
 
         setSpeciesCount(speciesArray);
-        // Calculate initial totals
         updateTotals(speciesArray);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  // Update totals based on filtered data
   const updateTotals = (data) => {
     const totalPreviousMonths = data.reduce((sum, species) => sum + species.previousMonths, 0);
     const totalThisMonth = data.reduce((sum, species) => sum + species.thisMonth, 0);
@@ -100,12 +93,10 @@ function AccomplishmentReport() {
     });
   };
 
-  // Compute percentage based on target
   const handleTargetChange = (e) => {
     const targetValue = e.target.value;
     setTarget(targetValue);
   
-    // Convert target value to number
     const targetNumber = Number(targetValue);
   
     if (targetNumber > 0 && totals.total > 0) {
@@ -115,92 +106,92 @@ function AccomplishmentReport() {
     }
   };
   
-  // Handle vaccine type selection
   const handleVaccineChange = (e) => {
     const selectedVaccineType = e.target.value;
     setSelectedVaccine(selectedVaccineType);
 
-    // Filter data based on selected vaccine type
     const filteredSpeciesCount = selectedVaccineType === 'All'
       ? speciesCount
       : speciesCount.filter((data) => data.vaccineType === selectedVaccineType);
 
-    // Update totals based on filtered data
     updateTotals(filteredSpeciesCount);
   };
 
-  // Filter data based on the selected vaccine type
   const filteredSpeciesCount = selectedVaccine === 'All'
     ? speciesCount
     : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Accomplishment Report</h1>
-      <div className="mb-4">
-        <label className="block text-lg font-semibold mb-2">Target Second Quarter Value:</label>
-        <input
-          type="number"
-          value={target}
-          onChange={handleTargetChange}
-          className="border border-gray-300 rounded-md p-2 w-full"
-          placeholder="Enter target value"
-        />
-        {percentage !== null && (
-          <p className="mt-2 text-lg font-semibold">
-            Percentage: {percentage}%
-          </p>
-        )}
-      </div>
-      <div className="mb-4">
-        <label className="block text-lg font-semibold mb-2">Select Vaccine Type:</label>
-        <select
-          value={selectedVaccine}
-          onChange={handleVaccineChange}
-          className="border border-gray-300 rounded-md p-2 w-full"
-        >
-          <option value="All">All</option>
-          {vaccineTypes.map((vaccine) => (
-            <option key={vaccine} value={vaccine}>
-              {vaccine}
-            </option>
-          ))}
-        </select>
-      </div>
-      <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-        <thead>
-          <tr className="bg-gray-100 text-left border-b border-gray-200">
-            <th className="py-2 px-4">Vaccine Type</th>
-            <th className="py-2 px-4">Species</th>
-            <th className="py-2 px-4">Previous Months' Count</th>
-            <th className="py-2 px-4">This Month's Count</th>
-            <th className="py-2 px-4">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSpeciesCount.length > 0 ? (
-            filteredSpeciesCount.map((speciesData) => (
-              <tr key={speciesData.species} className="border-b border-gray-200">
-                <td className="py-2 px-4">{speciesData.vaccineType}</td>
-                <td className="py-2 px-4">{speciesData.species + "(hds)"}</td>
-                <td className="py-2 px-4">{speciesData.previousMonths}</td>
-                <td className="py-2 px-4">{speciesData.thisMonth}</td>
-                <td className="py-2 px-4">{speciesData.total}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="5" className="py-2 px-4 text-center">No data available</td>
-            </tr>
+    <div className="p-6 bg-[#FFFAFA] min-h-screen">
+      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
+          <input
+            type="number"
+            value={target}
+            onChange={handleTargetChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            placeholder="Enter target value"
+          />
+          {percentage !== null && (
+            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+              Percentage: {percentage}%
+            </p>
           )}
-          <tr className="bg-gray-100 font-bold">
-            <td colSpan="2" className="py-2 px-4">Total</td>
-            <td className="py-2 px-4">{totals.previousMonths}</td>
-            <td className="py-2 px-4">{totals.thisMonth}</td>
-            <td className="py-2 px-4">{totals.total}</td>
-          </tr>
-        </tbody>
-      </table>
+        </div>
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
+          <select
+            value={selectedVaccine}
+            onChange={handleVaccineChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            <option value="All">All</option>
+            {vaccineTypes.map((vaccine) => (
+              <option key={vaccine} value={vaccine}>
+                {vaccine}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="overflow-x-auto mt-6">
+        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
+          <thead className="bg-[#ffe356] text-[#1b5b40]">
+            <tr>
+              <th className="py-3 px-4 text-left">Vaccine Type</th>
+              <th className="py-3 px-4 text-left">Species</th>
+              <th className="py-3 px-4 text-left">Previous Months' Count</th>
+              <th className="py-3 px-4 text-left">This Month's Count</th>
+              <th className="py-3 px-4 text-left">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredSpeciesCount.length > 0 ? (
+              filteredSpeciesCount.map((speciesData) => (
+                <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
+                  <td className="py-2 px-4 text-[#252525]">{speciesData.vaccineType}</td>
+                  <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
+                  <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonths}</td>
+                  <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
+                  <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="py-2 px-4 text-center text-[#252525]">No data available</td>
+              </tr>
+            )}
+            <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
+              <td colSpan="2" className="py-3 px-4">Total</td>
+              <td className="py-3 px-4">{totals.previousMonths}</td>
+              <td className="py-3 px-4">{totals.thisMonth}</td>
+              <td className="py-3 px-4">{totals.total}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
