@@ -15,7 +15,7 @@ const animalInfoSchema = new Schema({
   species: String,
   sex: { type: String, enum: ['Male', 'Female'] },
   age: String,
-  registered: { type: String, enum: ['Yes', 'No'] },
+  registered: String,
   remarks: String
 });
 
@@ -31,6 +31,7 @@ const entrySchema = new Schema({
 
 // Define the Vaccination Report Schema
 const vaccinationReportSchema = new Schema({
+  vaccine: String,
   municipality: String,
   province: { type: String, default: 'Nueva Vizcaya' },
   dateReported: Date,
