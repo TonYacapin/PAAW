@@ -769,6 +769,7 @@ const DiseaseInvestigationForm = () => {
       ),
     },
   ];
+  
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Form</h1>

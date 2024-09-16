@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 import {
   TextField,
   FormControl,
@@ -19,36 +19,36 @@ import {
   Step,
   StepLabel,
   Paper,
-} from '@mui/material';
-import Navbar from '../../component/Navbar';
+} from "@mui/material";
+import Navbar from "../../component/Navbar";
 import "./RabiesHistoryForm.css";
 
 const RabiesHistoryForm = () => {
-  const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState('');
-  const [locationOfBiteSpecify, setLocationOfBiteSpecify] = useState('');
-  const [treatmentReceivedSpecify, setTreatmentReceivedSpecify] = useState('');
-  const [ownershipType, setOwnershipType] = useState('');
-  const [petManagement, setPetManagement] = useState('');
-  const [causeOfDeath, setCauseOfDeath] = useState('');
-  const [vaccinationHistory, setVaccinationHistory] = useState('');
-  const [bitchVaccinated, setBitchVaccinated] = useState('');
-  const [contactWithAnimals, setContactWithAnimals] = useState('');
-  const [contactLocation, setContactLocation] = useState('');
-  const [siteOfBite, setSiteOfBite] = useState('');
-  const [biteProvoked, setBiteProvoked] = useState('');
-  const [locationOfBite, setLocationOfBite] = useState('');
-  const [treatmentReceived, setTreatmentReceived] = useState('');
-  const [animalResidence, setAnimalResidence] = useState('');
-  const [species, setSpecies] = useState('');
-  const [breed, setBreed] = useState('');
-  const [sex, setSex] = useState('');
-  const [age, setAge] = useState('');
-  const [dateOfDeath, setDateOfDeath] = useState('');
-  const [timeOfDeath, setTimeOfDeath] = useState('');
-  const [typeOfVaccine, setTypeOfVaccine] = useState('');
-  const [dateOfLastVaccination, setDateOfLastVaccination] = useState('');
-  const [durationIllnessFrom, setDurationIllnessFrom] = useState('');
-  const [durationIllnessTo, setDurationIllnessTo] = useState('');
+  const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState("");
+  const [locationOfBiteSpecify, setLocationOfBiteSpecify] = useState("");
+  const [treatmentReceivedSpecify, setTreatmentReceivedSpecify] = useState("");
+  const [ownershipType, setOwnershipType] = useState("");
+  const [petManagement, setPetManagement] = useState("");
+  const [causeOfDeath, setCauseOfDeath] = useState("");
+  const [vaccinationHistory, setVaccinationHistory] = useState("");
+  const [bitchVaccinated, setBitchVaccinated] = useState("");
+  const [contactWithAnimals, setContactWithAnimals] = useState("");
+  const [contactLocation, setContactLocation] = useState("");
+  const [siteOfBite, setSiteOfBite] = useState("");
+  const [biteProvoked, setBiteProvoked] = useState("");
+  const [locationOfBite, setLocationOfBite] = useState("");
+  const [treatmentReceived, setTreatmentReceived] = useState("");
+  const [animalResidence, setAnimalResidence] = useState("");
+  const [species, setSpecies] = useState("");
+  const [breed, setBreed] = useState("");
+  const [sex, setSex] = useState("");
+  const [age, setAge] = useState("");
+  const [dateOfDeath, setDateOfDeath] = useState("");
+  const [timeOfDeath, setTimeOfDeath] = useState("");
+  const [typeOfVaccine, setTypeOfVaccine] = useState("");
+  const [dateOfLastVaccination, setDateOfLastVaccination] = useState("");
+  const [durationIllnessFrom, setDurationIllnessFrom] = useState("");
+  const [durationIllnessTo, setDurationIllnessTo] = useState("");
   const [behavioralChanges, setBehavioralChanges] = useState({
     restlessness: false,
     apprehensiveWatchfulLook: false,
@@ -56,21 +56,21 @@ const RabiesHistoryForm = () => {
     bitingInanimateObjects: false,
     hyperactivity: false,
     others: false,
-    specify: ''
+    specify: "",
   });
-  const [victimName, setVictimName] = useState('');
-  const [victimAge, setVictimAge] = useState('');
-  const [victimSex, setVictimSex] = useState('');
-  const [victimAddress, setVictimAddress] = useState('');
-  const [dateOfBite, setDateOfBite] = useState('');
-  const [timeOfBite, setTimeOfBite] = useState('');
-  const [siteOfBiteOther, setSiteOfBiteOther] = useState('');
-  const [natureOfBite, setNatureOfBite] = useState('');
-  const [biteProvokedSpecify, setBiteProvokedSpecify] = useState('');
-  const [locationOfBiteOther, setLocationOfBiteOther] = useState('');
-  const [otherVictims, setOtherVictims] = useState('');
-  const [treatmentReceivedOther, setTreatmentReceivedOther] = useState('');
-  const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState('');
+  const [victimName, setVictimName] = useState("");
+  const [victimAge, setVictimAge] = useState("");
+  const [victimSex, setVictimSex] = useState("");
+  const [victimAddress, setVictimAddress] = useState("");
+  const [dateOfBite, setDateOfBite] = useState("");
+  const [timeOfBite, setTimeOfBite] = useState("");
+  const [siteOfBiteOther, setSiteOfBiteOther] = useState("");
+  const [natureOfBite, setNatureOfBite] = useState("");
+  const [biteProvokedSpecify, setBiteProvokedSpecify] = useState("");
+  const [locationOfBiteOther, setLocationOfBiteOther] = useState("");
+  const [otherVictims, setOtherVictims] = useState("");
+  const [treatmentReceivedOther, setTreatmentReceivedOther] = useState("");
+  const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState("");
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -120,21 +120,32 @@ const RabiesHistoryForm = () => {
       locationOfBiteOther,
       otherVictims,
       treatmentReceivedOther,
-      dateOfTreatmentReceived
+      dateOfTreatmentReceived,
     };
-    
+
     try {
       console.log(formData);
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/RH`, formData);
-      console.log('Form submitted successfully:', response.data);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/RH`,
+        formData
+      );
+      console.log("Form submitted successfully:", response.data);
       // Handle success (e.g., show a success message or redirect)
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       // Handle error (e.g., show an error message)
     }
   };
 
-  const steps = ['Animal Profile 1', 'Animal Profile 2', 'Animal Profile 3', 'Victim Profile 1', 'Victim Profile 2', 'Victim Profile 3'];
+  const steps = [
+    "Animal 1",
+    "Animal 2",
+    "Animal 3",
+    "Animal 4",
+    "Victim 1",
+    "Victim 2",
+    "Victim 3",
+  ];
 
   const renderStepContent = (step) => {
     switch (step) {
@@ -179,12 +190,20 @@ const RabiesHistoryForm = () => {
                   value={sex}
                   onChange={(e) => setSex(e.target.value)}
                 >
-                  <FormControlLabel value="male" control={<Radio />} label="Male" />
-                  <FormControlLabel value="female" control={<Radio />} label="Female" />
+                  <FormControlLabel
+                    value="male"
+                    control={<Radio />}
+                    label="Male"
+                  />
+                  <FormControlLabel
+                    value="female"
+                    control={<Radio />}
+                    label="Female"
+                  />
                 </RadioGroup>
               </FormControl>
             </Grid>
-        
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -208,6 +227,16 @@ const RabiesHistoryForm = () => {
                 </Select>
               </FormControl>
             </Grid>
+          </>
+        );
+      case 1:
+        return (
+          <>
+            
+            <Grid item xs={12}>
+              <Typography variant="h6">Animal Profile - Page 2</Typography>
+            </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Pet Management</InputLabel>
@@ -220,14 +249,6 @@ const RabiesHistoryForm = () => {
                   <MenuItem value="leashed">Leashed</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-          </>
-        );
-      case 1:
-        return (
-          <>
-            <Grid item xs={12}>
-              <Typography variant="h6">Animal Profile - Page 2</Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined">
@@ -266,6 +287,16 @@ const RabiesHistoryForm = () => {
                 onChange={(e) => setTimeOfDeath(e.target.value)}
               />
             </Grid>
+            
+          </>
+        );
+      case 2:
+        return (
+          <>
+          <Grid item xs={12}>
+              <Typography variant="h6">Animal Profile - Page 3</Typography>
+            </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Vaccination History</InputLabel>
@@ -301,31 +332,54 @@ const RabiesHistoryForm = () => {
             </Grid>
             <Grid item xs={12}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Bitch Vaccinated (for puppies 3 months and below)?</FormLabel>
+                <FormLabel component="legend">
+                  Bitch Vaccinated (for puppies 3 months and below)?
+                </FormLabel>
                 <RadioGroup
                   row
                   value={bitchVaccinated}
                   onChange={(e) => setBitchVaccinated(e.target.value)}
                 >
-                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                  />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Contact with Other Animals?</FormLabel>
+                <FormLabel component="legend">
+                  Contact with Other Animals?
+                </FormLabel>
                 <RadioGroup
                   row
                   value={contactWithAnimals}
                   onChange={(e) => setContactWithAnimals(e.target.value)}
                 >
-                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                  />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
               </FormControl>
             </Grid>
-            {contactWithAnimals === 'yes' && (
+
+          </>
+        )
+
+        case 3:
+          return (
+            <>
+            <Grid item xs={12}>
+              <Typography variant="h6">Animal Profile - Page 4</Typography>
+            </Grid>
+
+            {contactWithAnimals === "yes" && (
               <Grid item xs={12}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Where?</InputLabel>
@@ -342,7 +396,9 @@ const RabiesHistoryForm = () => {
               </Grid>
             )}
             <Grid item xs={12}>
-              <Typography variant="body1">If Sick, Duration of Illness</Typography>
+              <Typography variant="body1">
+                If Sick, Duration of Illness
+              </Typography>
             </Grid>
             <Grid item xs={6}>
               <TextField
@@ -371,27 +427,90 @@ const RabiesHistoryForm = () => {
                 <FormLabel component="legend">Behavioral Changes</FormLabel>
                 <FormGroup row>
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.restlessness} onChange={() => setBehavioralChanges({ ...behavioralChanges, restlessness: !behavioralChanges.restlessness })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.restlessness}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            restlessness: !behavioralChanges.restlessness,
+                          })
+                        }
+                      />
+                    }
                     label="Restlessness"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.apprehensiveWatchfulLook} onChange={() => setBehavioralChanges({ ...behavioralChanges, apprehensiveWatchfulLook: !behavioralChanges.apprehensiveWatchfulLook })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.apprehensiveWatchfulLook}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            apprehensiveWatchfulLook:
+                              !behavioralChanges.apprehensiveWatchfulLook,
+                          })
+                        }
+                      />
+                    }
                     label="Apprehensive Watchful Look"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.runningAimlessly} onChange={() => setBehavioralChanges({ ...behavioralChanges, runningAimlessly: !behavioralChanges.runningAimlessly })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.runningAimlessly}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            runningAimlessly:
+                              !behavioralChanges.runningAimlessly,
+                          })
+                        }
+                      />
+                    }
                     label="Running Aimlessly"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.bitingInanimateObjects} onChange={() => setBehavioralChanges({ ...behavioralChanges, bitingInanimateObjects: !behavioralChanges.bitingInanimateObjects })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.bitingInanimateObjects}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            bitingInanimateObjects:
+                              !behavioralChanges.bitingInanimateObjects,
+                          })
+                        }
+                      />
+                    }
                     label="Biting Inanimate Objects"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.hyperactivity} onChange={() => setBehavioralChanges({ ...behavioralChanges, hyperactivity: !behavioralChanges.hyperactivity })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.hyperactivity}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            hyperactivity: !behavioralChanges.hyperactivity,
+                          })
+                        }
+                      />
+                    }
                     label="Hyperactivity"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={behavioralChanges.others} onChange={() => setBehavioralChanges({ ...behavioralChanges, others: !behavioralChanges.others })} />}
+                    control={
+                      <Checkbox
+                        checked={behavioralChanges.others}
+                        onChange={() =>
+                          setBehavioralChanges({
+                            ...behavioralChanges,
+                            others: !behavioralChanges.others,
+                          })
+                        }
+                      />
+                    }
                     label="Others"
                   />
                 </FormGroup>
@@ -402,17 +521,23 @@ const RabiesHistoryForm = () => {
                     variant="outlined"
                     margin="normal"
                     value={behavioralChanges.specify}
-                    onChange={(e) => setBehavioralChanges({ ...behavioralChanges, specify: e.target.value })}
+                    onChange={(e) =>
+                      setBehavioralChanges({
+                        ...behavioralChanges,
+                        specify: e.target.value,
+                      })
+                    }
                   />
                 )}
               </FormControl>
             </Grid>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <Grid item xs={12}>
+            </>
+          )
+
+          case 4:
+            return (
+              <>
+              <Grid item xs={12}>
               <Typography variant="h6">Victim Profile - Page 1</Typography>
             </Grid>
             <Grid item xs={12}>
@@ -455,6 +580,15 @@ const RabiesHistoryForm = () => {
                 onChange={(e) => setVictimAddress(e.target.value)}
               />
             </Grid>
+              </>
+            )
+
+            case 5:
+              return (
+                <>
+                <Grid item xs={12}>
+              <Typography variant="h6">Victim Profile - Page 2</Typography>
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -476,14 +610,6 @@ const RabiesHistoryForm = () => {
                 value={timeOfBite}
                 onChange={(e) => setTimeOfBite(e.target.value)}
               />
-            </Grid>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <Grid item xs={12}>
-              <Typography variant="h6">Victim Profile - Page 2</Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined">
@@ -529,6 +655,15 @@ const RabiesHistoryForm = () => {
                 </Select>
               </FormControl>
             </Grid>
+                </>
+              )
+
+              case 6:
+                return(
+                  <>
+                  <Grid item xs={12}>
+              <Typography variant="h6">Victim Profile - Page 3</Typography>
+            </Grid>
             <Grid item xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Bite Provoked?</FormLabel>
@@ -537,11 +672,15 @@ const RabiesHistoryForm = () => {
                   value={biteProvoked}
                   onChange={(e) => setBiteProvoked(e.target.value)}
                 >
-                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                  />
                   <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
               </FormControl>
-              {biteProvoked === 'yes' && (
+              {biteProvoked === "yes" && (
                 <TextField
                   fullWidth
                   label="Specify Provocation"
@@ -565,7 +704,7 @@ const RabiesHistoryForm = () => {
                   <MenuItem value="others">Others</MenuItem>
                 </Select>
               </FormControl>
-              {locationOfBite === 'others' && (
+              {locationOfBite === "others" && (
                 <TextField
                   fullWidth
                   label="Specify Location of Bite"
@@ -600,7 +739,7 @@ const RabiesHistoryForm = () => {
                   <MenuItem value="others">Others</MenuItem>
                 </Select>
               </FormControl>
-              {treatmentReceived === 'others' && (
+              {treatmentReceived === "others" && (
                 <TextField
                   fullWidth
                   label="Specify Treatment"
@@ -622,17 +761,17 @@ const RabiesHistoryForm = () => {
                 onChange={(e) => setDateOfTreatmentReceived(e.target.value)}
               />
             </Grid>
-          </>
-        );
+                  </>
+                )
       default:
-        return 'Unknown step';
+        return "Unknown step";
     }
   };
 
   return (
     <>
       <Navbar />
-      <Paper style={{ padding: '20px', margin: '20px' }}>
+      <Paper style={{ padding: "20px", margin: "20px" }}>
         <Stepper activeStep={activeStep}>
           {steps.map((label) => (
             <Step key={label}>
@@ -644,7 +783,13 @@ const RabiesHistoryForm = () => {
           <Grid container spacing={2}>
             {renderStepContent(activeStep)}
           </Grid>
-          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
             <Button
               color="inherit"
               disabled={activeStep === 0}
