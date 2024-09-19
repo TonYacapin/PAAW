@@ -713,7 +713,7 @@ const RabiesHistoryForm = () => {
           onChange={(e) => setDateOfTreatmentReceived(e.target.value)}
         />
       </Grid>
-    </>,
+    </>
   ];
 
   const renderStepContent = (step) => {
