@@ -23,6 +23,7 @@ import {
 import Navbar from "../../component/Navbar";
 import "./RabiesHistoryForm.css";
 import StepperComponent from "../../component/StepperComponent";
+import Papa from "papaparse";
 
 const RabiesHistoryForm = () => {
   const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState("");
@@ -72,16 +73,7 @@ const RabiesHistoryForm = () => {
   const [otherVictims, setOtherVictims] = useState("");
   const [treatmentReceivedOther, setTreatmentReceivedOther] = useState("");
   const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState("");
-
-  const [activeStep, setActiveStep] = useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  const [formData, setFormData] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -131,22 +123,134 @@ const RabiesHistoryForm = () => {
         formData
       );
       console.log("Form submitted successfully:", response.data);
-      // Handle success (e.g., show a success message or redirect)
     } catch (error) {
       console.error("Error submitting form:", error);
-      // Handle error (e.g., show an error message)
     }
   };
 
-  const steps = [
-    "Animal 1",
-    "Animal 2",
-    "Animal 3",
-    "Animal 4",
-    "Victim 1",
-    "Victim 2",
-    "Victim 3",
-  ];
+  const handleImportCSV = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const importedData = results.data[0];
+
+        setAnimalResidence(importedData.animalResidence || "");
+        setSpecies(importedData.species || "");
+        setBreed(importedData.breed || "");
+        setSex(importedData.sex || "");
+        setAge(importedData.age || "");
+        setOwnershipType(importedData.ownershipType || "");
+        setPetManagement(importedData.petManagement || "");
+        setCauseOfDeath(importedData.causeOfDeath || "");
+        setVaccinationHistory(importedData.vaccinationHistory || "");
+        setTypeOfVaccine(importedData.typeOfVaccine || "");
+        setDateOfLastVaccination(importedData.dateOfLastVaccination || "");
+        setBitchVaccinated(importedData.bitchVaccinated || "");
+        setContactWithAnimals(importedData.contactWithAnimals || "");
+        setContactLocation(importedData.contactLocation || "");
+        setDateOfDeath(importedData.dateOfDeath || "");
+        setTimeOfDeath(importedData.timeOfDeath || "");
+        setDurationIllnessFrom(importedData.durationIllnessFrom || "");
+        setDurationIllnessTo(importedData.durationIllnessTo || "");
+        setBehavioralChanges({
+          restlessness: importedData.behavioralChangesRestlessness === "true",
+          apprehensiveWatchfulLook:
+            importedData.behavioralChangesApprehensiveWatchfulLook === "true",
+          runningAimlessly:
+            importedData.behavioralChangesRunningAimlessly === "true",
+          bitingInanimateObjects:
+            importedData.behavioralChangesBitingInanimateObjects === "true",
+          hyperactivity: importedData.behavioralChangesHyperactivity === "true",
+          others: importedData.behavioralChangesOthers === "true",
+          specify: importedData.behavioralChangesSpecify || "",
+        });
+        setVictimName(importedData.victimName || "");
+        setVictimAge(importedData.victimAge || "");
+        setVictimSex(importedData.victimSex || "");
+        setVictimAddress(importedData.victimAddress || "");
+        setDateOfBite(importedData.dateOfBite || "");
+        setTimeOfBite(importedData.timeOfBite || "");
+        setSiteOfBite(importedData.siteOfBite || "");
+        setSiteOfBiteOther(importedData.siteOfBiteSpecify || "");
+        setNatureOfBite(importedData.natureOfBite || "");
+        setBiteProvoked(importedData.biteProvoked || "");
+        setBiteProvokedSpecify(importedData.biteProvokedSpecify || "");
+        setLocationOfBite(importedData.locationOfBite || "");
+        setLocationOfBiteOther(importedData.locationOfBiteSpecify || "");
+        setOtherVictims(importedData.otherVictims || "");
+        setTreatmentReceived(importedData.treatmentReceived || "");
+        setTreatmentReceivedOther(importedData.treatmentReceivedSpecify || "");
+        setDateOfTreatmentReceived(importedData.dateOfTreatmentReceived || "");
+      },
+    });
+  };
+
+  const handleExportCSV = () => {
+    const csvData = [
+      {
+        animalResidence,
+        species,
+        breed,
+        sex,
+        age,
+        ownershipType,
+        petManagement,
+        causeOfDeath,
+
+        dateOfDeath,
+        timeOfDeath,
+        vaccinationHistory,
+
+        typeOfVaccine,
+        dateOfLastVaccination,
+        bitchVaccinated,
+
+        contactWithAnimals,
+        contactLocation,
+        durationIllnessFrom,
+        durationIllnessTo,
+        behavioralChangesRestlessness: behavioralChanges.restlessness,
+        behavioralChangesApprehensiveWatchfulLook:
+          behavioralChanges.apprehensiveWatchfulLook,
+        behavioralChangesRunningAimlessly: behavioralChanges.runningAimlessly,
+        behavioralChangesBitingInanimateObjects:
+          behavioralChanges.bitingInanimateObjects,
+        behavioralChangesHyperactivity: behavioralChanges.hyperactivity,
+        behavioralChangesOthers: behavioralChanges.others,
+        behavioralChangesSpecify: behavioralChanges.specify,
+        victimName,
+        victimAge,
+        victimSex,
+        victimAddress,
+        dateOfBite,
+        timeOfBite,
+        siteOfBite,
+        siteOfBiteSpecify,
+        natureOfBite,
+        biteProvoked,
+        biteProvokedSpecify,
+        locationOfBite,
+        locationOfBiteSpecify,
+        otherVictims,
+        treatmentReceived,
+        treatmentReceivedSpecify,
+        dateOfTreatmentReceived,
+      },
+    ];
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "form-data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   var pages = [
     <>
@@ -274,6 +378,7 @@ const RabiesHistoryForm = () => {
         />
       </Grid>
     </>,
+
     <>
       <Grid item xs={12}>
         <Typography variant="h6">Animal Profile - Page 3</Typography>
@@ -713,11 +818,11 @@ const RabiesHistoryForm = () => {
           onChange={(e) => setDateOfTreatmentReceived(e.target.value)}
         />
       </Grid>
-    </>
+    </>,
   ];
 
-  const renderStepContent = (step) => {
-    switch (step) {
+  const renderStepContent = (steps) => {
+    switch (steps) {
       case 0:
         return pages[0];
       case 1:
@@ -737,12 +842,27 @@ const RabiesHistoryForm = () => {
 
   return (
     <>
+      <div>
+        <input type="file" accept=".csv" onChange={handleImportCSV} />
+      </div>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
 
-      <Button variant="contained" color="primary" type="submit">
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        onClick={handleSubmit}
+      >
         Submit
       </Button>
-      
+
+      <button
+        type="button"
+        onClick={handleExportCSV}
+        className="bg-green-500 text-white p-2 rounded mt-4"
+      >
+        Export CSV
+      </button>
     </>
   );
 };
