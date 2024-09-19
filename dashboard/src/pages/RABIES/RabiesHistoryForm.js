@@ -15,12 +15,7 @@ import {
   Grid,
   Typography,
   Button,
-  Stepper,
-  Step,
-  StepLabel,
-  Paper,
 } from "@mui/material";
-import Navbar from "../../component/Navbar";
 import "./RabiesHistoryForm.css";
 import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse";
@@ -73,7 +68,6 @@ const RabiesHistoryForm = () => {
   const [otherVictims, setOtherVictims] = useState("");
   const [treatmentReceivedOther, setTreatmentReceivedOther] = useState("");
   const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState("");
-  const [formData, setFormData] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -837,6 +831,7 @@ const RabiesHistoryForm = () => {
         return pages[5];
       case 6:
         return pages[6];
+        default:
     }
   };
 
