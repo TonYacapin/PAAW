@@ -98,17 +98,17 @@ function RoutineServicesMonitoringReport() {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    
+
     // Create a file name with a naming convention
     const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const fileName = `routine_services_monitoring_report_${municipality}_${date}.csv`;
-    
+
     link.href = url;
     link.setAttribute('download', fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-};
+  };
 
 
   // CSV Import function
@@ -304,12 +304,13 @@ function RoutineServicesMonitoringReport() {
           <label htmlFor="reportingPeriod" className="block mb-1">Reporting Period</label>
           <input
             id="reportingPeriod"
-            type="text"
+            type="date"
             value={reportingPeriod}
             onChange={(e) => setReportingPeriod(e.target.value)}
             className="border p-2 rounded w-full"
           />
         </div>
+
         <div>
           <label htmlFor="livestockTechnician" className="block mb-1">Livestock Technician</label>
           <input
@@ -509,13 +510,21 @@ function RoutineServicesMonitoringReport() {
             <h4 className="text-lg font-semibold mb-2">Activity and Remark</h4>
             <div>
               <label htmlFor="activity" className="block mb-1">Activity</label>
-              <textarea
+              <select
                 id="activity"
                 value={entries[selectedEntry].activity}
                 onChange={(e) => handleEntryChange(selectedEntry, 'activity', e.target.value)}
                 className="border p-2 rounded w-full mb-4"
-              />
+              >
+                <option value="Deworming">Deworming</option>
+                <option value="Wound Treatment">Wound Treatment</option>
+                <option value="Vitamin Supplementation">Vitamin Supplementation</option>
+                <option value="Iron Supplementation">Iron Supplementation</option>
+                <option value="Consultation">Consultation</option>
+                <option value="Support">Support</option>
+              </select>
             </div>
+
             <div>
               <label htmlFor="remark" className="block mb-1">Remark</label>
               <textarea
@@ -543,9 +552,9 @@ function RoutineServicesMonitoringReport() {
               </button>
             </div>
 
-           
+
           </div>
-         
+
         </div>
       )}
 
@@ -558,16 +567,16 @@ function RoutineServicesMonitoringReport() {
           message="Are you sure you want to remove this entry?"
         />
       )}
-  {/* Export as CSV Button */}
-  <div className="flex justify-end mb-4">
-              <button
-                type="button"
-                onClick={exportAsCSV}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Export as CSV
-              </button>
-            </div>
+      {/* Export as CSV Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          type="button"
+          onClick={exportAsCSV}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Export as CSV
+        </button>
+      </div>
     </div>
   );
 }
