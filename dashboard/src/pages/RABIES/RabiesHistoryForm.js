@@ -742,45 +742,7 @@ const RabiesHistoryForm = () => {
       <Button variant="contained" color="primary" type="submit">
         Submit
       </Button>
-
-      {/* <Paper style={{ padding: "20px", margin: "20px" }}>
-        <Stepper activeStep={activeStep}>
-          {pages.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            {renderStepContent(activeStep)}
-          </Grid>
-          <div
-            style={{
-              marginTop: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
-            {activeStep === pages.length - 1 ? (
-              <Button variant="contained" color="primary" type="submit">
-              Submit
-              </Button>
-            ) : (
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
-            )}
-          </div>
-        </form>
-      </Paper> */}
+      
     </>
   );
 };
