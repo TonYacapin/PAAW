@@ -132,24 +132,88 @@ function AccomplishmentReport() {
   const handleVaccineChange = (e) => {
     const selectedVaccineType = e.target.value;
     setSelectedVaccine(selectedVaccineType);
-
+  
+    // Directly filter species based on the selected vaccine type
     const filteredSpeciesCount = selectedVaccineType === 'All'
       ? speciesCount
       : speciesCount.filter((data) => data.vaccineType === selectedVaccineType);
-
+  
+    // Update totals for the filtered species count
     updateTotals(filteredSpeciesCount);
   };
-
+  
   const filteredSpeciesCount = selectedVaccine === 'All'
     ? speciesCount
     : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
-
-  const groupedByVaccine = vaccineTypes.map(vaccineType => {
-    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
-    return { vaccineType, speciesUnderVaccine };
-  });
+  
+  const groupedByVaccine = selectedVaccine === 'All'
+    ? vaccineTypes.map(vaccineType => {
+        const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
+        return { vaccineType, speciesUnderVaccine };
+      })
+    : [
+        {
+          vaccineType: selectedVaccine,
+          speciesUnderVaccine: filteredSpeciesCount,
+        }
+      ];
+  
 
   return (
+    <>
+    <div className="p-6 bg-[#FFFAFA] min-h-0">
+      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
+          <input
+            type="number"
+            value={target}
+            onChange={handleTargetChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            placeholder="Enter target value"
+          />
+          {percentage !== null && (
+            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+              Percentage: {percentage}%
+            </p>
+          )}
+        </div>
+
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target Value</h2>
+          <input
+            type="number"
+            value={semiAnnualTarget}
+            onChange={handleSemiAnnualTargetChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            placeholder="Enter semi-annual target value"
+          />
+          {semiAnnualPercentage !== null && (
+            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+              Semi-annual Percentage: {semiAnnualPercentage}%
+            </p>
+          )}
+        </div>
+
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
+          <select
+            value={selectedVaccine}
+            onChange={handleVaccineChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            <option value="All">All</option>
+            {vaccineTypes.map((vaccine) => (
+              <option key={vaccine} value={vaccine}>
+                {vaccine}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
 
@@ -193,7 +257,9 @@ function AccomplishmentReport() {
           </tbody>
         </table>
       </div>
+      </div>
     </div>
+    </>
   );
 }
 
