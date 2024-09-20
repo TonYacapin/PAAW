@@ -19,18 +19,25 @@ import RabiesReportChart from "./component/RabiesReportChart ";
 
 import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
 
-
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
           <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
-          <Route path="/RSMAccomplishmentReport" element={<RSMAccomplishmentReport />} />
-          <Route path="/RabiesVaccinationAccomplishmentReport" element={<RabiesVaccinationAccomplishmentReport/>} />
+          <Route
+            path="/RSMAccomplishmentReport"
+            element={<RSMAccomplishmentReport />}
+          />
+          <Route
+            path="/RabiesVaccinationAccomplishmentReport"
+            element={<RabiesVaccinationAccomplishmentReport />}
+          />
 
-
-          <Route path="/AccomplishementReport" element={<AccomplishmentReport />} />
+          <Route
+            path="/AccomplishementReport"
+            element={<AccomplishmentReport />}
+          />
           <Route path="/requisionslip" element={<RequisitionIssueSlip />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/Home" element={<Home />} />

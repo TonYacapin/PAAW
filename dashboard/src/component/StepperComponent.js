@@ -21,6 +21,7 @@ import {
   styled,
   useMediaQuery,
 } from "@mui/material";
+
 export var StepperActiveStep = 0;
 
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
@@ -136,71 +137,62 @@ export default function StepperComponent(props) {
   };
 
   return (
-    <Box sx={{width: "100%", flexDirection: "row", gap: "10rem" }}>
+    <Box sx={{ width: "100%", flexDirection: "row", gap: "10rem" }}>
       {useMediaQuery("(min-width:600px)") ? (
         <>
-          <Stepper activeStep={activeStep} connector={<QontoConnector />} sx={{marginBottom: "2rem"}}>
-            {props.pages.map((page, index) => {
-              const stepProps = {};
-              const labelProps = {};
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
-              return (
-                <Step key={index} {...stepProps}>
-                  <StepLabel StepIconComponent={QontoStepIcon}></StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
           {props.renderStepContent(activeStep)}
-          {/* {activeStep === props.pages.length ? (
-            <React.Fragment>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset}>Reset</Button>
-              </Box>
-            </React.Fragment>
-          ) : ( */}
-            <React.Fragment>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2, marginBottom:"2rem" }}>
-                <Button
-                  variant="contained"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1, bgcolor:"#1b5b40", color: "#fffafa" }}
-                >
-                  Back
-                </Button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button variant="contained" onClick={handleNext} disabled={activeStep === props.pages.length-1} sx={{bgcolor:"#1b5b40", color: "#fffafa"}}>
-                  Next
-                  {/* {activeStep === props.pages.length - 1 ? "Finish" : "Next"} */}
-                </Button>
-              </Box>
-            </React.Fragment>
-          {/* )} */}
+          <React.Fragment>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                pt: 2,
+                marginBottom: "2rem",
+                marginTop: "2rem",
+              }}
+            >
+              <Button
+                variant="contained"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1, bgcolor: "#1b5b40", color: "#fffafa" }}
+              >
+                <KeyboardArrowLeft /> Back
+              </Button>
+              <Stepper
+                activeStep={activeStep}
+                connector={<QontoConnector />}
+                sx={{  flex: "1 1 auto", width:"20%", paddingLeft:"10rem", paddingRight:"10rem", justifyItems:"center" }}
+              >
+                {props.pages.map((page, index) => {
+                  const stepProps = {};
+                  const labelProps = {};
+                  if (isStepSkipped(index)) {
+                    stepProps.completed = false;
+                  }
+                  return (
+                    <Step key={index} {...stepProps}>
+                      <StepLabel StepIconComponent={QontoStepIcon}></StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+              {/* <Box sx={{ }} /> */}
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={activeStep === props.pages.length - 1}
+                sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
+              >
+                Next <KeyboardArrowRight />
+                {/* {activeStep === props.pages.length - 1 ? "Finish" : "Next"} */}
+              </Button>
+            </Box>
+          </React.Fragment>
         </>
       ) : (
         <>
-            {" "}
-            {/* <Paper
-              square
-              elevation={0}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                height: 50,
-                pl: 2,
-                bgcolor: "background.default",
-              }}
-            ></Paper> */}
-          <Box>
-            {props.renderStepContent(activeStep)}
-          </Box>
+          <Box>{props.renderStepContent(activeStep)}</Box>
           <MobileStepper
             variant="text"
             steps={props.pages.length}

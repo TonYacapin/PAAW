@@ -489,7 +489,7 @@ function Home() {
             </div>
 
             {/* Right Side - Forms */}
-            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0">
+            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0 h-screen">
               {renderForms()}
             </div>
           </div>

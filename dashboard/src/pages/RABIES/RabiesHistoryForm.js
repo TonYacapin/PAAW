@@ -17,7 +17,9 @@ import {
   Button,
 } from "@mui/material";
 import "./RabiesHistoryForm.css";
-import StepperComponent from "../../component/StepperComponent";
+import StepperComponent, {
+  StepperActiveStep,
+} from "../../component/StepperComponent";
 import Papa from "papaparse";
 
 const RabiesHistoryForm = () => {
@@ -110,7 +112,6 @@ const RabiesHistoryForm = () => {
       treatmentReceivedOther,
       dateOfTreatmentReceived,
     };
-
 
     try {
       console.log(formData);
@@ -250,73 +251,98 @@ const RabiesHistoryForm = () => {
 
   var pages = [
     <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Animal Profile - Page 1</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Residence of the Animal for the Last 15 Days"
-          variant="outlined"
-          value={animalResidence}
-          onChange={(e) => setAnimalResidence(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Species"
-          variant="outlined"
-          value={species}
-          onChange={(e) => setSpecies(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Breed"
-          variant="outlined"
-          value={breed}
-          onChange={(e) => setBreed(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Sex</FormLabel>
-          <RadioGroup row value={sex} onChange={(e) => setSex(e.target.value)}>
-            <FormControlLabel value="male" control={<Radio />} label="Male" />
-            <FormControlLabel
-              value="female"
-              control={<Radio />}
-              label="Female"
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">
+              Residence of the Animal for the Last 15 Days
+            </label>
+            <input
+              type="text"
+              name="animalresidence"
+              value={animalResidence}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setAnimalResidence(e.target.value)}
             />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Age (in months)"
-          variant="outlined"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Type of Ownership</InputLabel>
-          <Select
-            value={ownershipType}
-            onChange={(e) => setOwnershipType(e.target.value)}
-            label="Type of Ownership"
-          >
-            <MenuItem value="household_pet">Household Pet</MenuItem>
-            <MenuItem value="pet_of_neighbor">Pet of Neighbor</MenuItem>
-            <MenuItem value="stray_animal">Stray Animal</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
+          </div>
+          <div>
+            {" "}
+            <label className="block mb-2 font-medium">Species</label>
+            <input
+              type="text"
+              name="species"
+              value={species}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setSpecies(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Breed</label>
+            <input
+              type="text"
+              name="breed"
+              value={breed}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setBreed(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Status:</label>
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="sex"
+                  value="male"
+                  checked={sex === "male"}
+                  onChange={(e) => setSex(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Male
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="sex"
+                  value="female"
+                  checked={sex === "female"}
+                  onChange={(e) => setSex(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Female
+              </label>
+            </div>
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">
+              {"Age (in months)"}
+            </label>
+            <input
+              type="text"
+              name="age"
+              value={age}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Farm Type:</label>
+            <select
+              name="farmType"
+              value={ownershipType}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setOwnershipType(e.target.value)}
+            >
+              <option value="" disabled>
+                Type of Ownership
+              </option>
+              <option value="household_pet">Household Pet</option>
+              <option value="pet_of_neighbor">Pet of Neighbor</option>
+              <option value="stray_animal">Stray Animal</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </>,
     <>
       <Grid item xs={12}>
@@ -833,18 +859,46 @@ const RabiesHistoryForm = () => {
         return pages[5];
       case 6:
         return pages[6];
-        default:
+      default:
     }
   };
 
   return (
     <>
-      <div>
-        <input type="file" accept=".csv" onChange={handleImportCSV} />
-      </div>
+      <h1 className="text-2xl font-bold mb-6">Rabies History</h1>
+      <div></div>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
+      <div className="flex flex-row">
+        <label htmlFor="fileinput">
+          <div className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen">
+            Load Form Progress
+          </div>
+          <input
+            id="fileinput"
+            type="file"
+            accept=".csv"
+            onChange={handleImportCSV}
+            style={{ display: "none" }}
+          />
+        </label>
+        <div className="grow" />
+        <div className="flex space-x-4">
+          <button
+            onClick={handleSubmit}
+            className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
+          >
+            Save Form
+          </button>
+          <button
+            onClick={handleExportCSV}
+            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
 
-      <Button
+      {/* <Button
         variant="contained"
         color="primary"
         type="submit"
@@ -859,7 +913,7 @@ const RabiesHistoryForm = () => {
         className="bg-green-500 text-white p-2 rounded mt-4"
       >
         Export CSV
-      </button>
+      </button> */}
     </>
   );
 };
