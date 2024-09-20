@@ -10,7 +10,7 @@ function AccomplishmentReport() {
     combined: 0,
     total: 0,
   });
-  const [target, setTarget] = useState('');
+  const [targets, setTargets] = useState({});
   const [percentage, setPercentage] = useState(null);
   const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); // New state for semi-annual target
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); // New state for semi-annual percentage
