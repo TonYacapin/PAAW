@@ -7,6 +7,9 @@ const diseaseinvestigationRoutes = require('./routes/diseaseInvestigationRoutes'
 const vaccinationReportRoutes = require('./routes/vaccinationReportRoutes');
 const RoutineServicesMonitoringReport = require('./routes/routineServicesMonitoringReportRoutes');
 const RabiesHistoryRoutes = require('./routes/RabiesHistoryRoutes');
+const TargetRoutes = require('./routes/Admin/targetRoutes');
+
+
 
 const user = require('./routes/userRoutes')
 const auth = require('./routes/loginRoute')
@@ -26,13 +29,13 @@ app.use(bodyParser.json());
 app.use(cors()); 
 
 // Use routes
-
+app.use('/api/targets', TargetRoutes);
 app.use('/', diseaseinvestigationRoutes);
 app.use('/', rabiesVaccinationReportRoutes);
 app.use('/', vaccinationReportRoutes);
 app.use('/', RoutineServicesMonitoringReport);
 app.use('/', RabiesHistoryRoutes);
-app.use('/', user);
+app.use('/api', user);
 app.use('/', auth);
 
 

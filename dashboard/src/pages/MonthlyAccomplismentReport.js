@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import AccomplishmentReport from "./AccomplishmentReport";
 import RSMAccomplishmentReport from "./RSMAccomplishmentReport";
 import RabiesVaccinationAccomplishmentReport from "./RabiesVaccinationAccomplishmentReport";
 import StepperComponent from "../component/StepperComponent";
 
+import Modal from "../component/Modal";
+import TargetList from "./Admin Pages/TargetList";
+
 function MonthlyAccomplishmentReport() {
-  // Define pages (steps) for each report component
+  const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
+
   const pages = [
     {
       label: "Accomplishment Report",
@@ -21,9 +25,7 @@ function MonthlyAccomplishmentReport() {
     },
   ];
 
-  // Function to render the step content based on the active step
   const renderStepContent = (step) => {
-    // Ensure we don't go beyond the last step
     if (step >= pages.length) {
       return pages[pages.length - 1].content;
     }
@@ -32,11 +34,25 @@ function MonthlyAccomplishmentReport() {
 
   return (
     <div className="p-6 space-y-8 bg-gray-50 min-h-0">
+       {/* Button to open the modal */}
+       <button 
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => setModalOpen(true)}
+        >
+          Open Target Form
+        </button>
       <div className="p-6 bg-white shadow-md rounded-lg">
         <h2 className="text-xl font-semibold text-gray-700 mb-0">Monthly Accomplishment Report</h2>
         {/* Render the StepperComponent */}
         <StepperComponent pages={pages} renderStepContent={renderStepContent} />
+
+       
       </div>
+
+      {/* Modal for TargetForm */}
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+        <TargetList />
+      </Modal>
     </div>
   );
 }
