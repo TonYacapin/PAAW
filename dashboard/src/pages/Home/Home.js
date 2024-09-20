@@ -13,6 +13,7 @@ import VaccinationReport from "../Animal Disease Prevention Control and Eradicat
 import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
+import AccomplishmentReport from "../AccomplishmentReport";
 
 //Charts
 
@@ -57,6 +58,8 @@ function Home() {
         return <RequisitionIssueSlip />;
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
+      case "AccomplishmentReport":
+        return <AccomplishmentReport />;
 
       default:
         return null;
@@ -102,8 +105,8 @@ function Home() {
     { value: "rabiesHistory", label: "Rabies History Charts" },
 
 
-    
-    
+
+
   ];
 
   const getChartOptions = () => {
@@ -144,8 +147,8 @@ function Home() {
           {selectedCharts.includes("vaccination") && <VaccinationReportChart />}
           {selectedCharts.includes("routine") && <RoutineServicesMonitoringReportChart />}
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
-          
-          
+
+
         </div>
       );
     }
@@ -233,7 +236,7 @@ function Home() {
             </div>
           </>
         );
-        
+
       case "animalhealth":
         return (
           <>
@@ -241,14 +244,14 @@ function Home() {
               Browse Forms from Animal Health
             </h3>
             <div className="space-y-6">
-            <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  Requisition Forms
-                </h4>
-                <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <Outbox className="mr-2" /> Requisition Form
-                  </button>
-                  </div>
+              <h4 className="text-lg font-medium text-gray-700 mb-2">
+                Requisition Forms
+              </h4>
+              <div className="space-y-2">
+                <button className={buttonClasses}>
+                  <Outbox className="mr-2" /> Requisition Form
+                </button>
+              </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   Vaccination Forms
@@ -278,7 +281,9 @@ function Home() {
                   Reports
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
+                  <button 
+                   onClick={() => openModalWithContent("AccomplishmentReport")}
+                  className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment
                     Report
                   </button>

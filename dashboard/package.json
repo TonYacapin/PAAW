@@ -16,6 +16,8 @@
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.4",
     "chartjs-chart-matrix": "^2.0.1",
+    "classnames": "^2.5.1",
+    "date-fns": "^4.0.0",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
     "json2csv": "^6.0.0-alpha.2",
@@ -30,6 +32,7 @@
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
+    "react-table": "^7.8.0",
     "styled-components": "^6.1.12",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"

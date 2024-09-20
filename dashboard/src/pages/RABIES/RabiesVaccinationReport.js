@@ -4,7 +4,7 @@ import ConfirmationModal from '../../component/ConfirmationModal'; // Import the
 import Papa from 'papaparse'; // Import PapaParse for CSV handling
 
 function RabiesVaccinationReport() {
-  const [errors, setErrors] = useState({});
+ 
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -17,35 +17,7 @@ function RabiesVaccinationReport() {
   const [batchLotNo, setBatchLotNo] = useState('');
   const [vaccineSource, setVaccineSource] = useState('');
 
-  const validateForm = () => {
-    let newErrors = {};
-
-    // Validate main fields
-    if (!municipality) newErrors.municipality = "Municipality is required";
-    if (!dateReported) newErrors.dateReported = "Date reported is required";
-    if (!vaccineUsed) newErrors.vaccineUsed = "Vaccine used is required";
-    if (!batchLotNo) newErrors.batchLotNo = "Batch/Lot No. is required";
-    if (!vaccineSource) newErrors.vaccineSource = "Vaccine source is required";
-
-    // Validate entries
-    let entryErrors = entries.map(entry => {
-      let entryError = {};
-      if (!entry.date) entryError.date = "Date is required";
-      if (!entry.barangay) entryError.barangay = "Barangay is required";
-      if (!entry.clientInfo.firstName) entryError.clientFirstName = "First name is required";
-      if (!entry.clientInfo.lastName) entryError.clientLastName = "Last name is required";
-      if (!entry.animalInfo.name) entryError.animalName = "Animal name is required";
-      if (!entry.animalInfo.species) entryError.animalSpecies = "Species is required";
-      return entryError;
-    });
-
-    if (entryErrors.some(error => Object.keys(error).length > 0)) {
-      newErrors.entries = entryErrors;
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+ 
 
   const addEntry = () => {
     setEntries([
@@ -217,15 +189,20 @@ function RabiesVaccinationReport() {
     const csv = Papa.unparse(data);
     console.log("Generated CSV:", csv);
 
+    // Create a file name with a naming convention
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const fileName = `rabies_vaccination_report_${municipality}_${date}.csv`;
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'rabies_vaccination_report.csv');
+    link.setAttribute('download', fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
   // Function to import CSV
   const importCSV = (event) => {
     const file = event.target.files[0];

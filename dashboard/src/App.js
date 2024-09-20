@@ -11,6 +11,7 @@ import VeterinaryQuarantineInspectionReport from "./pages/Regulatory and Monitor
 import VaccinationReport from "./pages/Animal Disease Prevention Control and Eradication/VaccinationReport";
 import RabiesHistoryForm from "./pages/RABIES/RabiesHistoryForm";
 import ChartComponent from "./component/ChartComponent";
+import AccomplishmentReport from "./pages/AccomplishmentReport";
 
 import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
 

@@ -46,6 +46,44 @@ const RabiesHistoryForm = () => {
   const [dateOfLastVaccination, setDateOfLastVaccination] = useState("");
   const [durationIllnessFrom, setDurationIllnessFrom] = useState("");
   const [durationIllnessTo, setDurationIllnessTo] = useState("");
+
+  const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState('');
+
+  const [locationOfBiteSpecify, setLocationOfBiteSpecify] = useState('');
+
+
+  const [treatmentReceivedSpecify, setTreatmentReceivedSpecify] = useState('');
+  const [ownershipType, setOwnershipType] = useState('');
+  const [petManagement, setPetManagement] = useState('');
+  const [causeOfDeath, setCauseOfDeath] = useState('');
+  const [causeOfDeathSpecify, setCauseOfDeathSpecify] = useState('')
+  const [vaccinationHistory, setVaccinationHistory] = useState('');
+  const [bitchVaccinated, setBitchVaccinated] = useState('');
+  const [contactWithAnimals, setContactWithAnimals] = useState('');
+
+  const [vaccinationHistorySpecify, setVaccinationHistorySpecify] = useState('');
+  const [bitchVaccinatedSpecify, setBitchVaccinatedSpecify] = useState('');
+
+  const [contactLocationSpecify, setContactLocationSpecify] = useState('');
+  const [contactLocation, setContactLocation] = useState('');
+
+  const [siteOfBite, setSiteOfBite] = useState('');
+  const [biteProvoked, setBiteProvoked] = useState('');
+  const [locationOfBite, setLocationOfBite] = useState('');
+  const [treatmentReceived, setTreatmentReceived] = useState('');
+
+  // Additional states for new fields
+  const [animalResidence, setAnimalResidence] = useState('');
+  const [species, setSpecies] = useState('');
+  const [breed, setBreed] = useState('');
+  const [sex, setSex] = useState('');
+  const [age, setAge] = useState('');
+  const [dateOfDeath, setDateOfDeath] = useState('');
+  const [timeOfDeath, setTimeOfDeath] = useState('');
+  const [typeOfVaccine, setTypeOfVaccine] = useState('');
+  const [dateOfLastVaccination, setDateOfLastVaccination] = useState('');
+  const [durationIllnessFrom, setDurationIllnessFrom] = useState('');
+  const [durationIllnessTo, setDurationIllnessTo] = useState('');
   const [behavioralChanges, setBehavioralChanges] = useState({
     restlessness: false,
     apprehensiveWatchfulLook: false,
@@ -109,6 +147,7 @@ const RabiesHistoryForm = () => {
       treatmentReceivedOther,
       dateOfTreatmentReceived,
     };
+
 
     try {
       console.log(formData);

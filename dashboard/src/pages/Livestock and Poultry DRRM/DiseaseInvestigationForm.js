@@ -252,10 +252,16 @@ const DiseaseInvestigationForm = () => {
     const url = URL.createObjectURL(csvBlob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "disease_investigation_form.csv";
+    
+    // Create a file name with a naming convention
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const fileName = `disease_investigation_form_${formData.municipality}_${formData.dateReported}.csv`;
+
+    a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
-  };
+};
+
 
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];

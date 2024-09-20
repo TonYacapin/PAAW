@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
 import ConfirmationModal from '../../component/ConfirmationModal'; // Import the ConfirmationModal component
 import { Add, Save } from '@mui/icons-material';
+import Papa from 'papaparse';
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -41,6 +42,133 @@ function RoutineServicesMonitoringReport() {
     ]);
     setSelectedEntry(entries.length);
   };
+
+  // CSV Export function
+  const exportAsCSV = () => {
+    const data = [];
+
+    // Add header row
+    data.push({
+      Province: province,
+      Municipality: municipality,
+      ReportingPeriod: reportingPeriod,
+      LivestockTechnician: livestockTechnician,
+      No: '', // Leave blank for entries below
+      Date: '',
+      Barangay: '',
+      FirstName: '',
+      LastName: '',
+      Gender: '',
+      Birthday: '',
+      ContactNo: '',
+      Species: '',
+      Sex: '',
+      Age: '',
+      AnimalRegistered: '',
+      NoOfHeads: '',
+      Activity: '',
+      Remark: ''
+    });
+
+    // Add each entry row
+    entries.forEach((entry, index) => {
+      data.push({
+        Province: '',
+        Municipality: '',
+        ReportingPeriod: '',
+        LivestockTechnician: '',
+        No: index + 1,
+        Date: entry.date,
+        Barangay: entry.barangay,
+        FirstName: entry.clientInfo.firstName,
+        LastName: entry.clientInfo.lastName,
+        Gender: entry.clientInfo.gender,
+        Birthday: entry.clientInfo.birthday,
+        ContactNo: entry.clientInfo.contactNo,
+        Species: entry.animalInfo.species,
+        Sex: entry.animalInfo.sex,
+        Age: entry.animalInfo.age,
+        AnimalRegistered: entry.animalInfo.animalRegistered,
+        NoOfHeads: entry.animalInfo.noOfHeads,
+        Activity: entry.activity,
+        Remark: entry.remark
+      });
+    });
+
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    // Create a file name with a naming convention
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const fileName = `routine_services_monitoring_report_${municipality}_${date}.csv`;
+
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+  // CSV Import function
+  const importCSV = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      alert('No file selected.');
+      return;
+    }
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const importedData = results.data;
+
+        if (importedData.length === 0) {
+          alert('No data found in the CSV file.');
+          return;
+        }
+
+        // Get the first row for the main fields
+        const mainFields = importedData[0];
+        setProvince(mainFields.Province || 'Nueva Vizcaya');
+        setMunicipality(mainFields.Municipality || '');
+        setReportingPeriod(mainFields.ReportingPeriod || '');
+        setLivestockTechnician(mainFields.LivestockTechnician || '');
+
+        // Get the remaining rows for the entries
+        const importedEntries = importedData.slice(1).map((row) => ({
+          date: row.Date || '',
+          barangay: row.Barangay || '',
+          clientInfo: {
+            firstName: row.FirstName || '',
+            lastName: row.LastName || '',
+            gender: row.Gender || '',
+            birthday: row.Birthday || '',
+            contactNo: row.ContactNo || ''
+          },
+          animalInfo: {
+            species: row.Species || '',
+            sex: row.Sex || '',
+            age: row.Age || '',
+            animalRegistered: row.AnimalRegistered || '',
+            noOfHeads: row.NoOfHeads || ''
+          },
+          activity: row.Activity || '',
+          remark: row.Remark || ''
+        }));
+
+        setEntries(importedEntries);
+      },
+      error: (error) => {
+        console.error('Error parsing CSV:', error);
+        alert('Failed to import CSV file.');
+      }
+    });
+  };
+
 
   const openConfirmationModal = (index) => {
     setEntryToRemove(index);
@@ -123,6 +251,15 @@ function RoutineServicesMonitoringReport() {
 
   return (
     <div className="container mx-auto p-4">
+
+      <div className="flex justify-end mb-4">
+        <input
+          type="file"
+          accept=".csv"
+          onChange={importCSV}
+          className="px-4 py-2 bg-yellow-500 text-white rounded"
+        />
+      </div>
       <h2 className="text-2xl font-bold mb-4">Routine Services Monitoring Report</h2>
 
       {/* Main fields */}
@@ -168,12 +305,13 @@ function RoutineServicesMonitoringReport() {
           <label htmlFor="reportingPeriod" className="block mb-1">Reporting Period</label>
           <input
             id="reportingPeriod"
-            type="text"
+            type="date"
             value={reportingPeriod}
             onChange={(e) => setReportingPeriod(e.target.value)}
             className="border p-2 rounded w-full"
           />
         </div>
+
         <div>
           <label htmlFor="livestockTechnician" className="block mb-1">Livestock Technician</label>
           <input
@@ -374,13 +512,21 @@ function RoutineServicesMonitoringReport() {
             <h4 className="text-lg font-semibold mb-2">Activity and Remark</h4>
             <div>
               <label htmlFor="activity" className="block mb-1">Activity</label>
-              <textarea
+              <select
                 id="activity"
                 value={entries[selectedEntry].activity}
                 onChange={(e) => handleEntryChange(selectedEntry, 'activity', e.target.value)}
                 className="border p-2 rounded w-full mb-4"
-              />
+              >
+                <option value="Deworming">Deworming</option>
+                <option value="Wound Treatment">Wound Treatment</option>
+                <option value="Vitamin Supplementation">Vitamin Supplementation</option>
+                <option value="Iron Supplementation">Iron Supplementation</option>
+                <option value="Consultation">Consultation</option>
+                <option value="Support">Support</option>
+              </select>
             </div>
+
             <div>
               <label htmlFor="remark" className="block mb-1">Remark</label>
               <textarea
@@ -407,7 +553,10 @@ function RoutineServicesMonitoringReport() {
                 Save
               </button>
             </div>
+
+
           </div>
+
         </div>
       )}
 
@@ -420,7 +569,16 @@ function RoutineServicesMonitoringReport() {
           message="Are you sure you want to remove this entry?"
         />
       )}
-
+      {/* Export as CSV Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          type="button"
+          onClick={exportAsCSV}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Export as CSV
+        </button>
+      </div>
     </div>
   );
 }
