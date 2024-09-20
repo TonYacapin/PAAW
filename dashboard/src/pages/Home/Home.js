@@ -304,10 +304,10 @@ function Home() {
                   >
                     <ReportIcon className="mr-2" /> Disease Investigation Form
                   </button>
-                  <button className={buttonClasses}>
+                  {/* <button className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Disease Surveillance and
                     Incident Report
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => openModalWithContent("RabiesHistoryForm")}
                     className={buttonClasses}
@@ -486,7 +486,7 @@ function Home() {
             </div>
 
             {/* Right Side - Forms */}
-            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0">
+            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0 h-screen">
               {renderForms()}
             </div>
           </div>
