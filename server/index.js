@@ -4,6 +4,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const rabiesVaccinationReportRoutes = require('./routes/rabiesVaccinationReport.routes');
 const diseaseinvestigationRoutes = require('./routes/diseaseInvestigationRoutes');
+const vaccinationReportRoutes = require('./routes/vaccinationReportRoutes');
+const RoutineServicesMonitoringReport = require('./routes/routineServicesMonitoringReportRoutes');
+const RabiesHistoryRoutes = require('./routes/RabiesHistoryRoutes');
+
 const user = require('./routes/userRoutes')
 const auth = require('./routes/loginRoute')
 const app = express();
@@ -22,8 +26,12 @@ app.use(bodyParser.json());
 app.use(cors()); 
 
 // Use routes
+
 app.use('/', diseaseinvestigationRoutes);
 app.use('/', rabiesVaccinationReportRoutes);
+app.use('/', vaccinationReportRoutes);
+app.use('/', RoutineServicesMonitoringReport);
+app.use('/', RabiesHistoryRoutes);
 app.use('/', user);
 app.use('/', auth);
 

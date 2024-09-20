@@ -20,7 +20,7 @@ const DiseaseInvestigationChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/disease-investigation');
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/disease-investigation`);
         const reports = response.data;
 
         // Line Chart: Investigations over Time

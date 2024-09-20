@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for HTTP requests
 import ConfirmationModal from '../../component/ConfirmationModal'; // Import the ConfirmationModal component
+import Papa from 'papaparse';
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -9,7 +10,7 @@ function RoutineServicesMonitoringReport() {
   const [entryToRemove, setEntryToRemove] = useState(null);
 
   // Main fields state
-  const [province, setProvince] = useState('');
+  const [province, setProvince] = useState('Nueva Vizcaya');
   const [municipality, setMunicipality] = useState('');
   const [reportingPeriod, setReportingPeriod] = useState('');
   const [livestockTechnician, setLivestockTechnician] = useState('');
@@ -40,6 +41,133 @@ function RoutineServicesMonitoringReport() {
     ]);
     setSelectedEntry(entries.length);
   };
+
+  // CSV Export function
+  const exportAsCSV = () => {
+    const data = [];
+
+    // Add header row
+    data.push({
+      Province: province,
+      Municipality: municipality,
+      ReportingPeriod: reportingPeriod,
+      LivestockTechnician: livestockTechnician,
+      No: '', // Leave blank for entries below
+      Date: '',
+      Barangay: '',
+      FirstName: '',
+      LastName: '',
+      Gender: '',
+      Birthday: '',
+      ContactNo: '',
+      Species: '',
+      Sex: '',
+      Age: '',
+      AnimalRegistered: '',
+      NoOfHeads: '',
+      Activity: '',
+      Remark: ''
+    });
+
+    // Add each entry row
+    entries.forEach((entry, index) => {
+      data.push({
+        Province: '',
+        Municipality: '',
+        ReportingPeriod: '',
+        LivestockTechnician: '',
+        No: index + 1,
+        Date: entry.date,
+        Barangay: entry.barangay,
+        FirstName: entry.clientInfo.firstName,
+        LastName: entry.clientInfo.lastName,
+        Gender: entry.clientInfo.gender,
+        Birthday: entry.clientInfo.birthday,
+        ContactNo: entry.clientInfo.contactNo,
+        Species: entry.animalInfo.species,
+        Sex: entry.animalInfo.sex,
+        Age: entry.animalInfo.age,
+        AnimalRegistered: entry.animalInfo.animalRegistered,
+        NoOfHeads: entry.animalInfo.noOfHeads,
+        Activity: entry.activity,
+        Remark: entry.remark
+      });
+    });
+
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    // Create a file name with a naming convention
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const fileName = `routine_services_monitoring_report_${municipality}_${date}.csv`;
+
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+  // CSV Import function
+  const importCSV = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      alert('No file selected.');
+      return;
+    }
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const importedData = results.data;
+
+        if (importedData.length === 0) {
+          alert('No data found in the CSV file.');
+          return;
+        }
+
+        // Get the first row for the main fields
+        const mainFields = importedData[0];
+        setProvince(mainFields.Province || 'Nueva Vizcaya');
+        setMunicipality(mainFields.Municipality || '');
+        setReportingPeriod(mainFields.ReportingPeriod || '');
+        setLivestockTechnician(mainFields.LivestockTechnician || '');
+
+        // Get the remaining rows for the entries
+        const importedEntries = importedData.slice(1).map((row) => ({
+          date: row.Date || '',
+          barangay: row.Barangay || '',
+          clientInfo: {
+            firstName: row.FirstName || '',
+            lastName: row.LastName || '',
+            gender: row.Gender || '',
+            birthday: row.Birthday || '',
+            contactNo: row.ContactNo || ''
+          },
+          animalInfo: {
+            species: row.Species || '',
+            sex: row.Sex || '',
+            age: row.Age || '',
+            animalRegistered: row.AnimalRegistered || '',
+            noOfHeads: row.NoOfHeads || ''
+          },
+          activity: row.Activity || '',
+          remark: row.Remark || ''
+        }));
+
+        setEntries(importedEntries);
+      },
+      error: (error) => {
+        console.error('Error parsing CSV:', error);
+        alert('Failed to import CSV file.');
+      }
+    });
+  };
+
 
   const openConfirmationModal = (index) => {
     setEntryToRemove(index);
@@ -99,7 +227,7 @@ function RoutineServicesMonitoringReport() {
   const saveEntries = async () => {
     try {
       // Replace with your backend API URL
-      const response = await axios.post('http://localhost:5000/api/entries', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/RSM`, {
         province,
         municipality,
         reportingPeriod,
@@ -122,38 +250,77 @@ function RoutineServicesMonitoringReport() {
 
   return (
     <div className="container mx-auto p-4">
+
+      <div className="flex justify-end mb-4">
+        <input
+          type="file"
+          accept=".csv"
+          onChange={importCSV}
+          className="px-4 py-2 bg-yellow-500 text-white rounded"
+        />
+      </div>
       <h2 className="text-2xl font-bold mb-4">Routine Services Monitoring Report</h2>
 
       {/* Main fields */}
       <div className="grid grid-cols-1 gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Province"
-          value={province}
-          onChange={(e) => setProvince(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Municipality"
-          value={municipality}
-          onChange={(e) => setMunicipality(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Reporting Period"
-          value={reportingPeriod}
-          onChange={(e) => setReportingPeriod(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Livestock Technician"
-          value={livestockTechnician}
-          onChange={(e) => setLivestockTechnician(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
+        <div>
+          <label htmlFor="province" className="block mb-1">Province</label>
+          <input
+            id="province"
+            type="text"
+            value={province}
+            onChange={(e) => setProvince(e.target.value)}
+            className="border p-2 rounded w-full"
+            disabled
+          />
+        </div>
+        <div>
+          <label htmlFor="municipality" className="block mb-1">Municipality</label>
+          <select
+            id="municipality"
+            value={municipality}
+            onChange={(e) => setMunicipality(e.target.value)}
+            className="border p-2 rounded w-full"
+          >
+            <option value="">Select Municipality</option>
+            <option value="Ambaguio">Ambaguio</option>
+            <option value="Bagabag">Bagabag</option>
+            <option value="Bayombong">Bayombong</option>
+            <option value="Diadi">Diadi</option>
+            <option value="Quezon">Quezon</option>
+            <option value="Solano">Solano</option>
+            <option value="Villaverde">Villaverde</option>
+            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+            <option value="Aritao">Aritao</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Dupax del Norte">Dupax del Norte</option>
+            <option value="Dupax del Sur">Dupax del Sur</option>
+            <option value="Kayapa">Kayapa</option>
+            <option value="Kasibu">Kasibu</option>
+            <option value="Santa Fe">Santa Fe</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="reportingPeriod" className="block mb-1">Reporting Period</label>
+          <input
+            id="reportingPeriod"
+            type="date"
+            value={reportingPeriod}
+            onChange={(e) => setReportingPeriod(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="livestockTechnician" className="block mb-1">Livestock Technician</label>
+          <input
+            id="livestockTechnician"
+            type="text"
+            value={livestockTechnician}
+            onChange={(e) => setLivestockTechnician(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
       </div>
 
       {/* Entries section */}
@@ -210,141 +377,163 @@ function RoutineServicesMonitoringReport() {
             <h3 className="text-2xl font-bold mb-4">Edit Entry {selectedEntry + 1}</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <input
-                type="date"
-                placeholder="Date"
-                value={entries[selectedEntry].date}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'date', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Barangay"
-                value={entries[selectedEntry].barangay}
-                onChange={(e) =>
-                  handleEntryChange(selectedEntry, 'barangay', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
+              <div>
+                <label htmlFor="date" className="block mb-1">Date</label>
+                <input
+                  id="date"
+                  type="date"
+                  value={entries[selectedEntry].date}
+                  onChange={(e) => handleEntryChange(selectedEntry, 'date', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="barangay" className="block mb-1">Barangay</label>
+                <input
+                  id="barangay"
+                  type="text"
+                  value={entries[selectedEntry].barangay}
+                  onChange={(e) => handleEntryChange(selectedEntry, 'barangay', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
             </div>
 
             <h4 className="text-lg font-semibold mb-2">Client Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="First Name"
-                value={entries[selectedEntry].clientInfo.firstName}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'firstName', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={entries[selectedEntry].clientInfo.lastName}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'lastName', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Gender"
-                value={entries[selectedEntry].clientInfo.gender}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'gender', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="date"
-                placeholder="Birthday"
-                value={entries[selectedEntry].clientInfo.birthday}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'birthday', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Contact No."
-                value={entries[selectedEntry].clientInfo.contactNo}
-                onChange={(e) =>
-                  handleClientInfoChange(selectedEntry, 'contactNo', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
+              <div>
+                <label htmlFor="firstName" className="block mb-1">First Name</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.firstName}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'firstName', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block mb-1">Last Name</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.lastName}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'lastName', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="gender" className="block mb-1">Gender</label>
+                <input
+                  id="gender"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.gender}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'gender', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="birthday" className="block mb-1">Birthday</label>
+                <input
+                  id="birthday"
+                  type="date"
+                  value={entries[selectedEntry].clientInfo.birthday}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'birthday', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="contactNo" className="block mb-1">Contact No.</label>
+                <input
+                  id="contactNo"
+                  type="text"
+                  value={entries[selectedEntry].clientInfo.contactNo}
+                  onChange={(e) => handleClientInfoChange(selectedEntry, 'contactNo', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
             </div>
 
             <h4 className="text-lg font-semibold mb-2">Animal Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="Species/Animal"
-                value={entries[selectedEntry].animalInfo.species}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'species', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Sex"
-                value={entries[selectedEntry].animalInfo.sex}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'sex', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Age/Age Group"
-                value={entries[selectedEntry].animalInfo.age}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'age', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="Animal Registered"
-                value={entries[selectedEntry].animalInfo.animalRegistered}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'animalRegistered', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
-              <input
-                type="text"
-                placeholder="No. of Heads"
-                value={entries[selectedEntry].animalInfo.noOfHeads}
-                onChange={(e) =>
-                  handleAnimalInfoChange(selectedEntry, 'noOfHeads', e.target.value)
-                }
-                className="border p-2 rounded w-full"
-              />
+              <div>
+                <label htmlFor="species" className="block mb-1">Species/Animal</label>
+                <input
+                  id="species"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.species}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'species', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="sex" className="block mb-1">Sex</label>
+                <input
+                  id="sex"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.sex}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'sex', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="age" className="block mb-1">Age/Age Group</label>
+                <input
+                  id="age"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.age}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'age', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="animalRegistered" className="block mb-1">Animal Registered</label>
+                <input
+                  id="animalRegistered"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.animalRegistered}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'animalRegistered', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="noOfHeads" className="block mb-1">No. of Heads</label>
+                <input
+                  id="noOfHeads"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.noOfHeads}
+                  onChange={(e) => handleAnimalInfoChange(selectedEntry, 'noOfHeads', e.target.value)}
+                  className="border p-2 rounded w-full"
+                />
+              </div>
             </div>
 
             <h4 className="text-lg font-semibold mb-2">Activity and Remark</h4>
-            <textarea
-              placeholder="Activity"
-              value={entries[selectedEntry].activity}
-              onChange={(e) =>
-                handleEntryChange(selectedEntry, 'activity', e.target.value)
-              }
-              className="border p-2 rounded w-full mb-4"
-            />
-            <textarea
-              placeholder="Remark"
-              value={entries[selectedEntry].remark}
-              onChange={(e) =>
-                handleEntryChange(selectedEntry, 'remark', e.target.value)
-              }
-              className="border p-2 rounded w-full"
-            />
+            <div>
+              <label htmlFor="activity" className="block mb-1">Activity</label>
+              <select
+                id="activity"
+                value={entries[selectedEntry].activity}
+                onChange={(e) => handleEntryChange(selectedEntry, 'activity', e.target.value)}
+                className="border p-2 rounded w-full mb-4"
+              >
+                <option value="Deworming">Deworming</option>
+                <option value="Wound Treatment">Wound Treatment</option>
+                <option value="Vitamin Supplementation">Vitamin Supplementation</option>
+                <option value="Iron Supplementation">Iron Supplementation</option>
+                <option value="Consultation">Consultation</option>
+                <option value="Support">Support</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="remark" className="block mb-1">Remark</label>
+              <textarea
+                id="remark"
+                value={entries[selectedEntry].remark}
+                onChange={(e) => handleEntryChange(selectedEntry, 'remark', e.target.value)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
 
             <div className="flex justify-end mt-4">
               <button
@@ -362,20 +551,32 @@ function RoutineServicesMonitoringReport() {
                 Save
               </button>
             </div>
+
+
           </div>
+
         </div>
       )}
 
       {/* Confirmation Modal */}
       {isConfirmationModalOpen && (
         <ConfirmationModal
-          isOpen={isConfirmationModalOpen}  // Pass isOpen prop
+          isOpen={isConfirmationModalOpen}
           onConfirm={handleConfirmRemove}
           onCancel={handleCancelRemove}
           message="Are you sure you want to remove this entry?"
         />
       )}
-
+      {/* Export as CSV Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          type="button"
+          onClick={exportAsCSV}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Export as CSV
+        </button>
+      </div>
     </div>
   );
 }

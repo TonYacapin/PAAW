@@ -88,7 +88,7 @@ const DiseaseInvestigationForm = () => {
 
       console.log(data);
       // Send data to backend API
-      const response = await axios.post('http://localhost:5000/disease-investigation', data);
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/disease-investigation`, data);
 
       // Handle successful response
       if (response.status === 201) {
@@ -170,10 +170,16 @@ const DiseaseInvestigationForm = () => {
     const url = URL.createObjectURL(csvBlob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "disease_investigation_form.csv";
+    
+    // Create a file name with a naming convention
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const fileName = `disease_investigation_form_${formData.municipality}_${formData.dateReported}.csv`;
+
+    a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
-  };
+};
+
 
 
   const handleCSVUpload = (event) => {
