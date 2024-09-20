@@ -131,15 +131,6 @@ export default function StepperComponent(props) {
     StepperActiveStep = activeStep;
   };
 
-  const handleSkip = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
-  };
-
   const handleReset = () => {
     setActiveStep(0);
   };
@@ -163,7 +154,7 @@ export default function StepperComponent(props) {
             })}
           </Stepper>
           {props.renderStepContent(activeStep)}
-          {activeStep === props.pages.length ? (
+          {/* {activeStep === props.pages.length ? (
             <React.Fragment>
               <Typography sx={{ mt: 2, mb: 1 }}>
                 All steps completed - you&apos;re finished
@@ -173,7 +164,7 @@ export default function StepperComponent(props) {
                 <Button onClick={handleReset}>Reset</Button>
               </Box>
             </React.Fragment>
-          ) : (
+          ) : ( */}
             <React.Fragment>
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2, marginBottom:"2rem" }}>
                 <Button
@@ -185,12 +176,13 @@ export default function StepperComponent(props) {
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext} sx={{bgcolor:"#1b5b40", color: "#fffafa"}}>
-                  {activeStep === props.pages.length - 1 ? "Finish" : "Next"}
+                <Button variant="contained" onClick={handleNext} disabled={activeStep === props.pages.length-1} sx={{bgcolor:"#1b5b40", color: "#fffafa"}}>
+                  Next
+                  {/* {activeStep === props.pages.length - 1 ? "Finish" : "Next"} */}
                 </Button>
               </Box>
             </React.Fragment>
-          )}
+          {/* )} */}
         </>
       ) : (
         <>
