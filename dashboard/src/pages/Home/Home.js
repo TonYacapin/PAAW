@@ -307,10 +307,10 @@ function Home() {
                   >
                     <ReportIcon className="mr-2" /> Disease Investigation Form
                   </button>
-                  <button className={buttonClasses}>
+                  {/* <button className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Disease Surveillance and
                     Incident Report
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => openModalWithContent("RabiesHistoryForm")}
                     className={buttonClasses}

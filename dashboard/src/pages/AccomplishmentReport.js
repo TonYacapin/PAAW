@@ -10,10 +10,13 @@ function AccomplishmentReport() {
     combined: 0,
     total: 0,
   });
-  const [targets, setTargets] = useState({});
+  const [target, setTarget] = useState('');
+  const [percentage, setPercentage] = useState(null);
+  const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); // New state for semi-annual target
+  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); // New state for semi-annual percentage
   const [selectedVaccine, setSelectedVaccine] = useState('All');
   const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
-  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
+  
 
   const vaccineGroups = {
     "Hemorrhagic Septicemia": ["Carabao", "Cattle", "Goat/Sheep"],
@@ -175,6 +178,11 @@ function AccomplishmentReport() {
     ? speciesCount
     : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
 
+  const groupedByVaccine = vaccineTypes.map(vaccineType => {
+    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
+    return { vaccineType, speciesUnderVaccine };
+  });
+
   return (
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
@@ -234,27 +242,28 @@ function AccomplishmentReport() {
               <th className="py-3 px-4 text-left">Species</th>
               <th className="py-3 px-4 text-left">Previous Month's Count</th>
               <th className="py-3 px-4 text-left">This Month's Count</th>
+              <th className="py-3 px-4 text-left">Combined</th>
               <th className="py-3 px-4 text-left">Total</th>
-              <th className="py-3 px-4 text-left">Total Accomplishment</th>
             </tr>
           </thead>
           <tbody>
-            {filteredSpeciesCount.length > 0 ? (
-              filteredSpeciesCount.map((speciesData) => (
-                <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.vaccineType}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+            {groupedByVaccine.map(({ vaccineType, speciesUnderVaccine }) => (
+              <>
+                <tr key={vaccineType}>
+                  <td className="py-2 px-4 font-bold" colSpan="6">{vaccineType}</td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="py-2 px-4 text-center text-[#252525]">No data available</td>
-              </tr>
-            )}
+                {speciesUnderVaccine.map(speciesData => (
+                  <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
+                    <td className="py-2 px-4"></td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+                  </tr>
+                ))}
+              </>
+            ))}
             <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
               <td colSpan="2" className="py-3 px-4">Total</td>
               <td className="py-3 px-4">{totals.previousMonth}</td>
