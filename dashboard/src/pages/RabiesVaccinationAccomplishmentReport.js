@@ -164,10 +164,7 @@ function RabiesVaccinationAccomplishmentReport() {
                 <td colSpan="4" className="py-2 px-4 text-center text-[#252525]">No data available.</td>
               </tr>
             )}
-            <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
-              <td colSpan="4" className="py-3 px-4">Total</td>
-              <td className="py-3 px-4">{totals.total}</td>
-            </tr>
+       
           </tbody>
         </table>
       </div>
