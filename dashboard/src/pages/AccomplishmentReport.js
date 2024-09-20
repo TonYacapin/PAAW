@@ -12,8 +12,8 @@ function AccomplishmentReport() {
   });
   const [target, setTarget] = useState('');
   const [percentage, setPercentage] = useState(null);
-  const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); // New state for semi-annual target
-  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); // New state for semi-annual percentage
+  const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); 
+  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); 
   const [selectedVaccine, setSelectedVaccine] = useState('All');
 
   const vaccineGroups = {
@@ -144,58 +144,14 @@ function AccomplishmentReport() {
     ? speciesCount
     : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
 
+  const groupedByVaccine = vaccineTypes.map(vaccineType => {
+    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
+    return { vaccineType, speciesUnderVaccine };
+  });
+
   return (
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
-          <input
-            type="number"
-            value={target}
-            onChange={handleTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter target value"
-          />
-          {percentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {percentage}%
-            </p>
-          )}
-        </div>
-
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target Value</h2>
-          <input
-            type="number"
-            value={semiAnnualTarget}
-            onChange={handleSemiAnnualTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter semi-annual target value"
-          />
-          {semiAnnualPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Semi-annual Percentage: {semiAnnualPercentage}%
-            </p>
-          )}
-        </div>
-
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
-          <select
-            value={selectedVaccine}
-            onChange={handleVaccineChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-          >
-            <option value="All">All</option>
-            {vaccineTypes.map((vaccine) => (
-              <option key={vaccine} value={vaccine}>
-                {vaccine}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       <div className="overflow-x-auto mt-6">
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
@@ -205,27 +161,28 @@ function AccomplishmentReport() {
               <th className="py-3 px-4 text-left">Species</th>
               <th className="py-3 px-4 text-left">Previous Month's Count</th>
               <th className="py-3 px-4 text-left">This Month's Count</th>
+              <th className="py-3 px-4 text-left">Combined</th>
               <th className="py-3 px-4 text-left">Total</th>
-              <th className="py-3 px-4 text-left">Total Accomplishment</th>
             </tr>
           </thead>
           <tbody>
-            {filteredSpeciesCount.length > 0 ? (
-              filteredSpeciesCount.map((speciesData) => (
-                <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.vaccineType}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
-                  <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+            {groupedByVaccine.map(({ vaccineType, speciesUnderVaccine }) => (
+              <>
+                <tr key={vaccineType}>
+                  <td className="py-2 px-4 font-bold" colSpan="6">{vaccineType}</td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="py-2 px-4 text-center text-[#252525]">No data available</td>
-              </tr>
-            )}
+                {speciesUnderVaccine.map(speciesData => (
+                  <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
+                    <td className="py-2 px-4"></td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
+                    <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+                  </tr>
+                ))}
+              </>
+            ))}
             <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
               <td colSpan="2" className="py-3 px-4">Total</td>
               <td className="py-3 px-4">{totals.previousMonth}</td>
