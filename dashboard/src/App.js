@@ -17,16 +17,13 @@ import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
 
 import RabiesReportChart from "./component/RabiesReportChart ";
 
-
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-        <Route path="/rabiesreportchart"  element={<RabiesReportChart />} />
-
-        <Route path="/AccomplishementReport"  element={<AccomplishmentReport />} />
-          <Route path="/requisionslip"  element={<RequisitionIssueSlip />} />
+          <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
+          <Route path="/requisionslip" element={<RequisitionIssueSlip />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/Signup" element={<SignupForm />} />
