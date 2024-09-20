@@ -94,10 +94,6 @@ function Home() {
   };
 
   const allChartOptions = [
-    { value: "admin", label: "Admin Chart" },
-    { value: "animalhealth", label: "Animal Health Chart" },
-    { value: "livestock", label: "Livestock Chart" },
-    { value: "regulatory", label: "Regulatory Chart" },
     { value: "rabies", label: "Rabies Chart" },
     { value: "disease", label: "Disease Investigation Chart" },
     { value: "vaccination", label: "Vaccination Report Chart" },
