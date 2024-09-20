@@ -130,21 +130,21 @@ function AccomplishmentReport() {
       const totalSemiAnnual = Object.values(targets).reduce((sum, target) => sum + (target.semiAnnual || 0), 0);
   
       if (totalQuarterly === 0) {
-        setQuarterlyPercentage("Can't calculate percentage; no target value set.");
+        setQuarterlyPercentage("no target value set.");
       } else {
         setQuarterlyPercentage(((totals.combined / totalQuarterly) * 100).toFixed(2));
       }
   
       if (totalSemiAnnual === 0) {
-        setSemiAnnualPercentage("Can't calculate percentage; no target value set.");
+        setSemiAnnualPercentage("no target value set.");
       } else {
         setSemiAnnualPercentage(((totals.combined / totalSemiAnnual) * 100).toFixed(2));
       }
     } else {
       const target = targets[selectedVaccine];
       if (!target) {
-        setQuarterlyPercentage("Can't calculate percentage; no target value set.");
-        setSemiAnnualPercentage("Can't calculate percentage; no target value set.");
+        setQuarterlyPercentage("no target value set.");
+        setSemiAnnualPercentage("no target value set.");
         return;
       }
   
@@ -154,11 +154,11 @@ function AccomplishmentReport() {
   
       setQuarterlyPercentage(target.quarterly > 0
         ? ((vaccineTotal / target.quarterly) * 100).toFixed(2)
-        : "Can't calculate percentage; no target value set.");
+        : "no target value set.");
   
       setSemiAnnualPercentage(target.semiAnnual > 0
         ? ((vaccineTotal / target.semiAnnual) * 100).toFixed(2)
-        : "Can't calculate percentage; no target value set.");
+        : " no target value set.");
     }
   };
 
@@ -197,7 +197,7 @@ function AccomplishmentReport() {
           />
           {quarterlyPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Second Quarter Percentage: {quarterlyPercentage}
+             Percentage: {quarterlyPercentage}
             </p>
           )}
         </div>
@@ -212,7 +212,7 @@ function AccomplishmentReport() {
           />
           {semiAnnualPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Semi-annual Percentage: {semiAnnualPercentage}
+              Percentage: {semiAnnualPercentage}
             </p>
           )}
         </div>
