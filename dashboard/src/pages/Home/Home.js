@@ -127,7 +127,7 @@ function Home() {
 
   const renderCharts = () => {
     const chartClasses =
-      "bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
+      "md:h-2/5 bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
     const chartTextClasses = "text-gray-700 font-semibold text-lg";
 
     if (selectedCharts.length > 0) {
@@ -449,13 +449,13 @@ function Home() {
 
   return (
     <>
-      <div className="container w-full flex flex-row bg-white min-h-screen relative overflow-hidden">
+      <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col bg-white min-h-screen relative overflow-hidden">
         {/* Navbar */}
         <Navbar onDivisionChange={handleDivisionChange} />
         {/* Add relative positioning */}
-        <div className="flex flex-col lg:flex-row justify-between lg:space-x-8 xl:space-x-9 w-screen p-8 overflow-y-scroll max-h-[100vh]">
+        <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-8 overflow-y-scroll max-h-[100vh]">
           {/* Main Content Wrapper */}
-          <div className="flex flex-col lg:flex-row w-full ">
+          <div className="flex flex-col lg:flex-row w-full">
             {/* Left Side - Charts */}
             <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-center lg:text-left">
