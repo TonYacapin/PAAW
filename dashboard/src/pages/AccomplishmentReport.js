@@ -12,9 +12,11 @@ function AccomplishmentReport() {
   });
   const [targets, setTargets] = useState({});
   const [percentage, setPercentage] = useState(null);
-  const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); 
-  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); 
+  const [semiAnnualTarget, setSemiAnnualTarget] = useState(''); // New state for semi-annual target
+  const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null); // New state for semi-annual percentage
   const [selectedVaccine, setSelectedVaccine] = useState('All');
+  const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
+  
 
   const vaccineGroups = {
     "Hemorrhagic Septicemia": ["Carabao", "Cattle", "Goat/Sheep"],
@@ -25,10 +27,25 @@ function AccomplishmentReport() {
   const vaccineTypes = Object.keys(vaccineGroups);
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/api/reports`)
-      .then((response) => {
-        const data = response.data;
+    Promise.all([
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/reports`),
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets`)
+    ])
+      .then(([reportsResponse, targetsResponse]) => {
+        const reportsData = reportsResponse.data;
+        const targetsData = targetsResponse.data;
+
+        // Process targets data
+        const targetsObj = targetsData.reduce((acc, target) => {
+          acc[target.Type] = {
+            quarterly: target.target,
+            semiAnnual: target.semiAnnualTarget
+          };
+          return acc;
+        }, {});
+        setTargets(targetsObj);
+
+        // Process reports data
         const currentDate = new Date();
         const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const previousMonthStart = subMonths(thisMonthStart, 1);
@@ -52,7 +69,7 @@ function AccomplishmentReport() {
           speciesReport[species].total++;
         }
 
-        data.forEach((report) => {
+        reportsData.forEach((report) => {
           report.entries.forEach((entry) => {
             const species = entry.animalInfo.species;
             const entryDate = new Date(entry.date);
@@ -88,6 +105,10 @@ function AccomplishmentReport() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+
+  useEffect(() => {
+    calculatePercentages();
+  }, [totals, targets, selectedVaccine]);
 
   const updateTotals = (data) => {
     const totalPreviousMonth = data.reduce((sum, species) => sum + species.previousMonth, 0);
@@ -144,34 +165,25 @@ function AccomplishmentReport() {
   const handleVaccineChange = (e) => {
     const selectedVaccineType = e.target.value;
     setSelectedVaccine(selectedVaccineType);
-  
-    
-    const filteredSpeciesCount = selectedVaccineType === 'All'
-      ? speciesCount
-      : speciesCount.filter((data) => data.vaccineType === selectedVaccineType);
-  
-    updateTotals(filteredSpeciesCount);
+    calculatePercentages()
+    if (selectedVaccineType === 'All') {
+      updateTotals(speciesCount);
+    } else {
+      const filteredSpeciesCount = speciesCount.filter((data) => data.vaccineType === selectedVaccineType);
+      updateTotals(filteredSpeciesCount);
+    }
   };
-  
+
   const filteredSpeciesCount = selectedVaccine === 'All'
     ? speciesCount
     : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
-  
-  const groupedByVaccine = selectedVaccine === 'All'
-    ? vaccineTypes.map(vaccineType => {
-        const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
-        return { vaccineType, speciesUnderVaccine };
-      })
-    : [
-        {
-          vaccineType: selectedVaccine,
-          speciesUnderVaccine: filteredSpeciesCount,
-        }
-      ];
-  
+
+  const groupedByVaccine = vaccineTypes.map(vaccineType => {
+    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
+    return { vaccineType, speciesUnderVaccine };
+  });
 
   return (
-    <>
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -179,12 +191,11 @@ function AccomplishmentReport() {
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
           <input
             type="number"
-            value={target}
-            onChange={handleTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter target value"
+            value={selectedVaccine === 'All' ? Object.values(targets).reduce((sum, target) => sum + (target.quarterly || 0), 0) : targets[selectedVaccine]?.quarterly || ''}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          {percentage !== null && (
+          {quarterlyPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
              Percentage: {quarterlyPercentage}
             </p>
@@ -195,10 +206,9 @@ function AccomplishmentReport() {
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target Value</h2>
           <input
             type="number"
-            value={semiAnnualTarget}
-            onChange={handleSemiAnnualTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter semi-annual target value"
+            value={selectedVaccine === 'All' ? Object.values(targets).reduce((sum, target) => sum + (target.semiAnnual || 0), 0) : targets[selectedVaccine]?.semiAnnual || ''}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
           {semiAnnualPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
@@ -224,53 +234,56 @@ function AccomplishmentReport() {
         </div>
       </div>
 
-
-    <div className="p-6 bg-[#FFFAFA] min-h-0">
-      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
-
       <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
-          <thead className="bg-[#ffe356] text-[#1b5b40]">
+      <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
+  <thead className="bg-[#ffe356] text-[#1b5b40]">
+    <tr>
+      <th className="py-3 px-4 text-left">Vaccine Type</th>
+      <th className="py-3 px-4 text-left">Species</th>
+      <th className="py-3 px-4 text-left">Previous Month's Count</th>
+      <th className="py-3 px-4 text-left">This Month's Count</th>
+      <th className="py-3 px-4 text-left">Combined</th>
+      <th className="py-3 px-4 text-left">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {groupedByVaccine.map(({ vaccineType, speciesUnderVaccine }) => {
+      // Only render if speciesUnderVaccine has data
+      if (speciesUnderVaccine.length > 0) {
+        return (
+          <React.Fragment key={vaccineType}>
             <tr>
-              <th className="py-3 px-4 text-left">Vaccine Type</th>
-              <th className="py-3 px-4 text-left">Species</th>
-              <th className="py-3 px-4 text-left">Previous Month's Count</th>
-              <th className="py-3 px-4 text-left">This Month's Count</th>
-              <th className="py-3 px-4 text-left">Combined</th>
-              <th className="py-3 px-4 text-left">Total</th>
+              <td className="py-2 px-4 font-bold" colSpan="6">{vaccineType}</td>
             </tr>
-          </thead>
-          <tbody>
-            {groupedByVaccine.map(({ vaccineType, speciesUnderVaccine }) => (
-              <>
-                <tr key={vaccineType}>
-                  <td className="py-2 px-4 font-bold" colSpan="6">{vaccineType}</td>
-                </tr>
-                {speciesUnderVaccine.map(speciesData => (
-                  <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-                    <td className="py-2 px-4"></td>
-                    <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
-                    <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
-                    <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
-                    <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
-                    <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
-                  </tr>
-                ))}
-              </>
+            {speciesUnderVaccine.map((speciesData) => (
+              <tr key={speciesData.species} className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
+                <td className="py-2 px-4"></td>
+                <td className="py-2 px-4 text-[#252525]">{speciesData.species + "(hds)"}</td>
+                <td className="py-2 px-4 text-[#252525]">{speciesData.previousMonth}</td>
+                <td className="py-2 px-4 text-[#252525]">{speciesData.thisMonth}</td>
+                <td className="py-2 px-4 text-[#252525]">{speciesData.combined}</td>
+                <td className="py-2 px-4 text-[#252525]">{speciesData.total}</td>
+              </tr>
             ))}
-            <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
-              <td colSpan="2" className="py-3 px-4">Total</td>
-              <td className="py-3 px-4">{totals.previousMonth}</td>
-              <td className="py-3 px-4">{totals.thisMonth}</td>
-              <td className="py-3 px-4">{totals.combined}</td>
-              <td className="py-3 px-4">{totals.total}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          </React.Fragment>
+        );
+      } else {
+        // If no data, return null to skip rendering this vaccineType
+        return null;
+      }
+    })}
+    <tr className="bg-[#ffe356] font-bold text-[#1b5b40]">
+      <td colSpan="2" className="py-3 px-4">Total</td>
+      <td className="py-3 px-4">{totals.previousMonth}</td>
+      <td className="py-3 px-4">{totals.thisMonth}</td>
+      <td className="py-3 px-4">{totals.combined}</td>
+      <td className="py-3 px-4">{totals.total}</td>
+    </tr>
+  </tbody>
+</table>
+
       </div>
     </div>
-    </>
   );
 }
 
