@@ -31,7 +31,7 @@ import HealingIcon from "@mui/icons-material/Healing";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PetsIcon from "@mui/icons-material/Pets";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-
+import MonthlyAccomplishmentReport from "../MonthlyAccomplismentReport";
 import RequisitionIssueSlip from "../RequisitionIssueSlip ";
 import { Inventory, Outbox } from "@mui/icons-material";
 
@@ -59,7 +59,7 @@ function Home() {
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
       case "AccomplishmentReport":
-        return <AccomplishmentReport />  ;
+        return <MonthlyAccomplishmentReport />  ;
 
       default:
         return null;
