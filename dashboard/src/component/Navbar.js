@@ -10,6 +10,15 @@ import {
   Menu,
   Close,
 } from "@mui/icons-material"; // MUI icons
+import {
+  AppBar,
+  Button,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 
 function Navbar({ onDivisionChange }) {
   const role = localStorage.getItem("userRole");
@@ -146,22 +155,18 @@ function Navbar({ onDivisionChange }) {
           {/* Side Navbar */}
           <div
             ref={menuRef}
-            className={`lg:sticky md:fixed sm:fixed xs:fixed top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
+            className={`lg:sticky 2xs:fixed md:fixed sm:fixed xs:fixed top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
               isMenuOpen ? "translate-x-0" : "-translate-x-full"
             } md:translate-x-0 z-20`}
           >
             {/* Logo */}
-            <img
-              src={Logo}
-              alt="Logo"
-              className="h-auto w-40 drop-shadow-lg"
-            />
+            <img src={Logo} alt="Logo" className="h-auto w-40 drop-shadow-lg" />
             {/* Buttons */}
-            <div className="space-y-4 w-full flex-grow justify-center flex flex-col lg:gap-2 md:gap-2 sm:gap-1">
+            <div className="space-y-4 w-full flex-grow justify-center flex flex-col lg:gap-0 md:gap-0 sm:gap-0">
               {renderButtons()}
             </div>
             {/* Logout button at the bottom */}
-            <div className="mt-auto w-full">
+            <div className="mt-auto mb-10 w-full">
               <div className={`${baseClasses}`} onClick={handleLogout}>
                 <Logout />
                 <span>Logout</span>
@@ -172,7 +177,7 @@ function Navbar({ onDivisionChange }) {
           {/* Main Content */}
         </div>
         {/* Mobile Menu Button */}
-        <div className="lg:hidden w-full fixed top-0 right-0 z-30">
+        {/* <div className="lg:hidden w-full fixed top-0 right-0 z-30">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-white text-4xl"
@@ -183,7 +188,40 @@ function Navbar({ onDivisionChange }) {
               <Menu sx={{ color: "#1b5b40", fontSize: 40 }} />
             )}
           </button>
-        </div>
+        </div> */}
+        {useMediaQuery("(min-width:600px)") ? (
+          <></>
+        ) : (
+          <>
+            <AppBar position="static" sx={{ background: "#1b5b40" }}>
+              <Toolbar>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  sx={{ mr: 2, color: "#fffafa" }}
+                >
+                  <Menu />
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+                <Button sx={{ color: "#fffafa" }} variant="text" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <Drawer
+              open={isMenuOpen}
+              onClose={() => setIsMenuOpen(false)}
+              sx={{ zIndex: 3 }}
+            >
+              {Navbar}
+            </Drawer>
+          </>
+        )}
+
+        {/* {Button} */}
       </div>
     </>
   );
