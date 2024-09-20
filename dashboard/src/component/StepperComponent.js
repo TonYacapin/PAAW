@@ -145,10 +145,10 @@ export default function StepperComponent(props) {
   };
 
   return (
-    <Box sx={{ width: "100%", flexDirection: "row", gap: "10rem" }}>
+    <Box sx={{width: "100%", flexDirection: "row", gap: "10rem" }}>
       {useMediaQuery("(min-width:600px)") ? (
         <>
-          <Stepper activeStep={activeStep} connector={<QontoConnector />}>
+          <Stepper activeStep={activeStep} connector={<QontoConnector />} sx={{marginBottom: "2rem"}}>
             {props.pages.map((page, index) => {
               const stepProps = {};
               const labelProps = {};
@@ -175,17 +175,17 @@ export default function StepperComponent(props) {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2, marginBottom:"2rem" }}>
                 <Button
-                  color="inherit"
+                  variant="contained"
                   disabled={activeStep === 0}
                   onClick={handleBack}
-                  sx={{ mr: 1 }}
+                  sx={{ mr: 1, bgcolor:"#1b5b40", color: "#fffafa" }}
                 >
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext}>
+                <Button onClick={handleNext} sx={{bgcolor:"#1b5b40", color: "#fffafa"}}>
                   {activeStep === props.pages.length - 1 ? "Finish" : "Next"}
                 </Button>
               </Box>
@@ -194,18 +194,18 @@ export default function StepperComponent(props) {
         </>
       ) : (
         <>
-          {" "}
-          {/* <Paper
-            square
-            elevation={0}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              height: 50,
-              pl: 2,
-              bgcolor: "background.default",
-            }}
-          ></Paper> */}
+            {" "}
+            {/* <Paper
+              square
+              elevation={0}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                height: 50,
+                pl: 2,
+                bgcolor: "background.default",
+              }}
+            ></Paper> */}
           <Box>
             {props.renderStepContent(activeStep)}
           </Box>
