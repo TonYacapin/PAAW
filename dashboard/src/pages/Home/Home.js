@@ -35,6 +35,8 @@ import MonthlyAccomplishmentReport from "../MonthlyAccomplismentReport";
 import RequisitionIssueSlip from "../RequisitionIssueSlip ";
 import { Inventory, Outbox } from "@mui/icons-material";
 
+import UserManagement from "../Admin Pages/UserManagement";
+
 function Home() {
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -60,6 +62,8 @@ function Home() {
         return <RabiesHistoryForm />;
       case "AccomplishmentReport":
         return <MonthlyAccomplishmentReport />  ;
+        case "UserManagement":
+          return <UserManagement />  ;
 
       default:
         return null;
@@ -213,7 +217,10 @@ function Home() {
             <div className="space-y-2">
               <button
                 className={buttonClasses}
-                onClick={() => setSelectedDivision("user")}
+                // onClick={() => setSelectedDivision("user")}
+                onClick={() =>
+                  openModalWithContent("UserManagement")
+                }
               >
                 <ManageAccountsIcon className="mr-2" /> Manage Users
               </button>
