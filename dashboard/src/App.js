@@ -12,10 +12,12 @@ import VaccinationReport from "./pages/Animal Disease Prevention Control and Era
 import RabiesHistoryForm from "./pages/RABIES/RabiesHistoryForm";
 import ChartComponent from "./component/ChartComponent";
 import AccomplishmentReport from "./pages/AccomplishmentReport";
-
+import RabiesVaccinationAccomplishmentReport from "./pages/RabiesVaccinationAccomplishmentReport";
 import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
 
 import RabiesReportChart from "./component/RabiesReportChart ";
+
+import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
 
 
 const App = () => {
@@ -23,10 +25,13 @@ const App = () => {
     <Router>
       <div className="App">
         <Routes>
-        <Route path="/rabiesreportchart"  element={<RabiesReportChart />} />
+          <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
+          <Route path="/RSMAccomplishmentReport" element={<RSMAccomplishmentReport />} />
+          <Route path="/RabiesVaccinationAccomplishmentReport" element={<RabiesVaccinationAccomplishmentReport/>} />
 
-        <Route path="/AccomplishementReport"  element={<AccomplishmentReport />} />
-          <Route path="/requisionslip"  element={<RequisitionIssueSlip />} />
+
+          <Route path="/AccomplishementReport" element={<AccomplishmentReport />} />
+          <Route path="/requisionslip" element={<RequisitionIssueSlip />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/Signup" element={<SignupForm />} />

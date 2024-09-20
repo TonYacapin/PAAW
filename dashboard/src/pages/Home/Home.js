@@ -14,7 +14,7 @@ import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/Routi
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
 import AccomplishmentReport from "../AccomplishmentReport";
-
+import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
 //Charts
 
 import RabiesReportChart from "../../component/RabiesReportChart ";
@@ -34,6 +34,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 
 import RequisitionIssueSlip from "../RequisitionIssueSlip ";
 import { Inventory, Outbox } from "@mui/icons-material";
+import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
 
 function Home() {
   const [userRole, setUserRole] = useState("");
@@ -59,7 +60,7 @@ function Home() {
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
       case "AccomplishmentReport":
-        return <AccomplishmentReport />;
+        return <AccomplishmentReport />  ;
 
       default:
         return null;
