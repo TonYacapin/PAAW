@@ -1,4 +1,3 @@
-// TargetForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -6,19 +5,39 @@ const TargetForm = ({ onClose }) => {
     const [type, setType] = useState('');
     const [target, setTarget] = useState('');
     const [semiAnnualTarget, setSemiAnnualTarget] = useState('');
-    const [targetDate, setTargetDate] = useState('');
+    const [targetYear, setTargetYear] = useState(''); // Changed from targetDate to targetYear
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Update Semi Annual Target when Second Quarter Target changes
+    const handleTargetChange = (e) => {
+        const newTarget = e.target.value;
+        setTarget(newTarget);
+        setSemiAnnualTarget(newTarget ? newTarget * 2 : ''); // If target is set, double it for semiAnnualTarget
+    };
+
+    // Update Second Quarter Target when Semi Annual Target changes
+    const handleSemiAnnualTargetChange = (e) => {
+        const newSemiAnnualTarget = e.target.value;
+        setSemiAnnualTarget(newSemiAnnualTarget);
+        setTarget(newSemiAnnualTarget ? newSemiAnnualTarget / 2 : ''); // If semiAnnualTarget is set, halve it for target
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Ensure the target year is valid (four-digit number)
+        if (!/^\d{4}$/.test(targetYear)) {
+            setError('Please enter a valid 4-digit year.');
+            return;
+        }
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/targets`, {
                 Type: type,
                 target: Number(target),
                 semiAnnualTarget: Number(semiAnnualTarget),
-                targetDate: targetDate,
+                targetYear: Number(targetYear), // Use targetYear
             });
 
             if (response.status === 201) {
@@ -27,7 +46,7 @@ const TargetForm = ({ onClose }) => {
                 setType('');
                 setTarget('');
                 setSemiAnnualTarget('');
-                setTargetDate('');
+                setTargetYear(''); // Clear targetYear
                 // Call the onClose function to refresh the list
                 onClose();
             }
@@ -67,11 +86,11 @@ const TargetForm = ({ onClose }) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium">Target</label>
+                    <label className="block text-sm font-medium">Second Quarter Target</label>
                     <input
                         type="number"
                         value={target}
-                        onChange={(e) => setTarget(e.target.value)}
+                        onChange={handleTargetChange} // Handle change for Second Quarter Target
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                     />
@@ -81,18 +100,21 @@ const TargetForm = ({ onClose }) => {
                     <input
                         type="number"
                         value={semiAnnualTarget}
-                        onChange={(e) => setSemiAnnualTarget(e.target.value)}
+                        onChange={handleSemiAnnualTargetChange} // Handle change for Semi Annual Target
                         required
                         className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium">Target Date</label>
+                    <label className="block text-sm font-medium">Target Year</label>
                     <input
-                        type="date"
-                        value={targetDate}
-                        onChange={(e) => setTargetDate(e.target.value)}
+                        type="number"
+                        value={targetYear}
+                        onChange={(e) => setTargetYear(e.target.value)}
                         required
+                        placeholder="e.g., 2024"
+                        min="1900"
+                        max="2100"
                         className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                     />
                 </div>

@@ -1,4 +1,3 @@
-// TargetList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../component/Modal';
@@ -40,13 +39,13 @@ const TargetList = () => {
                 Add Target Value
             </button>
 
-            <table className="min-w-full bg-white border border-gray-300">
+            <table className="min-w-full bg-white border border-gray-300 mt-4">
                 <thead>
                     <tr>
                         <th className="border px-4 py-2">Type</th>
                         <th className="border px-4 py-2">Target</th>
                         <th className="border px-4 py-2">Semi Annual Target</th>
-                        <th className="border px-4 py-2">Target Date</th>
+                        <th className="border px-4 py-2">Target Year</th> {/* Changed header from "Target Date" to "Target Year" */}
                     </tr>
                 </thead>
                 <tbody>
@@ -60,7 +59,7 @@ const TargetList = () => {
                                 <td className="border px-4 py-2">{target.Type}</td>
                                 <td className="border px-4 py-2">{target.target}</td>
                                 <td className="border px-4 py-2">{target.semiAnnualTarget}</td>
-                                <td className="border px-4 py-2">{new Date(target.targetDate).toLocaleDateString()}</td>
+                                <td className="border px-4 py-2">{target.targetYear}</td> {/* Display targetYear as a number */}
                             </tr>
                         ))
                     )}

@@ -27,6 +27,25 @@ router.get('/api/reports', async (req, res) => {
   }
 });
 
+router.get('/api/reports/accomplishment', async (req, res) => {
+  try {
+    const { year } = req.query;
+    let query = {};
+    
+    if (year) {
+      const startDate = new Date(parseInt(year), 0, 1);
+      const endDate = new Date(parseInt(year) + 1, 0, 1);
+      query.dateReported = { $gte: startDate, $lt: endDate };
+    }
+    
+    const reports = await VaccinationReport.find(query);
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error('Error retrieving reports:', error);
+    res.status(500).json({ message: 'Failed to retrieve reports' });
+  }
+});
+
 // Route to get a single vaccination report by ID
 router.get('/api/reports/:id', async (req, res) => {
   try {
@@ -126,5 +145,7 @@ router.delete('/api/reports/:reportId/entries/:entryIndex', async (req, res) => 
     res.status(500).json({ message: 'Failed to delete entry' });
   }
 });
+
+
 
 module.exports = router;
