@@ -29,24 +29,30 @@ function MonthlyAccomplishmentReport() {
     if (step >= pages.length) {
       return pages[pages.length - 1].content;
     }
-    return pages[step]?.content || <div>No content available for this step.</div>;
+    return (
+      pages[step]?.content || <div>No content available for this step.</div>
+    );
   };
 
   return (
     <div className="p-6 space-y-8 bg-gray-50 min-h-0">
-       {/* Button to open the modal */}
-       <button 
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          onClick={() => setModalOpen(true)}
-        >
-          Open Target Form
-        </button>
+      {/* Button to open the modal */}
+
       <div className="p-6 bg-white shadow-md rounded-lg">
-        <h2 className="text-xl font-semibold text-gray-700 mb-0">Monthly Accomplishment Report</h2>
+        <div className="flex flex-row justify-between">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Monthly Accomplishment Report
+          </h2>
+          <button
+            className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded hover:bg-blue-700"
+            onClick={() => setModalOpen(true)}
+          >
+            Open Target Form
+          </button>
+        </div>
+
         {/* Render the StepperComponent */}
         <StepperComponent pages={pages} renderStepContent={renderStepContent} />
-
-       
       </div>
 
       {/* Modal for TargetForm */}

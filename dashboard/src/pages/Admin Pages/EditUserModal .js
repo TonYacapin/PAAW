@@ -53,114 +53,117 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className="text-xl font-bold mb-4">Edit User</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">First Name</label>
-          <input
-            type="text"
-            name="firstname"
-            value={userData.firstname}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Last Name</label>
-          <input
-            type="text"
-            name="lastname"
-            value={userData.lastname}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Middle Name</label>
-          <input
-            type="text"
-            name="middlename"
-            value={userData.middlename}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={userData.email}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Password (Leave blank to keep unchanged)</label>
-          <input
-            type="password"
-            name="password"
-            value={userData.password} // Password field can be updated
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-            placeholder="Enter new password"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Role</label>
-          <select
-            name="role"
-            value={userData.role}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-            <option value="regulatory">Regulatory</option>
-            <option value="livestock">Livestock</option>
-            <option value="animalhealth">Animal Health</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="inline-flex items-center">
+      <div className="p-6 bg-[#fffafa] rounded-lg">
+        <h2 className="text-2xl font-bold mb-4 text-[#1b5b40]">Edit User</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">First Name</label>
             <input
-              type="checkbox"
-              name="isActive"
-              checked={userData.isActive}
+              type="text"
+              name="firstname"
+              value={userData.firstname}
               onChange={handleChange}
-              className="form-checkbox"
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+              required
             />
-            <span className="ml-2 text-gray-700">Active</span>
-          </label>
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="ml-2 bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+          </div>
+  
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">Last Name</label>
+            <input
+              type="text"
+              name="lastname"
+              value={userData.lastname}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+              required
+            />
+          </div>
+  
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">Middle Name</label>
+            <input
+              type="text"
+              name="middlename"
+              value={userData.middlename}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+            />
+          </div>
+  
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={userData.email}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+              required
+            />
+          </div>
+  
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">Password (Leave blank to keep unchanged)</label>
+            <input
+              type="password"
+              name="password"
+              value={userData.password}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+              placeholder="Enter new password"
+            />
+          </div>
+  
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1b5b40]">Role</label>
+            <select
+              name="role"
+              value={userData.role}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="regulatory">Regulatory</option>
+              <option value="livestock">Livestock</option>
+              <option value="animalhealth">Animal Health</option>
+            </select>
+          </div>
+  
+          <div className="mb-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={userData.isActive}
+                onChange={handleChange}
+                className="form-checkbox text-[#1b5b40]"
+              />
+              <span className="ml-2 text-[#1b5b40]">Active</span>
+            </label>
+          </div>
+  
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-[#1b5b40] hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="ml-2 bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
+  
 };
 
 export default EditUserModal;

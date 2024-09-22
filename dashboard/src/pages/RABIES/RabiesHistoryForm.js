@@ -21,6 +21,7 @@ import StepperComponent, {
   StepperActiveStep,
 } from "../../component/StepperComponent";
 import Papa from "papaparse";
+import FormSubmit from "../../component/FormSubmit";
 
 const RabiesHistoryForm = () => {
   const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState("");
@@ -863,12 +864,14 @@ const RabiesHistoryForm = () => {
     }
   };
 
+  
   return (
     <>
       <h1 className="text-2xl font-bold mb-6">Rabies History</h1>
       <div></div>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
-      <div className="flex flex-row">
+      <FormSubmit handleImportCSV={handleImportCSV} handleExportCSV={handleExportCSV} handleSubmit={handleSubmit} />
+      {/* <div className="flex flex-row">
         <label htmlFor="fileinput">
           <div className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen">
             Load Form Progress
@@ -884,19 +887,19 @@ const RabiesHistoryForm = () => {
         <div className="grow" />
         <div className="flex space-x-4">
           <button
+            onClick={handleExportCSV}
+            className="bg-pastelyellow text-white py-2 px-4 rounded hover:bg-yellow-600"
+          >
+            Save Form As CSV
+          </button>
+          <button
             onClick={handleSubmit}
             className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
           >
-            Save Form
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-          >
-            Export CSV
+            Submit Form
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* <Button
         variant="contained"

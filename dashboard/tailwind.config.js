@@ -27,6 +27,7 @@ module.exports = {
         white: "#fffafa",
         black: "#252525",
         pastelyellow: "#ffe459",
+        darkerpastelyellow:"#e5cd50"
       },
     },
   },

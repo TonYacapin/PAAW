@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import axios from "axios";
 import StepperComponent from "../../component/StepperComponent";
+import FormSubmit from "../../component/FormSubmit";
 
 const DiseaseInvestigationForm = () => {
   const [detailsRows, setDetailsRows] = useState([
@@ -787,15 +788,15 @@ const DiseaseInvestigationForm = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Form</h1>
-      <input
+      {/* <input
         type="file"
         accept=".csv"
         onChange={handleCSVUpload}
         className="mb-6"
-      />
+      /> */}
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
-
-      <div className="flex justify-end space-x-4">
+      <FormSubmit handleCSVImport={handleCSVUpload} handleCSVExport={exportToCSV} handleSubmit={handleSave}/>
+      {/* <div className="flex justify-end space-x-4">
         <button
           onClick={handleSave}
           className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
@@ -808,7 +809,7 @@ const DiseaseInvestigationForm = () => {
         >
           Export CSV
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
