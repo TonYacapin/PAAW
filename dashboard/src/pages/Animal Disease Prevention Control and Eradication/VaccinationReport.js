@@ -4,6 +4,7 @@ import ConfirmationModal from '../../component/ConfirmationModal'; // Import the
 import Papa from 'papaparse';
 
 import { Add, Save } from '@mui/icons-material';
+import FormSubmit from '../../component/FormSubmit';
 
 function VaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -273,7 +274,7 @@ function VaccinationReport() {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Import CSV Input */}
+      {/* Import CSV Input
       <div className="flex justify-end mb-4">
         <input
           type="file"
@@ -281,7 +282,7 @@ function VaccinationReport() {
           onChange={importCSV}
           className="px-4 py-2 bg-yellow-500 text-white rounded"
         />
-      </div>
+      </div> */}
       <h2 className="text-2xl font-bold mb-4">Vaccination Report</h2>
 
       {/* Main fields */}
@@ -428,7 +429,8 @@ function VaccinationReport() {
         ))}
       </div>
 
-      {/* Save Entries Button */}
+      <FormSubmit handleImportCSV={importCSV} handleExportCSV={exportAsCSV} handleSubmit={saveEntries}/>
+      {/* Save Entries Button
       <div className="flex justify-end mb-4">
         <button
           type="button"
@@ -440,7 +442,7 @@ function VaccinationReport() {
       </div>
 
 
-      {/* Save Entries Button */}
+      Save Entries Button
       <div className="flex justify-end mb-4">
         <button
           type="button"
@@ -449,7 +451,7 @@ function VaccinationReport() {
         >
           Save CSV
         </button>
-      </div>
+      </div> */}
 
 
       {/* Modal for Editing Entries */}
