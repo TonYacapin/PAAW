@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { format, isSameMonth, subMonths } from "date-fns";
- 
+
 function AccomplishmentReport() {
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [speciesCount, setSpeciesCount] = useState([]);
-  const [totals, setTotals] = useState({
-    previousMonth: 0,
-    thisMonth: 0,
-    combined: 0,
-    total: 0,
-  });
+  const [totals, setTotals] = useState({});
   const [targets, setTargets] = useState({});
   const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
@@ -17,107 +13,84 @@ function AccomplishmentReport() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const vaccineGroups = {
-    "Hemorrhagic Septicemia": ["Carabao", "Cattle", "Goat/Sheep"],
+    "Hemorrhagic Septicemia": ["Carabao", "Cattle", "Goat/Sheep",],
     "Hog Cholera": ["Swine"],
-    "Newcastle Disease": ["Poultry"],
+    "New Castle Disease": ["Poultry"],
   };
- 
+
   const vaccineTypes = Object.keys(vaccineGroups);
- 
+
   useEffect(() => {
     fetchData();
-  }, [selectedYear]);
+  }, [selectedYear, selectedMonth]);
 
   useEffect(() => {
     calculatePercentages();
   }, [totals, targets, selectedVaccine]);
 
-  const fetchData = () => {
-    Promise.all([
-      axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/reports/accomplishment?year=${selectedYear}`),
-      axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}`)
-    ])
-      .then(([reportsResponse, targetsResponse]) => {
-        const reportsData = reportsResponse.data;
-        const targetsData = targetsResponse.data;
- 
-        // Process targets data
-        const targetsObj = targetsData.reduce((acc, target) => {
-          acc[target.Type] = {
-            quarterly: target.target,
-            semiAnnual: target.semiAnnualTarget
-          };
-          return acc;
-        }, {});
-        setTargets(targetsObj);
- 
-        // Process reports data
-        const currentDate = new Date(selectedYear, new Date().getMonth(), new Date().getDate());
-        const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const previousMonthStart = subMonths(thisMonthStart, 1);
-        const speciesReport = {};
- 
-        function addSpeciesCount(species, isThisMonth, isPreviousMonth) {
-          if (!speciesReport[species]) {
-            speciesReport[species] = {
-              previousMonth: 0,
-              thisMonth: 0,
-              combined: 0,
-              total: 0,
-            };
-          }
-          if (isThisMonth) {
-            speciesReport[species].thisMonth++;
-          } else if (isPreviousMonth) {
-            speciesReport[species].previousMonth++;
-          }
-          speciesReport[species].combined = speciesReport[species].previousMonth + speciesReport[species].thisMonth;
-          speciesReport[species].total++;
-        }
- 
-        reportsData.forEach((report) => {
-          report.entries.forEach((entry) => {
-            const species = entry.animalInfo.species;
-            const entryDate = new Date(entry.date);
-            const isThisMonth = entryDate >= thisMonthStart && isSameMonth(entryDate, currentDate);
-            const isPreviousMonth = entryDate >= previousMonthStart && entryDate < thisMonthStart;
-            addSpeciesCount(species, isThisMonth, isPreviousMonth);
-          });
-        });
- 
-        const speciesArray = Object.keys(speciesReport).map((species) => {
-          const vaccineType = Object.keys(vaccineGroups).find((vaccine) =>
-            vaccineGroups[vaccine].includes(species)
-          ) || "Other";
-          return {
-            species,
-            vaccineType,
-            previousMonth: speciesReport[species].previousMonth,
-            thisMonth: speciesReport[species].thisMonth,
-            combined: speciesReport[species].combined,
-            total: speciesReport[species].total,
-          };
-        });
- 
-        speciesArray.sort((a, b) => {
-          if (a.vaccineType !== b.vaccineType) {
-            return a.vaccineType.localeCompare(b.vaccineType);
-          }
-          return a.species.localeCompare(b.species);
-        });
- 
-        setSpeciesCount(speciesArray);
-        updateTotals(speciesArray);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+  // Fetch data from the new species-count API
+  const fetchData = async () => {
+    try {
+      const [speciesCountResponse, targetsResponse] = await Promise.all([
+        axios.get(`http://localhost:5000/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`),
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}`)
+      ]);
+
+      processSpeciesCount(speciesCountResponse.data);
+      processTargets(targetsResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
+  const processTargets = (targetsData) => {
+    const targetsObj = targetsData.reduce((acc, target) => {
+      acc[target.Type] = {
+        quarterly: target.target,
+        semiAnnual: target.semiAnnualTarget
+      };
+      return acc;
+    }, {});
+    setTargets(targetsObj);
+  };
+
+  const processSpeciesCount = (speciesData) => {
+    const speciesReport = speciesData.map((vaccineData) => {
+      return vaccineData.species.map((speciesItem) => ({
+        species: speciesItem.species || "Unknown",
+        vaccineType: vaccineData.vaccine,
+        previousMonth: speciesItem.previousMonthCount,
+        thisMonth: speciesItem.thisMonthCount,
+        combined: speciesItem.previousMonthCount + speciesItem.thisMonthCount,
+        total: speciesItem.totalCount
+      }));
+    }).flat();
+
+    speciesReport.sort((a, b) => a.vaccineType.localeCompare(b.vaccineType));
+    setSpeciesCount(speciesReport);
+  };
+
+  const filteredSpeciesCount = useMemo(() => (
+    selectedVaccine === 'All'
+      ? speciesCount
+      : speciesCount.filter((data) => data.vaccineType === selectedVaccine)
+  ), [speciesCount, selectedVaccine]);
+
+  const groupedByVaccine = useMemo(() => vaccineTypes.map(vaccineType => {
+    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
+    return { vaccineType, speciesUnderVaccine };
+  }), [filteredSpeciesCount, vaccineTypes]);
+
+  useEffect(() => {
+    updateTotals(filteredSpeciesCount);
+  }, [filteredSpeciesCount]);
 
   const updateTotals = (data) => {
     const totalPreviousMonth = data.reduce((sum, species) => sum + species.previousMonth, 0);
     const totalThisMonth = data.reduce((sum, species) => sum + species.thisMonth, 0);
     const totalCombined = data.reduce((sum, species) => sum + species.combined, 0);
     const totalOverall = data.reduce((sum, species) => sum + species.total, 0);
- 
+
     setTotals({
       previousMonth: totalPreviousMonth,
       thisMonth: totalThisMonth,
@@ -125,12 +98,12 @@ function AccomplishmentReport() {
       total: totalOverall,
     });
   };
- 
+
   const calculatePercentages = () => {
     if (selectedVaccine === 'All') {
       const totalQuarterly = Object.values(targets).reduce((sum, target) => sum + (target.quarterly || 0), 0);
       const totalSemiAnnual = Object.values(targets).reduce((sum, target) => sum + (target.semiAnnual || 0), 0);
-  
+
       setQuarterlyPercentage(totalQuarterly === 0 ? "no target value set." : ((totals.combined / totalQuarterly) * 100).toFixed(2));
       setSemiAnnualPercentage(totalSemiAnnual === 0 ? "no target value set." : ((totals.combined / totalSemiAnnual) * 100).toFixed(2));
     } else {
@@ -140,44 +113,32 @@ function AccomplishmentReport() {
         setSemiAnnualPercentage("no target value set.");
         return;
       }
- 
-      const vaccineTotal = speciesCount
-        .filter((species) => species.vaccineType === selectedVaccine)
-        .reduce((sum, species) => sum + species.combined, 0);
-  
-      setQuarterlyPercentage(target.quarterly > 0 ? ((vaccineTotal / target.quarterly) * 100).toFixed(2) : "no target value set.");
+
+      const vaccineTotal = filteredSpeciesCount.reduce((sum, species) => sum + species.combined, 0);
+
+      setQuarterlyPercentage(target.quarterly > 0 ? ((species.com / target.quarterly) * 100).toFixed(2) : "no target value set.");
       setSemiAnnualPercentage(target.semiAnnual > 0 ? ((vaccineTotal / target.semiAnnual) * 100).toFixed(2) : "no target value set.");
-    }
-  };
- 
-  const handleVaccineChange = (e) => {
-    const selectedVaccineType = e.target.value;
-    setSelectedVaccine(selectedVaccineType);
-    if (selectedVaccineType === 'All') {
-      updateTotals(speciesCount);
-    } else {
-      const filteredSpeciesCount = speciesCount.filter((data) => data.vaccineType === selectedVaccineType);
-      updateTotals(filteredSpeciesCount);
     }
   };
 
   const handleYearChange = (e) => {
-    setSelectedYear(parseInt(e.target.value));
+    setSelectedYear(e.target.value);
+  };
+  
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
+  
+  const handleVaccineChange = (e) => {
+    setSelectedVaccine(e.target.value);
   };
 
-  const filteredSpeciesCount = selectedVaccine === 'All'
-    ? speciesCount
-    : speciesCount.filter((data) => data.vaccineType === selectedVaccine);
- 
-  const groupedByVaccine = vaccineTypes.map(vaccineType => {
-    const speciesUnderVaccine = filteredSpeciesCount.filter(species => species.vaccineType === vaccineType);
-    return { vaccineType, speciesUnderVaccine };
-  });
- 
   return (
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        
+        {/* Year Selector */}
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Year</h2>
           <select
@@ -196,6 +157,22 @@ function AccomplishmentReport() {
           </select>
         </div>
 
+        {/* Month Selector */}
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Month</h2>
+          <select
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            {Array.from({ length: 12 }, (_, index) => (
+              <option key={index} value={index + 1}>
+                {format(new Date(0, index), "MMMM")}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
           <input
@@ -206,11 +183,11 @@ function AccomplishmentReport() {
           />
           {quarterlyPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-             Percentage: {quarterlyPercentage}
+              Percentage: {quarterlyPercentage}
             </p>
           )}
         </div>
- 
+
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target Value</h2>
           <input
@@ -225,7 +202,7 @@ function AccomplishmentReport() {
             </p>
           )}
         </div>
- 
+
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
           <select
@@ -242,7 +219,7 @@ function AccomplishmentReport() {
           </select>
         </div>
       </div>
- 
+
       <div className="overflow-x-auto mt-6">
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
           <thead className="bg-[#ffe356] text-[#1b5b40]">
@@ -252,7 +229,7 @@ function AccomplishmentReport() {
               <th className="py-3 px-4 text-left">Previous Month's Count</th>
               <th className="py-3 px-4 text-left">This Month's Count</th>
               <th className="py-3 px-4 text-left">Combined</th>
-              <th className="py-3 px-4 text-left">Total</th>
+              <th className="py-3 px-4 text-left">Total Accomplishment</th>
             </tr>
           </thead>
           <tbody>
@@ -288,10 +265,9 @@ function AccomplishmentReport() {
             </tr>
           </tbody>
         </table>
-
       </div>
     </div>
   );
 }
- 
+
 export default AccomplishmentReport;

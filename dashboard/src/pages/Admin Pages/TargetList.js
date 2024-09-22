@@ -7,8 +7,8 @@ const TargetList = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [targets, setTargets] = useState([]);
     const [error, setError] = useState('');
+    const [selectedTarget, setSelectedTarget] = useState(null); // State for the target being edited
 
-    // Function to fetch targets
     const fetchTargets = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets`);
@@ -22,10 +22,15 @@ const TargetList = () => {
         fetchTargets();
     }, []);
 
-    // Function to handle modal close and refresh the target list
     const handleModalClose = () => {
         setModalOpen(false);
-        fetchTargets(); // Refresh the target list when modal closes
+        setSelectedTarget(null); // Reset selected target
+        fetchTargets();
+    };
+
+    const handleEditClick = (target) => {
+        setSelectedTarget(target);
+        setModalOpen(true);
     };
 
     return (
@@ -34,7 +39,10 @@ const TargetList = () => {
             {error && <p className="text-red-500">{error}</p>}
             <button
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                onClick={() => setModalOpen(true)}
+                onClick={() => {
+                    setSelectedTarget(null); // Prepare for adding a new target
+                    setModalOpen(true);
+                }}
             >
                 Add Target Value
             </button>
@@ -45,13 +53,14 @@ const TargetList = () => {
                         <th className="border px-4 py-2">Type</th>
                         <th className="border px-4 py-2">Target</th>
                         <th className="border px-4 py-2">Semi Annual Target</th>
-                        <th className="border px-4 py-2">Target Year</th> {/* Changed header from "Target Date" to "Target Year" */}
+                        <th className="border px-4 py-2">Target Year</th>
+                        <th className="border px-4 py-2">Actions</th> {/* New Actions column */}
                     </tr>
                 </thead>
                 <tbody>
                     {targets.length === 0 ? (
                         <tr>
-                            <td colSpan="4" className="text-center border px-4 py-2">No targets available</td>
+                            <td colSpan="5" className="text-center border px-4 py-2">No targets available</td>
                         </tr>
                     ) : (
                         targets.map((target) => (
@@ -59,7 +68,15 @@ const TargetList = () => {
                                 <td className="border px-4 py-2">{target.Type}</td>
                                 <td className="border px-4 py-2">{target.target}</td>
                                 <td className="border px-4 py-2">{target.semiAnnualTarget}</td>
-                                <td className="border px-4 py-2">{target.targetYear}</td> {/* Display targetYear as a number */}
+                                <td className="border px-4 py-2">{target.targetYear}</td>
+                                <td className="border px-4 py-2">
+                                    <button
+                                        className="text-blue-600 hover:underline"
+                                        onClick={() => handleEditClick(target)} // Open form to edit
+                                    >
+                                        Edit
+                                    </button>
+                                </td>
                             </tr>
                         ))
                     )}
@@ -67,7 +84,7 @@ const TargetList = () => {
             </table>
 
             <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-                <TargetForm onClose={handleModalClose} />
+                <TargetForm onClose={handleModalClose} target={selectedTarget} /> {/* Pass selected target */}
             </Modal>
         </div>
     );

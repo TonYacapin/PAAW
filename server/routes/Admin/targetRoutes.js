@@ -103,4 +103,20 @@ router.delete('/:type', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const { Type, target, semiAnnualTarget, targetYear } = req.body;
+
+  try {
+      const updatedTarget = await Target.findByIdAndUpdate(req.params.id, {
+          Type,
+          target,
+          semiAnnualTarget,
+          targetYear,
+      }, { new: true }); // Returns the updated document
+      res.status(200).json(updatedTarget);
+  } catch (err) {
+      res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = router;
