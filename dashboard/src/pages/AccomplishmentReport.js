@@ -116,7 +116,7 @@ function AccomplishmentReport() {
 
       const vaccineTotal = filteredSpeciesCount.reduce((sum, species) => sum + species.combined, 0);
 
-      setQuarterlyPercentage(target.quarterly > 0 ? ((species.com / target.quarterly) * 100).toFixed(2) : "no target value set.");
+      setQuarterlyPercentage(target.quarterly > 0 ? ((vaccineTotal / target.quarterly) * 100).toFixed(2) : "no target value set.");
       setSemiAnnualPercentage(target.semiAnnual > 0 ? ((vaccineTotal / target.semiAnnual) * 100).toFixed(2) : "no target value set.");
     }
   };
