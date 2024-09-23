@@ -14,6 +14,24 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Route to get targets for a specific year
+router.get('/accomplishment', async (req, res) => {
+  try {
+    const { year } = req.query;
+    let query = {};
+    
+    if (year) {
+      query.targetYear = parseInt(year);
+    }
+    
+    const targets = await Target.find(query);
+    res.json(targets);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 // GET a specific target by type
 router.get('/:type', async (req, res) => {
   try {
@@ -31,16 +49,26 @@ router.post('/', async (req, res) => {
     Type: req.body.Type,
     target: req.body.target,
     semiAnnualTarget: req.body.semiAnnualTarget,
-    targetDate: req.body.targetDate
+    targetYear: req.body.targetYear
   });
 
   try {
     const newTarget = await target.save();
     res.status(201).json(newTarget);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    // Check if the error is a duplicate key error (E11000)
+    if (err.code === 11000) {
+      const duplicatedField = Object.keys(err.keyValue)[0];
+      res.status(400).json({
+        message: `Duplicate entry: A target for '${req.body.Type}' already exists for the year ${req.body.targetYear}.`
+      });
+    } else {
+      // Handle other errors (e.g., validation errors)
+      res.status(400).json({ message: err.message });
+    }
   }
 });
+
 
 // PATCH (update) a target by type
 router.patch('/:type', async (req, res) => {
@@ -72,6 +100,22 @@ router.delete('/:type', async (req, res) => {
     res.json({ message: 'Target deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  const { Type, target, semiAnnualTarget, targetYear } = req.body;
+
+  try {
+      const updatedTarget = await Target.findByIdAndUpdate(req.params.id, {
+          Type,
+          target,
+          semiAnnualTarget,
+          targetYear,
+      }, { new: true }); // Returns the updated document
+      res.status(200).json(updatedTarget);
+  } catch (err) {
+      res.status(400).json({ message: err.message });
   }
 });
 
