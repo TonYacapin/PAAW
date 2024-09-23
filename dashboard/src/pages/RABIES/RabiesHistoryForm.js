@@ -17,10 +17,9 @@ import {
   Button,
 } from "@mui/material";
 import "./RabiesHistoryForm.css";
-import StepperComponent, {
-  StepperActiveStep,
-} from "../../component/StepperComponent";
+import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse";
+import FormSubmit from "../../component/FormSubmit";
 
 const RabiesHistoryForm = () => {
   const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState("");
@@ -72,6 +71,7 @@ const RabiesHistoryForm = () => {
   const [otherVictims, setOtherVictims] = useState("");
   const [treatmentReceivedOther, setTreatmentReceivedOther] = useState("");
   const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState("");
+  const [StepperActiveStep, setStepperActiveStep] = useState();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
@@ -251,6 +251,7 @@ const RabiesHistoryForm = () => {
 
   var pages = [
     <>
+      <h3 className="text-lg font-bold mb-6">Animal Profile</h3>
       <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -287,7 +288,7 @@ const RabiesHistoryForm = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 font-medium">Status:</label>
+            <label className="block mb-2 font-medium">Sex</label>
             <div className="flex space-x-4">
               <label className="flex items-center">
                 <input
@@ -326,15 +327,15 @@ const RabiesHistoryForm = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 font-medium">Farm Type:</label>
+            <label className="block mb-2 font-medium">Ownership Type</label>
             <select
-              name="farmType"
+              name="ownershipType"
               value={ownershipType}
               className="border w-full p-2 rounded"
               onChange={(e) => setOwnershipType(e.target.value)}
             >
               <option value="" disabled>
-                Type of Ownership
+                Select Type of Ownership
               </option>
               <option value="household_pet">Household Pet</option>
               <option value="pet_of_neighbor">Pet of Neighbor</option>
@@ -345,408 +346,622 @@ const RabiesHistoryForm = () => {
       </div>
     </>,
     <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Animal Profile - Page 2</Typography>
-      </Grid>
+      <h3 className="text-lg font-bold mb-6">Animal Profile</h3>
 
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Pet Management</InputLabel>
-          <Select
-            value={petManagement}
-            onChange={(e) => setPetManagement(e.target.value)}
-            label="Pet Management"
-          >
-            <MenuItem value="confined">Confined</MenuItem>
-            <MenuItem value="leashed">Leashed</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Cause of Death</InputLabel>
-          <Select
-            value={causeOfDeath}
-            onChange={(e) => setCauseOfDeath(e.target.value)}
-            label="Cause of Death"
-          >
-            <MenuItem value="euthanasia">Euthanasia</MenuItem>
-            <MenuItem value="illness">Illness</MenuItem>
-            <MenuItem value="accident">Accident</MenuItem>
-            <MenuItem value="others">Others</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Date of Death"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={dateOfDeath}
-          onChange={(e) => setDateOfDeath(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Time of Death"
-          type="time"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={timeOfDeath}
-          onChange={(e) => setTimeOfDeath(e.target.value)}
-        />
-      </Grid>
-    </>,
-
-    <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Animal Profile - Page 3</Typography>
-      </Grid>
-
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Vaccination History</InputLabel>
-          <Select
-            value={vaccinationHistory}
-            onChange={(e) => setVaccinationHistory(e.target.value)}
-            label="Vaccination History"
-          >
-            <MenuItem value="rabies">Rabies</MenuItem>
-            <MenuItem value="others">Others</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Type of Vaccine"
-          variant="outlined"
-          value={typeOfVaccine}
-          onChange={(e) => setTypeOfVaccine(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Date of Last Vaccination"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={dateOfLastVaccination}
-          onChange={(e) => setDateOfLastVaccination(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">
-            Bitch Vaccinated (for puppies 3 months and below)?
-          </FormLabel>
-          <RadioGroup
-            row
-            value={bitchVaccinated}
-            onChange={(e) => setBitchVaccinated(e.target.value)}
-          >
-            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Contact with Other Animals?</FormLabel>
-          <RadioGroup
-            row
-            value={contactWithAnimals}
-            onChange={(e) => setContactWithAnimals(e.target.value)}
-          >
-            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-    </>,
-    <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Animal Profile - Page 4</Typography>
-      </Grid>
-
-      {contactWithAnimals === "yes" && (
-        <Grid item xs={12}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel>Where?</InputLabel>
-            <Select
-              value={contactLocation}
-              onChange={(e) => setContactLocation(e.target.value)}
-              label="Where?"
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">Pet Management</label>
+            <select
+              name="PetManagement"
+              value={petManagement}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setPetManagement(e.target.value)}
             >
-              <MenuItem value="household">Household</MenuItem>
-              <MenuItem value="neighbor">Neighbor</MenuItem>
-              <MenuItem value="others">Others</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      )}
-      <Grid item xs={12}>
-        <Typography variant="body1">If Sick, Duration of Illness</Typography>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="From"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={durationIllnessFrom}
-          onChange={(e) => setDurationIllnessFrom(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="To"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={durationIllnessTo}
-          onChange={(e) => setDurationIllnessTo(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Behavioral Changes</FormLabel>
-          <FormGroup row>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.restlessness}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      restlessness: !behavioralChanges.restlessness,
-                    })
-                  }
-                />
-              }
-              label="Restlessness"
+              <option value="" disabled>
+                Select Pet Management
+              </option>
+              <option value="confined">Confined</option>
+              <option value="leashed">Leashed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Cause of Death</label>
+            <select
+              name="CauseofDeath"
+              value={causeOfDeath}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setCauseOfDeath(e.target.value)}
+            >
+              <option value="" disabled>
+                Select Cause of Death
+              </option>
+              <option value="euthanasia">Euthanasia</option>
+              <option value="illness">Illness</option>
+              <option value="accident">Accident</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Date of Death</label>
+            <input
+              type="date"
+              name="DateofDeath"
+              value={dateOfDeath}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDateOfDeath(e.target.value)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.apprehensiveWatchfulLook}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      apprehensiveWatchfulLook:
-                        !behavioralChanges.apprehensiveWatchfulLook,
-                    })
-                  }
-                />
-              }
-              label="Apprehensive Watchful Look"
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Time of Death</label>
+            <input
+              type="time"
+              name="TimeofDeath"
+              value={timeOfDeath}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setTimeOfDeath(e.target.value)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.runningAimlessly}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      runningAimlessly: !behavioralChanges.runningAimlessly,
-                    })
-                  }
-                />
-              }
-              label="Running Aimlessly"
+          </div>
+        </div>
+      </div>
+    </>,
+    <>
+      <h3 className="text-lg font-bold mb-6">Animal Profile</h3>
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">
+              Vaccination History
+            </label>
+            <select
+              name="VaccinationHistory"
+              value={vaccinationHistory}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setCauseOfDeath(e.target.value)}
+            >
+              <option value="" disabled>
+                Select Vaccination History
+              </option>
+              <option value="rabies">Rabies</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Type of Vaccine</label>
+            <input
+              type="text"
+              name="TypeofVaccine"
+              value={typeOfVaccine}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setTypeOfVaccine(e.target.value)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.bitingInanimateObjects}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      bitingInanimateObjects:
-                        !behavioralChanges.bitingInanimateObjects,
-                    })
-                  }
-                />
-              }
-              label="Biting Inanimate Objects"
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">
+              Date of Last Vaccination
+            </label>
+            <input
+              type="date"
+              name="Date of Last Vaccination"
+              value={dateOfLastVaccination}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDateOfLastVaccination(e.target.value)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.hyperactivity}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      hyperactivity: !behavioralChanges.hyperactivity,
-                    })
-                  }
-                />
-              }
-              label="Hyperactivity"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={behavioralChanges.others}
-                  onChange={() =>
-                    setBehavioralChanges({
-                      ...behavioralChanges,
-                      others: !behavioralChanges.others,
-                    })
-                  }
-                />
-              }
-              label="Others"
-            />
-          </FormGroup>
-          {behavioralChanges.others && (
-            <TextField
-              fullWidth
-              label="Specify Behavioral Changes"
-              variant="outlined"
-              margin="normal"
-              value={behavioralChanges.specify}
-              onChange={(e) =>
-                setBehavioralChanges({
-                  ...behavioralChanges,
-                  specify: e.target.value,
-                })
-              }
-            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">
+              {"Bitch Vaccinated (for puppies 3 months and below)?"}
+            </label>
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="yesBitchVax"
+                  value="yes"
+                  checked={bitchVaccinated === "yes"}
+                  onChange={(e) => setBitchVaccinated(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Yes
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="noBitchVax"
+                  value="no"
+                  checked={bitchVaccinated === "no"}
+                  onChange={(e) => setBitchVaccinated(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                No
+              </label>
+            </div>
+          </div>{" "}
+          <div>
+            <div>
+              <label className="block mb-2 font-medium">
+                {"Contact with Other Animals?"}
+              </label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="yesContact"
+                    value="yes"
+                    checked={contactWithAnimals === "yes"}
+                    onChange={(e) => setContactWithAnimals(e.target.value)}
+                    className="mr-2"
+                  />{" "}
+                  Yes
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="noContact"
+                    value="no"
+                    checked={contactWithAnimals === "no"}
+                    onChange={(e) => setContactWithAnimals(e.target.value)}
+                    className="mr-2"
+                  />{" "}
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+          {contactWithAnimals === "yes" && (
+            <div>
+              <label className="block mb-2 font-medium">Where?</label>
+              <select
+                name="contactLocation"
+                value={contactLocation}
+                className="border w-full p-2 rounded"
+                onChange={(e) => setContactLocation(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select Contact Location
+                </option>
+                <option value="household">Household</option>
+                <option value="neighbo">Neighbor</option>
+                <option value="others">Others</option>
+              </select>
+            </div>
           )}
-        </FormControl>
-      </Grid>
+        </div>
+      </div>
     </>,
     <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Victim Profile - Page 1</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Name"
-          variant="outlined"
-          value={victimName}
-          onChange={(e) => setVictimName(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Age"
-          variant="outlined"
-          value={victimAge}
-          onChange={(e) => setVictimAge(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Sex</FormLabel>
-          <RadioGroup
-            row
-            value={victimSex}
-            onChange={(e) => setVictimSex(e.target.value)}
-          >
-            <FormControlLabel value="male" control={<Radio />} label="Male" />
-            <FormControlLabel
-              value="female"
-              control={<Radio />}
-              label="Female"
+      <h3 className="text-lg font-bold mb-6">Animal Profile</h3>
+
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <h4 className="text-md font-bold mb-6">If Sick, Duration of Illness</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">From</label>
+            <input
+              type="date"
+              name="FromDuration"
+              value={durationIllnessFrom}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDurationIllnessFrom(e.target.value)}
             />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Address"
-          variant="outlined"
-          value={victimAddress}
-          onChange={(e) => setVictimAddress(e.target.value)}
-        />
-      </Grid>
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">To</label>
+            <input
+              type="date"
+              name="ToDuration"
+              value={durationIllnessTo}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDurationIllnessTo(e.target.value)}
+            />
+          </div>
+        </div>
+        <div>
+          <h4 className="text-md font-bold mb-6">Behavioral Changes</h4>
+          <div className="flex flex-row justify-between">
+            <label htmlFor="Restlessness" className="block mb-2 font-medium">
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="Restlessness"
+                name="Restlessness"
+                checked={behavioralChanges.restlessness}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    restlessness: !behavioralChanges.restlessness,
+                  })
+                }
+              />{" "}
+              Restlessness
+            </label>
+            <label
+              htmlFor="ApprehensiveWatchfulLook"
+              className="block mb-2 font-medium"
+            >
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="ApprehensiveWatchfulLook"
+                name="ApprehensiveWatchfulLook"
+                value={behavioralChanges.apprehensiveWatchfulLook}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    apprehensiveWatchfulLook:
+                      !behavioralChanges.apprehensiveWatchfulLook,
+                  })
+                }
+              />{" "}
+              Apprehensive Watchful Look
+            </label>
+            <label
+              htmlFor="RunningAimlessly"
+              className="block mb-2 font-medium"
+            >
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="RunningAimlessly"
+                name="RunningAimlessly"
+                value={behavioralChanges.runningAimlessly}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    runningAimlessly: !behavioralChanges.runningAimlessly,
+                  })
+                }
+              />{" "}
+              Running Aimlessly
+            </label>
+            <label
+              htmlFor="BitingInanimateObjects"
+              className="block mb-2 font-medium"
+            >
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="BitingInanimateObjects"
+                name="BitingInanimateObjects"
+                value={behavioralChanges.bitingInanimateObjects}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    bitingInanimateObjects:
+                      !behavioralChanges.bitingInanimateObjects,
+                  })
+                }
+              />{" "}
+              Biting Inanimate Objects
+            </label>
+            <label htmlFor="Hyperactivity" className="block mb-2 font-medium">
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="Hyperactivity"
+                name="Hyperactivity"
+                value={behavioralChanges.hyperactivity}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    hyperactivity: !behavioralChanges.hyperactivity,
+                  })
+                }
+              />{" "}
+              Hyperactivity
+            </label>
+            <label htmlFor="Others" className="block mb-2 font-medium">
+              <input
+                className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                type="checkbox"
+                id="Others"
+                name="Others"
+                value={behavioralChanges.others}
+                onChange={() =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    others: !behavioralChanges.others,
+                  })
+                }
+              />{" "}
+              Others
+            </label>
+          </div>
+          {behavioralChanges.others && (
+            <div>
+              <label className="block mb-2 font-medium">
+                Specify Behavioral Changes
+              </label>
+              <input
+                type="text"
+                name="SpecifyBehavioralChanges"
+                value={behavioralChanges.specify}
+                className="border w-full p-2 rounded"
+                onChange={(e) =>
+                  setBehavioralChanges({
+                    ...behavioralChanges,
+                    specify: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </>,
     <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Victim Profile - Page 2</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Date of Bite"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={dateOfBite}
-          onChange={(e) => setDateOfBite(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Time of Bite"
-          type="time"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          value={timeOfBite}
-          onChange={(e) => setTimeOfBite(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Site of Bite</InputLabel>
-          <Select
-            value={siteOfBite}
-            onChange={(e) => setSiteOfBite(e.target.value)}
-            label="Site of Bite"
-          >
-            <MenuItem value="head">Head</MenuItem>
-            <MenuItem value="trunk">Trunk</MenuItem>
-            <MenuItem value="lower_extremity">Lower Extremity</MenuItem>
-            <MenuItem value="upper_extremity">Upper Extremity</MenuItem>
-            <MenuItem value="back">Back</MenuItem>
-            <MenuItem value="others">Others</MenuItem>
-          </Select>
-        </FormControl>
-        {siteOfBite === "others" && (
-          <TextField
-            fullWidth
-            label="Specify Site of Bite"
-            variant="outlined"
-            margin="normal"
-            value={siteOfBiteSpecify}
-            onChange={(e) => setSiteOfBiteSpecify(e.target.value)}
+      <h3 className="text-lg font-bold mb-6">Victim Profile</h3>
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">Name</label>
+            <input
+              type="text"
+              name="Name"
+              value={victimName}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setVictimName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Age</label>
+            <input
+              type="text"
+              name="Age"
+              value={victimAge}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setVictimAge(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Sex</label>
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="victimSex"
+                  value="male"
+                  checked={victimSex === "male"}
+                  onChange={(e) => setVictimSex(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Male
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="victimSex"
+                  value="female"
+                  checked={victimSex === "female"}
+                  onChange={(e) => setVictimSex(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Female
+              </label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label className="block mb-2 font-medium">Address</label>
+          <input
+            type="text"
+            name="Address"
+            value={victimAddress}
+            className="border w-full p-2 rounded"
+            onChange={(e) => setVictimAddress(e.target.value)}
           />
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel>Nature of Bite</InputLabel>
-          <Select
-            value={natureOfBite}
-            onChange={(e) => setNatureOfBite(e.target.value)}
-            label="Nature of Bite"
-          >
-            <MenuItem value="scratch">Scratch</MenuItem>
-            <MenuItem value="single">Single</MenuItem>
-            <MenuItem value="moderate">Moderate</MenuItem>
-            <MenuItem value="multiple">Multiple</MenuItem>
-            <MenuItem value="bad">Bad</MenuItem>
-            <MenuItem value="severe">Severe</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
+        </div>
+      </div>
     </>,
     <>
-      <Grid item xs={12}>
-        <Typography variant="h6">Victim Profile - Page 3</Typography>
-      </Grid>
+      <h3 className="text-lg font-bold mb-6">Victim Profile</h3>
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">Date of Bite</label>
+            <input
+              type="date"
+              name="DateofBite"
+              value={dateOfBite}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDateOfBite(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Time of Bite</label>
+            <input
+              type="time"
+              name="TimeofBite"
+              value={timeOfBite}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setTimeOfBite(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Site of Bite</label>
+            <select
+              name="siteOfBite"
+              value={siteOfBite}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setSiteOfBite(e.target.value)}
+            >
+              <option value="" disabled>
+                Select Site of Bite
+              </option>
+              <option value="head">Head</option>
+              <option value="trunk">Trunk</option>
+              <option value="lower_extremity">Lower Extremity</option>
+              <option value="upper_extremity">Upper Extremity</option>
+              <option value="back">Back</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          {siteOfBite === "others" && (
+            <div>
+              <label className="block mb-2 font-medium">
+                Specify Site of Bite
+              </label>
+              <input
+                type="text"
+                name="SpecifySiteofBite"
+                value={siteOfBiteSpecify}
+                className="border w-full p-2 rounded"
+                onChange={(e) => setSiteOfBiteSpecify(e.target.value)}
+              />
+            </div>
+          )}
+          <div>
+            <label className="block mb-2 font-medium">Nature of Bite</label>
+            <select
+              name="NatureofBite"
+              value={natureOfBite}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setNatureOfBite(e.target.value)}
+            >
+              <option value="" disabled>
+                Select Site of Bite
+              </option>
+              <option value="scratch">Scratch</option>
+              <option value="single">Single</option>
+              <option value="moderate">Moderate</option>
+              <option value="multiple">Multiple</option>
+              <option value="bad">Bad</option>
+              <option value="severe">Severe</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </>,
+    <>
+      <h3 className="text-lg font-bold mb-6">Victim Profile</h3>
+      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium">Bite Provoked?</label>
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="biteProvoked"
+                  value="yes"
+                  checked={biteProvoked === "yes"}
+                  onChange={(e) => setBiteProvoked(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                Yes
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="biteProvoked"
+                  value="no"
+                  checked={biteProvoked === "no"}
+                  onChange={(e) => setBiteProvoked(e.target.value)}
+                  className="mr-2"
+                />{" "}
+                No
+              </label>
+            </div>
+          </div>
+          {biteProvoked === "yes" && (
+            <div className="col-span-2">
+              <label className="block mb-2 font-medium">
+                Specify Provocation
+              </label>
+              <input
+                type="text"
+                name="SpecifyProvocation"
+                value={biteProvokedSpecify}
+                className="border w-full p-2 rounded"
+                onChange={(e) => setBiteProvokedSpecify(e.target.value)}
+              />
+            </div>
+          )}
+          <div>
+            <label className="block mb-2 font-medium">Location of Bite</label>
+            <select
+              name="locationOfBite"
+              value={locationOfBite}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setLocationOfBite(e.target.value)}
+            >
+              <option value="" disabled>
+                Location of Bite
+              </option>
+              <option value="household">Household</option>
+              <option value="neighbo">Neighbor</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          {locationOfBite === "others" && (
+            <div className="col-span-2">
+              <label className="block mb-2 font-medium">
+                Specify Location of Bite
+              </label>
+              <input
+                type="text"
+                name="SpecifyLocationofBite"
+                value={locationOfBiteSpecify}
+                className="border w-full p-2 rounded"
+                onChange={(e) => setLocationOfBiteSpecify(e.target.value)}
+              />
+            </div>
+          )}
+          <div>
+            <label className="block mb-2 font-medium">
+              {"Other Victims (if any)"}
+            </label>
+            <input
+              type="text"
+              name="SpecifyLocationofBite"
+              value={otherVictims}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setOtherVictims(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">Treatment Received</label>
+            <select
+              name="TreatmentReceived"
+              value={treatmentReceived}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setTreatmentReceived(e.target.value)}
+            >
+              <option value="" disabled>
+                Select Treatment Received
+              </option>
+              <option value="anti_rabies">Anti-Rabies</option>
+              <option value="anti_tetanus">Anti-Tetanus</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          {treatmentReceived === "others" && (
+            <div className="col-span-2">
+              <label className="block mb-2 font-medium">
+                Specify Treatment
+              </label>
+              <input
+                type="text"
+                name="SpecifyTreatment"
+                value={treatmentReceivedSpecify}
+                className="border w-full p-2 rounded"
+                onChange={(e) => setTreatmentReceivedSpecify(e.target.value)}
+              />
+            </div>
+          )}
+          <div>
+            <label className="block mb-2 font-medium">Date of Treatment Received</label>
+            <input
+              type="date"
+              name="DateofTreatmentReceived"
+              value={dateOfTreatmentReceived}
+              className="border w-full p-2 rounded"
+              onChange={(e) => setDateOfTreatmentReceived(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+{/* 
       <Grid item xs={12}>
         <FormControl component="fieldset">
           <FormLabel component="legend">Bite Provoked?</FormLabel>
@@ -839,7 +1054,7 @@ const RabiesHistoryForm = () => {
           value={dateOfTreatmentReceived}
           onChange={(e) => setDateOfTreatmentReceived(e.target.value)}
         />
-      </Grid>
+      </Grid> */}
     </>,
   ];
 
@@ -867,8 +1082,17 @@ const RabiesHistoryForm = () => {
     <>
       <h1 className="text-2xl font-bold mb-6">Rabies History</h1>
       <div></div>
-      <StepperComponent pages={pages} renderStepContent={renderStepContent} />
-      <div className="flex flex-row">
+      <StepperComponent
+        pages={pages}
+        renderStepContent={renderStepContent}
+        setStepperActiveStep={setStepperActiveStep}
+      />
+      <FormSubmit
+        handleImportCSV={handleImportCSV}
+        handleExportCSV={handleExportCSV}
+        handleSubmit={handleSubmit}
+      />
+      {/* <div className="flex flex-row">
         <label htmlFor="fileinput">
           <div className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen">
             Load Form Progress
@@ -884,19 +1108,19 @@ const RabiesHistoryForm = () => {
         <div className="grow" />
         <div className="flex space-x-4">
           <button
+            onClick={handleExportCSV}
+            className="bg-pastelyellow text-white py-2 px-4 rounded hover:bg-yellow-600"
+          >
+            Save Form As CSV
+          </button>
+          <button
             onClick={handleSubmit}
             className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
           >
-            Save Form
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-          >
-            Export CSV
+            Submit Form
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* <Button
         variant="contained"
