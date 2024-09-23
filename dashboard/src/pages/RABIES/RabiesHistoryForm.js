@@ -565,7 +565,7 @@ const RabiesHistoryForm = () => {
                 type="checkbox"
                 id="Restlessness"
                 name="Restlessness"
-                value={behavioralChanges.restlessness}
+                checked={behavioralChanges.restlessness}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,

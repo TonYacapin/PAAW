@@ -26,7 +26,7 @@ function AccomplishmentReport() {
 
   useEffect(() => {
     calculatePercentages();
-  }, [totals, targets, selectedVaccine]);
+  }, [totals, targets, selectedVaccine]); 
 
   // Fetch data from the new species-count API
   const fetchData = async () => {
@@ -70,7 +70,7 @@ function AccomplishmentReport() {
     setSpeciesCount(speciesReport);
   };
 
-  const filteredSpeciesCount = useMemo(() => (
+  const filteredSpeciesCount = useMemo(() => (  
     selectedVaccine === 'All'
       ? speciesCount
       : speciesCount.filter((data) => data.vaccineType === selectedVaccine)

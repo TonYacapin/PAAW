@@ -66,26 +66,26 @@ router.post('/RH', async (req, res) => {
         species,
         breed,
         sex,
-        age: parseInt(age, 10) // Convert to number
+        age: age ? parseInt(age, 10) : null // Convert to number, or leave blank
       },
       dateOfDeath: new Date(dateOfDeath),
       timeOfDeath,
       typeOfVaccine,
-      dateOfLastVaccination: new Date(dateOfLastVaccination),
-      durationOfIllness: {
+      dateOfLastVaccination: dateOfLastVaccination ? new Date(dateOfLastVaccination) : null,
+      durationOfIllness: durationIllnessFrom && durationIllnessTo ? {
         from: new Date(durationIllnessFrom),
         to: new Date(durationIllnessTo)
-      },
-      behavioralChanges: {
+      } : undefined, // Leave blank if not provided
+      behavioralChanges: behavioralChanges ? {
         ...behavioralChanges,
         specify: behavioralChanges.specify || ''
-      },
+      } : undefined, // Leave blank if not provided
       victimProfile: {
         name: victimName,
-        age: parseInt(victimAge, 10), // Convert to number
+        age: victimAge ? parseInt(victimAge, 10) : null, // Convert to number, or leave blank
         sex: victimSex,
         address: victimAddress,
-        dateOfBite: new Date(dateOfBite),
+        dateOfBite: dateOfBite ? new Date(dateOfBite) : null,
         timeOfBite,
         siteOfBite,
         siteOfBiteOther,
@@ -97,7 +97,7 @@ router.post('/RH', async (req, res) => {
         otherVictims
       },
       treatmentReceivedOther,
-      dateOfTreatmentReceived: new Date(dateOfTreatmentReceived)
+      dateOfTreatmentReceived: dateOfTreatmentReceived ? new Date(dateOfTreatmentReceived) : null
     });
 
     await rabiesHistory.save();
@@ -106,6 +106,7 @@ router.post('/RH', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 // Get all RabiesHistory entries
 router.get('/RH', async (req, res) => {
   try {
