@@ -22,7 +22,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 
-export var StepperActiveStep = 0;
+
 
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -121,15 +121,16 @@ export default function StepperComponent(props) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-
+    
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    StepperActiveStep = activeStep;
+    // props.setStepperActiveStep(activeStep);
     setSkipped(newSkipped);
   };
 
   const handleBack = () => {
+    
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    StepperActiveStep = activeStep;
+    // props.setStepperActiveStep(activeStep);
   };
 
   const handleReset = () => {
@@ -195,6 +196,7 @@ export default function StepperComponent(props) {
           <Box>{props.renderStepContent(activeStep)}</Box>
           <MobileStepper
             variant="text"
+            color="green"
             steps={props.pages.length}
             position="static"
             activeStep={activeStep}
