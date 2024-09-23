@@ -44,7 +44,7 @@ function MonthlyAccomplishmentReport() {
             Monthly Accomplishment Report
           </h2>
           <button
-            className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
             onClick={() => setModalOpen(true)}
           >
             Open Target Form
