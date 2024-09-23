@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
+import ChartGroup from './ChartGroup';
 
 const RoutineServicesMonitoringReportChart = () => {
   const [data, setData] = useState({
@@ -123,35 +124,49 @@ const RoutineServicesMonitoringReportChart = () => {
     return <div>Loading chart data...</div>;
   }
 
+
+  const charts = [
+    {
+      label: "Number of Entries by Municipality",
+      content: data.barChartMunicipality.labels.length > 0 ? (
+        <Bar data={data.barChartMunicipality} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+
+    {
+      label: "Number of Animals by Species",
+      content: data.pieChartSpecies.labels.length > 0 ?  (
+        <Pie data={data.pieChartSpecies} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Activities Conducted",
+      content: data.barChartActivities.labels.length > 0 ? (
+        <Bar data={data.barChartActivities} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Number of Heads per Animal over Time",
+      content: data.lineChartNoOfHeads.labels.length > 0 ? (
+        <Line data={data.lineChartNoOfHeads} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+
+    
+  ]
+
   return (
-    <div>
-      <h2>Routine Services Monitoring Report Dashboard</h2>
-
-      {/* Bar Chart: Number of Entries by Municipality */}
-      <div>
-        <h3>Number of Entries by Municipality</h3>
-        {data.barChartMunicipality.labels.length > 0 ? <Bar data={data.barChartMunicipality} /> : <div>No data available</div>}
-      </div>
-
-      {/* Pie Chart: Number of Animals by Species */}
-      <div>
-        <h3>Number of Animals by Species</h3>
-        {data.pieChartSpecies.labels.length > 0 ? <Pie data={data.pieChartSpecies} /> : <div>No data available</div>}
-      </div>
-
-      {/* Bar Chart: Activities Conducted */}
-      <div>
-        <h3>Activities Conducted</h3>
-        {data.barChartActivities.labels.length > 0 ? <Bar data={data.barChartActivities} /> : <div>No data available</div>}
-      </div>
-
-      {/* Line Chart: Number of Heads per Animal over Time */}
-      <div>
-        <h3>Number of Heads per Animal over Time</h3>
-        {data.lineChartNoOfHeads.labels.length > 0 ? <Line data={data.lineChartNoOfHeads} /> : <div>No data available</div>}
-      </div>
-    </div>
+    <ChartGroup charts={charts} title="Routine Services Monitoring Report" />
   );
 };
+
 
 export default RoutineServicesMonitoringReportChart;
