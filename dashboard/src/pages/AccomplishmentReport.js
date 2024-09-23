@@ -26,33 +26,45 @@ function AccomplishmentReport() {
 
   useEffect(() => {
     calculatePercentages();
-  }, [totals, targets, selectedVaccine]); 
+  }, [totals, targets, selectedVaccine]);
 
   // Fetch data from the new species-count API
   const fetchData = async () => {
     try {
       const [speciesCountResponse, targetsResponse] = await Promise.all([
-        axios.get(`http://localhost:5000/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`),
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}`)
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`),
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`)
       ]);
 
       processSpeciesCount(speciesCountResponse.data);
       processTargets(targetsResponse.data);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
   const processTargets = (targetsData) => {
-    const targetsObj = targetsData.reduce((acc, target) => {
+    if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
+      console.error("Invalid targets data format:", targetsData);
+      return;
+    }
+
+    const targetsObj = targetsData.targets.reduce((acc, target) => {
       acc[target.Type] = {
         quarterly: target.target,
         semiAnnual: target.semiAnnualTarget
       };
       return acc;
     }, {});
-    setTargets(targetsObj);
+
+    setTargets({
+      ...targetsObj,
+      totalTarget: targetsData.totalTarget,
+      totalSemiAnnualTarget: targetsData.totalSemiAnnualTarget
+    });
   };
+
 
   const processSpeciesCount = (speciesData) => {
     const speciesReport = speciesData.map((vaccineData) => {
@@ -70,7 +82,7 @@ function AccomplishmentReport() {
     setSpeciesCount(speciesReport);
   };
 
-  const filteredSpeciesCount = useMemo(() => (  
+  const filteredSpeciesCount = useMemo(() => (
     selectedVaccine === 'All'
       ? speciesCount
       : speciesCount.filter((data) => data.vaccineType === selectedVaccine)
@@ -98,37 +110,35 @@ function AccomplishmentReport() {
       total: totalOverall,
     });
   };
-
   const calculatePercentages = () => {
     if (selectedVaccine === 'All') {
-      const totalQuarterly = Object.values(targets).reduce((sum, target) => sum + (target.quarterly || 0), 0);
-      const totalSemiAnnual = Object.values(targets).reduce((sum, target) => sum + (target.semiAnnual || 0), 0);
+      const totalQuarterly = targets.totalTarget || 0;
+      const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
 
-      setQuarterlyPercentage(totalQuarterly === 0 ? "no target value set." : ((totals.combined / totalQuarterly) * 100).toFixed(2));
-      setSemiAnnualPercentage(totalSemiAnnual === 0 ? "no target value set." : ((totals.combined / totalSemiAnnual) * 100).toFixed(2));
+      setQuarterlyPercentage(totalQuarterly === 0 ? "No target set" : `${((totals.combined / totalQuarterly) * 100).toFixed(2)}%`);
+      setSemiAnnualPercentage(totalSemiAnnual === 0 ? "No target set" : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`);
     } else {
       const target = targets[selectedVaccine];
       if (!target) {
-        setQuarterlyPercentage("no target value set.");
-        setSemiAnnualPercentage("no target value set.");
+        setQuarterlyPercentage("No target set");
+        setSemiAnnualPercentage("No target set");
         return;
       }
 
       const vaccineTotal = filteredSpeciesCount.reduce((sum, species) => sum + species.combined, 0);
 
-      setQuarterlyPercentage(target.quarterly > 0 ? ((vaccineTotal / target.quarterly) * 100).toFixed(2) : "no target value set.");
-      setSemiAnnualPercentage(target.semiAnnual > 0 ? ((vaccineTotal / target.semiAnnual) * 100).toFixed(2) : "no target value set.");
+      setQuarterlyPercentage(target.quarterly > 0 ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%` : "No target set");
+      setSemiAnnualPercentage(target.semiAnnual > 0 ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%` : "No target set");
     }
   };
-
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
   };
-  
+
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value);
   };
-  
+
   const handleVaccineChange = (e) => {
     setSelectedVaccine(e.target.value);
   };
@@ -137,7 +147,7 @@ function AccomplishmentReport() {
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        
+
         {/* Year Selector */}
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Year</h2>
@@ -174,34 +184,35 @@ function AccomplishmentReport() {
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Target Second Quarter Value</h2>
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
           <input
             type="number"
-            value={selectedVaccine === 'All' ? Object.values(targets).reduce((sum, target) => sum + (target.quarterly || 0), 0) : targets[selectedVaccine]?.quarterly || ''}
+            value={selectedVaccine === 'All'
+              ? targets.totalTarget || ''
+              : targets[selectedVaccine]?.quarterly || ''}
             disabled
             className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          {quarterlyPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {quarterlyPercentage}
-            </p>
-          )}
+          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+            Percentage: {quarterlyPercentage}
+          </p>
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target Value</h2>
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
           <input
             type="number"
-            value={selectedVaccine === 'All' ? Object.values(targets).reduce((sum, target) => sum + (target.semiAnnual || 0), 0) : targets[selectedVaccine]?.semiAnnual || ''}
+            value={selectedVaccine === 'All'
+              ? targets.totalSemiAnnualTarget || ''
+              : targets[selectedVaccine]?.semiAnnual || ''}
             disabled
             className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          {semiAnnualPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {semiAnnualPercentage}
-            </p>
-          )}
+          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+            Percentage: {semiAnnualPercentage}
+          </p>
         </div>
+
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>

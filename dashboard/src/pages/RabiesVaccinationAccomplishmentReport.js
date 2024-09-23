@@ -10,89 +10,110 @@ function RabiesVaccinationAccomplishmentReport() {
     combined: 0,
     total: 0,
   });
-  const [target, setTarget] = useState('');
-  const [percentage, setPercentage] = useState(null);
-  const [semiAnnualTarget, setSemiAnnualTarget] = useState('');
+  const [targets, setTargets] = useState({
+    quarterly: 0,
+    semiAnnual: 0
+  });
+  const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/api/entries`)
-      .then((response) => {
-        const data = response.data;
-        const currentDate = new Date();
-        const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const previousMonthStart = subMonths(thisMonthStart, 1);
+    fetchData();
+  }, [selectedYear]);
 
-        const immunizationReport = {
-          previousMonth: 0,
-          thisMonth: 0,
-          combined: 0,
-          total: 0, // Total for all months
-        };
+  const fetchData = async () => {
+    try {
+      const [immunizationResponse, targetsResponse] = await Promise.all([
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/entries?year=${selectedYear}`),
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`)
+      ]);
 
-        function addImmunizationCount(entryDate, count) {
-          // Determine whether the entry is from this month or the previous month
-          const isThisMonth = entryDate >= thisMonthStart && isSameMonth(entryDate, currentDate);
-          const isPreviousMonth = entryDate >= previousMonthStart && entryDate < thisMonthStart;
+      processImmunizationData(immunizationResponse.data);
+      processTargets(targetsResponse.data);
 
-          if (isThisMonth) {
-            immunizationReport.thisMonth += count;
-          } else if (isPreviousMonth) {
-            immunizationReport.previousMonth += count;
-          }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-          // Update combined count and total accomplishment count for all months
-          immunizationReport.combined =
-            immunizationReport.previousMonth + immunizationReport.thisMonth;
-          immunizationReport.total += count;
+  const processImmunizationData = (data) => {
+    const currentDate = new Date();
+    const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const previousMonthStart = subMonths(thisMonthStart, 1);
+
+    const immunizationReport = {
+      previousMonth: 0,
+      thisMonth: 0,
+      combined: 0,
+      total: 0,
+    };
+
+    data.forEach((report) => {
+      report.entries.forEach((entry) => {
+        const entryDate = new Date(entry.date);
+        const count = entry.no || 0;
+
+        if (entryDate >= thisMonthStart && isSameMonth(entryDate, currentDate)) {
+          immunizationReport.thisMonth += count;
+        } else if (entryDate >= previousMonthStart && entryDate < thisMonthStart) {
+          immunizationReport.previousMonth += count;
         }
 
-        data.forEach((report) => {
-          report.entries.forEach((entry) => {
-            const entryDate = new Date(entry.date);
-            const count = entry.no || 0; // Use 'no' field as count
-            addImmunizationCount(entryDate, count);
-          });
-        });
+        immunizationReport.total += count;
+      });
+    });
 
-        setImmunizationData([immunizationReport]);
-        updateTotals(immunizationReport);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+    immunizationReport.combined = immunizationReport.previousMonth + immunizationReport.thisMonth;
+
+    setImmunizationData([immunizationReport]);
+    updateTotals(immunizationReport);
+  };
+
+  const processTargets = (targetsData) => {
+    if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
+      console.error("Invalid targets data format:", targetsData);
+      return;
+    }
+
+    const rabiesTarget = targetsData.targets.find(target => target.Type === "No. of dogs immunized against rabies and registered");
+    if (rabiesTarget) {
+      setTargets({
+        quarterly: rabiesTarget.target,
+        semiAnnual: rabiesTarget.semiAnnualTarget
+      });
+    }
+  };
 
   const updateTotals = (data) => {
     setTotals({
       previousMonth: data.previousMonth,
       thisMonth: data.thisMonth,
       combined: data.combined,
-      total: data.total, // Reflecting all months
+      total: data.total,
     });
   };
 
-  const handleTargetChange = (e) => {
-    const targetValue = e.target.value;
-    setTarget(targetValue);
+  useEffect(() => {
+    calculatePercentages();
+  }, [totals, targets]);
 
-    const targetNumber = Number(targetValue);
-    if (targetNumber > 0 && totals.combined > 0) {
-      setPercentage(((totals.combined / targetNumber) * 100).toFixed(2));
+  const calculatePercentages = () => {
+    if (targets.quarterly > 0) {
+      setQuarterlyPercentage(((totals.combined / targets.quarterly) * 100).toFixed(2));
     } else {
-      setPercentage(null);
+      setQuarterlyPercentage(null);
     }
-  };
 
-  const handleSemiAnnualTargetChange = (e) => {
-    const semiAnnualTargetValue = e.target.value;
-    setSemiAnnualTarget(semiAnnualTargetValue);
-
-    const targetNumber = Number(semiAnnualTargetValue);
-    if (targetNumber > 0 && totals.total > 0) {
-      setSemiAnnualPercentage(((totals.total / targetNumber) * 100).toFixed(2));
+    if (targets.semiAnnual > 0) {
+      setSemiAnnualPercentage(((totals.total / targets.semiAnnual) * 100).toFixed(2));
     } else {
       setSemiAnnualPercentage(null);
     }
+  };
+
+  const handleYearChange = (e) => {
+    setSelectedYear(Number(e.target.value));
   };
 
   return (
@@ -101,39 +122,55 @@ function RabiesVaccinationAccomplishmentReport() {
         Rabies Vaccination Accomplishment Report
       </h1>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Year</h2>
+          <select
+            value={selectedYear}
+            onChange={handleYearChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            {[...Array(10)].map((_, i) => {
+              const year = new Date().getFullYear() - i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Target Second Quarter Value
+            Quarterly Target
           </h2>
           <input
             type="number"
-            value={target}
-            onChange={handleTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter target value"
+            value={targets.quarterly}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          {percentage !== null && (
+          {quarterlyPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {percentage}%
+              Percentage: {quarterlyPercentage}%
             </p>
           )}
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Semi-annual Target Value
+            Semi-annual Target
           </h2>
           <input
             type="number"
-            value={semiAnnualTarget}
-            onChange={handleSemiAnnualTargetChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter semi-annual target value"
+            value={targets.semiAnnual}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
           {semiAnnualPercentage !== null && (
             <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Semi-annual Percentage: {semiAnnualPercentage}%
+              Percentage: {semiAnnualPercentage}%
             </p>
           )}
         </div>
@@ -143,7 +180,7 @@ function RabiesVaccinationAccomplishmentReport() {
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
           <thead>
             <tr className="bg-[#1b5b40] text-white">
-            <th className="py-2 px-4 text-left">Activity</th>
+              <th className="py-2 px-4 text-left">Activity</th>
               <th className="py-2 px-4 text-left">Previous Month</th>
               <th className="py-2 px-4 text-left">This Month</th>
               <th className="py-2 px-4 text-left">Combined</th>
@@ -153,7 +190,7 @@ function RabiesVaccinationAccomplishmentReport() {
           <tbody>
             {immunizationData.length > 0 ? (
               <tr className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-                                <td className="py-2 px-4 text-[#252525]">No. of Dogs immunized against Rabies and Registered</td>
+                <td className="py-2 px-4 text-[#252525]">No. of Dogs immunized against Rabies and Registered</td>
                 <td className="py-2 px-4 text-[#252525]">{totals.previousMonth}</td>
                 <td className="py-2 px-4 text-[#252525]">{totals.thisMonth}</td>
                 <td className="py-2 px-4 text-[#252525]">{totals.combined}</td>
@@ -161,10 +198,9 @@ function RabiesVaccinationAccomplishmentReport() {
               </tr>
             ) : (
               <tr>
-                <td colSpan="4" className="py-2 px-4 text-center text-[#252525]">No data available.</td>
+                <td colSpan="5" className="py-2 px-4 text-center text-[#252525]">No data available.</td>
               </tr>
             )}
-       
           </tbody>
         </table>
       </div>

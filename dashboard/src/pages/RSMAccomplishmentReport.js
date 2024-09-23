@@ -10,11 +10,12 @@ function RSMAccomplishmentReport() {
     combined: 0,
     total: 0,
   });
-  const [target, setTarget] = useState('');
-  const [percentage, setPercentage] = useState(null);
-  const [semiAnnualTarget, setSemiAnnualTarget] = useState('');
+  const [targets, setTargets] = useState({});
+  const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState('All');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
   const activityOptions = [
     "Deworming",
@@ -25,147 +26,146 @@ function RSMAccomplishmentReport() {
     "Support",
   ];
 
+  const monthOptions = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
+  ];
+
+  const yearOptions = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+
   useEffect(() => {
-    axios
-      .get("http://192.168.1.197:5000/RSM")
-      .then((response) => {
-        const data = response.data;
-        const currentDate = new Date();
-        const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const previousMonthStart = subMonths(thisMonthStart, 1);
-        const activityReport = {};
+    fetchData();
+  }, [selectedYear, selectedMonth]);
 
-        // Modify to calculate for all months
-        function addActivityCount(activity, species, entryDate, noOfHeads) {
-          if (!activityReport[activity]) {
-            activityReport[activity] = {
-              speciesCount: {},
-              previousMonth: 0,
-              thisMonth: 0,
-              combined: 0,
-              total: 0, // Total for all months
-            };
-          }
+  useEffect(() => {
+    calculatePercentages();
+  }, [totals, targets, selectedActivity]);
 
-          if (!activityReport[activity].speciesCount[species]) {
-            activityReport[activity].speciesCount[species] = {
-              previousMonth: 0,
-              thisMonth: 0,
-              combined: 0,
-              total: 0, // Total for all months for this species
-            };
-          }
+  const fetchData = async () => {
+    try {
+      const [activityResponse, targetsResponse] = await Promise.all([
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/species-activity-count?year=${selectedYear}&month=${selectedMonth}`),
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RoutineServiceMonitoring`)
+      ]);
 
-          // Determine whether the entry is from this month or the previous month
-          const isThisMonth = entryDate >= thisMonthStart && isSameMonth(entryDate, currentDate);
-          const isPreviousMonth = entryDate >= previousMonthStart && entryDate < thisMonthStart;
+      processActivityData(activityResponse.data);
+      processTargets(targetsResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-          if (isThisMonth) {
-            activityReport[activity].thisMonth += noOfHeads;
-            activityReport[activity].speciesCount[species].thisMonth += noOfHeads;
-          } else if (isPreviousMonth) {
-            activityReport[activity].previousMonth += noOfHeads;
-            activityReport[activity].speciesCount[species].previousMonth += noOfHeads;
-          }
+  const processTargets = (targetsData) => {
+    if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
+      console.error("Invalid targets data format:", targetsData);
+      return;
+    }
 
-          // Update the combined count (previous + this month)
-          activityReport[activity].combined =
-            activityReport[activity].previousMonth + activityReport[activity].thisMonth;
-          activityReport[activity].speciesCount[species].combined =
-            activityReport[activity].speciesCount[species].previousMonth +
-            activityReport[activity].speciesCount[species].thisMonth;
+    const targetsObj = targetsData.targets.reduce((acc, target) => {
+      acc[target.Type] = {
+        quarterly: target.target,
+        semiAnnual: target.semiAnnualTarget
+      };
+      return acc;
+    }, {});
 
-          // Increment total accomplishment count for all months
-          activityReport[activity].total += noOfHeads;
-          activityReport[activity].speciesCount[species].total += noOfHeads;
-        }
+    setTargets({
+      ...targetsObj,
+      totalTarget: targetsData.totalTarget,
+      totalSemiAnnualTarget: targetsData.totalSemiAnnualTarget
+    });
+  };
 
-        data.forEach((report) => {
-          report.entries.forEach((entry) => {
-            const activity = entry.activity;
-            const species = entry.animalInfo.species;
-            const noOfHeads = entry.animalInfo.noOfHeads || 0;
-            const entryDate = new Date(entry.date);
-
-            // Now add all the entries for total computation
-            addActivityCount(activity, species, entryDate, noOfHeads);
-          });
-        });
-
-        const activityArray = Object.keys(activityReport).map((activity) => {
-          return {
-            activity,
-            speciesData: Object.keys(activityReport[activity].speciesCount).map((species) => ({
-              species,
-              previousMonth: activityReport[activity].speciesCount[species].previousMonth,
-              thisMonth: activityReport[activity].speciesCount[species].thisMonth,
-              combined: activityReport[activity].speciesCount[species].combined,
-              total: activityReport[activity].speciesCount[species].total, // Total for all months
-            })),
-            previousMonth: activityReport[activity].previousMonth,
-            thisMonth: activityReport[activity].thisMonth,
-            combined: activityReport[activity].combined,
-            total: activityReport[activity].total, // Total for all months
-          };
-        });
-
-        setActivityData(activityArray);
-        updateTotals(activityArray);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
-  const updateTotals = (data) => {
+  const processActivityData = (data) => {
+    const processedData = {};
     let totalPreviousMonth = 0;
     let totalThisMonth = 0;
     let totalCombined = 0;
     let totalOverall = 0;
 
-    data.forEach((activity) => {
-      activity.speciesData.forEach((species) => {
-        totalPreviousMonth += species.previousMonth;
-        totalThisMonth += species.thisMonth;
-        totalCombined += species.combined;
-        totalOverall += species.total; // Total for all months
+    data.forEach((item) => {
+      if (!processedData[item.activity]) {
+        processedData[item.activity] = {
+          activity: item.activity,
+          speciesData: [],
+          previousMonth: 0,
+          thisMonth: 0,
+          combined: 0,
+          total: 0,
+        };
+      }
+
+      processedData[item.activity].speciesData.push({
+        species: item.species,
+        previousMonth: item.previousMonthCount,
+        thisMonth: item.thisMonthCount,
+        combined: item.previousMonthCount + item.thisMonthCount,
+        total: item.totalCount,
       });
+
+      processedData[item.activity].previousMonth += item.previousMonthCount;
+      processedData[item.activity].thisMonth += item.thisMonthCount;
+      processedData[item.activity].combined += item.previousMonthCount + item.thisMonthCount;
+      processedData[item.activity].total += item.totalCount;
+
+      totalPreviousMonth += item.previousMonthCount;
+      totalThisMonth += item.thisMonthCount;
+      totalCombined += item.previousMonthCount + item.thisMonthCount;
+      totalOverall += item.totalCount;
     });
 
+    setActivityData(Object.values(processedData));
     setTotals({
       previousMonth: totalPreviousMonth,
       thisMonth: totalThisMonth,
       combined: totalCombined,
-      total: totalOverall, // Reflecting all months
+      total: totalOverall,
     });
   };
 
+  const calculatePercentages = () => {
+    if (selectedActivity === 'All') {
+      const totalQuarterly = targets.totalTarget || 0;
+      const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
 
-  const handleTargetChange = (e) => {
-    const targetValue = e.target.value;
-    setTarget(targetValue);
-
-    const targetNumber = Number(targetValue);
-    if (targetNumber > 0 && totals.combined > 0) {
-      setPercentage(((totals.combined / targetNumber) * 100).toFixed(2));
+      setQuarterlyPercentage(totalQuarterly === 0 ? "No target set" : `${((totals.combined / totalQuarterly) * 100).toFixed(2)}%`);
+      setSemiAnnualPercentage(totalSemiAnnual === 0 ? "No target set" : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`);
     } else {
-      setPercentage(null);
+      const target = targets[selectedActivity];
+      if (!target) {
+        setQuarterlyPercentage("No target set");
+        setSemiAnnualPercentage("No target set");
+        return;
+      }
+
+      const vaccineTotal = filteredActivityData.reduce((sum, species) => sum + species.combined, 0);
+
+      setQuarterlyPercentage(target.quarterly > 0 ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%` : "No target set");
+      setSemiAnnualPercentage(target.semiAnnual > 0 ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%` : "No target set");
     }
   };
 
-  const handleSemiAnnualTargetChange = (e) => {
-    const semiAnnualTargetValue = e.target.value;
-    setSemiAnnualTarget(semiAnnualTargetValue);
-
-    const targetNumber = Number(semiAnnualTargetValue);
-    if (targetNumber > 0 && totals.total > 0) {
-      setSemiAnnualPercentage(((totals.total / targetNumber) * 100).toFixed(2));
-    } else {
-      setSemiAnnualPercentage(null);
-    }
-  };
-
+  const activityTotal = activityData.find(activity => activity.activity === selectedActivity)?.combined || 0;
   const handleActivityChange = (e) => {
-    const selectedActivityType = e.target.value;
-    setSelectedActivity(selectedActivityType);
+    setSelectedActivity(e.target.value);
+  };
+
+  const handleMonthChange = (e) => {
+    setSelectedMonth(Number(e.target.value));
+  };
+
+  const handleYearChange = (e) => {
+    setSelectedYear(Number(e.target.value));
   };
 
   const filteredActivityData =
@@ -176,44 +176,42 @@ function RSMAccomplishmentReport() {
   return (
     <div className="p-6 bg-[#FFFAFA] min-h-0">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
-        Routine Service Monitoring Accomplisment
+        Routine Service Monitoring Accomplishment
       </h1>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Target Second Quarter Value
+            Select Year
           </h2>
-          <input
-            type="number"
-            value={target}
-            onChange={handleTargetChange}
+          <select
+            value={selectedYear}
+            onChange={handleYearChange}
             className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter target value"
-          />
-          {percentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {percentage}%
-            </p>
-          )}
+          >
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Semi-annual Target Value
+            Select Month
           </h2>
-          <input
-            type="number"
-            value={semiAnnualTarget}
-            onChange={handleSemiAnnualTargetChange}
+          <select
+            value={selectedMonth}
+            onChange={handleMonthChange}
             className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-            placeholder="Enter semi-annual target value"
-          />
-          {semiAnnualPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Semi-annual Percentage: {semiAnnualPercentage}%
-            </p>
-          )}
+          >
+            {monthOptions.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
@@ -232,6 +230,36 @@ function RSMAccomplishmentReport() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
+          <input
+            type="number"
+            value={selectedActivity === 'All'
+              ? targets.totalTarget || ''
+              : targets[selectedActivity]?.quarterly || ''}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+          />
+          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+            Percentage: {quarterlyPercentage}
+          </p>
+        </div>
+
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
+          <input
+            type="number"
+            value={selectedActivity === 'All'
+              ? targets.totalSemiAnnualTarget || ''
+              : targets[selectedActivity]?.semiAnnual || ''}
+            disabled
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+          />
+          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
+            Percentage: {semiAnnualPercentage}
+          </p>
         </div>
       </div>
 
@@ -284,6 +312,7 @@ function RSMAccomplishmentReport() {
         </table>
       </div>
     </div>
+
   );
 }
 

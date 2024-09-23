@@ -17,21 +17,47 @@ router.get('/', async (req, res) => {
 // Route to get targets for a specific year
 router.get('/accomplishment', async (req, res) => {
   try {
-    const { year } = req.query;
+    const { year, reportType } = req.query;
     let query = {};
-    
+    let totalTarget = 0;
+    let totalSemiAnnualTarget = 0;
+
     if (year) {
       query.targetYear = parseInt(year);
     }
-    
+
     const targets = await Target.find(query);
-    res.json(targets);
+
+    // Filtering and calculating totals based on report type
+    if (reportType === 'VaccinationReport') {
+      const vaccinationTypes = ['Hemorrhagic Septicemia', 'New Castle Disease', 'Hog Cholera'];
+      const filteredTargets = targets.filter(target => vaccinationTypes.includes(target.Type));
+
+      totalTarget = filteredTargets.reduce((acc, target) => acc + target.target, 0);
+      totalSemiAnnualTarget = filteredTargets.reduce((acc, target) => acc + target.semiAnnualTarget, 0);
+
+    } else if (reportType === 'RoutineServiceMonitoring') {
+      const routineServices = [
+        'Deworming', 'Wound Treatment', 'Vitamin Supplementation',
+        'Iron Supplementation', 'Consultation', 'Support'
+      ];
+      const filteredTargets = targets.filter(target => routineServices.includes(target.Type));
+
+      totalTarget = filteredTargets.reduce((acc, target) => acc + target.target, 0);
+      totalSemiAnnualTarget = filteredTargets.reduce((acc, target) => acc + target.semiAnnualTarget, 0);
+
+    } else if (reportType === 'RabiesVaccination') {
+      const filteredTargets = targets.filter(target => target.Type === 'No. of dogs immunized against rabies and registered');
+
+      totalTarget = filteredTargets.reduce((acc, target) => acc + target.target, 0);
+      totalSemiAnnualTarget = filteredTargets.reduce((acc, target) => acc + target.semiAnnualTarget, 0);
+    }
+
+    res.json({ targets, totalTarget, totalSemiAnnualTarget });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
-
 // GET a specific target by type
 router.get('/:type', async (req, res) => {
   try {
