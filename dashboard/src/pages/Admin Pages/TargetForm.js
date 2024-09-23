@@ -67,7 +67,7 @@ const TargetForm = ({ onClose, target }) => {
                     >
                         <option value="">Select a type</option>
                         <option value="Hemorrhagic Septicemia">Hemorrhagic Septicemia</option>
-                        <option value="Newcastle Disease">Newcastle Disease</option>
+                        <option value="Newcastle Disease">New Castle Disease</option>
                         <option value="Hog Cholera">Hog Cholera</option>
                         <option value="Deworming">Deworming</option>
                         <option value="Wound Treatment">Wound Treatment</option>
