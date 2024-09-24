@@ -231,9 +231,9 @@ function AccomplishmentReport() {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
-          <thead className="bg-[#ffe356] text-[#1b5b40]">
+      <div className="overflow-x-auto mt-6 shadow-lg">
+        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
+          <thead className="bg-darkgreen text-white">
             <tr>
               <th className="py-3 px-4 text-left">Vaccine Type</th>
               <th className="py-3 px-4 text-left">Species</th>

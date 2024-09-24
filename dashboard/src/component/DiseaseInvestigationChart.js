@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Line, Pie, Doughnut, Bar, Bubble } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
+import ChartGroup from './ChartGroup';
 
 const DiseaseInvestigationChart = () => {
   const [data, setData] = useState({
@@ -168,58 +169,76 @@ const DiseaseInvestigationChart = () => {
     return <div>Loading chart data...</div>;
   }
 
+  const charts = [
+    {
+      label: "Investigations Over Time",
+      content: data.lineChart.labels.length > 0 ? (
+        <Line data={data.lineChart} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Investigation Status",
+      content: data.pieChartStatus.labels.length > 0 ? (
+        <Pie data={data.pieChartStatus} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Farm Type Distribution",
+      content: data.pieChartFarmType.labels.length > 0 ? (
+        <Doughnut data={data.pieChartFarmType} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Cases and Deaths by Species",
+      content: data.barChartSpeciesCasesDeaths.labels.length > 0 ? (
+        <Bar data={data.barChartSpeciesCasesDeaths} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Species vs Population Affected",
+      content: data.bubbleChartSpeciesPopulation.labels.length > 0 ? (
+        <Bubble data={data.bubbleChartSpeciesPopulation} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Control Measures Used",
+      content: data.pieChartControlMeasures.labels.length > 0 ? (
+        <Pie data={data.pieChartControlMeasures} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Probable Source of Infection",
+      content: data.pieChartProbableSource.labels.length > 0 ? (
+        <Doughnut data={data.pieChartProbableSource} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+    {
+      label: "Case Fatality Rate by Species",
+      content: data.barChartCFRBySpecies.labels.length > 0 ? (
+        <Bar data={data.barChartCFRBySpecies} />
+      ) : (
+        <div>No data available</div>
+      ),
+    },
+  ];
+  
+
   return (
-    <div>
-      <h2>Disease Investigation Reports</h2>
-
-      {/* Line Chart: Investigations Over Time */}
-      <div>
-        <h3>Investigations Over Time</h3>
-        {data.lineChart.labels.length > 0 ? <Line data={data.lineChart} /> : <div>No data available</div>}
-      </div>
-
-      {/* Pie Chart: Investigation Status */}
-      <div>
-        <h3>Investigation Status</h3>
-        {data.pieChartStatus.labels.length > 0 ? <Pie data={data.pieChartStatus} /> : <div>No data available</div>}
-      </div>
-
-      {/* Pie Chart: Farm Type Distribution */}
-      <div>
-        <h3>Farm Type Distribution</h3>
-        {data.pieChartFarmType.labels.length > 0 ? <Doughnut data={data.pieChartFarmType} /> : <div>No data available</div>}
-      </div>
-
-      {/* Bar Chart: Cases and Deaths by Species */}
-      <div>
-        <h3>Cases and Deaths by Species</h3>
-        {data.barChartSpeciesCasesDeaths.labels.length > 0 ? <Bar data={data.barChartSpeciesCasesDeaths} /> : <div>No data available</div>}
-      </div>
-
-      {/* Bubble Chart: Species vs Population Affected */}
-      <div>
-        <h3>Species vs Population Affected</h3>
-        {data.bubbleChartSpeciesPopulation.labels.length > 0 ? <Bubble data={data.bubbleChartSpeciesPopulation} /> : <div>No data available</div>}
-      </div>
-
-      {/* Pie Chart: Control Measures */}
-      <div>
-        <h3>Control Measures Used</h3>
-        {data.pieChartControlMeasures.labels.length > 0 ? <Pie data={data.pieChartControlMeasures} /> : <div>No data available</div>}
-      </div>
-
-      {/* Pie Chart: Probable Source of Infection */}
-      <div>
-        <h3>Probable Source of Infection</h3>
-        {data.pieChartProbableSource.labels.length > 0 ? <Doughnut data={data.pieChartProbableSource} /> : <div>No data available</div>}
-      </div>
-
-      {/* Bar Chart: Case Fatality Rate by Species */}
-      <div>
-        <h3>Case Fatality Rate by Species</h3>
-        {data.barChartCFRBySpecies.labels.length > 0 ? <Bar data={data.barChartCFRBySpecies} /> : <div>No data available</div>}
-      </div>
-    </div>
+    <ChartGroup charts={charts} title="Disease Investigation Report" />
   );
 };
 

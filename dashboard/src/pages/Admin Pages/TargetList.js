@@ -38,7 +38,7 @@ const TargetList = () => {
             <h2 className="text-xl font-bold mb-4">Target Value List</h2>
             {error && <p className="text-red-500">{error}</p>}
             <button
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 my-4 bg-darkgreen hover:bg-darkergreen text-white rounded"
                 onClick={() => {
                     setSelectedTarget(null); // Prepare for adding a new target
                     setModalOpen(true);
@@ -46,9 +46,8 @@ const TargetList = () => {
             >
                 Add Target Value
             </button>
-
-            <table className="min-w-full bg-white border border-gray-300 mt-4">
-                <thead>
+            <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
+                <thead className="bg-darkgreen text-white">
                     <tr>
                         <th className="border px-4 py-2">Type</th>
                         <th className="border px-4 py-2">Target</th>
@@ -69,9 +68,9 @@ const TargetList = () => {
                                 <td className="border px-4 py-2">{target.target}</td>
                                 <td className="border px-4 py-2">{target.semiAnnualTarget}</td>
                                 <td className="border px-4 py-2">{target.targetYear}</td>
-                                <td className="border px-4 py-2">
+                                <td className="border px-4 py-2 text-center">
                                     <button
-                                        className="text-blue-600 hover:underline"
+                                        className="bg-darkgreen hover:bg-darkergreen text-white rounded-md px-7 py-1"
                                         onClick={() => handleEditClick(target)} // Open form to edit
                                     >
                                         Edit
