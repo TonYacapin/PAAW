@@ -83,6 +83,8 @@ const rabiesVaccinationReportSchema = new Schema({
   }]
 });
 
+// 
+
 // Create the model from the schema
 const RabiesVaccinationReport = mongoose.model('RabiesVaccinationReport', rabiesVaccinationReportSchema);
 

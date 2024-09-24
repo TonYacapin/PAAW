@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { format, isSameMonth, subMonths } from "date-fns";
+import { format } from "date-fns";
 
 function RabiesVaccinationAccomplishmentReport() {
-  const [immunizationData, setImmunizationData] = useState([]);
-  const [totals, setTotals] = useState({
-    previousMonth: 0,
-    thisMonth: 0,
-    combined: 0,
-    total: 0,
+  const [immunizationData, setImmunizationData] = useState({
+    previousMonthCount: 0,
+    thisMonthCount: 0,
+    totalCount: 0,
   });
   const [targets, setTargets] = useState({
     quarterly: 0,
@@ -17,57 +15,25 @@ function RabiesVaccinationAccomplishmentReport() {
   const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // 1-12
 
   useEffect(() => {
     fetchData();
-  }, [selectedYear]);
+  }, [selectedYear, selectedMonth]);
 
   const fetchData = async () => {
     try {
       const [immunizationResponse, targetsResponse] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/entries?year=${selectedYear}`),
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/rabies-report/entry-count?year=${selectedYear}&month=${selectedMonth}`),
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`)
       ]);
 
-      processImmunizationData(immunizationResponse.data);
+      setImmunizationData(immunizationResponse.data);
       processTargets(targetsResponse.data);
 
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  const processImmunizationData = (data) => {
-    const currentDate = new Date();
-    const thisMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const previousMonthStart = subMonths(thisMonthStart, 1);
-
-    const immunizationReport = {
-      previousMonth: 0,
-      thisMonth: 0,
-      combined: 0,
-      total: 0,
-    };
-
-    data.forEach((report) => {
-      report.entries.forEach((entry) => {
-        const entryDate = new Date(entry.date);
-        const count = entry.no || 0;
-
-        if (entryDate >= thisMonthStart && isSameMonth(entryDate, currentDate)) {
-          immunizationReport.thisMonth += count;
-        } else if (entryDate >= previousMonthStart && entryDate < thisMonthStart) {
-          immunizationReport.previousMonth += count;
-        }
-
-        immunizationReport.total += count;
-      });
-    });
-
-    immunizationReport.combined = immunizationReport.previousMonth + immunizationReport.thisMonth;
-
-    setImmunizationData([immunizationReport]);
-    updateTotals(immunizationReport);
   };
 
   const processTargets = (targetsData) => {
@@ -85,28 +51,20 @@ function RabiesVaccinationAccomplishmentReport() {
     }
   };
 
-  const updateTotals = (data) => {
-    setTotals({
-      previousMonth: data.previousMonth,
-      thisMonth: data.thisMonth,
-      combined: data.combined,
-      total: data.total,
-    });
-  };
-
   useEffect(() => {
     calculatePercentages();
-  }, [totals, targets]);
+  }, [immunizationData, targets]);
 
   const calculatePercentages = () => {
+    const combined = immunizationData.previousMonthCount + immunizationData.thisMonthCount;
     if (targets.quarterly > 0) {
-      setQuarterlyPercentage(((totals.combined / targets.quarterly) * 100).toFixed(2));
+      setQuarterlyPercentage(((combined / targets.quarterly) * 100).toFixed(2));
     } else {
       setQuarterlyPercentage(null);
     }
 
     if (targets.semiAnnual > 0) {
-      setSemiAnnualPercentage(((totals.total / targets.semiAnnual) * 100).toFixed(2));
+      setSemiAnnualPercentage(((immunizationData.totalCount / targets.semiAnnual) * 100).toFixed(2));
     } else {
       setSemiAnnualPercentage(null);
     }
@@ -114,6 +72,10 @@ function RabiesVaccinationAccomplishmentReport() {
 
   const handleYearChange = (e) => {
     setSelectedYear(Number(e.target.value));
+  };
+
+  const handleMonthChange = (e) => {
+    setSelectedMonth(Number(e.target.value));
   };
 
   return (
@@ -138,6 +100,21 @@ function RabiesVaccinationAccomplishmentReport() {
                 </option>
               );
             })}
+          </select>
+        </div>
+
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Month</h2>
+          <select
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            {[...Array(12)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {format(new Date(2000, i, 1), 'MMMM')}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -188,19 +165,13 @@ function RabiesVaccinationAccomplishmentReport() {
             </tr>
           </thead>
           <tbody>
-            {immunizationData.length > 0 ? (
-              <tr className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-                <td className="py-2 px-4 text-[#252525]">No. of Dogs immunized against Rabies and Registered</td>
-                <td className="py-2 px-4 text-[#252525]">{totals.previousMonth}</td>
-                <td className="py-2 px-4 text-[#252525]">{totals.thisMonth}</td>
-                <td className="py-2 px-4 text-[#252525]">{totals.combined}</td>
-                <td className="py-2 px-4 text-[#252525]">{totals.total}</td>
-              </tr>
-            ) : (
-              <tr>
-                <td colSpan="5" className="py-2 px-4 text-center text-[#252525]">No data available.</td>
-              </tr>
-            )}
+            <tr className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
+              <td className="py-2 px-4 text-[#252525]">No. of Dogs immunized against Rabies and Registered</td>
+              <td className="py-2 px-4 text-[#252525]">{immunizationData.previousMonthCount}</td>
+              <td className="py-2 px-4 text-[#252525]">{immunizationData.thisMonthCount}</td>
+              <td className="py-2 px-4 text-[#252525]">{immunizationData.previousMonthCount + immunizationData.thisMonthCount}</td>
+              <td className="py-2 px-4 text-[#252525]">{immunizationData.totalCount}</td>
+            </tr>
           </tbody>
         </table>
       </div>
