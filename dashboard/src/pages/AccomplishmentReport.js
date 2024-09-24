@@ -231,7 +231,7 @@ function AccomplishmentReport() {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6">
+      <div className="overflow-x-auto mt-6 shadow-lg">
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
           <thead className="bg-darkgreen text-white">
             <tr>
