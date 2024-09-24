@@ -46,7 +46,6 @@ const TargetList = () => {
             >
                 Add Target Value
             </button>
-
             <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
                 <thead className="bg-darkgreen text-white">
                     <tr>
@@ -69,9 +68,9 @@ const TargetList = () => {
                                 <td className="border px-4 py-2">{target.target}</td>
                                 <td className="border px-4 py-2">{target.semiAnnualTarget}</td>
                                 <td className="border px-4 py-2">{target.targetYear}</td>
-                                <td className="border px-4 py-2">
+                                <td className="border px-4 py-2 text-center">
                                     <button
-                                        className="text-blue-600 hover:underline"
+                                        className="bg-darkgreen hover:bg-darkergreen text-white rounded-md px-7 py-1"
                                         onClick={() => handleEditClick(target)} // Open form to edit
                                     >
                                         Edit
