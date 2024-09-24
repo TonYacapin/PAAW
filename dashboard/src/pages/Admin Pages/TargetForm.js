@@ -20,6 +20,18 @@ const TargetForm = ({ onClose, target }) => {
     }
   }, [target]);
 
+  const handleQuarterChange = (e) => {
+    const value = e.target.value;
+    setTargetValue(value);
+    setSemiAnnualTarget(value * 2); // Update semiAnnualTarget based on targetValue
+  };
+
+  const handleSemiAnnualChange = (e) => {
+    const value = e.target.value;
+    setSemiAnnualTarget(value);
+    setTargetValue(value / 2); // Update targetValue based on semiAnnualTarget
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,7 +76,7 @@ const TargetForm = ({ onClose, target }) => {
       <CardBox
         content={
           <>
-            <form onSubmit={handleSubmit} className="bg-white space-y-4" >
+            <form onSubmit={handleSubmit} className="bg-white space-y-4">
               <div>
                 <label className="block text-sm font-medium">Type</label>
                 <select
@@ -102,7 +114,7 @@ const TargetForm = ({ onClose, target }) => {
                 <input
                   type="number"
                   value={targetValue}
-                  onChange={(e) => setTargetValue(e.target.value)}
+                  onChange={handleQuarterChange} // Update handler
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 />
@@ -114,7 +126,7 @@ const TargetForm = ({ onClose, target }) => {
                 <input
                   type="number"
                   value={semiAnnualTarget}
-                  onChange={(e) => setSemiAnnualTarget(e.target.value)}
+                  onChange={handleSemiAnnualChange} // Update handler
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 />
