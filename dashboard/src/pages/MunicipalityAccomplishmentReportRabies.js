@@ -3,17 +3,15 @@ import axios from 'axios';
 
 const MunicipalityAccomplishmentReportRabies = () => {
     const [reportData, setReportData] = useState([]);
-    const [year, setYear] = useState(new Date().getFullYear());  // Default to current year
-    const [month, setMonth] = useState(new Date().getMonth() + 1);  // Default to current month (getMonth() returns 0-11)
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [month, setMonth] = useState(new Date().getMonth() + 1);
 
-    // Predefined list of municipalities
     const municipalitiesList = [
         "Ambaguio", "Bagabag", "Bayombong", "Diadi", "Quezon", "Solano", 
         "Villaverde", "Alfonso Castañeda", "Aritao", "Bambang", 
         "Dupax del Norte", "Dupax del Sur", "Kayapa", "Kasibu", "Santa Fe"
     ];
 
-    // List of month names
     const monthNames = [
         "January", "February", "March", "April", "May", "June", 
         "July", "August", "September", "October", "November", "December"
@@ -24,7 +22,6 @@ const MunicipalityAccomplishmentReportRabies = () => {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rabies-vaccination-summary?year=${year}&month=${month}`);
             const { currentMonth, previousMonth, total } = response.data;
 
-            // Initialize aggregated data with zero counts for each municipality
             const aggregatedData = {};
             municipalitiesList.forEach(municipality => {
                 aggregatedData[municipality] = {
@@ -35,43 +32,45 @@ const MunicipalityAccomplishmentReportRabies = () => {
                 };
             });
 
-            // Helper function to aggregate counts
             const aggregateCounts = (dataArray, monthType) => {
                 dataArray.forEach(item => {
                     const { municipality, count } = item;
-
-                    // Check if municipality exists in the predefined list
                     if (aggregatedData[municipality]) {
-                        // Aggregate counts by month type
-                        if (monthType === 'currentMonth') {
-                            aggregatedData[municipality].currentMonth += count;
-                        } else if (monthType === 'previousMonth') {
-                            aggregatedData[municipality].previousMonth += count;
-                        } else if (monthType === 'total') {
-                            aggregatedData[municipality].total += count;
-                        }
+                        aggregatedData[municipality][monthType] += count;
                     }
                 });
             };
 
-            // Aggregate counts for current month, previous month, and total
             aggregateCounts(currentMonth, 'currentMonth');
             aggregateCounts(previousMonth, 'previousMonth');
             aggregateCounts(total, 'total');
 
-            // Convert aggregated data into an array for rendering
             setReportData(Object.values(aggregatedData));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
-    // Fetch data whenever the year or month changes
     useEffect(() => {
         fetchData();
     }, [year, month]);
 
+    const calculateGrandTotals = () => {
+        return reportData.reduce((totals, item) => {
+            totals.currentMonth += item.currentMonth;
+            totals.previousMonth += item.previousMonth;
+            totals.total += item.total;
+            return totals;
+        }, { currentMonth: 0, previousMonth: 0, total: 0 });
+    };
+
+    const grandTotals = calculateGrandTotals();
+
     return (
+        <>
+        <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+        Municipality Rabies Vaccination Accomplishment Report
+      </h1>
         <div className="p-4">
             <div className="mb-4">
                 <label className="mr-2">Year:</label>
@@ -94,13 +93,11 @@ const MunicipalityAccomplishmentReportRabies = () => {
                 </select>
             </div>
 
-            {/* Table Title */}
             <h2 className="text-lg font-semibold mb-4">Rabies</h2>
 
-            {/* Scrollable Table */}
             <div className="overflow-x-auto max-h-64">
-                <table className="min-w-full table-auto border-collapse border border-gray-200 text-sm">
-                    <thead className="sticky top-0 bg-gray-100">
+                <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
+                    <thead className="sticky top-0 bg-[#1b5b40] text-white">
                         <tr>
                             <th className="border border-gray-300 px-2 py-1">Municipality</th>
                             <th className="border border-gray-300 px-2 py-1">Semi Annual Target</th>
@@ -114,17 +111,29 @@ const MunicipalityAccomplishmentReportRabies = () => {
                         {reportData.map((item, index) => (
                             <tr key={index}>
                                 <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
-                                <td className="border border-gray-300 px-2 py-1"></td> {/* Semi Annual Target (blank for now) */}
+                                <td className="border border-gray-300 px-2 py-1"></td>
                                 <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
                                 <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
                                 <td className="border border-gray-300 px-2 py-1">{item.total}</td>
-                                <td className="border border-gray-300 px-2 py-1"></td> {/* Percentage (blank for now) */}
+                                <td className="border border-gray-300 px-2 py-1"></td>
                             </tr>
                         ))}
                     </tbody>
+                    <tfoot className="sticky bottom-0 bg-[#ffe356] font-bold text-[#1b5b40]">
+                        <tr className="font-semibold">
+                            <td className="border border-gray-300 px-2 py-1">Grand Total</td>
+                            <td className="border border-gray-300 px-2 py-1"></td>
+                            <td className="border border-gray-300 px-2 py-1">{grandTotals.previousMonth}</td>
+                            <td className="border border-gray-300 px-2 py-1">{grandTotals.currentMonth}</td>
+                            <td className="border border-gray-300 px-2 py-1">{grandTotals.total}</td>
+                            <td className="border border-gray-300 px-2 py-1"></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
+        </>
+        
     );
 };
 
