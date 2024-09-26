@@ -358,14 +358,14 @@ function RoutineServicesMonitoringReport() {
             <button
               type="button"
               onClick={() => openModal(index)}
-              className="px-4 py-2 bg-yellow-500 text-white rounded mr-2"
+              className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
             >
               Edit
             </button>
             <button
               type="button"
               onClick={() => openConfirmationModal(index)}
-              className="px-4 py-2 bg-red-500 text-white rounded"
+              className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
             >
               Remove
             </button>
@@ -373,7 +373,11 @@ function RoutineServicesMonitoringReport() {
         ))}
       </div>
 
-      <FormSubmit handleExportCSV={exportAsCSV} handleImportCSV={importCSV} handleSubmit={saveEntries}/>
+      <FormSubmit
+        handleExportCSV={exportAsCSV}
+        handleImportCSV={importCSV}
+        handleSubmit={saveEntries}
+      />
       {/* Save Entries Button
       <div className="flex justify-end mb-4">
         <button
@@ -400,7 +404,7 @@ function RoutineServicesMonitoringReport() {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
             <h3 className="text-2xl font-bold mb-4">
-              Edit Entry {selectedEntry + 1}
+              Edit Routine Service Entry {selectedEntry + 1}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -534,6 +538,36 @@ function RoutineServicesMonitoringReport() {
                 <label htmlFor="species" className="block mb-1">
                   Species/Animal
                 </label>
+                <select
+                  name="species"
+                  value={entries[selectedEntry].animalInfo.species}
+                  className="border w-full p-2 rounded"
+                  id="species"
+                  onChange={(e) =>
+                    handleAnimalInfoChange(
+                      selectedEntry,
+                      "species",
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="" disabled>
+                    Select Species
+                  </option>
+                  <option value="Swine">Swine</option>
+                  <option value="Goat">Goat</option>
+                  <option value="Chicken">Chicken</option>
+                  <option value="Sheep">Sheep</option>
+                  <option value="Duck">Duck</option>
+                  <option value="Carabao">Carabao</option>
+                  <option value="Rabbit">Rabbit</option>
+                  <option value="Cattle">Cattle</option>
+                </select>
+              </div>
+              {/* <div>
+                <label htmlFor="species" className="block mb-1">
+                  Species/Animal
+                </label>
                 <input
                   id="species"
                   type="text"
@@ -547,8 +581,28 @@ function RoutineServicesMonitoringReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
+                <label htmlFor="sex" className="block mb-1">
+                  Sex
+                </label>
+                <select
+                  name="sex"
+                  id="sex"
+                  value={entries[selectedEntry].animalInfo.sex}
+                  className="border w-full p-2 rounded"
+                  onChange={(e) =>
+                    handleAnimalInfoChange(selectedEntry, "sex", e.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Select Sex
+                  </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              {/* <div>
                 <label htmlFor="sex" className="block mb-1">
                   Sex
                 </label>
@@ -561,7 +615,7 @@ function RoutineServicesMonitoringReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
                 <label htmlFor="age" className="block mb-1">
                   Age/Age Group
@@ -658,14 +712,14 @@ function RoutineServicesMonitoringReport() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-4 py-2 bg-gray-500 text-white rounded mr-2"
+                className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded mr-2"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
               >
                 Save
               </button>

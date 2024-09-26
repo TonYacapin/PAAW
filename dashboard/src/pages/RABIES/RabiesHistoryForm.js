@@ -819,7 +819,7 @@ const RabiesHistoryForm = () => {
               onChange={(e) => setNatureOfBite(e.target.value)}
             >
               <option value="" disabled>
-                Select Site of Bite
+                Select Nature of Bite
               </option>
               <option value="scratch">Scratch</option>
               <option value="single">Single</option>
