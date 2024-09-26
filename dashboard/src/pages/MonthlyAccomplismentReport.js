@@ -7,7 +7,7 @@ import StepperComponent from "../component/StepperComponent";
 import Modal from "../component/Modal";
 import TargetList from "./Admin Pages/TargetList";
 import MunicipalityAccomplishmentReportVaccination from "./MunicipalityAccomplishmentReportVaccination";
-
+import MunicipalityAccomplishmentReportRabies from "./MunicipalityAccomplishmentReportRabies";
 function MonthlyAccomplishmentReport() {
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
 
@@ -28,6 +28,13 @@ function MonthlyAccomplishmentReport() {
       label: "Municipality Accomplishment Report Vaccination",
       content: <MunicipalityAccomplishmentReportVaccination />,
     },
+    {
+      label: "Municipality Accomplishment Report Rabies",
+      content: <MunicipalityAccomplishmentReportRabies />,
+    },
+
+
+
   ];
 
   const renderStepContent = (step) => {

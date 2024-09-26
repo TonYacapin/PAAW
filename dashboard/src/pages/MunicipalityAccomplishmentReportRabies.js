@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const MunicipalityAccomplishmentReportRabies = () => {
     const [reportData, setReportData] = useState([]);
+    const [year, setYear] = useState(new Date().getFullYear());  // Default to current year
+    const [month, setMonth] = useState(new Date().getMonth() + 1);  // Default to current month (getMonth() returns 0-11)
 
     // Predefined list of municipalities
     const municipalitiesList = [
@@ -11,100 +13,117 @@ const MunicipalityAccomplishmentReportRabies = () => {
         "Dupax del Norte", "Dupax del Sur", "Kayapa", "Kasibu", "Santa Fe"
     ];
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/rabies-vaccination-summary?year=2024&month=10');
-                const { currentMonth, previousMonth, total } = response.data;
+    // List of month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-                // Initialize aggregated data with zero counts for each municipality
-                const aggregatedData = {};
-                municipalitiesList.forEach(municipality => {
-                    aggregatedData[municipality] = {
-                        municipality,
-                        currentMonth: 0,
-                        previousMonth: 0,
-                        total: 0,
-                        speciesVaccines: {}, // To store species and vaccine information
-                    };
-                });
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rabies-vaccination-summary?year=${year}&month=${month}`);
+            const { currentMonth, previousMonth, total } = response.data;
 
-                // Helper function to aggregate counts
-                const aggregateCounts = (dataArray, monthType) => {
-                    dataArray.forEach(item => {
-                        const { municipality, species, vaccine, count } = item;
-
-                        // Check if municipality exists in the predefined list
-                        if (aggregatedData[municipality]) {
-                            // Aggregate counts by month type
-                            if (monthType === 'currentMonth') {
-                                aggregatedData[municipality].currentMonth += count;
-                            } else if (monthType === 'previousMonth') {
-                                aggregatedData[municipality].previousMonth += count;
-                            } else if (monthType === 'total') {
-                                aggregatedData[municipality].total += count;
-                            }
-
-                            // Store species and vaccine data for detailed info
-                            if (!aggregatedData[municipality].speciesVaccines[species]) {
-                                aggregatedData[municipality].speciesVaccines[species] = {};
-                            }
-                            aggregatedData[municipality].speciesVaccines[species][vaccine] = count;
-                        }
-                    });
+            // Initialize aggregated data with zero counts for each municipality
+            const aggregatedData = {};
+            municipalitiesList.forEach(municipality => {
+                aggregatedData[municipality] = {
+                    municipality,
+                    currentMonth: 0,
+                    previousMonth: 0,
+                    total: 0,
                 };
+            });
 
-                // Aggregate counts for current month, previous month, and total
-                aggregateCounts(currentMonth, 'currentMonth');
-                aggregateCounts(previousMonth, 'previousMonth');
-                aggregateCounts(total, 'total');
+            // Helper function to aggregate counts
+            const aggregateCounts = (dataArray, monthType) => {
+                dataArray.forEach(item => {
+                    const { municipality, count } = item;
 
-                // Convert aggregated data into an array for rendering
-                setReportData(Object.values(aggregatedData));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+                    // Check if municipality exists in the predefined list
+                    if (aggregatedData[municipality]) {
+                        // Aggregate counts by month type
+                        if (monthType === 'currentMonth') {
+                            aggregatedData[municipality].currentMonth += count;
+                        } else if (monthType === 'previousMonth') {
+                            aggregatedData[municipality].previousMonth += count;
+                        } else if (monthType === 'total') {
+                            aggregatedData[municipality].total += count;
+                        }
+                    }
+                });
+            };
 
+            // Aggregate counts for current month, previous month, and total
+            aggregateCounts(currentMonth, 'currentMonth');
+            aggregateCounts(previousMonth, 'previousMonth');
+            aggregateCounts(total, 'total');
+
+            // Convert aggregated data into an array for rendering
+            setReportData(Object.values(aggregatedData));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    // Fetch data whenever the year or month changes
+    useEffect(() => {
         fetchData();
-    }, []);
+    }, [year, month]);
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-200">
-                <thead>
-                    <tr>
-                        <th className="border border-gray-300 px-4 py-2">Municipality</th>
-                        <th className="border border-gray-300 px-4 py-2">Species & Vaccines</th>
-                        <th className="border border-gray-300 px-4 py-2">Previous Month</th>
-                        <th className="border border-gray-300 px-4 py-2">Current Month</th>
-                        <th className="border border-gray-300 px-4 py-2">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {reportData.map((item, index) => (
-                        <tr key={index}>
-                            <td className="border border-gray-300 px-4 py-2">{item.municipality}</td>
-                            <td className="border border-gray-300 px-4 py-2">
-                                {/* Render species and vaccines data */}
-                                {Object.entries(item.speciesVaccines).map(([species, vaccines], idx) => (
-                                    <div key={idx}>
-                                        <strong>{species}:</strong>
-                                        <ul>
-                                            {Object.entries(vaccines).map(([vaccine, count], vIdx) => (
-                                                <li key={vIdx}>{vaccine}: {count}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">{item.previousMonth}</td>
-                            <td className="border border-gray-300 px-4 py-2">{item.currentMonth}</td>
-                            <td className="border border-gray-300 px-4 py-2">{item.total}</td>
-                        </tr>
+        <div className="p-4">
+            <div className="mb-4">
+                <label className="mr-2">Year:</label>
+                <input 
+                    type="number" 
+                    value={year} 
+                    onChange={(e) => setYear(e.target.value)} 
+                    className="border rounded px-2 py-1 mr-4"
+                />
+                
+                <label className="mr-2">Month:</label>
+                <select 
+                    value={month} 
+                    onChange={(e) => setMonth(e.target.value)} 
+                    className="border rounded px-2 py-1 mr-4"
+                >
+                    {monthNames.map((name, index) => (
+                        <option key={index + 1} value={index + 1}>{name}</option>
                     ))}
-                </tbody>
-            </table>
+                </select>
+            </div>
+
+            {/* Table Title */}
+            <h2 className="text-lg font-semibold mb-4">Rabies</h2>
+
+            {/* Scrollable Table */}
+            <div className="overflow-x-auto max-h-64">
+                <table className="min-w-full table-auto border-collapse border border-gray-200 text-sm">
+                    <thead className="sticky top-0 bg-gray-100">
+                        <tr>
+                            <th className="border border-gray-300 px-2 py-1">Municipality</th>
+                            <th className="border border-gray-300 px-2 py-1">Semi Annual Target</th>
+                            <th className="border border-gray-300 px-2 py-1">Previous Month</th>
+                            <th className="border border-gray-300 px-2 py-1">Current Month</th>
+                            <th className="border border-gray-300 px-2 py-1">Total</th>
+                            <th className="border border-gray-300 px-2 py-1">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reportData.map((item, index) => (
+                            <tr key={index}>
+                                <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
+                                <td className="border border-gray-300 px-2 py-1"></td> {/* Semi Annual Target (blank for now) */}
+                                <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
+                                <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
+                                <td className="border border-gray-300 px-2 py-1">{item.total}</td>
+                                <td className="border border-gray-300 px-2 py-1"></td> {/* Percentage (blank for now) */}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
