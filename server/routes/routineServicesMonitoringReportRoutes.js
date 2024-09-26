@@ -168,4 +168,119 @@ router.get('/species-activity-count', async (req, res) => {
   }
 });
 
+router.get('/routine-services/species-count', async (req, res) => {
+  try {
+    const { year, month, species } = req.query;
+
+    if (!year || !month) {
+      return res.status(400).json({ error: 'Year and month are required parameters.' });
+    }
+
+    const parsedYear = parseInt(year);
+    const parsedMonth = parseInt(month) - 1; // Adjust month for zero-based index
+
+    const startOfThisMonth = new Date(parsedYear, parsedMonth, 1);
+    const startOfPreviousMonth = new Date(parsedYear, parsedMonth - 1, 1);
+
+    // Modified species filter
+    const speciesFilter = species === 'Others'
+      ? { "entries.animalInfo.species": { $nin: ['Dog', 'Swine', 'Poultry'] } }
+      : species
+        ? { "entries.animalInfo.species": species }
+        : {};
+
+    const speciesCount = await RoutineServicesMonitoringReport.aggregate([
+      { $unwind: "$entries" },
+      {
+        $addFields: {
+          "entries.date": {
+            $cond: {
+              if: { $ne: [{ $type: "$entries.date" }, "date"] },
+              then: { $toDate: "$entries.date" },
+              else: "$entries.date"
+            }
+          }
+        }
+      },
+      {
+        $facet: {
+          currentMonth: [
+            {
+              $match: {
+                $and: [
+                  { "entries.date": { $gte: startOfThisMonth, $lt: new Date(parsedYear, parsedMonth + 1, 1) } },
+                  speciesFilter
+                ]
+              }
+            },
+            {
+              $group: {
+                _id: { municipality: "$municipality" },
+                count: { $sum: "$entries.animalInfo.noOfHeads" }
+              }
+            },
+            {
+              $project: {
+                municipality: "$_id.municipality",
+                count: 1,
+                _id: 0
+              }
+            }
+          ],
+          previousMonth: [
+            {
+              $match: {
+                $and: [
+                  { "entries.date": { $gte: startOfPreviousMonth, $lt: startOfThisMonth } },
+                  speciesFilter
+                ]
+              }
+            },
+            {
+              $group: {
+                _id: { municipality: "$municipality" },
+                count: { $sum: "$entries.animalInfo.noOfHeads" }
+              }
+            },
+            {
+              $project: {
+                municipality: "$_id.municipality",
+                count: 1,
+                _id: 0
+              }
+            }
+          ],
+          total: [
+            {
+              $match: {
+                $and: [
+                  { "entries.date": { $lt: new Date(parsedYear, parsedMonth + 1, 1) } },
+                  speciesFilter
+                ]
+              }
+            },
+            {
+              $group: {
+                _id: { municipality: "$municipality" },
+                count: { $sum: "$entries.animalInfo.noOfHeads" }
+              }
+            },
+            {
+              $project: {
+                municipality: "$_id.municipality",
+                count: 1,
+                _id: 0
+              }
+            }
+          ]
+        }
+      }
+    ]);
+
+    res.json(speciesCount);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

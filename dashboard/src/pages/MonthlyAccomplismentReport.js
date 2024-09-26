@@ -8,6 +8,8 @@ import TargetList from "./Admin Pages/TargetList";
 import MunicipalityAccomplishmentReportVaccination from "./MunicipalityAccomplishmentReportVaccination";
 import MunicipalityAccomplishmentReportRabies from "./MunicipalityAccomplishmentReportRabies";
 
+import MunicipalityAccomplishmentReportRoutineServices from "./MunicipalityAccomplishmentReportRoutineServices";
+
 function MonthlyAccomplishmentReport() {
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
 
@@ -32,6 +34,14 @@ function MonthlyAccomplishmentReport() {
       label: "Municipality Accomplishment Report Rabies",
       content: <MunicipalityAccomplishmentReportRabies />,
     },
+    {
+      label: "Municipality Accomplishment Report Routine Services",
+      content: <MunicipalityAccomplishmentReportRoutineServices />,
+    },
+
+
+
+
   ];
 
   const renderStepContent = (step) => {
