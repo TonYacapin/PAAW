@@ -98,7 +98,8 @@ const MunicipalityAccomplishmentReportVaccination = () => {
 
     return (
         <>
-        <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+            <div className="max-h-[55vh] overflow-y-hidden">
+            <h1 className="text-3xl font-extrabold text-[#1b5b40]">
         Municipality Vaccination Accomplishment Report
       </h1>
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -206,6 +207,8 @@ const MunicipalityAccomplishmentReportVaccination = () => {
         <div className="">
             
         </div>
+
+            </div>
         </>
     );
 };

@@ -144,9 +144,9 @@ function AccomplishmentReport() {
   };
 
   return (
-    <div className="p-6 bg-[#FFFAFA] min-h-0">
+    <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-y-scroll">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">Accomplishment Report</h1>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 
         {/* Year Selector */}
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
@@ -183,6 +183,23 @@ function AccomplishmentReport() {
           </select>
         </div>
 
+        
+        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
+          <select
+            value={selectedVaccine}
+            onChange={handleVaccineChange}
+            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+          >
+            <option value="All">All</option>
+            {vaccineTypes.map((vaccine) => (
+              <option key={vaccine} value={vaccine}>
+                {vaccine}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
           <input
@@ -214,21 +231,6 @@ function AccomplishmentReport() {
         </div>
 
 
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Vaccine</h2>
-          <select
-            value={selectedVaccine}
-            onChange={handleVaccineChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
-          >
-            <option value="All">All</option>
-            {vaccineTypes.map((vaccine) => (
-              <option key={vaccine} value={vaccine}>
-                {vaccine}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
 
       <div className="overflow-x-auto mt-6 shadow-lg">
