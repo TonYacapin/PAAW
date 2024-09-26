@@ -373,7 +373,11 @@ function RoutineServicesMonitoringReport() {
         ))}
       </div>
 
-      <FormSubmit handleExportCSV={exportAsCSV} handleImportCSV={importCSV} handleSubmit={saveEntries}/>
+      <FormSubmit
+        handleExportCSV={exportAsCSV}
+        handleImportCSV={importCSV}
+        handleSubmit={saveEntries}
+      />
       {/* Save Entries Button
       <div className="flex justify-end mb-4">
         <button
@@ -534,6 +538,36 @@ function RoutineServicesMonitoringReport() {
                 <label htmlFor="species" className="block mb-1">
                   Species/Animal
                 </label>
+                <select
+                  name="species"
+                  value={entries[selectedEntry].animalInfo.species}
+                  className="border w-full p-2 rounded"
+                  id="species"
+                  onChange={(e) =>
+                    handleAnimalInfoChange(
+                      selectedEntry,
+                      "species",
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="" disabled>
+                    Select Species
+                  </option>
+                  <option value="Swine">Swine</option>
+                  <option value="Goat">Goat</option>
+                  <option value="Chicken">Chicken</option>
+                  <option value="Sheep">Sheep</option>
+                  <option value="Duck">Duck</option>
+                  <option value="Carabao">Carabao</option>
+                  <option value="Rabbit">Rabbit</option>
+                  <option value="Cattle">Cattle</option>
+                </select>
+              </div>
+              {/* <div>
+                <label htmlFor="species" className="block mb-1">
+                  Species/Animal
+                </label>
                 <input
                   id="species"
                   type="text"
@@ -547,8 +581,28 @@ function RoutineServicesMonitoringReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
+                <label htmlFor="sex" className="block mb-1">
+                  Sex
+                </label>
+                <select
+                  name="sex"
+                  id="sex"
+                  value={entries[selectedEntry].animalInfo.sex}
+                  className="border w-full p-2 rounded"
+                  onChange={(e) =>
+                    handleAnimalInfoChange(selectedEntry, "sex", e.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Select Sex
+                  </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              {/* <div>
                 <label htmlFor="sex" className="block mb-1">
                   Sex
                 </label>
@@ -561,7 +615,7 @@ function RoutineServicesMonitoringReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
                 <label htmlFor="age" className="block mb-1">
                   Age/Age Group
