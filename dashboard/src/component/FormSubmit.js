@@ -20,8 +20,8 @@ export default function FormSubmit(props) {
         </label>
       </div>
 
-      <div className="grow shrink" />
-      <div className="flex space-x-4 md:flex-row flex-col">
+      {useMediaQuery("(min-width:600px)") && <div className="grow shrink" />}
+      <div className="flex md:space-x-4 md:flex-row flex-col">
         <button
           onClick={props.handleExportCSV}
           className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen shadow-md"
