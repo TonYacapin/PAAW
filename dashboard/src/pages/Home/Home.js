@@ -457,11 +457,11 @@ function Home() {
 
   return (
     <>
-      <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col bg-white min-h-screen relative overflow-hidden">
+      <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col bg-white min-h-screen relative overflow-hidden">
         {/* Navbar */}
         <Navbar onDivisionChange={handleDivisionChange} />
         {/* Add relative positioning */}
-        <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-8 overflow-y-scroll max-h-[100vh]">
+        <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-scroll max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col lg:flex-row w-full">
             {/* Left Side - Charts */}
