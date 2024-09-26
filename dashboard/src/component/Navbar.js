@@ -155,9 +155,9 @@ function Navbar({ onDivisionChange }) {
           {/* Side Navbar */}
           <div
             ref={menuRef}
-            className={`lg:sticky 2xs:fixed md:fixed sm:fixed xs:fixed top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
+            className={`lg:sticky 3xs:fixed 2xs:fixed 3md:fixed 2md:fixed md:fixed sm:fixed xs:fixed md:translate-x-0 2md:translate-x-0 3md:translate-x-0 top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
               isMenuOpen ? "translate-x-0" : "-translate-x-full"
-            } md:translate-x-0 z-20`}
+            } z-20`}
           >
             {/* Logo */}
             <img src={Logo} alt="Logo" className="h-auto w-40 drop-shadow-lg" />
@@ -189,7 +189,7 @@ function Navbar({ onDivisionChange }) {
             )}
           </button>
         </div> */}
-        {useMediaQuery("(min-width:600px)") ? (
+        {useMediaQuery("(min-width:900px)") ? (
           <></>
         ) : (
           <>

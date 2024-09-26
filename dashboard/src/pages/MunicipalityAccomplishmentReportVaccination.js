@@ -73,6 +73,11 @@ const MunicipalityAccomplishmentReportVaccination = () => {
         fetchData(selectedYear, selectedMonth, selectedSpecies);
     }, [selectedYear, selectedMonth, selectedSpecies]);
 
+    // Function to calculate the grand total for Previous Month, Present Month, and Total
+    const calculateGrandTotal = (type) => {
+        return reportData.reduce((acc, item) => acc + (item[type] || 0), 0);
+    };
+
     // Function to get the table title based on selected species
     const getTableTitle = () => {
         switch (selectedSpecies) {
@@ -149,42 +154,51 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                 <div className="overflow-x-auto">
                     <h2 className="text-lg font-semibold mb-4">{getTableTitle()}</h2>
                     <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
-                        <table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg shadow-md">
+                        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
                             <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Municipality</th>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semi Annual Target</th>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Previous Month</th>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Present Month</th>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">%</th>
+                                <tr className="bg-[#1b5b40] text-white">
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Municipality</th>
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Semi Annual Target</th>
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Previous Month</th>
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Present Month</th>
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Total</th>
+                                    <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">%</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {reportData.length > 0 ? (
                                     reportData.map((item, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.municipality}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Semi Annual Target */}
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.previousMonth}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.presentMonth}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.total}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Percentage */}
+                                            <td className="py-2 px-4 text-[#252525]">{item.municipality}</td>
+                                            <td className="py-2 px-4 text-[#252525]"></td> {/* Semi Annual Target */}
+                                            <td className="py-2 px-4 text-[#252525]">{item.previousMonth}</td>
+                                            <td className="py-2 px-4 text-[#252525]">{item.presentMonth}</td>
+                                            <td className="py-2 px-4 text-[#252525]">{item.total}</td>
+                                            <td className="py-2 px-4 text-[#252525]"></td> {/* Percentage */}
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-4 text-center text-gray-500">No data available</td>
+                                        <td colSpan="6" className="text-center py-4">No data available</td>
                                     </tr>
                                 )}
                             </tbody>
+                            <tfoot className="bg-[#ffe356] font-bold text-[#1b5b40]">
+                                <tr>
+                                    <td className="py-3 px-4">Grand Total</td>
+                                    <td className="px-6 py-4"></td>
+                                    <td className="py-3 px-4">{calculateGrandTotal('previousMonth')}</td>
+                                    <td className="py-3 px-4">{calculateGrandTotal('presentMonth')}</td>
+                                    <td className="py-3 px-4">{calculateGrandTotal('total')}</td>
+                                    <td className="px-6 py-4"></td> 
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             )}
         </div>
     );
-    
 };
 
 export default MunicipalityAccomplishmentReportVaccination;

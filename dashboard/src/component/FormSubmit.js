@@ -4,10 +4,10 @@ import React from "react";
 
 export default function FormSubmit(props) {
   return (
-    <div className="flex md:flex-row flex-col gap-x-5 md:min-h-2 2xs:min-h-2">
+    <div className="flex md:flex-row flex-col gap-x-5 md:min-h-2 gap-y-5 2xs:min-h-2">
       <div className="flex">
-        <label htmlFor="fileinput" className="w-max">
-          <div className=" bg-darkgreen text-white py-2 px-4  w-max rounded hover:bg-darkergreen shadow-md">
+        <label htmlFor="fileinput" className="w-max grow">
+          <div className=" bg-darkgreen text-white py-2 px-4  rounded hover:bg-darkergreen shadow-md text-center">
             <Download /> Load Form Progress
           </div>
           <input
@@ -21,7 +21,7 @@ export default function FormSubmit(props) {
       </div>
 
       {useMediaQuery("(min-width:600px)") && <div className="grow shrink" />}
-      <div className="flex md:space-x-4 md:flex-row flex-col">
+      <div className="flex md:space-x-4 md:flex-row flex-col gap-y-3">
         <button
           onClick={props.handleExportCSV}
           className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen shadow-md"

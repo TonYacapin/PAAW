@@ -206,7 +206,7 @@ const RabiesReportChart = () => {
   return (
     <>
       <div>
-        <div className="grow flex">
+        <div className="grow flex flex-row lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col gap-x-3">
           <label className="mb-2 text-lg font-bold">
             Start Date:
             <input
