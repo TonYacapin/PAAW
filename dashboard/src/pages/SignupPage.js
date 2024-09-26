@@ -14,6 +14,7 @@ const SignupForm = () => {
   });
 
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // New state for message type (success or error)
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,6 +29,7 @@ const SignupForm = () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users`, formData);
       setMessage(`User created successfully: ${response.data.firstname}`);
+      setMessageType('success'); // Set message type to success
       setFormData({
         firstname: '',
         lastname: '',
@@ -37,6 +39,7 @@ const SignupForm = () => {
       });
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
+      setMessageType('error'); // Set message type to error
     }
   };
 
@@ -62,8 +65,11 @@ const SignupForm = () => {
           </div>
           <h2 className="text-3xl font-bold text-[#1b5b40]">Portable Assistant for Animal Welfare</h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+        
+        <form className="mt-8 space-y-6; flex flex-col gap-y-7" onSubmit={handleSubmit} >
+          
+
+          <div className="rounded-md shadow-sm -space-y-px flex flex-col gap-y-2 ">
             <div>
               <label htmlFor="firstname" className="sr-only">First Name</label>
               <input
@@ -77,7 +83,7 @@ const SignupForm = () => {
                 required
               />
             </div>
-            <div>
+            <div >
               <label htmlFor="lastname" className="sr-only">Last Name</label>
               <input
                 id="lastname"
@@ -128,8 +134,14 @@ const SignupForm = () => {
                 required
               />
             </div>
+         
           </div>
-          {message && <p className="text-red-500 text-sm mt-2">{message}</p>}
+          
+          {message && (
+            <p className={`text-sm mt-2 ${messageType === 'error' ? 'text-red-500' : 'text-[#1b5b40]'}`}>
+              {message}
+            </p>
+          )}
           <div className="flex flex-col gap-4">
             <button
               type="submit"
@@ -146,8 +158,10 @@ const SignupForm = () => {
             </button>
           </div>
         </form>
+        </div>
+        
       </div>
-    </div>
+
   );
 };
 
