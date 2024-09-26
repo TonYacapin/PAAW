@@ -138,7 +138,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     </div>
                 </div>
             </form>
-
+    
             {/* Display loading spinner or table */}
             {loading ? (
                 <div className="flex justify-center items-center h-32">
@@ -147,7 +147,6 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                 </div>
             ) : (
                 <div className="overflow-x-auto">
-                    {/* Table Title */}
                     <h2 className="text-lg font-semibold mb-4">{getTableTitle()}</h2>
                     <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
                         <table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg shadow-md">
@@ -162,16 +161,22 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {reportData.map((item, index) => (
-                                    <tr key={index} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.municipality}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Semi Annual Target */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.previousMonth}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.presentMonth}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.total}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Percentage */}
+                                {reportData.length > 0 ? (
+                                    reportData.map((item, index) => (
+                                        <tr key={index} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.municipality}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Semi Annual Target */}
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.previousMonth}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.presentMonth}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.total}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"></td> {/* Percentage */}
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-4 text-center text-gray-500">No data available</td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -179,6 +184,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
             )}
         </div>
     );
+    
 };
 
 export default MunicipalityAccomplishmentReportVaccination;
