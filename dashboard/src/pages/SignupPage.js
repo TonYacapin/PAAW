@@ -26,7 +26,7 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users`, formData);
       setMessage(`User created successfully: ${response.data.firstname}`);
       setFormData({
         firstname: '',

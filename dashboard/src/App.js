@@ -19,14 +19,14 @@ import RabiesReportChart from "./component/RabiesReportChart ";
 
 import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
 import MunicipalityAccomplishmentReportVaccination from "./pages/MunicipalityAccomplishmentReportVaccination";
-
+import MunicipalityAccomplishmentReportRabies from "./pages/MunicipalityAccomplishmentReportRabies";
 
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-
+        <Route path="/MunicipalityAccomplishmentReportRabies" element={<MunicipalityAccomplishmentReportRabies />} />
         <Route path="/MunicipalityAccomplishmentReportVaccination" element={<MunicipalityAccomplishmentReportVaccination />} />
 
 
