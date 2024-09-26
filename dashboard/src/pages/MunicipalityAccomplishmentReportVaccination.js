@@ -73,6 +73,11 @@ const MunicipalityAccomplishmentReportVaccination = () => {
         fetchData(selectedYear, selectedMonth, selectedSpecies);
     }, [selectedYear, selectedMonth, selectedSpecies]);
 
+    // Function to calculate the grand total for Previous Month, Present Month, and Total
+    const calculateGrandTotal = (type) => {
+        return reportData.reduce((acc, item) => acc + (item[type] || 0), 0);
+    };
+
     // Function to get the table title based on selected species
     const getTableTitle = () => {
         switch (selectedSpecies) {
@@ -174,17 +179,26 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-4 text-center text-gray-500">No data available</td>
+                                        <td colSpan="6" className="text-center text-gray-500 py-4">No data available</td>
                                     </tr>
                                 )}
                             </tbody>
+                            <tfoot className="bg-gray-50">
+                                <tr>
+                                    <td className="px-6 py-4 font-medium text-gray-700">Grand Total</td>
+                                    <td className="px-6 py-4"></td> {/* Semi Annual Target */}
+                                    <td className="px-6 py-4 font-medium text-gray-700">{calculateGrandTotal('previousMonth')}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-700">{calculateGrandTotal('presentMonth')}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-700">{calculateGrandTotal('total')}</td>
+                                    <td className="px-6 py-4"></td> {/* Percentage */}
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             )}
         </div>
     );
-    
 };
 
 export default MunicipalityAccomplishmentReportVaccination;
