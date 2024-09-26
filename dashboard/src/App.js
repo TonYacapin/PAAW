@@ -18,17 +18,13 @@ import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
 import RabiesReportChart from "./component/RabiesReportChart ";
 
 import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
-import MunicipalityAccomplishmentReportVaccination from "./pages/MunicipalityAccomplishmentReportVaccination";
-
 
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-
-        <Route path="/MunicipalityAccomplishmentReportVaccination" element={<MunicipalityAccomplishmentReportVaccination />} />
-
+      
 
           <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
           <Route

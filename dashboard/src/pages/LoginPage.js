@@ -68,7 +68,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FFFAFA]">
+    <div className="min-h-screen flex items-center justify-center bg-[#FFFAFA] ">
       <div className="w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10">
         <div className="text-center">
           <div className="flex justify-center space-x-4 mb-6">
@@ -87,6 +87,7 @@ const LoginPage = () => {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="rounded-md shadow-sm -space-y-px">
+            <div className='flex flex-col gap-y-2'>
             <div>
               <label htmlFor="email" className="sr-only">Email address</label>
               <input
@@ -100,6 +101,7 @@ const LoginPage = () => {
                 placeholder="Email address"
               />
             </div>
+            
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
               <input
@@ -113,6 +115,8 @@ const LoginPage = () => {
                 placeholder="Password"
               />
             </div>
+            </div>
+            
           </div>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <div className="flex gap-4">

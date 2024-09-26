@@ -120,4 +120,93 @@ router.get('/rabies-report/entry-count', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+function getMonthRange(year, month) {
+  const start = new Date(year, month - 1, 1); // Month is 0-indexed in JavaScript Date
+  const end = new Date(year, month, 1); // First day of the next month
+  return { start, end };
+}
+
+// Route to count rabies vaccinations by municipality, species, and vaccine
+router.get('/rabies-vaccination-summary', async (req, res) => {
+  try {
+    const { year, month } = req.query;
+
+    const selectedYear = parseInt(year, 10);
+    const selectedMonth = parseInt(month, 10);
+
+    if (!selectedYear || !selectedMonth) {
+      return res.status(400).json({ error: 'Please provide valid year and month as query parameters' });
+    }
+
+    // Calculate date ranges for the current month, previous month, and all previous months up to current
+    const currentMonthRange = getMonthRange(selectedYear, selectedMonth);
+    const previousMonthRange = getMonthRange(selectedYear, selectedMonth - 1);
+    const startOfYear = new Date(selectedYear, 0, 1);
+
+    const aggregationPipeline = (start, end) => [
+      // Unwind the entries array
+      { $unwind: '$entries' },
+
+      // Match within the provided date range
+      {
+        $match: {
+          'entries.date': {
+            $gte: start,
+            $lt: end
+          }
+        }
+      },
+
+      // Group by municipality, species, and vaccine, and count the number of entries
+      {
+        $group: {
+          _id: {
+            municipality: '$municipality',
+            species: '$entries.animalInfo.species',
+            vaccine: '$vaccineUsed'
+          },
+          count: { $sum: 1 }
+        }
+      },
+
+      // Project the results in a more readable format
+      {
+        $project: {
+          _id: 0,
+          municipality: '$_id.municipality',
+          species: '$_id.species',
+          vaccine: '$_id.vaccine',
+          count: 1
+        }
+      }
+    ];
+
+    // Get counts for the current month
+    const currentMonthCounts = await RabiesVaccinationReport.aggregate(
+      aggregationPipeline(currentMonthRange.start, currentMonthRange.end)
+    );
+
+    // Get counts for the previous month
+    const previousMonthCounts = await RabiesVaccinationReport.aggregate(
+      aggregationPipeline(previousMonthRange.start, previousMonthRange.end)
+    );
+
+    // Get total counts from the start of the year up to the current month
+    const totalCounts = await RabiesVaccinationReport.aggregate(
+      aggregationPipeline(startOfYear, currentMonthRange.end)
+    );
+
+    // Respond with the formatted structure
+    res.json({
+      currentMonth: currentMonthCounts,
+      previousMonth: previousMonthCounts,
+      total: totalCounts
+    });
+  } catch (error) {
+    console.error('Error fetching rabies vaccination counts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 module.exports = router;
