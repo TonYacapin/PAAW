@@ -20,11 +20,16 @@ import {
   useMediaQuery,
 } from "@mui/material";
 
-function Navbar({ onDivisionChange }) {
+function Navbar({ onDivisionChange, selectedDivision }) {
   const role = localStorage.getItem("userRole");
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
+
+  function onDivisionButtonClick(division) {
+    setIsMenuOpen(false)
+    onDivisionChange(division)
+  }
 
   const handleLogout = () => {
     localStorage.clear();
@@ -32,7 +37,7 @@ function Navbar({ onDivisionChange }) {
   };
 
   const baseClasses =
-    "px-6 py-3 text-xl rounded-md text-white flex items-center space-x-3 cursor-pointer bg-darkgreen hover:bg-darkergreen transition-colors";
+    "px-6 py-3 text-xl rounded-md text-white flex items-center space-x-3 cursor-pointer bg-darkgreen hover:bg-darkergreen transition-colors ";
 
   const renderButtons = () => {
     switch (role) {
@@ -40,32 +45,32 @@ function Navbar({ onDivisionChange }) {
         return (
           <>
             <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("admin")}
+              className={baseClasses + (selectedDivision === "admin" && "bg-darkergreen")}
+              onClick={() => onDivisionButtonClick("admin")}
             >
               <People /> <span>Admin</span>
             </div>
             <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("user")}
+              className={baseClasses + (selectedDivision === "user" && "bg-darkergreen")}
+              onClick={() => onDivisionButtonClick("user")}
             >
               <People /> <span>Clients</span>
             </div>
             <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("animalhealth")}
+              className={baseClasses + (selectedDivision === "animalhealth" && "bg-darkergreen")}
+              onClick={() => onDivisionButtonClick("animalhealth")}
             >
               <Pets /> <span>Animal Health</span>
             </div>
             <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("livestock")}
+              className={baseClasses  + (selectedDivision === "livestock" && "bg-darkergreen")}
+              onClick={() => onDivisionButtonClick("livestock")}
             >
               <Agriculture /> <span>Livestock</span>
             </div>
             <div
-              className={baseClasses}
-              onClick={() => onDivisionChange("regulatory")}
+              className={baseClasses + (selectedDivision === "regulatory" && "bg-darkergreen")}
+              onClick={() => onDivisionButtonClick("regulatory")}
             >
               <Gavel /> <span>Regulatory</span>
             </div>
@@ -76,13 +81,13 @@ function Navbar({ onDivisionChange }) {
           <>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("user")}
+              onClick={() => onDivisionButtonClick("user")}
             >
               <People /> <span>Clients</span>
             </div>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("regulatory")}
+              onClick={() => onDivisionButtonClick("regulatory")}
             >
               <Gavel /> <span>Regulatory</span>
             </div>
@@ -93,13 +98,13 @@ function Navbar({ onDivisionChange }) {
           <>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("user")}
+              onClick={() => onDivisionButtonClick("user")}
             >
               <People /> <span>Clients</span>
             </div>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("animalhealth")}
+              onClick={() => onDivisionButtonClick("animalhealth")}
             >
               <Pets /> <span>Animal Health</span>
             </div>
@@ -110,13 +115,13 @@ function Navbar({ onDivisionChange }) {
           <>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("user")}
+              onClick={() => onDivisionButtonClick("user")}
             >
               <People /> <span>Clients</span>
             </div>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("livestock")}
+              onClick={() => onDivisionButtonClick("livestock")}
             >
               <Agriculture /> <span>Livestock</span>
             </div>
@@ -128,7 +133,7 @@ function Navbar({ onDivisionChange }) {
           <>
             <div
               className={baseClasses}
-              onClick={() => onDivisionChange("user")}
+              onClick={() => onDivisionButtonClick("user")}
             >
               <People /> <span>Clients</span>
             </div>
@@ -155,7 +160,7 @@ function Navbar({ onDivisionChange }) {
           {/* Side Navbar */}
           <div
             ref={menuRef}
-            className={`lg:sticky 3xs:fixed 2xs:fixed 3md:fixed 2md:fixed md:fixed sm:fixed xs:fixed md:translate-x-0 2md:translate-x-0 3md:translate-x-0 top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
+            className={`lg:sticky 3xs:fixed 2xs:fixed 3md:fixed 2md:fixed md:fixed sm:fixed xs:fixed lg:translate-x-0 top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
               isMenuOpen ? "translate-x-0" : "-translate-x-full"
             } z-20`}
           >
@@ -189,7 +194,7 @@ function Navbar({ onDivisionChange }) {
             )}
           </button>
         </div> */}
-        {useMediaQuery("(min-width:900px)") ? (
+        {useMediaQuery("(min-width:913px)") ? (
           <></>
         ) : (
           <>
