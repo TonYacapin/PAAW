@@ -558,7 +558,7 @@ const RabiesHistoryForm = () => {
         </div>
         <div>
           <h4 className="text-md font-bold mb-6">Behavioral Changes</h4>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-col lg:flex-row justify-between">
             <label htmlFor="Restlessness" className="block mb-2 font-medium">
               <input
                 className="w-4 h-4 text-darkgreen bg-gray-100 border-gray-300 rounded focus:ring-darkergreen dark:focus:ring-darkgreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"

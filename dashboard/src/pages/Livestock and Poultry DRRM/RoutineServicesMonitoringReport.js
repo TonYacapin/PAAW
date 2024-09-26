@@ -562,6 +562,7 @@ function RoutineServicesMonitoringReport() {
                   <option value="Carabao">Carabao</option>
                   <option value="Rabbit">Rabbit</option>
                   <option value="Cattle">Cattle</option>
+                  <option value="Dog">Dog</option>
                 </select>
               </div>
               {/* <div>

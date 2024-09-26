@@ -200,11 +200,14 @@ export default function StepperComponent(props) {
             steps={props.pages.length}
             position="static"
             activeStep={activeStep}
+            className="rounded-md"
+            sx={{marginBottom:"4rem",bgcolor: "#1b5b40", color: "#fffafa"}}
             nextButton={
               <Button
                 size="small"
                 onClick={handleNext}
                 disabled={activeStep === props.pages.length - 1}
+                sx={{color: "#fffafa"}}
               >
                 Next
                 <KeyboardArrowRight />
@@ -215,6 +218,7 @@ export default function StepperComponent(props) {
                 size="small"
                 onClick={handleBack}
                 disabled={activeStep === 0}
+                sx={{color: "#fffafa"}}
               >
                 <KeyboardArrowLeft />
                 Back
