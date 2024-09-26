@@ -459,7 +459,7 @@ function Home() {
     <>
       <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col bg-white min-h-screen relative overflow-hidden">
         {/* Navbar */}
-        <Navbar onDivisionChange={handleDivisionChange} />
+        <Navbar onDivisionChange={handleDivisionChange} selectedDivision={selectedDivision} />
         {/* Add relative positioning */}
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-scroll max-h-[100vh]">
           {/* Main Content Wrapper */}

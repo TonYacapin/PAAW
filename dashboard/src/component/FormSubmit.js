@@ -4,7 +4,7 @@ import React from "react";
 
 export default function FormSubmit(props) {
   return (
-    <div className="flex md:flex-row flex-col gap-x-5 md:min-h-2 gap-y-5 2xs:min-h-2">
+    <div className="flex md:flex-row flex-col gap-x-5 md:min-h-2 gap-y-10 2xs:min-h-2">
       <div className="flex">
         <label htmlFor="fileinput" className="w-max grow">
           <div className=" bg-darkgreen text-white py-2 px-4  rounded hover:bg-darkergreen shadow-md text-center">

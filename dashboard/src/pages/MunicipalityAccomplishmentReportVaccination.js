@@ -97,6 +97,10 @@ const MunicipalityAccomplishmentReportVaccination = () => {
     };
 
     return (
+        <>
+        <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+        Municipality Vaccination Accomplishment Report
+      </h1>
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
             {/* Form to select year, month, and species */}
             <form className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
@@ -151,11 +155,11 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     <span className="ml-2 text-gray-700">Loading...</span>
                 </div>
             ) : (
-                <div className="overflow-x-auto">
+                <div className="">
                     <h2 className="text-lg font-semibold mb-4">{getTableTitle()}</h2>
                     <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
-                        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
-                            <thead className="bg-gray-50">
+                        <table className="min-w-full border-[#1b5b40] rounded-lg shadow-lg">
+                            <thead className='bg-[#1b5b40] text-white sticky top-0'>
                                 <tr className="bg-[#1b5b40] text-white">
                                     <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Municipality</th>
                                     <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Semi Annual Target</th>
@@ -169,12 +173,12 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                 {reportData.length > 0 ? (
                                     reportData.map((item, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
-                                            <td className="py-2 px-4 text-[#252525]">{item.municipality}</td>
-                                            <td className="py-2 px-4 text-[#252525]"></td> {/* Semi Annual Target */}
-                                            <td className="py-2 px-4 text-[#252525]">{item.previousMonth}</td>
-                                            <td className="py-2 px-4 text-[#252525]">{item.presentMonth}</td>
-                                            <td className="py-2 px-4 text-[#252525]">{item.total}</td>
-                                            <td className="py-2 px-4 text-[#252525]"></td> {/* Percentage */}
+                                            <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
+                                            <td className="border border-gray-300 px-2 py-1"></td> {/* Semi Annual Target */}
+                                            <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
+                                            <td className="border border-gray-300 px-2 py-1">{item.presentMonth}</td>
+                                            <td className="border border-gray-300 px-2 py-1">{item.total}</td>
+                                            <td className="border border-gray-300 px-2 py-1"></td> {/* Percentage */}
                                         </tr>
                                     ))
                                 ) : (
@@ -183,14 +187,14 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                     </tr>
                                 )}
                             </tbody>
-                            <tfoot className="bg-[#ffe356] font-bold text-[#1b5b40]">
-                                <tr>
-                                    <td className="py-3 px-4">Grand Total</td>
-                                    <td className="px-6 py-4"></td>
-                                    <td className="py-3 px-4">{calculateGrandTotal('previousMonth')}</td>
-                                    <td className="py-3 px-4">{calculateGrandTotal('presentMonth')}</td>
-                                    <td className="py-3 px-4">{calculateGrandTotal('total')}</td>
-                                    <td className="px-6 py-4"></td> 
+                            <tfoot className="bg-[#ffe356] font-semibold text-[#1b5b40] sticky bottom-0">
+                                <tr className='font-semibold'>
+                                    <td className="border border-gray-300 px-2 py-1">Grand Total</td>
+                                    <td className="border border-gray-300 px-2 py-1"></td>
+                                    <td className="border border-gray-300 px-2 py-1">{calculateGrandTotal('previousMonth')}</td>
+                                    <td className="border border-gray-300 px-2 py-1">{calculateGrandTotal('presentMonth')}</td>
+                                    <td className="border border-gray-300 px-2 py-1">{calculateGrandTotal('total')}</td>
+                                    <td className="border border-gray-300 px-2 py-1"></td> 
                                 </tr>
                             </tfoot>
                         </table>
@@ -198,6 +202,11 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                 </div>
             )}
         </div>
+
+        <div className="">
+            
+        </div>
+        </>
     );
 };
 
