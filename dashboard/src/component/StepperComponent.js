@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Check,
-  ChevronLeft,
-  ChevronRight,
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from "@mui/icons-material";
@@ -11,19 +9,16 @@ import {
   Box,
   Button,
   MobileStepper,
-  Paper,
   Step,
   StepConnector,
+  stepConnectorClasses,
   StepLabel,
   Stepper,
-  Typography,
-  stepConnectorClasses,
   styled,
   useMediaQuery,
 } from "@mui/material";
 
-
-
+// Custom connector styling
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 10,
@@ -50,6 +45,7 @@ export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   },
 }));
 
+// Custom step icon styling
 const QontoStepIconRoot = styled("div")(({ theme }) => ({
   color: "#1b5b40",
   display: "flex",
@@ -94,22 +90,15 @@ function QontoStepIcon(props) {
 }
 
 QontoStepIcon.propTypes = {
-  /**
-   * Whether this step is active.
-   * @default false
-   */
   active: PropTypes.bool,
   className: PropTypes.string,
-  /**
-   * Mark the step as completed. Is passed to child components.
-   * @default false
-   */
   completed: PropTypes.bool,
 };
 
 export default function StepperComponent(props) {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set());
+  const [activeStep, setActiveStep] = useState(0);
+  const [skipped, setSkipped] = useState(new Set());
+  const contentRef = useRef(null); // Create a ref to scroll the content (works for both modal and page content)
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -121,16 +110,29 @@ export default function StepperComponent(props) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-    
+
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // props.setStepperActiveStep(activeStep);
     setSkipped(newSkipped);
+
+    // Scroll to the top of the content
+    if (contentRef.current) {
+      contentRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   const handleBack = () => {
-    
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    // props.setStepperActiveStep(activeStep);
+
+    // Scroll to the top of the content
+    if (contentRef.current) {
+      contentRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   const handleReset = () => {
@@ -141,7 +143,10 @@ export default function StepperComponent(props) {
     <Box sx={{ width: "100%", flexDirection: "row", gap: "10rem" }}>
       {useMediaQuery("(min-width:600px)") ? (
         <>
-          {props.renderStepContent(activeStep)}
+          {/* Add a ref to the scrollable content */}
+          <Box ref={contentRef} sx={{ maxHeight: "400px", overflowY: "auto" }}>
+            {props.renderStepContent(activeStep)}
+          </Box>
           <React.Fragment>
             <Box
               sx={{
@@ -163,7 +168,13 @@ export default function StepperComponent(props) {
               <Stepper
                 activeStep={activeStep}
                 connector={<QontoConnector />}
-                sx={{  flex: "1 1 auto", width:"20%", paddingLeft:"10rem", paddingRight:"10rem", justifyItems:"center" }}
+                sx={{
+                  flex: "1 1 auto",
+                  width: "20%",
+                  paddingLeft: "10rem",
+                  paddingRight: "10rem",
+                  justifyItems: "center",
+                }}
               >
                 {props.pages.map((page, index) => {
                   const stepProps = {};
@@ -178,7 +189,6 @@ export default function StepperComponent(props) {
                   );
                 })}
               </Stepper>
-              {/* <Box sx={{ }} /> */}
               <Button
                 variant="contained"
                 onClick={handleNext}
@@ -186,28 +196,28 @@ export default function StepperComponent(props) {
                 sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
               >
                 Next <KeyboardArrowRight />
-                {/* {activeStep === props.pages.length - 1 ? "Finish" : "Next"} */}
               </Button>
             </Box>
           </React.Fragment>
         </>
       ) : (
         <>
-          <Box>{props.renderStepContent(activeStep)}</Box>
+          {/* Mobile view */}
+          <Box ref={contentRef} sx={{ maxHeight: "400px", overflowY: "auto"}}>
+            {props.renderStepContent(activeStep)}
+          </Box>
           <MobileStepper
             variant="text"
-            color="green"
             steps={props.pages.length}
             position="static"
             activeStep={activeStep}
-            className="rounded-md"
-            sx={{marginBottom:"4rem",bgcolor: "#1b5b40", color: "#fffafa"}}
+            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa", borderRadius: '0 0 6px 6px' }}
             nextButton={
               <Button
                 size="small"
                 onClick={handleNext}
                 disabled={activeStep === props.pages.length - 1}
-                sx={{color: "#fffafa"}}
+                sx={{ color: "#fffafa" }}
               >
                 Next
                 <KeyboardArrowRight />
@@ -218,7 +228,7 @@ export default function StepperComponent(props) {
                 size="small"
                 onClick={handleBack}
                 disabled={activeStep === 0}
-                sx={{color: "#fffafa"}}
+                sx={{ color: "#fffafa" }}
               >
                 <KeyboardArrowLeft />
                 Back
@@ -230,27 +240,3 @@ export default function StepperComponent(props) {
     </Box>
   );
 }
-// function CarouselComponent(props) {
-//   return (
-//     <>
-//       <Carousel
-//         navButtonsWrapperProps={{
-//           // Move the buttons to the bottom. Unsetting top here to override default style.
-//           style: {
-//             bottom: "0",
-//             top: "unset",
-//           },
-//         }}
-//         swipe={false}
-//         navButtonsAlwaysVisible
-//         animation="slide"
-//         autoPlay={false}
-//         cycleNavigation={false}
-//       >
-//         {props.pages.map((page, i) => (
-//           <React.Fragment key={i}>{page.content}</React.Fragment>
-//         ))}
-//       </Carousel>
-//     </>
-//   );
-// }
