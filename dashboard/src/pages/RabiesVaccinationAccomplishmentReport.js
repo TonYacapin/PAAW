@@ -79,7 +79,7 @@ function RabiesVaccinationAccomplishmentReport() {
   };
 
   return (
-    <div className="p-6 bg-[#FFFAFA] min-h-0">
+    <div className="p-6 bg-[#FFFAFA] h-[55vh] overflow-y-scroll">
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
         Rabies Vaccination Accomplishment Report
       </h1>
