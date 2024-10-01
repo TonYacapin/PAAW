@@ -56,7 +56,7 @@ function MonthlyAccomplishmentReport() {
   return (
     <>
       {/* This will display the content for screens larger than medium (md) */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <div className="p-6 space-y-8 bg-gray-50 min-h-0">
           {/* Button to open the modal */}
           <div className="p-6 bg-white shadow-md rounded-lg">
@@ -87,7 +87,7 @@ function MonthlyAccomplishmentReport() {
       </div>
 
       {/* This will display the message for screens smaller than medium (md) */}
-      <div className="block md:hidden">
+      <div className="block lg:hidden">
         <div className="p-6 bg-green-100 text-green-800 text-center rounded-lg">
           <h2 className="text-xl font-semibold">Mobile does not support this feature</h2>
           <p>Please visit our desktop site to access this feature. Thank you!</p>
