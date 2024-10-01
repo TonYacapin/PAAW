@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from "@mui/icons-material";
@@ -9,16 +11,17 @@ import {
   Box,
   Button,
   MobileStepper,
+  Paper,
   Step,
   StepConnector,
-  stepConnectorClasses,
   StepLabel,
   Stepper,
+  Typography,
+  stepConnectorClasses,
   styled,
   useMediaQuery,
 } from "@mui/material";
 
-// Custom connector styling
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 10,
@@ -45,7 +48,6 @@ export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   },
 }));
 
-// Custom step icon styling
 const QontoStepIconRoot = styled("div")(({ theme }) => ({
   color: "#1b5b40",
   display: "flex",
@@ -90,15 +92,24 @@ function QontoStepIcon(props) {
 }
 
 QontoStepIcon.propTypes = {
+  /**
+   * Whether this step is active.
+   * @default false
+   */
   active: PropTypes.bool,
   className: PropTypes.string,
+  /**
+   * Mark the step as completed. Is passed to child components.
+   * @default false
+   */
   completed: PropTypes.bool,
 };
 
+
+
 export default function StepperComponent(props) {
-  const [activeStep, setActiveStep] = useState(0);
-  const [skipped, setSkipped] = useState(new Set());
-  const contentRef = useRef(null); // Create a ref to scroll the content (works for both modal and page content)
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [skipped, setSkipped] = React.useState(new Set());
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -111,42 +122,40 @@ export default function StepperComponent(props) {
       newSkipped.delete(activeStep);
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    const nextStep = activeStep + 1;
+    setActiveStep(nextStep);
     setSkipped(newSkipped);
 
-    // Scroll to the top of the content
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+    // Call the onStepChange prop with the new step
+    if (props.onStepChange) {
+      props.onStepChange(nextStep);
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    const prevStep = activeStep - 1;
+    setActiveStep(prevStep);
 
-    // Scroll to the top of the content
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+    // Call the onStepChange prop with the new step
+    if (props.onStepChange) {
+      props.onStepChange(prevStep);
     }
   };
 
   const handleReset = () => {
     setActiveStep(0);
+
+    // Call the onStepChange prop with the reset step (0)
+    if (props.onStepChange) {
+      props.onStepChange(0);
+    }
   };
 
   return (
     <Box sx={{ width: "100%", flexDirection: "row", gap: "10rem" }}>
       {useMediaQuery("(min-width:600px)") ? (
         <>
-          {/* Add a ref to the scrollable content */}
-          <Box ref={contentRef} sx={{ maxHeight: "400px", overflowY: "auto" }}>
-            {props.renderStepContent(activeStep)}
-          </Box>
+          {props.renderStepContent(activeStep)}
           <React.Fragment>
             <Box
               sx={{
@@ -168,13 +177,7 @@ export default function StepperComponent(props) {
               <Stepper
                 activeStep={activeStep}
                 connector={<QontoConnector />}
-                sx={{
-                  flex: "1 1 auto",
-                  width: "20%",
-                  paddingLeft: "10rem",
-                  paddingRight: "10rem",
-                  justifyItems: "center",
-                }}
+                sx={{ flex: "1 1 auto", width: "20%", paddingLeft: "10rem", paddingRight: "10rem", justifyItems: "center" }}
               >
                 {props.pages.map((page, index) => {
                   const stepProps = {};
@@ -202,16 +205,15 @@ export default function StepperComponent(props) {
         </>
       ) : (
         <>
-          {/* Mobile view */}
-          <Box ref={contentRef} sx={{ maxHeight: "400px", overflowY: "auto"}}>
-            {props.renderStepContent(activeStep)}
-          </Box>
+          <Box>{props.renderStepContent(activeStep)}</Box>
           <MobileStepper
             variant="text"
+            color="green"
             steps={props.pages.length}
             position="static"
             activeStep={activeStep}
-            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa", borderRadius: '0 0 6px 6px' }}
+            className="rounded-md"
+            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa" }}
             nextButton={
               <Button
                 size="small"
@@ -240,3 +242,9 @@ export default function StepperComponent(props) {
     </Box>
   );
 }
+
+StepperComponent.propTypes = {
+  pages: PropTypes.array.isRequired,
+  renderStepContent: PropTypes.func.isRequired,
+  onStepChange: PropTypes.func,
+};

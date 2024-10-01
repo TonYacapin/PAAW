@@ -5,6 +5,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
     const [reportData, setReportData] = useState([]);
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [semiAnnualTargets, setSemiAnnualTargets] = useState([]);
 
     const municipalitiesList = [
         "Ambaguio", "Bagabag", "Bayombong", "Diadi", "Quezon", "Solano", 
@@ -51,8 +52,29 @@ const MunicipalityAccomplishmentReportRabies = () => {
         }
     };
 
+     // Fetch the semi-annual targets
+     const fetchSemiAnnualTargets = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+                params: { targetYear: year, type: "RABIES"}
+            });
+            const targets = response.data;
+            const targetsMap = {};
+
+            // Map the semi-annual target data by municipality
+            targets.forEach(target => {
+                targetsMap[target.municipality] = target.semiAnnualTarget;
+            });
+
+            setSemiAnnualTargets(targetsMap);
+        } catch (error) {
+            console.error('Error fetching semi-annual targets:', error);
+        }
+    };
+
     useEffect(() => {
         fetchData();
+        fetchSemiAnnualTargets(); 
     }, [year, month]);
 
     const calculateGrandTotals = () => {
@@ -109,18 +131,30 @@ const MunicipalityAccomplishmentReportRabies = () => {
                             <th className="border border-gray-300 px-2 py-1">%</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {reportData.map((item, index) => (
-                            <tr key={index}>
-                                <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
-                                <td className="border border-gray-300 px-2 py-1"></td>
-                                <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
-                                <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
-                                <td className="border border-gray-300 px-2 py-1">{item.total}</td>
-                                <td className="border border-gray-300 px-2 py-1"></td>
-                            </tr>
-                        ))}
-                    </tbody>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {reportData.length > 0 ? (
+                                            reportData.map((item, index) => {
+                                                const semiAnnualTarget = semiAnnualTargets[item.municipality] || 0;
+                                                const percentage = semiAnnualTarget > 0 ? ((item.total / semiAnnualTarget) * 100).toFixed(2) : 'N/A';
+
+                                                return (
+                                                    <tr key={index} className="hover:bg-gray-50">
+                                                        <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
+                                                        <td className="py-2 px-4 border-b">{semiAnnualTarget}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.total}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{percentage}</td> {/* Percentage */}
+                                                    </tr>
+                                                );
+                                            })
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center py-4">No data available</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+
                     <tfoot className="sticky bottom-0 bg-[#ffe356] font-bold text-[#1b5b40]">
                         <tr className="font-semibold">
                             <td className="border border-gray-300 px-2 py-1">Grand Total</td>

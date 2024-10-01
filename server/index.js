@@ -8,8 +8,7 @@ const vaccinationReportRoutes = require('./routes/vaccinationReportRoutes');
 const RoutineServicesMonitoringReport = require('./routes/routineServicesMonitoringReportRoutes');
 const RabiesHistoryRoutes = require('./routes/RabiesHistoryRoutes');
 const TargetRoutes = require('./routes/Admin/targetRoutes');
-
-
+const MunicipalityTargetRoutes = require('./routes/Admin/municipalityTargetRoutes');
 
 const user = require('./routes/userRoutes')
 const auth = require('./routes/loginRoute')
@@ -29,6 +28,7 @@ app.use(bodyParser.json());
 app.use(cors()); 
 
 // Use routes
+app.use('/api/mtargets', MunicipalityTargetRoutes);
 app.use('/api/targets', TargetRoutes);
 app.use('/', diseaseinvestigationRoutes);
 app.use('/', rabiesVaccinationReportRoutes);
