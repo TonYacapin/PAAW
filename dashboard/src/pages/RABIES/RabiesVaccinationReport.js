@@ -264,7 +264,7 @@ function RabiesVaccinationReport() {
       <h2 className="text-2xl font-bold mb-4">Rabies Vaccination Report</h2>
 
       {/* Main fields */}
-      <div className="grid grid-cols-1 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label htmlFor="municipality" className="block mb-1">
             Municipality
@@ -356,37 +356,43 @@ function RabiesVaccinationReport() {
         >
           + Add Entry
         </button>
-
-        {entries.map((entry, index) => (
-          <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
-            <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <p>Date: {entry.date || "N/A"}</p>
-              <p>Barangay: {entry.barangay || "N/A"}</p>
-              <p>
-                Client: {entry.clientInfo.firstName || "N/A"}{" "}
-                {entry.clientInfo.lastName || ""}
-              </p>
+        <div className="max-h-[40vh] overflow-auto">
+          {entries.map((entry, index) => (
+            <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
+              <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <p>Date: {entry.date || "N/A"}</p>
+                <p>Barangay: {entry.barangay || "N/A"}</p>
+                <p>
+                  Client: {entry.clientInfo.firstName || "N/A"}{" "}
+                  {entry.clientInfo.lastName || ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => openModal(index)}
+                className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => openConfirmationModal(index)}
+                className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
+              >
+                Remove
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => openModal(index)}
-              className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={() => openConfirmationModal(index)}
-              className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="mb-3"/>
       </div>
 
-      <FormSubmit handleFormSubmit={saveEntries} handleImportCSV={importCSV} handleExportCSV={exportAsCSV}/>
+      <FormSubmit
+        handleFormSubmit={saveEntries}
+        handleImportCSV={importCSV}
+        handleExportCSV={exportAsCSV}
+      />
       {/* Save Entries Button
       <div className="flex justify-end mb-4">
         <button
@@ -412,7 +418,7 @@ function RabiesVaccinationReport() {
       {/* Modal for Editing Entries */}
       {selectedEntry !== null && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
+          <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen ">
             <h3 className="text-2xl font-bold mb-4">
               Edit Rabies Vaccination Entry {entries[selectedEntry].no}
             </h3>

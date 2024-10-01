@@ -14,6 +14,7 @@ import ChartComponent from "./component/ChartComponent";
 import AccomplishmentReport from "./pages/AccomplishmentReport";
 import RabiesVaccinationAccomplishmentReport from "./pages/RabiesVaccinationAccomplishmentReport";
 import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
+import UpgradingService from "./pages/UpgradingServices";
 
 import RabiesReportChart from "./component/RabiesReportChart ";
 
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="/rsmr" element={<RoutineServicesMonitoringReport />} />
 
           {/* Livestock Division */}
+          <Route path="/up" element={<UpgradingService />} />
           {/* Upgrading Services */}
           {/* (need dito yung lahat ng upgrading service na nakalagay sa usecase) */}
 
