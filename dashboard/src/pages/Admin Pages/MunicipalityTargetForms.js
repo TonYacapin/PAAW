@@ -1,78 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const MunicipalityTargetForms = () => {
-  const [type, setType] = useState('');
-  const [municipality, setMunicipality] = useState('');
-  const [semiAnnualTarget, setSemiAnnualTarget] = useState('');
-  const [targetYear, setTargetYear] = useState('');
+const MunicipalityTargetForms = ({ targetData, allMunicipalityTargets }) => {
+  const [type, setType] = useState(targetData?.type || '');
+  const [targetYear, setTargetYear] = useState(targetData?.targetYear || '');
+  const [municipalitiesTargets, setMunicipalitiesTargets] = useState([]);
 
   const types = [
-    'HEMOSEP-CARABAO', 'HEMOSEP-CATTLE', 'HEMOSEP-GOAT/SHEEP', 'RABIES', 
+    'HEMOSEP-CARABAO', 'HEMOSEP-CATTLE', 'HEMOSEP-GOAT/SHEEP', 'RABIES',
     'NCD-POULTRY', 'HOG CHOLERA', 'DOG', 'SWINE', 'POULTRY', 'OTHERS'
   ];
 
   const municipalities = [
-    'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon', 'Solano', 
-    'Villaverde', 'Alfonso Castañeda', 'Aritao', 'Bambang', 'Dupax del Norte', 
+    'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon', 'Solano',
+    'Villaverde', 'Alfonso Castañeda', 'Aritao', 'Bambang', 'Dupax del Norte',
     'Dupax del Sur', 'Kayapa', 'Kasibu', 'Santa Fe'
   ];
 
-  // Set the current year as the default value for targetYear
   useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    setTargetYear(currentYear);
-  }, []);
+    if (allMunicipalityTargets && allMunicipalityTargets.length > 0) {
+      setMunicipalitiesTargets(allMunicipalityTargets);
+    } else {
+      const initialTargets = municipalities.map((municipality) => {
+        const target = targetData?.municipality === municipality ? targetData : {};
+        return {
+          municipality,
+          semiAnnualTarget: target?.semiAnnualTarget || ''
+        };
+      });
+      setMunicipalitiesTargets(initialTargets);
+    }
+
+    if (targetData) {
+      setType(targetData.type);
+      setTargetYear(targetData.targetYear);
+    } else {
+      setTargetYear(new Date().getFullYear());
+    }
+  }, [targetData, allMunicipalityTargets]);
+
+  const handleTargetChange = (index, value) => {
+    const updatedTargets = [...municipalitiesTargets];
+    updatedTargets[index].semiAnnualTarget = value;
+    setMunicipalitiesTargets(updatedTargets);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!type) {
+      alert('Please select a type before submitting.');
+      return;
+    }
+
     try {
-      const response = await axios.post('/api/municipality-targets', {
+      const targetsToSubmit = municipalitiesTargets.filter(target => target.semiAnnualTarget);
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets/bulk`, {
         type,
-        municipality,
-        semiAnnualTarget,
         targetYear,
+        targets: targetsToSubmit
       });
-      alert('Target added successfully');
+
+      if (response.data.success) {
+        alert('All targets added/updated successfully');
+      } else {
+        console.error('Detailed error:', response.data);
+        let errorMessage = 'Some targets failed to update:\n';
+        response.data.failures.forEach(failure => {
+          errorMessage += `${failure.municipality}: ${failure.error}\n`;
+        });
+        alert(errorMessage);
+      }
     } catch (error) {
-      console.error('Error posting target', error);
-      alert('Failed to add target');
+      console.error('Error posting targets', error);
+      alert(`Failed to add/update targets: ${error.response?.data?.message || error.message}`);
     }
   };
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Post New Target</h1>
+      <h1 className="text-2xl font-bold mb-4">{targetData ? 'Edit Target' : 'Post New Target'}</h1>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block">Type</label>
-          <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2 w-full">
+          <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2 w-full" disabled={!!targetData}>
             <option value="">Select Type</option>
             {types.map((t, index) => (
               <option key={index} value={t}>{t}</option>
             ))}
           </select>
-        </div>
-
-        <div>
-          <label className="block">Municipality</label>
-          <select value={municipality} onChange={(e) => setMunicipality(e.target.value)} className="border p-2 w-full">
-            <option value="">Select Municipality</option>
-            {municipalities.map((m, index) => (
-              <option key={index} value={m}>{m}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block">Semi Annual Target</label>
-          <input
-            type="number"
-            value={semiAnnualTarget}
-            onChange={(e) => setSemiAnnualTarget(e.target.value)}
-            className="border p-2 w-full"
-            placeholder="Enter Semi Annual Target"
-          />
         </div>
 
         <div>
@@ -83,11 +100,39 @@ const MunicipalityTargetForms = () => {
             onChange={(e) => setTargetYear(e.target.value)}
             className="border p-2 w-full"
             placeholder="Enter Target Year"
+            disabled={!!targetData}
           />
         </div>
 
-        <button type="submit" className="bg-green-500 text-white py-2 px-4">
-          Submit
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse">
+            <thead>
+              <tr>
+                <th className="border p-2">Municipality</th>
+                <th className="border p-2">Semi Annual Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              {municipalitiesTargets.map((target, index) => (
+                <tr key={index}>
+                  <td className="border p-2">{target.municipality}</td>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      className="border p-2 w-full"
+                      value={target.semiAnnualTarget}
+                      onChange={(e) => handleTargetChange(index, e.target.value)}
+                      placeholder="Enter Target"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <button type="submit" className="bg-blue-500 text-white py-2 px-4">
+          {targetData ? 'Update Targets' : 'Add Targets'}
         </button>
       </form>
     </div>

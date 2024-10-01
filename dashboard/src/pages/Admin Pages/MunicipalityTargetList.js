@@ -7,8 +7,9 @@ const MunicipalityTargetList = () => {
     const [targets, setTargets] = useState([]);
     const [municipality, setMunicipality] = useState('');
     const [targetYear, setTargetYear] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTarget, setSelectedTarget] = useState(null);
+    const [allMunicipalityTargets, setAllMunicipalityTargets] = useState([]);
     const municipalities = [
         'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon', 'Solano',
         'Villaverde', 'Alfonso Castañeda', 'Aritao', 'Bambang', 'Dupax del Norte',
@@ -17,7 +18,7 @@ const MunicipalityTargetList = () => {
 
     const fetchTargets = async () => {
         try {
-            const response = await axios.get('/api/municipality-targets', {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
                 params: { municipality, targetYear },
             });
             setTargets(response.data);
@@ -28,7 +29,20 @@ const MunicipalityTargetList = () => {
 
     useEffect(() => {
         fetchTargets();
-    }, []);
+    }, [municipality, targetYear]);
+
+    const handleEditTarget = async (target) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+                params: { type: target.type, targetYear: target.targetYear },
+            });
+            setAllMunicipalityTargets(response.data);
+            setSelectedTarget(target);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching all municipality targets', error);
+        }
+    };
 
     return (
         <div className="p-4">
@@ -55,45 +69,60 @@ const MunicipalityTargetList = () => {
                 />
             </div>
 
-            <button onClick={fetchTargets} className="bg-blue-500 text-white py-2 px-4 mb-4">
-                Fetch Targets
-            </button>
-
-            {/* Button to open the modal */}
             <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white py-2 px-4 mb-4">
                 Add New Target
             </button>
 
-            <table className="w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th className="border p-2">Type</th>
-                        <th className="border p-2">Municipality</th>
-                        <th className="border p-2">Semi Annual Target</th>
-                        <th className="border p-2">Target Year</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {targets.length > 0 ? (
-                        targets.map((target) => (
-                            <tr key={target._id}>
-                                <td className="border p-2">{target.type}</td>
-                                <td className="border p-2">{target.municipality}</td>
-                                <td className="border p-2">{target.semiAnnualTarget}</td>
-                                <td className="border p-2">{target.targetYear}</td>
+            {/* Wrapper div for a scrollable table */}
+            <div className="overflow-x-auto max-w-full">
+                <div className="max-h-64 overflow-y-auto"> {/* Set a maximum height and enable scrolling */}
+                    <table className="min-w-full border-collapse text-sm"> {/* Reduced font size */}
+                        <thead>
+                            <tr>
+                                <th className="border p-2">Type</th>
+                                <th className="border p-2">Municipality</th>
+                                <th className="border p-2">Semi Annual Target</th>
+                                <th className="border p-2">Target Year</th>
+                                <th className="border p-2">Actions</th>
                             </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="4" className="border p-2 text-center">No targets found</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            {targets.length > 0 ? (
+                                targets.map((target) => (
+                                    <tr key={target._id}>
+                                        <td className="border p-2">{target.type}</td>
+                                        <td className="border p-2">{target.municipality}</td>
+                                        <td className="border p-2">{target.semiAnnualTarget}</td>
+                                        <td className="border p-2">{target.targetYear}</td>
+                                        <td className="border p-2">
+                                            <button
+                                                className="bg-yellow-500 text-white py-1 px-3"
+                                                onClick={() => handleEditTarget(target)}
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className="border p-2 text-center">No targets found</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            {/* Modal for adding new target */}
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <MunicipalityTargetForms></MunicipalityTargetForms>
+            <Modal isOpen={isModalOpen} onClose={() => {
+                setIsModalOpen(false);
+                setSelectedTarget(null);
+                setAllMunicipalityTargets(null);
+            }}>
+                <MunicipalityTargetForms
+                    targetData={selectedTarget}
+                    allMunicipalityTargets={allMunicipalityTargets}
+                />
             </Modal>
         </div>
     );

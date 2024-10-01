@@ -21,9 +21,6 @@ import {
   styled,
   useMediaQuery,
 } from "@mui/material";
-
-
-
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 10,
@@ -107,6 +104,8 @@ QontoStepIcon.propTypes = {
   completed: PropTypes.bool,
 };
 
+
+
 export default function StepperComponent(props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
@@ -121,20 +120,34 @@ export default function StepperComponent(props) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-    
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // props.setStepperActiveStep(activeStep);
+
+    const nextStep = activeStep + 1;
+    setActiveStep(nextStep);
     setSkipped(newSkipped);
+
+    // Call the onStepChange prop with the new step
+    if (props.onStepChange) {
+      props.onStepChange(nextStep);
+    }
   };
 
   const handleBack = () => {
-    
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    // props.setStepperActiveStep(activeStep);
+    const prevStep = activeStep - 1;
+    setActiveStep(prevStep);
+
+    // Call the onStepChange prop with the new step
+    if (props.onStepChange) {
+      props.onStepChange(prevStep);
+    }
   };
 
   const handleReset = () => {
     setActiveStep(0);
+
+    // Call the onStepChange prop with the reset step (0)
+    if (props.onStepChange) {
+      props.onStepChange(0);
+    }
   };
 
   return (
@@ -163,7 +176,7 @@ export default function StepperComponent(props) {
               <Stepper
                 activeStep={activeStep}
                 connector={<QontoConnector />}
-                sx={{  flex: "1 1 auto", width:"20%", paddingLeft:"10rem", paddingRight:"10rem", justifyItems:"center" }}
+                sx={{ flex: "1 1 auto", width: "20%", paddingLeft: "10rem", paddingRight: "10rem", justifyItems: "center" }}
               >
                 {props.pages.map((page, index) => {
                   const stepProps = {};
@@ -178,7 +191,6 @@ export default function StepperComponent(props) {
                   );
                 })}
               </Stepper>
-              {/* <Box sx={{ }} /> */}
               <Button
                 variant="contained"
                 onClick={handleNext}
@@ -186,7 +198,6 @@ export default function StepperComponent(props) {
                 sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
               >
                 Next <KeyboardArrowRight />
-                {/* {activeStep === props.pages.length - 1 ? "Finish" : "Next"} */}
               </Button>
             </Box>
           </React.Fragment>
@@ -201,13 +212,13 @@ export default function StepperComponent(props) {
             position="static"
             activeStep={activeStep}
             className="rounded-md"
-            sx={{marginBottom:"4rem",bgcolor: "#1b5b40", color: "#fffafa"}}
+            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa" }}
             nextButton={
               <Button
                 size="small"
                 onClick={handleNext}
                 disabled={activeStep === props.pages.length - 1}
-                sx={{color: "#fffafa"}}
+                sx={{ color: "#fffafa" }}
               >
                 Next
                 <KeyboardArrowRight />
@@ -218,7 +229,7 @@ export default function StepperComponent(props) {
                 size="small"
                 onClick={handleBack}
                 disabled={activeStep === 0}
-                sx={{color: "#fffafa"}}
+                sx={{ color: "#fffafa" }}
               >
                 <KeyboardArrowLeft />
                 Back
@@ -230,27 +241,9 @@ export default function StepperComponent(props) {
     </Box>
   );
 }
-// function CarouselComponent(props) {
-//   return (
-//     <>
-//       <Carousel
-//         navButtonsWrapperProps={{
-//           // Move the buttons to the bottom. Unsetting top here to override default style.
-//           style: {
-//             bottom: "0",
-//             top: "unset",
-//           },
-//         }}
-//         swipe={false}
-//         navButtonsAlwaysVisible
-//         animation="slide"
-//         autoPlay={false}
-//         cycleNavigation={false}
-//       >
-//         {props.pages.map((page, i) => (
-//           <React.Fragment key={i}>{page.content}</React.Fragment>
-//         ))}
-//       </Carousel>
-//     </>
-//   );
-// }
+
+StepperComponent.propTypes = {
+  pages: PropTypes.array.isRequired,
+  renderStepContent: PropTypes.func.isRequired,
+  onStepChange: PropTypes.func,
+};

@@ -5,13 +5,14 @@ import RabiesVaccinationAccomplishmentReport from "./RabiesVaccinationAccomplish
 import StepperComponent from "../component/StepperComponent";
 import Modal from "../component/Modal";
 import TargetList from "./Admin Pages/TargetList";
+import MunicipalityTargetList from "./Admin Pages/MunicipalityTargetList";
 import MunicipalityAccomplishmentReportVaccination from "./MunicipalityAccomplishmentReportVaccination";
 import MunicipalityAccomplishmentReportRabies from "./MunicipalityAccomplishmentReportRabies";
-
 import MunicipalityAccomplishmentReportRoutineServices from "./MunicipalityAccomplishmentReportRoutineServices";
 
 function MonthlyAccomplishmentReport() {
-  const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const pages = [
     {
@@ -38,10 +39,6 @@ function MonthlyAccomplishmentReport() {
       label: "Municipality Accomplishment Report Routine Services",
       content: <MunicipalityAccomplishmentReportRoutineServices />,
     },
-
-
-
-
   ];
 
   const renderStepContent = (step) => {
@@ -51,6 +48,14 @@ function MonthlyAccomplishmentReport() {
     return (
       pages[step]?.content || <div>No content available for this step.</div>
     );
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -66,26 +71,24 @@ function MonthlyAccomplishmentReport() {
               </h2>
               <button
                 className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
-                onClick={() => setModalOpen(true)}
+                onClick={handleOpenModal}
               >
                 Open Target Form
               </button>
             </div>
-
             {/* Render the StepperComponent */}
             <StepperComponent
               pages={pages}
               renderStepContent={renderStepContent}
+              onStepChange={setCurrentStep}
             />
           </div>
-
           {/* Modal for TargetForm */}
-          <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-            <TargetList />
+          <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+            {currentStep >= 3 ? <MunicipalityTargetList /> : <TargetList />}
           </Modal>
         </div>
       </div>
-
       {/* This will display the message for screens smaller than medium (md) */}
       <div className="block md:hidden">
         <div className="p-6 bg-green-100 text-green-800 text-center rounded-lg">
