@@ -463,10 +463,10 @@ function Home() {
         {/* Add relative positioning */}
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-scroll max-h-[100vh]">
           {/* Main Content Wrapper */}
-          <div className="flex flex-col lg:flex-row w-full">
+          <div className="flex flex-col-reverse lg:flex-row w-full">
             {/* Left Side - Charts */}
             <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-center lg:text-left">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-left">
                 Select Charts to Display
               </h3>
 
@@ -480,7 +480,7 @@ function Home() {
                   onChange={handleChartSelect}
                   styles={customSelectStyles}
                   placeholder="Select charts..."
-                  className="text-sm sm:text-base"
+                  className="text-sm sm:text-base z-0"
                 />
               </div>
 
@@ -489,7 +489,7 @@ function Home() {
             </div>
 
             {/* Right Side - Forms */}
-            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 mt-8 lg:mt-0 h-screen">
+            <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 lg:mt-8 lg:mb-5 lg:h-screen">
               {renderForms()}
             </div>
           </div>
