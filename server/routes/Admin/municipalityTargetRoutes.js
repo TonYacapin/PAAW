@@ -22,24 +22,27 @@ router.get('/', async (req, res) => {
 // POST a new target
 router.post('/', async (req, res) => {
   const { type, municipality, semiAnnualTarget, targetYear } = req.body;
-  
-  const newTarget = new MunicipalityTargets({
-    type,
-    municipality,
-    semiAnnualTarget,
-    targetYear
-  });
 
   try {
+    // Check if a target with the same year, type, and municipality already exists
+    const existingTarget = await MunicipalityTargets.findOne({ type, municipality, targetYear });
+    
+    if (existingTarget) {
+      return res.status(400).json({ message: 'Duplicate entry: Target for this year, type, and municipality already exists.' });
+    }
+
+    // Create a new target if no duplicate is found
+    const newTarget = new MunicipalityTargets({
+      type,
+      municipality,
+      semiAnnualTarget,
+      targetYear
+    });
+
     const savedTarget = await newTarget.save();
     res.status(201).json(savedTarget);
   } catch (error) {
-    // Handle duplicate key error (unique constraint)
-    if (error.code === 11000) {
-      res.status(400).json({ message: 'Duplicate entry: Target for this year and type already exists.' });
-    } else {
-      res.status(400).json({ message: error.message });
-    }
+    res.status(400).json({ message: error.message });
   }
 });
 

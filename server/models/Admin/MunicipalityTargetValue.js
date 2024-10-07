@@ -13,13 +13,13 @@ const targetSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    targetYear: { // Store only the year as a number
+    targetYear: { 
         type: Number,
-        required: true // Ensures the user must provide a year
+        required: true // Store only the year as a number
     }
 });
 
-// Create a compound unique index for Type and targetYear to prevent duplicates
-targetSchema.index({ Type: 1, targetYear: 1 }, { unique: true });
+// Create a compound unique index for type, targetYear, and municipality to prevent duplicates
+targetSchema.index({ type: 1, targetYear: 1, municipality: 1 }, { unique: true });
 
 module.exports = mongoose.model('MunicipalityTargets', targetSchema);

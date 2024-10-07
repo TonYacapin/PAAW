@@ -36,6 +36,7 @@ import RequisitionIssueSlip from "../RequisitionIssueSlip ";
 import { Inventory, Outbox } from "@mui/icons-material";
 
 import UserManagement from "../Admin Pages/UserManagement";
+import UpgradingServices from "../UpgradingServices";
 
 function Home() {
   const [userRole, setUserRole] = useState("");
@@ -64,6 +65,8 @@ function Home() {
         return <MonthlyAccomplishmentReport />  ;
         case "UserManagement":
           return <UserManagement />  ;
+          case "UpgradingServices":
+          return <UpgradingServices />  ;
 
       default:
         return null;
@@ -236,6 +239,8 @@ function Home() {
               >
                 <Inventory className="mr-2" /> Manage Equipment Inventory
               </button>
+
+              
             </div>
           </>
         );
@@ -344,25 +349,21 @@ function Home() {
                   Livestock Management
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Artificial Insemination
+                  <button onClick={() =>
+                      openModalWithContent("UpgradingServices")
+                    }
+                    className={buttonClasses}>
+                    <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
-                  <button className={buttonClasses}>
+                  <button className={buttonClasses} >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Estrus Synchronization
-                  </button>
+                  
                   <button className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Vitamin ADE Supplement
-                  </button>
-                  <button className={buttonClasses}>
-                    <PetsIcon className="mr-2" /> Pregnancy Diagnostics
-                  </button>
+                  
                 </div>
               </div>
             </div>

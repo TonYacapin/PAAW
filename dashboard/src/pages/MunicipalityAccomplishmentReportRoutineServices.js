@@ -9,6 +9,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
   const [selectedSpecies, setSelectedSpecies] = useState("Swine"); // Default to 'Swine'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [semiAnnualTargets, setSemiAnnualTargets] = useState([]); // State to store semi-annual targets
 
   const municipalitiesList = [
     "Aritao",
@@ -65,7 +66,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
       aggregateCounts(previousMonth, "previousMonth");
       aggregateCounts(total, "total");
 
-      console.log("Aggregated Report Data:", Object.values(aggregatedData));
+
 
       setReportData(Object.values(aggregatedData));
     } catch (error) {
@@ -74,8 +75,45 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
       setLoading(false);
     }
   };
+    // Fetch the semi-annual targets
+    const fetchSemiAnnualTargets = async () => {
+      try {
+          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+              params: { targetYear: selectedYear, type: getTypeBySpecies(selectedSpecies) }
+          });
+          const targets = response.data;
+          const targetsMap = {};
+
+          // Map the semi-annual target data by municipality
+          targets.forEach(target => {
+              targetsMap[target.municipality] = target.semiAnnualTarget;
+          });
+
+          setSemiAnnualTargets(targetsMap);
+      } catch (error) {
+          console.error('Error fetching semi-annual targets:', error);
+      }
+  };
+
+  // Get species type for filtering targets (e.g., "HEMOSEP-CARABAO" for Carabao)
+  const getTypeBySpecies = (species) => {
+      switch (species) {
+          case 'Swine':
+              return 'SWINE';
+          case 'Poultry':
+              return 'POULTRY';
+          case 'Dog':
+              return 'DOG';
+          case 'Others':
+              return 'OTHERS';
+          default:
+              return '';
+      }
+  };
+
 
   useEffect(() => {
+    fetchSemiAnnualTargets();
     fetchData(selectedYear, selectedMonth, selectedSpecies);
   }, [selectedYear, selectedMonth, selectedSpecies]);
 
@@ -213,26 +251,29 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {reportData.map((item, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="border border-gray-300 px-2 py-1">
-                        {item.municipality}
-                      </td>
-                      <td className="border border-gray-300 px-2 py-1"></td>
-                      <td className="border border-gray-300 px-2 py-1">
-                        {item.previousMonth}
-                      </td>
-                      <td className="border border-gray-300 px-2 py-1">
-                        {item.presentMonth}
-                      </td>
-                      <td className="border border-gray-300 px-2 py-1">
-                        {item.total}
-                      </td>
-                      <td className="border border-gray-300 px-2 py-1"></td>{" "}
-                      {/* Percentage (blank for now) */}
-                    </tr>
-                  ))}
-                </tbody>
+                                        {reportData.length > 0 ? (
+                                            reportData.map((item, index) => {
+                                                const semiAnnualTarget = semiAnnualTargets[item.municipality] || 0;
+                                                const percentage = semiAnnualTarget > 0 ? ((item.total / semiAnnualTarget) * 100).toFixed(2) : 'N/A';
+
+                                                return (
+                                                    <tr key={index} className="hover:bg-gray-50">
+                                                        <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
+                                                        <td className="py-2 px-4 border-b">{semiAnnualTarget}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.presentMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.total}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{percentage}</td> {/* Percentage */}
+                                                    </tr>
+                                                );
+                                            })
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center py-4">No data available</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+
                 <tfoot className="bg-[#ffe356] font-bold text-[#1b5b40] sticky bottom-0">
                   <tr>
                     <td className="border border-gray-300 px-2 py-1">
