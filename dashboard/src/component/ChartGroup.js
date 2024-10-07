@@ -3,7 +3,7 @@ import CardBox from "./CardBox";
 
 export default function ChartGroup(props) {
   return (
-    <div>
+    <div className="lg:max-h-[60vh] overflow-auto">
       <h1 className="md:text-2xl font-bold mb-6">{props.title}</h1>
       {props.others}
       <div className="pb-10">
