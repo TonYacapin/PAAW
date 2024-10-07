@@ -22,13 +22,14 @@ import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
 
 import MunicipalityTargetList from "./pages/Admin Pages/MunicipalityTargetList";
 
+import OffspringMonitoring from "./pages/OffspringMonitoring";
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-      
-        <Route path="/MunicipalityTargetList" element={<MunicipalityTargetList />} />
+        <Route path="/OffspringMonitoring" element={<OffspringMonitoring />} />
+          <Route path="/MunicipalityTargetList" element={<MunicipalityTargetList />} />
           <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
           <Route
             path="/RSMAccomplishmentReport"

@@ -158,9 +158,10 @@ const UpgradingServices = () => {
   const exportAsCSV = () => {
     const data = [];
 
+    // Add header row
     data.push({
-      Municipality: municipality,
-      DateReported: dateReported,
+      Municipality: municipality || "",
+      DateReported: dateReported || "",
       no: "",
       Date: "",
       Barangay: "",
@@ -170,32 +171,35 @@ const UpgradingServices = () => {
       ClientBirthday: "",
       ClientContactNo: "",
       AnimalSpecies: "",
-      AnimalBreed: "",
       AnimalSex: "",
       AnimalAge: "",
       AnimalColor: "",
+      Estrus: "",
+      SireCodeNum: "",
+      Activity: "",
+      Remarks: "",
     });
 
-    entries.forEach((entry) => {
+    // Add data rows
+    entries.forEach((entry, index) => {
       data.push({
-        Municipality: "",
-        DateReported: "",
-        no: entry.no,
-        Date: entry.date,
-        Barangay: entry.barangay,
+        Municipality: municipality || "", // Ensure Municipality is populated for each row
+        DateReported: dateReported || "", // Ensure DateReported is populated for each row
+        no: index + 1, // Numbering starts from 1
+        Date: entry.date || "",
+        Barangay: entry.barangay || "",
         ClientFirstName: entry.clientInfo?.firstName || "",
         ClientLastName: entry.clientInfo?.lastName || "",
         ClientGender: entry.clientInfo?.gender || "",
         ClientBirthday: entry.clientInfo?.birthday || "",
         ClientContactNo: entry.clientInfo?.contactNo || "",
         AnimalSpecies: entry.animalInfo?.species || "",
-        AnimalBreed: entry.animalInfo?.breed || "",
         AnimalSex: entry.animalInfo?.sex || "",
         AnimalAge: entry.animalInfo?.age || "",
         AnimalColor: entry.animalInfo?.color || "",
-        Estrus: entry.estrus,
+        Estrus: entry.animalInfo?.estrus || "", // Ensure estrus is being saved properly
         SireCodeNum: entry.sireCodeNum || "",
-        Activity: entry.activity,
+        Activity: entry.activity || "", // Ensure activity is being saved properly
         Remarks: entry.remarks || "",
       });
     });
@@ -213,38 +217,47 @@ const UpgradingServices = () => {
     link.click();
     document.body.removeChild(link);
   };
-
   const importCSV = (event) => {
     const file = event.target.files[0];
+
     Papa.parse(file, {
       header: true,
       complete: (results) => {
         const importedData = results.data;
-        const mainFields = importedData[0];
-        setMunicipality(mainFields.Municipality);
-        setDateReported(mainFields.DateReported);
 
+        if (!importedData.length) {
+          alert("CSV is empty or invalid.");
+          return;
+        }
+
+        // Set the municipality and dateReported from the first row
+        const mainFields = importedData[0];
+        setMunicipality(mainFields.Municipality || "");
+        setDateReported(mainFields.DateReported || "");
+
+        // Process remaining rows as entries
         const importedEntries = importedData.slice(1).map((entry, index) => ({
           no: index + 1,
-          date: entry.Date,
-          barangay: entry.Barangay,
+          date: entry.Date || "",
+          barangay: entry.Barangay || "",
           clientInfo: {
-            firstName: entry.ClientFirstName,
-            lastName: entry.ClientLastName,
-            gender: entry.ClientGender,
-            birthday: entry.ClientBirthday,
-            contactNo: entry.ClientContactNo,
+            firstName: entry.ClientFirstName || "",
+            lastName: entry.ClientLastName || "",
+            gender: entry.ClientGender || "",
+            birthday: entry.ClientBirthday || "",
+            contactNo: entry.ClientContactNo || "",
           },
           animalInfo: {
-            species: entry.AnimalSpecies,
-            breed: entry.AnimalBreed,
-            sex: entry.AnimalSex,
-            age: entry.AnimalAge,
-            color: entry.AnimalColor,
+            species: entry.AnimalSpecies || "",
+            breed: entry.AnimalBreed || "",
+            sex: entry.AnimalSex || "",
+            age: entry.AnimalAge || "",
+            color: entry.AnimalColor || "",
+            estrus: entry.Estrus || "",
           },
-          estrus: entry.Estrus || "",
+          // Ensure estrus is imported correctly
           sireCodeNum: entry.SireCodeNum || "",
-          activity: entry.Activity || "",
+          activity: entry.Activity || "", // Ensure activity is imported correctly
           remarks: entry.Remarks || "",
         }));
 
@@ -256,6 +269,8 @@ const UpgradingServices = () => {
       },
     });
   };
+
+
 
   return (
     <>
@@ -538,12 +553,56 @@ const UpgradingServices = () => {
               </div>
 
               <div>
-                <label htmlFor="municipality" className="block mb-1">
+                <label htmlFor="animalColor" className="block mb-1">
+                  Estrus
+                </label>
+                <select
+                  id="estrus"
+                  type="text"
+                  value={entries[selectedEntry].animalInfo.estrus}
+                  onChange={(e) =>
+                    handleAnimalInfoChange(
+                      selectedEntry,
+                      "estrus",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full">
+
+                  <option value=""></option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+
+                </select>
+
+              </div>
+
+              <div>
+                <label htmlFor="sireCodeNum" className="block mb-1">
+                  Sire Code Number
+                </label>
+                <input
+                  id="sireCodeNum"
+                  type="text"
+                  value={entries[selectedEntry].sireCodeNum}
+                  onChange={(e) =>
+                    handleEntryChange(
+                      selectedEntry,
+                      "sireCodeNum",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="activity" className="block mb-1">
                   Activity
                 </label>
                 <select
                   id="activity"
-                  value={entries[selectedEntry].animalInfo.color}
+                  value={entries[selectedEntry]?.activity || ""} // Use optional chaining to avoid errors
                   onChange={(e) =>
                     handleEntryChange(selectedEntry, "activity", e.target.value)
                   }
@@ -551,16 +610,31 @@ const UpgradingServices = () => {
                 >
                   <option value="">Select Activity</option>
                   <option value="EstrusSynchro">Estrus Synchronization</option>
-                  <option value="ArtificialInsemination">
-                    Artificial Insemination
-                  </option>
-                  <option value="PregnancyDiagnosis">
-                    Pregnancy Diagnosis
-                  </option>
-                  <option value="VitaminADE">
-                    Vitamin ADE supplementation
-                  </option>
+                  <option value="ArtificialInsemination">Artificial Insemination</option>
+                  <option value="PregnancyDiagnosis">Pregnancy Diagnosis</option>
+                  <option value="VitaminADE">Vitamin ADE supplementation</option>
                 </select>
+              </div>
+
+
+
+              <div>
+                <label htmlFor="remarks" className="block mb-1">
+                  Remarks
+                </label>
+                <input
+                  id="remarks"
+                  type="text"
+                  value={entries[selectedEntry].remarks}
+                  onChange={(e) =>
+                    handleEntryChange(
+                      selectedEntry,
+                      "remarks",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                />
               </div>
 
               <div className="flex justify-end">
@@ -628,9 +702,9 @@ const UpgradingServices = () => {
               </div>
             ))}
           </div>
-          <div className="mb-3"/>
+          <div className="mb-3" />
 
-       
+
         </div>
         <FormSubmit
           handleImportCSV={importCSV}

@@ -37,6 +37,7 @@ import { Inventory, Outbox } from "@mui/icons-material";
 
 import UserManagement from "../Admin Pages/UserManagement";
 import UpgradingServices from "../UpgradingServices";
+import OffspringMonitoring from "../OffspringMonitoring";
 
 function Home() {
   const [userRole, setUserRole] = useState("");
@@ -62,11 +63,13 @@ function Home() {
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
       case "AccomplishmentReport":
-        return <MonthlyAccomplishmentReport />  ;
-        case "UserManagement":
-          return <UserManagement />  ;
-          case "UpgradingServices":
-          return <UpgradingServices />  ;
+        return <MonthlyAccomplishmentReport />;
+      case "UserManagement":
+        return <UserManagement />;
+      case "UpgradingServices":
+        return <UpgradingServices />;
+      case "OffSpringMonitoring":
+        return <OffspringMonitoring />;
 
       default:
         return null;
@@ -240,7 +243,7 @@ function Home() {
                 <Inventory className="mr-2" /> Manage Equipment Inventory
               </button>
 
-              
+
             </div>
           </>
         );
@@ -289,9 +292,9 @@ function Home() {
                   Reports
                 </h4>
                 <div className="space-y-2">
-                  <button 
-                   onClick={() => openModalWithContent("AccomplishmentReport")}
-                  className={buttonClasses}>
+                  <button
+                    onClick={() => openModalWithContent("AccomplishmentReport")}
+                    className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment
                     Report
                   </button>
@@ -350,20 +353,23 @@ function Home() {
                 </h4>
                 <div className="space-y-2">
                   <button onClick={() =>
-                      openModalWithContent("UpgradingServices")
-                    }
+                    openModalWithContent("UpgradingServices")
+                  }
                     className={buttonClasses}>
                     <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
-                  <button className={buttonClasses} >
+                  <button onClick={() =>
+                    openModalWithContent("OffSpringMonitoring")
+                  }
+                    className={buttonClasses} >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
-                  
+
                   <button className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
-                  
+
                 </div>
               </div>
             </div>
