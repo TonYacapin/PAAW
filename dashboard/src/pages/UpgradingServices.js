@@ -644,6 +644,28 @@ const UpgradingServices = () => {
                 </select>
               </div>
 
+              <div className="mb-3"/>
+
+
+              <div>
+                <label htmlFor="remarks" className="block mb-1">
+                  Remarks
+                </label>
+                <input
+                  id="remarks"
+                  type="text"
+                  value={entries[selectedEntry].remarks}
+                  onChange={(e) =>
+                    handleEntryChange(
+                      selectedEntry,
+                      "remarks",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+
 
 
               <div>
@@ -734,12 +756,14 @@ const UpgradingServices = () => {
 
 
         </div>
+        
         <FormSubmit
           handleImportCSV={importCSV}
           handleExportCSV={exportAsCSV}
           handleSubmit={saveEntries}
         />
       </div>
+      
     </>
   );
 };
