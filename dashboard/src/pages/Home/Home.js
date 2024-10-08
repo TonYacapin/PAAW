@@ -14,9 +14,13 @@ import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
 import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
 import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
+import TechnicianQuarterlyCharts from "../../component/TechnicianQuarterlyCharts";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
 import AccomplishmentReport from "../AccomplishmentReport";
 import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
+import TechnicianQuarterlyReportForm from "../TechnicianQuarterlyReportForm";
+import MonthlyAccomplishmentReportUpgradingServices from "../MonthlyAccomplishmentReportUpgradingServices";
+import MonthlyAccomplishmentReportLivestock from "../MonthlyAccomplishmentReportLivestock";
 //Charts
 
 import RabiesReportChart from "../../component/RabiesReportChart ";
@@ -24,6 +28,8 @@ import DiseaseInvestigationChart from "../../component/DiseaseInvestigationChart
 import VaccinationReportChart from "../../component/VaccinationReportChart";
 import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
+
+
 
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
@@ -100,6 +106,10 @@ function Home() {
         return <UpgradingServices />;
       case "OffSpringMonitoring":
         return <OffspringMonitoring />;
+      case "CalfDrop":
+        return <TechnicianQuarterlyReportForm />;
+      case "AccomplishmentReportLivestock":
+        return <MonthlyAccomplishmentReportLivestock />;
 
       default:
         return null;
@@ -143,6 +153,14 @@ function Home() {
     { value: "rabiesHistory", label: "Rabies History Charts" },
     { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
     { value: "UpgradingServices", label: "Upgrading Services Charts" },
+    { value: "TechnicianQuarterly", label: "Technician Quarterly Calf Drop Charts" },
+
+
+
+
+
+
+
   ];
 
   const getChartOptions = () => {
@@ -187,12 +205,11 @@ function Home() {
             <RoutineServicesMonitoringReportChart />
           )}
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
-          {selectedCharts.includes("offSringMonitoring") && (
-            <OffSpringMonitoringChart />
-          )}
-          {selectedCharts.includes("UpgradingServices") && (
-            <UpgradingServicesChart />
-          )}
+          {selectedCharts.includes("offSringMonitoring") && <OffSpringMonitoringChart />}
+          {selectedCharts.includes("UpgradingServices") && <UpgradingServicesChart />}
+          {selectedCharts.includes("TechnicianQuarterly") && <TechnicianQuarterlyCharts />}
+
+
         </div>
       );
     }
@@ -400,7 +417,23 @@ function Home() {
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
 
-                  <button className={buttonClasses}>
+                  <button onClick={() =>
+                    openModalWithContent("CalfDrop")
+                  }
+                    className={buttonClasses} >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+                  </button>
+                  
+                  <button onClick={() =>
+                    openModalWithContent("CalfDrop")
+                  }
+                    className={buttonClasses} >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+                  </button>
+
+                  <button onClick={() =>
+                    openModalWithContent("AccomplishmentReportLivestock")
+                  } className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
