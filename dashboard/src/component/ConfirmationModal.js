@@ -12,7 +12,7 @@ function ConfirmationModal({ isOpen, onConfirm, onCancel, message }) {
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-500 text-white rounded"
+            className="px-4 py-2 bg-darkgreen text-white rounded"
           >
             Cancel
           </button>

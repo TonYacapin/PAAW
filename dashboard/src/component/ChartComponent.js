@@ -6,7 +6,7 @@ ChartJS.register(LineElement, PointElement, BarElement, Tooltip, Legend, Categor
 
 const ChartComponent = () => {
   useEffect(() => {
-    // This effect runs once when the component mounts
+    
   }, []);
 
   const lineData = {
