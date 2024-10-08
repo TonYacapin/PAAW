@@ -56,7 +56,7 @@ const OffspringMonitoringReport = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Offspring Monitoring Report</h1>
+            <h1 className="text-2xl font-bold mb-6 text-black">Offspring Monitoring Report</h1>
 
             {/* Loading Indicator */}
             {loading ? (

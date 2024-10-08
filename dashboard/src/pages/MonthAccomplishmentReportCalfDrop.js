@@ -56,7 +56,7 @@ const MonthAccomplishmentReportCalfDrop = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-8">Technician Quarterly Report</h1>
+            <h1 className="text-2xl font-bold mb-8">Calf Drop Quarterly Report</h1>
 
             {/* Loading Indicator */}
             {loading ? (
