@@ -1,4 +1,4 @@
-// TargetForm.js
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CardBox from "../../component/CardBox";
@@ -23,13 +23,13 @@ const TargetForm = ({ onClose, target }) => {
   const handleQuarterChange = (e) => {
     const value = e.target.value;
     setTargetValue(value);
-    setSemiAnnualTarget(value * 2); // Update semiAnnualTarget based on targetValue
+    setSemiAnnualTarget(value * 2); 
   };
 
   const handleSemiAnnualChange = (e) => {
     const value = e.target.value;
     setSemiAnnualTarget(value);
-    setTargetValue(value / 2); // Update targetValue based on semiAnnualTarget
+    setTargetValue(value / 2); 
   };
 
   const handleSubmit = async (e) => {
@@ -54,7 +54,7 @@ const TargetForm = ({ onClose, target }) => {
 
       if (response.status === 201 || response.status === 200) {
         setSuccess("Target saved successfully!");
-        // Clear the form
+        
         setType("");
         setTargetValue("");
         setSemiAnnualTarget("");
@@ -114,7 +114,7 @@ const TargetForm = ({ onClose, target }) => {
                 <input
                   type="number"
                   value={targetValue}
-                  onChange={handleQuarterChange} // Update handler
+                  onChange={handleQuarterChange}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 />
@@ -126,7 +126,7 @@ const TargetForm = ({ onClose, target }) => {
                 <input
                   type="number"
                   value={semiAnnualTarget}
-                  onChange={handleSemiAnnualChange} // Update handler
+                  onChange={handleSemiAnnualChange}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 />
