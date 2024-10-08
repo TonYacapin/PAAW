@@ -5,6 +5,8 @@ import ChartComponent from "../../component/ChartComponent";
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
+import OffSpringMonitoringChart from "../../component/OffSpringMonitoringChart";
+import UpgradingServicesChart  from "../../component/UpgradingServicesChart";
 import Modal from "../../component/Modal";
 import Select from "react-select";
 
@@ -109,6 +111,9 @@ function Home() {
     { value: "vaccination", label: "Vaccination Report Chart" },
     { value: "routine", label: "Routine Services Monitoring Report Chart" },
     { value: "rabiesHistory", label: "Rabies History Charts" },
+    { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
+    { value: "UpgradingServices", label: "Upgrading Services Charts" },
+
 
 
 
@@ -153,6 +158,8 @@ function Home() {
           {selectedCharts.includes("vaccination") && <VaccinationReportChart />}
           {selectedCharts.includes("routine") && <RoutineServicesMonitoringReportChart />}
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
+          {selectedCharts.includes("offSringMonitoring") && <OffSpringMonitoringChart />}
+          {selectedCharts.includes("UpgradingServices") && <UpgradingServicesChart />}
 
 
         </div>

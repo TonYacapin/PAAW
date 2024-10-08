@@ -10,6 +10,11 @@ const RabiesHistoryRoutes = require('./routes/RabiesHistoryRoutes');
 const TargetRoutes = require('./routes/Admin/targetRoutes');
 const MunicipalityTargetRoutes = require('./routes/Admin/municipalityTargetRoutes');
 
+const upgradingServicesRoutes = require('./routes/upgradingServices');
+const offspringMonitoringRoutes = require('./routes/offspringmonitoring');
+
+
+
 const user = require('./routes/userRoutes')
 const auth = require('./routes/loginRoute')
 const app = express();
@@ -28,6 +33,8 @@ app.use(bodyParser.json());
 app.use(cors()); 
 
 // Use routes
+app.use('/api/offspring-monitoring', offspringMonitoringRoutes);
+app.use('/api/upgrading-services', upgradingServicesRoutes);
 app.use('/api/mtargets', MunicipalityTargetRoutes);
 app.use('/api/targets', TargetRoutes);
 app.use('/', diseaseinvestigationRoutes);

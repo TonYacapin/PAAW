@@ -136,7 +136,7 @@ const UpgradingServices = () => {
     try {
       console.log(entries);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/entries`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/upgrading-services`,
         {
           municipality,
           dateReported,
@@ -419,7 +419,7 @@ const UpgradingServices = () => {
                   <label htmlFor="clientGender" className="block mb-1">
                     Gender
                   </label>
-                  <input
+                  <select
                     id="clientGender"
                     type="text"
                     value={entries[selectedEntry].clientInfo.gender}
@@ -431,7 +431,16 @@ const UpgradingServices = () => {
                       )
                     }
                     className="border p-2 rounded w-full"
-                  />
+                  >
+
+
+
+                    <option value="" disabled>
+                      Select Sex
+                    </option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="clientBirthday" className="block mb-1">
@@ -485,6 +494,25 @@ const UpgradingServices = () => {
                       handleAnimalInfoChange(
                         selectedEntry,
                         "species",
+                        e.target.value
+                      )
+                    }
+                    className="border p-2 rounded w-full"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="animalSpecies" className="block mb-1">
+                    Breed
+                  </label>
+                  <input
+                    id="breed"
+                    type="text"
+                    value={entries[selectedEntry].animalInfo.breed}
+                    onChange={(e) =>
+                      handleAnimalInfoChange(
+                        selectedEntry,
+                        "breed",
                         e.target.value
                       )
                     }

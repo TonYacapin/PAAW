@@ -380,7 +380,7 @@ const OffspringMonitoring = () => {
                     handleExportCSV={exportAsCSV}
                     handleSubmit={saveEntries}
                 />
-            </div>
+        </div>
         </>
     );
 };
