@@ -137,7 +137,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
 
     return (
         <>
-            <div className="max-h-[55vh] overflow-y-hidden">
+            <div className="max-h-[55vh] overflow-y-auto">
                 <h1 className="text-3xl font-extrabold text-[#1b5b40]">
                     Municipality Vaccination Accomplishment Report
                 </h1>

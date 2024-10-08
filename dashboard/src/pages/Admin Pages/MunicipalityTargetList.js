@@ -7,6 +7,7 @@ const MunicipalityTargetList = () => {
     const [targets, setTargets] = useState([]);
     const [municipality, setMunicipality] = useState('');
     const [targetYear, setTargetYear] = useState('');
+    const [type, setType] = useState(''); // State for type filter
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTarget, setSelectedTarget] = useState(null);
     const [allMunicipalityTargets, setAllMunicipalityTargets] = useState([]);
@@ -15,11 +16,15 @@ const MunicipalityTargetList = () => {
         'Villaverde', 'Alfonso Castañeda', 'Aritao', 'Bambang', 'Dupax del Norte',
         'Dupax del Sur', 'Kayapa', 'Kasibu', 'Santa Fe'
     ];
+    const types = [
+        'HEMOSEP-CARABAO', 'HEMOSEP-CATTLE', 'HEMOSEP-GOAT/SHEEP',
+        'RABIES', 'NCD-POULTRY', 'HOG CHOLERA'
+    ];
 
     const fetchTargets = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
-                params: { municipality, targetYear },
+                params: { municipality, targetYear, type }, // Include type in the API request
             });
             setTargets(response.data);
         } catch (error) {
@@ -29,7 +34,7 @@ const MunicipalityTargetList = () => {
 
     useEffect(() => {
         fetchTargets();
-    }, [municipality, targetYear]);
+    }, [municipality, targetYear, type]); // Trigger fetch when type changes
 
     const handleEditTarget = async (target) => {
         try {
@@ -48,6 +53,7 @@ const MunicipalityTargetList = () => {
         <div className="p-4">
             <h1 className="text-2xl font-bold mb-4">Targets</h1>
 
+            {/* Municipality Filter */}
             <div className="mb-4">
                 <label className="block">Filter by Municipality</label>
                 <select value={municipality} onChange={(e) => setMunicipality(e.target.value)} className="border p-2 w-full">
@@ -58,6 +64,7 @@ const MunicipalityTargetList = () => {
                 </select>
             </div>
 
+            {/* Target Year Filter */}
             <div className="mb-4">
                 <label className="block">Filter by Target Year</label>
                 <input
@@ -67,6 +74,17 @@ const MunicipalityTargetList = () => {
                     className="border p-2 w-full"
                     placeholder="Enter Target Year"
                 />
+            </div>
+
+            {/* Type Filter */}
+            <div className="mb-4">
+                <label className="block">Filter by Type</label>
+                <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2 w-full">
+                    <option value="">Select Type</option>
+                    {types.map((t, index) => (
+                        <option key={index} value={t}>{t}</option>
+                    ))}
+                </select>
             </div>
 
             <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white py-2 px-4 mb-4">
