@@ -66,7 +66,7 @@ function MonthlyAccomplishmentReport() {
           {/* Button to open the modal */}
           <div className="p-6 bg-white shadow-md rounded-lg">
             <div className="flex flex-row mb-4 justify-between">
-              <h2 className="text-xl font-semibold text-gray-700">
+              <h2 className="text-3xl font-extrabold mb-6 text-darkgreen">
                 Monthly Accomplishment Report
               </h2>
               <button

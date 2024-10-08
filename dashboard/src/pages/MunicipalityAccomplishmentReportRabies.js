@@ -92,7 +92,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
         <>
     <div className="max-h-[55vh] overflow-y-hidden">
         
-    <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+    <h1 className="text-xl font-semibold text-gray-700">
         Municipality Rabies Vaccination Accomplishment Report
       </h1>
         <div className="p-4">
