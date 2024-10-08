@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import Navbar from "../../component/Navbar";
 import { useNavigate } from "react-router-dom";
 import ChartComponent from "../../component/ChartComponent";
@@ -6,7 +6,7 @@ import AnimalHealthChartComponent from "../../component/AnimalHealthChartCompone
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
 import OffSpringMonitoringChart from "../../component/OffSpringMonitoringChart";
-import UpgradingServicesChart  from "../../component/UpgradingServicesChart";
+import UpgradingServicesChart from "../../component/UpgradingServicesChart";
 import Modal from "../../component/Modal";
 import Select from "react-select";
 
@@ -25,7 +25,6 @@ import VaccinationReportChart from "../../component/VaccinationReportChart";
 import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
 
-
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
 import ReportIcon from "@mui/icons-material/Report";
@@ -41,6 +40,8 @@ import UserManagement from "../Admin Pages/UserManagement";
 import UpgradingServices from "../UpgradingServices";
 import OffspringMonitoring from "../OffspringMonitoring";
 
+export const FilterContext = createContext(null);
+
 function Home() {
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -49,6 +50,33 @@ function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const [modalContent, setModalContent] = useState(null);
+  const [openFilters, setOpenFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    dateRange: [null, null],
+    municipality: "",
+  });
+  const [showAll, setShowAll] = useState(false); // State to toggle between all data and filtered data
+
+  // const [filterOptions, setFilterOptions] = useState({ filters, showAll });
+
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      dateRange:
+        name === "startDate"
+          ? [value, prev.dateRange[1]]
+          : [prev.dateRange[0], value],
+    }));
+  };
+
+  const handleMunicipalityChange = (e) => {
+    setFilters((prev) => ({ ...prev, municipality: e.target.value }));
+  };
+
+  const toggleShowAll = () => {
+    setShowAll((prevShowAll) => !prevShowAll); // Toggle between all data and filtered data
+  };
 
   const renderModalContent = () => {
     switch (modalContent) {
@@ -86,6 +114,8 @@ function Home() {
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
+  const toggleFilter = () => setOpenFilters(!openFilters);
+
   useEffect(() => {
     const role = localStorage.getItem("userRole");
     setUserRole(role);
@@ -113,11 +143,6 @@ function Home() {
     { value: "rabiesHistory", label: "Rabies History Charts" },
     { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
     { value: "UpgradingServices", label: "Upgrading Services Charts" },
-
-
-
-
-
   ];
 
   const getChartOptions = () => {
@@ -152,16 +177,22 @@ function Home() {
             <AnimalHealthChartComponent />
           )}
           {selectedCharts.includes("livestock") && <LivestockChartComponent />}
-          {selectedCharts.includes("regulatory") && <RegulatoryChartComponent />}
+          {selectedCharts.includes("regulatory") && (
+            <RegulatoryChartComponent />
+          )}
           {selectedCharts.includes("rabies") && <RabiesReportChart />}
           {selectedCharts.includes("disease") && <DiseaseInvestigationChart />}
           {selectedCharts.includes("vaccination") && <VaccinationReportChart />}
-          {selectedCharts.includes("routine") && <RoutineServicesMonitoringReportChart />}
+          {selectedCharts.includes("routine") && (
+            <RoutineServicesMonitoringReportChart />
+          )}
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
-          {selectedCharts.includes("offSringMonitoring") && <OffSpringMonitoringChart />}
-          {selectedCharts.includes("UpgradingServices") && <UpgradingServicesChart />}
-
-
+          {selectedCharts.includes("offSringMonitoring") && (
+            <OffSpringMonitoringChart />
+          )}
+          {selectedCharts.includes("UpgradingServices") && (
+            <UpgradingServicesChart />
+          )}
         </div>
       );
     }
@@ -231,9 +262,7 @@ function Home() {
               <button
                 className={buttonClasses}
                 // onClick={() => setSelectedDivision("user")}
-                onClick={() =>
-                  openModalWithContent("UserManagement")
-                }
+                onClick={() => openModalWithContent("UserManagement")}
               >
                 <ManageAccountsIcon className="mr-2" /> Manage Users
               </button>
@@ -249,8 +278,6 @@ function Home() {
               >
                 <Inventory className="mr-2" /> Manage Equipment Inventory
               </button>
-
-
             </div>
           </>
         );
@@ -301,7 +328,8 @@ function Home() {
                 <div className="space-y-2">
                   <button
                     onClick={() => openModalWithContent("AccomplishmentReport")}
-                    className={buttonClasses}>
+                    className={buttonClasses}
+                  >
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment
                     Report
                   </button>
@@ -359,16 +387,16 @@ function Home() {
                   Livestock Management
                 </h4>
                 <div className="space-y-2">
-                  <button onClick={() =>
-                    openModalWithContent("UpgradingServices")
-                  }
-                    className={buttonClasses}>
+                  <button
+                    onClick={() => openModalWithContent("UpgradingServices")}
+                    className={buttonClasses}
+                  >
                     <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
-                  <button onClick={() =>
-                    openModalWithContent("OffSpringMonitoring")
-                  }
-                    className={buttonClasses} >
+                  <button
+                    onClick={() => openModalWithContent("OffSpringMonitoring")}
+                    className={buttonClasses}
+                  >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
 
@@ -376,7 +404,6 @@ function Home() {
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
-
                 </div>
               </div>
             </div>
@@ -473,7 +500,10 @@ function Home() {
     <>
       <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col bg-white min-h-screen relative overflow-hidden">
         {/* Navbar */}
-        <Navbar onDivisionChange={handleDivisionChange} selectedDivision={selectedDivision} />
+        <Navbar
+          onDivisionChange={handleDivisionChange}
+          selectedDivision={selectedDivision}
+        />
         {/* Add relative positioning */}
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-scroll max-h-[100vh]">
           {/* Main Content Wrapper */}
@@ -485,21 +515,71 @@ function Home() {
               </h3>
 
               {/* Chart Selection Dropdown */}
-              <div className="w-full z-10">
-                {" "}
-                {/* Increase z-index for dropdown */}
-                <Select
-                  isMulti
-                  options={getChartOptions()}
-                  onChange={handleChartSelect}
-                  styles={customSelectStyles}
-                  placeholder="Select charts..."
-                  className="text-sm sm:text-base z-0"
-                />
-              </div>
+              <div className="grid grid-cols-5 gap-5">
+                <div className="w-full col-span-4 z-10">
+                  {" "}
+                  {/* Increase z-index for dropdown */}
+                  <Select
+                    isMulti
+                    options={getChartOptions()}
+                    onChange={handleChartSelect}
+                    styles={customSelectStyles}
+                    placeholder="Select charts..."
+                    className="text-sm sm:text-base z-0"
+                  />
+                </div>
+                <button
+                  className="w-full flex items-center col-span-1 text-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                  onClick={() => toggleFilter()}
+                >
+                  Apply Filters
+                </button>
+                {openFilters && (
+                  <div className="sticky grow col-span-5 flex flex-row lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col gap-x-3">
+                    <label className="mb-2 text-lg ">
+                      <div className="font-bold">Start Date:</div>
+                      <input
+                        className="border"
+                        type="date"
+                        name="startDate"
+                        onChange={handleDateChange}
+                        disabled={showAll}
+                      />
+                    </label>
+                    <label className="mb-2 text-lg">
+                      <div className="font-bold">End Date:</div>
 
-              {/* Conditional Rendering for Charts */}
-              <div className="w-full">{renderCharts()}</div>
+                      <input
+                        className="border"
+                        type="date"
+                        name="endDate"
+                        onChange={handleDateChange}
+                        disabled={showAll}
+                      />
+                    </label>
+                    <label className="mb-2 text-lg">
+                      <div className="font-bold">Municipality:</div>
+                      <input
+                        className="border"
+                        type="text"
+                        value={filters.municipality}
+                        onChange={handleMunicipalityChange}
+                        disabled={showAll}
+                      />
+                    </label>
+                    <button
+                      className="w-full bg-darkgreen text-white rounded hover:bg-darkergreen"
+                      onClick={toggleShowAll}
+                    >
+                      {showAll ? "Enable" : "Disable"}
+                    </button>
+                  </div>
+                )}
+              </div>
+              <FilterContext.Provider value={{ filters, showAll }}>
+                {/* Conditional Rendering for Charts */}
+                <div className="w-full">{renderCharts()}</div>
+              </FilterContext.Provider>
             </div>
 
             {/* Right Side - Forms */}
