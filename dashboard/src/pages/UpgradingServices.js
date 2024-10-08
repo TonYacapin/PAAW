@@ -563,6 +563,8 @@ const UpgradingServices = () => {
                 </select>
               </div>
 
+              <div className="mb-3"/>
+
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -632,12 +634,14 @@ const UpgradingServices = () => {
 
        
         </div>
+        
         <FormSubmit
           handleImportCSV={importCSV}
           handleExportCSV={exportAsCSV}
           handleSubmit={saveEntries}
         />
       </div>
+      
     </>
   );
 };
