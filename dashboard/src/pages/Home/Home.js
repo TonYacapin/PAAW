@@ -6,7 +6,7 @@ import AnimalHealthChartComponent from "../../component/AnimalHealthChartCompone
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
 import OffSpringMonitoringChart from "../../component/OffSpringMonitoringChart";
-import UpgradingServicesChart  from "../../component/UpgradingServicesChart";
+import UpgradingServicesChart from "../../component/UpgradingServicesChart";
 import Modal from "../../component/Modal";
 import Select from "react-select";
 
@@ -17,6 +17,7 @@ import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInves
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
 import AccomplishmentReport from "../AccomplishmentReport";
 import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
+import TechnicianQuarterlyReportForm from "../TechnicianQuarterlyReportForm";
 //Charts
 
 import RabiesReportChart from "../../component/RabiesReportChart ";
@@ -24,6 +25,7 @@ import DiseaseInvestigationChart from "../../component/DiseaseInvestigationChart
 import VaccinationReportChart from "../../component/VaccinationReportChart";
 import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
+
 
 
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
@@ -72,6 +74,8 @@ function Home() {
         return <UpgradingServices />;
       case "OffSpringMonitoring":
         return <OffspringMonitoring />;
+      case "CalfDrop":
+        return <TechnicianQuarterlyReportForm />;
 
       default:
         return null;
@@ -370,6 +374,13 @@ function Home() {
                   }
                     className={buttonClasses} >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
+                  </button>
+
+                  <button onClick={() =>
+                    openModalWithContent("CalfDrop")
+                  }
+                    className={buttonClasses} >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
                   </button>
 
                   <button className={buttonClasses}>
