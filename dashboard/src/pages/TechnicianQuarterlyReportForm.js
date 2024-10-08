@@ -499,16 +499,16 @@ const TechnicianQuarterlyReportForm = () => {
                             <button
                                 type="button"
                                 onClick={closeModal}
-                                className="px-4 py-2 bg-gray-500 hover:bg-gray-700 text-white rounded mr-2"
+                                className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded mr-2"
                             >
-                                Close
+                                Cancel
                             </button>
                             <button
                                 type="button"
                                 onClick={closeModal}
                                 className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
                             >
-                                Save Changes
+                                Save
                             </button>
                         </div>
                     </div>
