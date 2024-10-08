@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
 import FormSubmit from '../component/FormSubmit';
-
+import ConfirmationModal from '../component/ConfirmationModal';
 
 const TechnicianQuarterlyReportForm = () => {
     const [formData, setFormData] = useState({
@@ -18,14 +18,8 @@ const TechnicianQuarterlyReportForm = () => {
     const [entryToRemove, setEntryToRemove] = useState(null);
     const [alert, setAlert] = useState({ show: false, message: '', type: '' });
 
-    const handleChange = (e, index = null, field = null) => {
-        if (index !== null && field) {
-            const updatedEntries = [...formData.animalEntries];
-            updatedEntries[index][field] = e.target.value;
-            setFormData({ ...formData, animalEntries: updatedEntries });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
-        }
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const addAnimalEntry = () => {
@@ -51,6 +45,7 @@ const TechnicianQuarterlyReportForm = () => {
                 }
             ]
         });
+        setSelectedEntry(formData.animalEntries.length);
     };
 
     const openConfirmationModal = (index) => {
@@ -68,6 +63,25 @@ const TechnicianQuarterlyReportForm = () => {
         setEntryToRemove(null);
     };
 
+    const handleCancelRemove = () => {
+        setIsConfirmationModalOpen(false);
+        setEntryToRemove(null);
+    };
+
+    const handleEntryChange = (index, field, value) => {
+        const newEntries = [...formData.animalEntries];
+        newEntries[index][field] = value;
+        setFormData({ ...formData, animalEntries: newEntries });
+    };
+
+    const openModal = (index) => {
+        setSelectedEntry(index);
+    };
+
+    const closeModal = () => {
+        setSelectedEntry(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -81,6 +95,7 @@ const TechnicianQuarterlyReportForm = () => {
             setAlert({ show: true, message: 'Failed to submit report', type: 'error' });
         }
     };
+
     const exportAsCSV = () => {
         const csvData = [
             [
@@ -149,7 +164,8 @@ const TechnicianQuarterlyReportForm = () => {
                 const remarksIndex = header.indexOf('Remarks');
                 const dateSubmittedIndex = header.indexOf('Date Submitted');
 
-                const newEntries = rows.map((row) => ({
+                const newEntries = rows.map((row, index) => ({
+                    no: index + 1,
                     farmerName: row[5] || '',
                     address: row[6] || '',
                     damIdNo: row[7] || '',
@@ -177,12 +193,9 @@ const TechnicianQuarterlyReportForm = () => {
         });
     };
 
-
-
     return (
-        <>
         <div className="container mx-auto p-4">
-            <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8 overflow-auto h-[60vh]">
+            <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8">
                 <h1 className="text-3xl font-bold mb-4 text-[#1b5b40]">Technician's Quarterly Calf Drop Report</h1>
 
                 {alert.show && (
@@ -193,7 +206,7 @@ const TechnicianQuarterlyReportForm = () => {
 
                 {/* General Information */}
                 <div className="border-b-2 border-gray-300 pb-4 mb-4">
-                    <h1 className="text-xl font-semibold mb-4">Technician & Report Information</h1>
+                    <h2 className="text-xl font-semibold mb-4">Technician & Report Information</h2>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="technicianName">
@@ -256,7 +269,7 @@ const TechnicianQuarterlyReportForm = () => {
                 </div>
 
                 {/* Remarks */}
-                <div className="mb-3">
+                <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="remarks">
                         Remarks
                     </label>
@@ -265,168 +278,203 @@ const TechnicianQuarterlyReportForm = () => {
                         name="remarks"
                         value={formData.remarks}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none             focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         rows="4"
                     />
                 </div>
 
                 {/* Animal Entries */}
                 <h3 className="text-lg font-semibold mb-4">Animal Entries</h3>
-                {formData.animalEntries.map((entry, index) => (
-                    <div key={index} className="border p-4 mb-4 rounded bg-gray-50">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`farmerName_${index}`}>
+                <button
+                    type="button"
+                    onClick={addAnimalEntry}
+                    className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
+                >
+                    + Add Entry
+                </button>
+                <div className="max-h-[40vh] overflow-auto">
+                    {formData.animalEntries.map((entry, index) => (
+                        <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
+                            <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <p>Farmer: {entry.farmerName || "N/A"}</p>
+                                <p>Dam ID: {entry.damIdNo || "N/A"}</p>
+                                <p>Date of AI: {entry.dateOfAI || "N/A"}</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => openModal(index)}
+                                className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => openConfirmationModal(index)}
+                                className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                <FormSubmit
+                    handleImportCSV={importCSV}
+                    handleExportCSV={exportAsCSV}
+                    handleSubmit={handleSubmit}
+                />
+            </form>
+
+            {/* Modal for Editing Entries */}
+            {selectedEntry !== null && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
+                        <h3 className="text-2xl font-bold mb-4">
+                            Edit Animal Entry {formData.animalEntries[selectedEntry].no}
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="farmerName">
                                     Farmer's Name
                                 </label>
                                 <input
                                     type="text"
-                                    id={`farmerName_${index}`}
-                                    name="farmerName"
-                                    value={entry.farmerName}
-                                    onChange={(e) => handleChange(e, index, 'farmerName')}
+                                    id="farmerName"
+                                    value={formData.animalEntries[selectedEntry].farmerName}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'farmerName', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`address_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
                                     Address
                                 </label>
                                 <input
                                     type="text"
-                                    id={`address_${index}`}
-                                    name="address"
-                                    value={entry.address}
-                                    onChange={(e) => handleChange(e, index, 'address')}
+                                    id="address"
+                                    value={formData.animalEntries[selectedEntry].address}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'address', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`damIdNo_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="damIdNo">
                                     Dam ID No.
                                 </label>
                                 <input
                                     type="text"
-                                    id={`damIdNo_${index}`}
-                                    name="damIdNo"
-                                    value={entry.damIdNo}
-                                    onChange={(e) => handleChange(e, index, 'damIdNo')}
+                                    id="damIdNo"
+                                    value={formData.animalEntries[selectedEntry].damIdNo}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'damIdNo', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`breed_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="breed">
                                     Breed
                                 </label>
                                 <input
                                     type="text"
-                                    id={`breed_${index}`}
-                                    name="breed"
-                                    value={entry.breed}
-                                    onChange={(e) => handleChange(e, index, 'breed')}
+                                    id="breed"
+                                    value={formData.animalEntries[selectedEntry].breed}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'breed', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`color_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="color">
                                     Color
                                 </label>
                                 <input
                                     type="text"
-                                    id={`color_${index}`}
-                                    name="color"
-                                    value={entry.color}
-                                    onChange={(e) => handleChange(e, index, 'color')}
+                                    id="color"
+                                    value={formData.animalEntries[selectedEntry].color}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'color', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`estrus_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="estrus">
                                     Estrus
                                 </label>
                                 <input
                                     type="text"
-                                    id={`estrus_${index}`}
-                                    name="estrus"
-                                    value={entry.estrus}
-                                    onChange={(e) => handleChange(e, index, 'estrus')}
+                                    id="estrus"
+                                    value={formData.animalEntries[selectedEntry].estrus}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'estrus', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`dateOfAI_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dateOfAI">
                                     Date of AI
                                 </label>
                                 <input
                                     type="date"
-                                    id={`dateOfAI_${index}`}
-                                    name="dateOfAI"
-                                    value={entry.dateOfAI}
-                                    onChange={(e) => handleChange(e, index, 'dateOfAI')}
+                                    id="dateOfAI"
+                                    value={formData.animalEntries[selectedEntry].dateOfAI}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'dateOfAI', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`sireId_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sireId">
                                     Sire ID
                                 </label>
                                 <input
                                     type="text"
-                                    id={`sireId_${index}`}
-                                    name="sireId"
-                                    value={entry.sireId}
-                                    onChange={(e) => handleChange(e, index, 'sireId')}
+                                    id="sireId"
+                                    value={formData.animalEntries[selectedEntry].sireId}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'sireId', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`aiServiceNo_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aiServiceNo">
                                     AI Service No.
                                 </label>
                                 <input
                                     type="text"
-                                    id={`aiServiceNo_${index}`}
-                                    name="aiServiceNo"
-                                    value={entry.aiServiceNo}
-                                    onChange={(e) => handleChange(e, index, 'aiServiceNo')}
+                                    id="aiServiceNo"
+                                    value={formData.animalEntries[selectedEntry].aiServiceNo}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'aiServiceNo', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`dateCalved_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dateCalved">
                                     Date Calved
                                 </label>
                                 <input
                                     type="date"
-                                    id={`dateCalved_${index}`}
-                                    name="dateCalved"
-                                    value={entry.dateCalved}
-                                    onChange={(e) => handleChange(e, index, 'dateCalved')}
+                                    id="dateCalved"
+                                    value={formData.animalEntries[selectedEntry].dateCalved}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'dateCalved', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`classification_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="classification">
                                     Classification
                                 </label>
                                 <input
                                     type="text"
-                                    id={`classification_${index}`}
-                                    name="classification"
-                                    value={entry.classification}
-                                    onChange={(e) => handleChange(e, index, 'classification')}
+                                    id="classification"
+                                    value={formData.animalEntries[selectedEntry].classification}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'classification', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`sex_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sex">
                                     Sex
                                 </label>
                                 <select
-                                    id={`sex_${index}`}
-                                    name="sex"
-                                    value={entry.sex}
-                                    onChange={(e) => handleChange(e, index, 'sex')}
+                                    id="sex"
+                                    value={formData.animalEntries[selectedEntry].sex}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'sex', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 >
                                     <option value="">Select Sex</option>
@@ -434,73 +482,48 @@ const TechnicianQuarterlyReportForm = () => {
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`calveColor_${index}`}>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="calveColor">
                                     Calve Color
                                 </label>
                                 <input
                                     type="text"
-                                    id={`calveColor_${index}`}
-                                    name="calveColor"
-                                    value={entry.calveColor}
-                                    onChange={(e) => handleChange(e, index, 'calveColor')}
+                                    id="calveColor"
+                                    value={formData.animalEntries[selectedEntry].calveColor}
+                                    onChange={(e) => handleEntryChange(selectedEntry, 'calveColor', e.target.value)}
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => openConfirmationModal(index)}
-                            className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                            Remove Entry
-                        </button>
-                    </div>
-                ))}
-                <button
-                    type="button"
-                    onClick={addAnimalEntry}
-                    className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
-                >
-                    Add Animal Entry
-                </button>
-                <FormSubmit
-        handleImportCSV={importCSV}
-        handleExportCSV={exportAsCSV}
-        handleSubmit={handleSubmit}
-      />
-                
-
-                {/* Confirmation Modal */}
-                {isConfirmationModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                        <div className="bg-white p-4 rounded shadow-lg">
-                            <h3 className="text-lg font-semibold">Confirm Removal</h3>
-                            <h4>Are you sure you want to remove this entry?</h4>
-                            <div className='mt-4'></div>
-                            <div className="flex justify-end gap-4">
-                                
-                                <button
-                                    onClick={() => setIsConfirmationModalOpen(false)}
-                                    className="px-4 py-2 bg-darkgreen text-white rounded"
-                                >
-                                    No
-                                </button>
-                                <button
-                                    onClick={handleConfirmRemove}
-                                    className="px-4 py-2 bg-red-500 text-white rounded"
-                                >
-                                    Yes
-                                </button>
-                            </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="px-4 py-2 bg-gray-500 hover:bg-gray-700 text-white rounded mr-2"
+                            >
+                                Close
+                            </button>
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
+                            >
+                                Save Changes
+                            </button>
                         </div>
                     </div>
-                )}
-            </form>
+                </div>
+            )}
+
+            {/* Confirmation Modal for Entry Deletion */}
+            <ConfirmationModal
+                isOpen={isConfirmationModalOpen}
+                onConfirm={handleConfirmRemove}
+                onCancel={handleCancelRemove}
+                message="Are you sure you want to remove this entry?"
+            />
         </div>
-        </>
     );
 };
 
 export default TechnicianQuarterlyReportForm;
-
