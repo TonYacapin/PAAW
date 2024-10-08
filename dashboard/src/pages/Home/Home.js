@@ -194,7 +194,7 @@ function Home() {
       case "user":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
               Browse Forms from Client Forms
             </h3>
             <div className="space-y-6">
@@ -271,7 +271,7 @@ function Home() {
       case "animalhealth":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
               Browse Forms from Animal Health
             </h3>
             <div className="space-y-6">
@@ -353,7 +353,7 @@ function Home() {
       case "livestock":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
               Browse Forms from Livestock
             </h3>
             <div className="space-y-6">
@@ -407,7 +407,7 @@ function Home() {
       case "regulatory":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
               Browse Forms from Regulatory
             </h3>
             <div className="space-y-6">
