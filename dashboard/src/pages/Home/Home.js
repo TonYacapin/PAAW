@@ -14,10 +14,13 @@ import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
 import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
 import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
 import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
+import TechnicianQuarterlyCharts from "../../component/TechnicianQuarterlyCharts";
 import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
 import AccomplishmentReport from "../AccomplishmentReport";
 import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
 import TechnicianQuarterlyReportForm from "../TechnicianQuarterlyReportForm";
+import MonthlyAccomplishmentReportUpgradingServices from "../MonthlyAccomplishmentReportUpgradingServices";
+import MonthlyAccomplishmentReportLivestock from "../MonthlyAccomplishmentReportLivestock";
 //Charts
 
 import RabiesReportChart from "../../component/RabiesReportChart ";
@@ -76,6 +79,8 @@ function Home() {
         return <OffspringMonitoring />;
       case "CalfDrop":
         return <TechnicianQuarterlyReportForm />;
+      case "AccomplishmentReportLivestock":
+        return <MonthlyAccomplishmentReportLivestock />;
 
       default:
         return null;
@@ -117,6 +122,9 @@ function Home() {
     { value: "rabiesHistory", label: "Rabies History Charts" },
     { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
     { value: "UpgradingServices", label: "Upgrading Services Charts" },
+    { value: "TechnicianQuarterly", label: "Technician Quarterly Calf Drop Charts" },
+
+
 
 
 
@@ -164,6 +172,7 @@ function Home() {
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
           {selectedCharts.includes("offSringMonitoring") && <OffSpringMonitoringChart />}
           {selectedCharts.includes("UpgradingServices") && <UpgradingServicesChart />}
+          {selectedCharts.includes("TechnicianQuarterly") && <TechnicianQuarterlyCharts />}
 
 
         </div>
@@ -383,7 +392,9 @@ function Home() {
                     <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
                   </button>
 
-                  <button className={buttonClasses}>
+                  <button onClick={() =>
+                    openModalWithContent("AccomplishmentReportLivestock")
+                  } className={buttonClasses}>
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
