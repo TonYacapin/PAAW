@@ -252,14 +252,7 @@ function RoutineServicesMonitoringReport() {
   };
   return (
     <div className="container mx-auto p-4">
-      {/* <div className="flex justify-end mb-4">
-        <input
-          type="file"
-          accept=".csv"
-          onChange={importCSV}
-          className="px-4 py-2 bg-yellow-500 text-white rounded"
-        />
-      </div> */}
+      
       <h2 className="text-2xl font-bold mb-4">
         Routine Services Monitoring Report
       </h2>
@@ -378,27 +371,7 @@ function RoutineServicesMonitoringReport() {
         handleImportCSV={importCSV}
         handleSubmit={saveEntries}
       />
-      {/* Save Entries Button
-      <div className="flex justify-end mb-4">
-        <button
-          type="button"
-          onClick={saveEntries}
-          className="px-4 py-2 bg-darkgreen text-white rounded"
-        >
-          <Save /> Save Entries
-        </button>
-      </div>
-      Export as CSV Button
-      <div className="flex justify-end mb-4">
-        <button
-          type="button"
-          onClick={exportAsCSV}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Export as CSV
-        </button>
-      </div> */}
-
+      
       {/* Modal for Editing Entries */}
       {selectedEntry !== null && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">

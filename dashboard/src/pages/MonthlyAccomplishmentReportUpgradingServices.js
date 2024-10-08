@@ -59,12 +59,12 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
     }, [filter, data]);
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-3xl font-bold text-center mb-8">Accomplishment Report Upgrading Services</h1>
+        <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-4">Accomplishment Report Upgrading Services</h1>
 
             {/* Loading Indicator */}
             {loading ? (
-                <p className="text-center text-gray-500">Loading data...</p>
+                <p className="text-center text-black-500">Loading data...</p>
             ) : (
                 <>
                     {/* Filter Section */}
@@ -76,7 +76,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                 name="municipality" 
                                 value={filter.municipality}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by municipality" 
                             />
                         </label>
@@ -87,7 +87,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                 name="activity" 
                                 value={filter.activity}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by activity" 
                             />
                         </label>
@@ -98,7 +98,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                 name="clientName" 
                                 value={filter.clientName}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by client name" 
                             />
                         </label>
@@ -108,7 +108,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                 name="month" 
                                 value={filter.month}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                             >
                                 <option value="">All Months</option>
                                 {Array.from({ length: 12 }, (_, i) => (
@@ -123,7 +123,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                 name="year" 
                                 value={filter.year}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-gray-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by year" 
                             />
                         </label>
@@ -131,15 +131,15 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
 
                     {/* Data Summary */}
                     <div className="bg-white p-4 mb-6 shadow-md rounded-md">
-                        <p className="font-semibold text-gray-700">Total Entries: {filteredData.reduce((acc, item) => acc + item.entries.length, 0)}</p>
-                        <p className="font-semibold text-gray-700">Total Municipalities: {filteredData.length}</p>
+                        <p className="font-semibold text-black">Total Entries: {filteredData.reduce((acc, item) => acc + item.entries.length, 0)}</p>
+                        <p className="font-semibold text-black">Total Municipalities: {filteredData.length}</p>
                     </div>
 
                     {/* Table Data */}
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white rounded-md shadow-md">
                             <thead>
-                                <tr className="bg-gray-200 text-gray-600 text-sm leading-normal">
+                                <tr className=" bg-darkgreen text-white text-sm leading-normal">
                                     <th className="py-3 px-6 text-left">No.</th>
                                     <th className="py-3 px-6 text-left">Municipality</th>
                                     <th className="py-3 px-6 text-left">Date Reported</th>
@@ -155,10 +155,10 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
                                     <th className="py-3 px-6 text-left">Remarks</th>
                                 </tr>
                             </thead>
-                            <tbody className="text-gray-600 text-sm">
+                            <tbody className="text-black text-sm">
                                 {filteredData.map((item, index) => (
                                     item.entries && Array.isArray(item.entries) && item.entries.map((entry, entryIndex) => (
-                                        <tr key={`${item._id}-${entryIndex}`} className="border-b border-gray-200 hover:bg-gray-100">
+                                        <tr key={`${item._id}-${entryIndex}`} className="border-b border-black-200 hover:bg-black-100">
                                             <td className="py-3 px-6">{index + 1}</td>
                                             <td className="py-3 px-6">{item.municipality}</td>
                                             <td className="py-3 px-6">{new Date(item.dateReported).toLocaleDateString()}</td>
