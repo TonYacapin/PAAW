@@ -34,7 +34,7 @@ const Modal = ({ isOpen, onClose, children }) => {
   return ReactDOM.createPortal(
     <>
       {/* Main Modal */}
-      {isOpen && !isConfirmationModalOpen && (
+      {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={handleOutsideClose} // Trigger confirmation modal when clicking outside

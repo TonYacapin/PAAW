@@ -79,7 +79,7 @@ const MunicipalityTargetForms = ({ targetData, allMunicipalityTargets }) => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{targetData ? 'Edit Target' : 'Post New Target'}</h1>
+      <h1 className="block text-2xl font-medium text-[#000000]">{targetData ? 'Edit Target' : 'Post New Target'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -131,7 +131,7 @@ const MunicipalityTargetForms = ({ targetData, allMunicipalityTargets }) => {
           </table>
         </div>
 
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4">
+        <button type="submit" className="w-full mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen">
           {targetData ? 'Update Targets' : 'Add Targets'}
         </button>
       </form>
