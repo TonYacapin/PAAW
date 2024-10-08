@@ -80,7 +80,7 @@ function RabiesVaccinationAccomplishmentReport() {
 
   return (
     <div className="p-6 bg-[#FFFAFA] h-[55vh] ">
-      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+      <h1 className="text-xl font-semibold mb-6 text-gray-700">
         Rabies Vaccination Accomplishment Report
       </h1>
 
