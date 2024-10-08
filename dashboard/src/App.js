@@ -15,6 +15,7 @@ import AccomplishmentReport from "./pages/AccomplishmentReport";
 import RabiesVaccinationAccomplishmentReport from "./pages/RabiesVaccinationAccomplishmentReport";
 import RequisitionIssueSlip from "./pages/RequisitionIssueSlip ";
 import UpgradingService from "./pages/UpgradingServices";
+import TechnicianQuarterlyReportForm from "./pages/TechnicianQuarterlyReportForm";
 
 import RabiesReportChart from "./component/RabiesReportChart ";
 
@@ -28,6 +29,7 @@ const App = () => {
     <Router>
       <div className="App">
         <Routes>
+        <Route path="/TechnicianQuarterlyReportForm" element={<TechnicianQuarterlyReportForm />} />
         <Route path="/OffspringMonitoring" element={<OffspringMonitoring />} />
           <Route path="/MunicipalityTargetList" element={<MunicipalityTargetList />} />
           <Route path="/rabiesreportchart" element={<RabiesReportChart />} />
