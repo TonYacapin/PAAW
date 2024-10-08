@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
 import {
@@ -12,6 +12,7 @@ import {
   ArcElement,
 } from "chart.js";
 import ChartGroup from "./ChartGroup";
+import { FilterContext } from "../pages/Home/Home";
 
 ChartJS.register(
   Tooltip,
@@ -26,11 +27,11 @@ ChartJS.register(
 const RabiesReportChart = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    dateRange: [null, null],
-    municipality: "",
-  });
-  const [showAll, setShowAll] = useState(false); // State to toggle between all data and filtered data
+  const filterOptions = useContext(FilterContext);
+  // const [filters, setFilters] = useState({
+  //   dateRange: [null, null],
+  //   municipality: "",
+  // });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,21 +42,21 @@ const RabiesReportChart = () => {
         let reports = response.data;
 
         // If "Show All" is selected, skip applying filters
-        if (!showAll) {
+        if (!filterOptions.showAll) {
           // Apply filters
-          if (filters.dateRange[0] && filters.dateRange[1]) {
+          if (filterOptions.filters.dateRange[0] && filterOptions.filters.dateRange[1]) {
             reports = reports.filter((report) => {
               const reportDate = new Date(report.dateReported).getTime();
               return (
-                reportDate >= new Date(filters.dateRange[0]).getTime() &&
-                reportDate <= new Date(filters.dateRange[1]).getTime()
+                reportDate >= new Date(filterOptions.filters.dateRange[0]).getTime() &&
+                reportDate <= new Date(filterOptions.filters.dateRange[1]).getTime()
               );
             });
           }
 
-          if (filters.municipality) {
+          if (filterOptions.filters.municipality) {
             reports = reports.filter(
-              (report) => report.municipality === filters.municipality
+              (report) => report.municipality === filterOptions.filters.municipality
             );
           }
         }
@@ -159,26 +160,7 @@ const RabiesReportChart = () => {
     };
 
     fetchData();
-  }, [filters, showAll]); // Reload data if filters or showAll changes
-
-  const handleDateChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      dateRange:
-        name === "startDate"
-          ? [value, prev.dateRange[1]]
-          : [prev.dateRange[0], value],
-    }));
-  };
-
-  const handleMunicipalityChange = (e) => {
-    setFilters((prev) => ({ ...prev, municipality: e.target.value }));
-  };
-
-  const toggleShowAll = () => {
-    setShowAll((prevShowAll) => !prevShowAll); // Toggle between all data and filtered data
-  };
+  }, [filterOptions.filters, filterOptions.showAll]); // Reload data if filters or showAll changes
 
   if (loading) {
     return <div>Loading chart data...</div>;
@@ -195,7 +177,7 @@ const RabiesReportChart = () => {
     },
     {
       label: "Vaccinations by Animal Sex",
-      content: <Pie data={data.pieChart} />,
+      content: <div className="flex relative h-[40vh] w-full items-center"><Pie data={data.pieChart} /></div>,
     },
     {
       label: "Vaccine Distribution",
@@ -205,46 +187,6 @@ const RabiesReportChart = () => {
 
   return (
     <>
-      <div>
-        <div className="grow flex flex-row lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col gap-x-3">
-          <label className="mb-2 text-lg font-bold">
-            Start Date:
-            <input
-              className="border"
-              type="date"
-              name="startDate"
-              onChange={handleDateChange}
-              disabled={showAll}
-            />
-          </label>
-          <label className="mb-2 text-lg font-bold">
-            End Date:
-            <input
-              className="border"
-              type="date"
-              name="endDate"
-              onChange={handleDateChange}
-              disabled={showAll}
-            />
-          </label>
-          <label className="mb-2 text-lg font-bold">
-            Municipality:
-            <input
-              className="border"
-              type="text"
-              value={filters.municipality}
-              onChange={handleMunicipalityChange}
-              disabled={showAll}
-            />
-          </label>
-          <button
-            className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
-            onClick={toggleShowAll}
-          >
-            {showAll ? "Apply Filters" : "Show All Data"}
-          </button>
-        </div>
-      </div>
       <ChartGroup charts={charts} title="Rabies Vaccination Report" />
     </>
   );
