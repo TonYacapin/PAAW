@@ -81,14 +81,22 @@ const TechnicianQuarterlyReportForm = () => {
     const closeModal = () => {
         setSelectedEntry(null);
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('YOUR_API_ENDPOINT', formData);
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/technician-quarterly`, formData);
             if (response.status === 201) {
                 setAlert({ show: true, message: 'Report submitted successfully', type: 'success' });
-                // Reset form or handle successful submission
+
+                // Reset form data after successful submission
+                setFormData({
+                    technicianName: '',
+                    municipality: '',
+                    province: '',
+                    remarks: '',
+                    dateSubmitted: '',
+                    animalEntries: []
+                });
             }
         } catch (error) {
             console.error('Error submitting report:', error);
@@ -249,6 +257,18 @@ const TechnicianQuarterlyReportForm = () => {
                                 <option value="Ambaguio">Ambaguio</option>
                                 <option value="Bagabag">Bagabag</option>
                                 <option value="Bayombong">Bayombong</option>
+                                <option value="Diadi">Diadi</option>
+                                <option value="Quezon">Quezon</option>
+                                <option value="Solano">Solano</option>
+                                <option value="Villaverde">Villaverde</option>
+                                <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+                                <option value="Aritao">Aritao</option>
+                                <option value="Bambang">Bambang</option>
+                                <option value="Dupax del Norte">Dupax del Norte</option>
+                                <option value="Dupax del Sur">Dupax del Sur</option>
+                                <option value="Kayapa">Kayapa</option>
+                                <option value="Kasibu">Kasibu</option>
+                                <option value="Santa Fe">Santa Fe</option>
                                 {/* Add more options as needed */}
                             </select>
                         </div>

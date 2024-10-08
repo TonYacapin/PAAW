@@ -12,6 +12,8 @@ const MunicipalityTargetRoutes = require('./routes/Admin/municipalityTargetRoute
 
 const upgradingServicesRoutes = require('./routes/upgradingServices');
 const offspringMonitoringRoutes = require('./routes/offspringmonitoring');
+const technicianQuarterlyReportRoutes = require('./routes/technicianQuarterlyReport');
+
 
 
 
@@ -33,6 +35,7 @@ app.use(bodyParser.json());
 app.use(cors()); 
 
 // Use routes
+app.use('/api/technician-quarterly', technicianQuarterlyReportRoutes);
 app.use('/api/offspring-monitoring', offspringMonitoringRoutes);
 app.use('/api/upgrading-services', upgradingServicesRoutes);
 app.use('/api/mtargets', MunicipalityTargetRoutes);
