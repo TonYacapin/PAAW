@@ -204,7 +204,7 @@ const TechnicianQuarterlyReportForm = () => {
     return (
         <div className="container mx-auto p-4">
             <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8">
-                <h1 className="text-3xl font-bold mb-4 text-[#1b5b40]">Technician's Quarterly Calf Drop Report</h1>
+                <h2 className="text-3xl font-bold mb-4 text-[#1b5b40]">Technician's Quarterly Calf Drop Report</h2>
 
                 {alert.show && (
                     <div className={`mb-4 p-4 rounded ${alert.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
