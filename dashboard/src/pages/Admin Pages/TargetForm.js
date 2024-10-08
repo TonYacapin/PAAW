@@ -72,7 +72,7 @@ const TargetForm = ({ onClose, target }) => {
         {target ? "Edit Target" : "Add Target"}
       </h2>
       {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
+      {success && <p className="w-full mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen">{success}</p>}
       <CardBox
         content={
           <>

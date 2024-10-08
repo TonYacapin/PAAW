@@ -87,7 +87,7 @@ const MunicipalityTargetList = () => {
                 </select>
             </div>
 
-            <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white py-2 px-4 mb-4">
+            <button onClick={() => setIsModalOpen(true)} className="mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen">
                 Add New Target
             </button>
 
@@ -114,7 +114,7 @@ const MunicipalityTargetList = () => {
                                         <td className="border p-2">{target.targetYear}</td>
                                         <td className="border p-2">
                                             <button
-                                                className="bg-yellow-500 text-white py-1 px-3"
+                                                className="w-full mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen"
                                                 onClick={() => handleEditTarget(target)}
                                             >
                                                 Edit
