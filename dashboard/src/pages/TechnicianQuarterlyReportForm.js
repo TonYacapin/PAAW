@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
+import FormSubmit from '../component/FormSubmit';
+
 
 const TechnicianQuarterlyReportForm = () => {
     const [formData, setFormData] = useState({
@@ -178,9 +180,10 @@ const TechnicianQuarterlyReportForm = () => {
 
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8 mb-4 overflow-auto h-[80vh]">
-                <h2 className="text-xl font-bold mb-4 text-center">Technician's Quarterly Calf Drop Report</h2>
+        <>
+        <div className="container mx-auto p-4">
+            <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8 overflow-auto h-[60vh]">
+                <h1 className="text-3xl font-bold mb-4 text-[#1b5b40]">Technician's Quarterly Calf Drop Report</h1>
 
                 {alert.show && (
                     <div className={`mb-4 p-4 rounded ${alert.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
@@ -190,7 +193,7 @@ const TechnicianQuarterlyReportForm = () => {
 
                 {/* General Information */}
                 <div className="border-b-2 border-gray-300 pb-4 mb-4">
-                    <h3 className="text-lg font-semibold mb-4">Technician & Report Information</h3>
+                    <h1 className="text-xl font-semibold mb-4">Technician & Report Information</h1>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="technicianName">
@@ -253,7 +256,7 @@ const TechnicianQuarterlyReportForm = () => {
                 </div>
 
                 {/* Remarks */}
-                <div className="mb-6">
+                <div className="mb-3">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="remarks">
                         Remarks
                     </label>
@@ -457,51 +460,37 @@ const TechnicianQuarterlyReportForm = () => {
                 <button
                     type="button"
                     onClick={addAnimalEntry}
-                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
                 >
                     Add Animal Entry
                 </button>
-
-                <div className="mt-6">
-                    <button
-                        type="submit"
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-4"
-                    >
-                        Submit Report
-                    </button>
-                    <button
-                        type="button"
-                        onClick={exportAsCSV}
-                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                        Export as CSV
-                    </button>
-                    <input
-                        type="file"
-                        accept=".csv"
-                        onChange={importCSV}
-                        className="mt-4"
-                    />
-                </div>
+                <FormSubmit
+        handleImportCSV={importCSV}
+        handleExportCSV={exportAsCSV}
+        handleSubmit={handleSubmit}
+      />
+                
 
                 {/* Confirmation Modal */}
                 {isConfirmationModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
                         <div className="bg-white p-4 rounded shadow-lg">
-                            <h4 className="text-lg font-semibold">Confirm Removal</h4>
-                            <p>Are you sure you want to remove this entry?</p>
-                            <div className="mt-4">
-                                <button
-                                    onClick={handleConfirmRemove}
-                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                >
-                                    Yes
-                                </button>
+                            <h3 className="text-lg font-semibold">Confirm Removal</h3>
+                            <h4>Are you sure you want to remove this entry?</h4>
+                            <div className='mt-4'></div>
+                            <div className="flex justify-end gap-4">
+                                
                                 <button
                                     onClick={() => setIsConfirmationModalOpen(false)}
-                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                    className="px-4 py-2 bg-darkgreen text-white rounded"
                                 >
                                     No
+                                </button>
+                                <button
+                                    onClick={handleConfirmRemove}
+                                    className="px-4 py-2 bg-red-500 text-white rounded"
+                                >
+                                    Yes
                                 </button>
                             </div>
                         </div>
@@ -509,6 +498,7 @@ const TechnicianQuarterlyReportForm = () => {
                 )}
             </form>
         </div>
+        </>
     );
 };
 
