@@ -30,7 +30,7 @@ export default function FormSubmit(props) {
         </button>
         <button
           onClick={props.handleSubmit}
-          className="w-full mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen"
+          className="bg-pastelyellow text-black py-2 px-4 rounded hover:bg-darkerpastelyellow shadow-md"
         >
           <Upload /> Submit {useMediaQuery("(min-width:600px)") && "form"}
         </button>
