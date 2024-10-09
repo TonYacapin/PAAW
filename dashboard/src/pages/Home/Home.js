@@ -416,13 +416,6 @@ function Home() {
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
-
-                  <button onClick={() =>
-                    openModalWithContent("CalfDrop")
-                  }
-                    className={buttonClasses} >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
-                  </button>
                   
                   <button onClick={() =>
                     openModalWithContent("CalfDrop")
