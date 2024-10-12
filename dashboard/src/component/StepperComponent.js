@@ -2,8 +2,6 @@ import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Check,
-  ChevronLeft,
-  ChevronRight,
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from "@mui/icons-material";

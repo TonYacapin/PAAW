@@ -346,7 +346,7 @@ const RabiesHistoryForm = () => {
       </div>
     </>,
     <>
-      <h3 className="text-lg font-bold mb-6">Animal Profile</h3>
+      <h3 className="text-lg font-bold mb-20">Animal Profile</h3>
 
       <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -754,7 +754,7 @@ const RabiesHistoryForm = () => {
       </div>
     </>,
     <>
-      <h3 className="text-lg font-bold mb-6">Victim Profile</h3>
+      <h3 className="text-lg font-bold mb-20 mt=20 ">Victim Profile</h3>
       <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
