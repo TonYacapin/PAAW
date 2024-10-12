@@ -11,8 +11,7 @@ import {
   Typography,
   TextField,
   Button,
-} from "@mui/material";
-import "./DiseaseIncidenceReport.css"; 
+} from "@mui/material"; 
 import Navbar from "../../component/Navbar";
 
 const DiseaseIncidenceReport = () => {

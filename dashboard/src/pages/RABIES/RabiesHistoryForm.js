@@ -1,22 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {
-  TextField,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  MenuItem,
-  Select,
-  InputLabel,
-  Checkbox,
-  FormGroup,
-  Grid,
-  Typography,
-  Button,
-} from "@mui/material";
-import "./RabiesHistoryForm.css";
 import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse";
 import FormSubmit from "../../component/FormSubmit";
