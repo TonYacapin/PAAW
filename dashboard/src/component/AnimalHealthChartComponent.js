@@ -6,7 +6,7 @@ ChartJS.register(LineElement, PointElement, BarElement, Tooltip, Legend, Categor
 
 const AnimalHealthChartComponent = () => {
   useEffect(() => {
-    // This effect runs once when the component mounts
+    
   }, []);
 
   const healthLineData = {
@@ -15,8 +15,8 @@ const AnimalHealthChartComponent = () => {
       {
         label: 'Health Check-ups',
         data: [15, 20, 30, 25, 35],
-        borderColor: 'rgba(27, 91, 64, 1)', // Primary color
-        backgroundColor: 'rgba(27, 91, 64, 0.2)', // Primary color with transparency
+        borderColor: 'rgba(27, 91, 64, 1)', 
+        backgroundColor: 'rgba(27, 91, 64, 0.2)', 
         fill: true,
       },
     ],

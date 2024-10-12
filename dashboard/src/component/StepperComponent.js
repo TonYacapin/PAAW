@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Check,
@@ -11,17 +11,16 @@ import {
   Box,
   Button,
   MobileStepper,
-  Paper,
   Step,
   StepConnector,
   StepLabel,
   Stepper,
-  Typography,
   stepConnectorClasses,
   styled,
   useMediaQuery,
 } from "@mui/material";
 
+// Custom styled connector
 export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 10,
@@ -48,6 +47,7 @@ export const QontoConnector = styled(StepConnector)(({ theme }) => ({
   },
 }));
 
+// Custom Step Icon
 const QontoStepIconRoot = styled("div")(({ theme }) => ({
   color: "#1b5b40",
   display: "flex",
@@ -67,19 +67,10 @@ const QontoStepIconRoot = styled("div")(({ theme }) => ({
   ...theme.applyStyles("dark", {
     color: theme.palette.grey[700],
   }),
-  variants: [
-    {
-      props: ({ ownerState }) => ownerState.active,
-      style: {
-        color: "#1b5b40",
-      },
-    },
-  ],
 }));
 
 function QontoStepIcon(props) {
   const { active, completed, className } = props;
-
   return (
     <QontoStepIconRoot ownerState={{ active }} className={className}>
       {completed ? (
@@ -92,28 +83,18 @@ function QontoStepIcon(props) {
 }
 
 QontoStepIcon.propTypes = {
-  /**
-   * Whether this step is active.
-   * @default false
-   */
   active: PropTypes.bool,
   className: PropTypes.string,
-  /**
-   * Mark the step as completed. Is passed to child components.
-   * @default false
-   */
   completed: PropTypes.bool,
 };
 
-
-
+// Main Stepper Component
 export default function StepperComponent(props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+  const modalContentRef = useRef(null);
 
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
+  const isStepSkipped = (step) => skipped.has(step);
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -126,7 +107,12 @@ export default function StepperComponent(props) {
     setActiveStep(nextStep);
     setSkipped(newSkipped);
 
-    // Call the onStepChange prop with the new step
+    // Scroll to top of the modal content
+    if (modalContentRef.current) {
+      modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Call onStepChange callback
     if (props.onStepChange) {
       props.onStepChange(nextStep);
     }
@@ -136,23 +122,19 @@ export default function StepperComponent(props) {
     const prevStep = activeStep - 1;
     setActiveStep(prevStep);
 
-    // Call the onStepChange prop with the new step
+    // Scroll to top of the modal content
+    if (modalContentRef.current) {
+      modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Call onStepChange callback
     if (props.onStepChange) {
       props.onStepChange(prevStep);
     }
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-
-    // Call the onStepChange prop with the reset step (0)
-    if (props.onStepChange) {
-      props.onStepChange(0);
-    }
-  };
-
   return (
-    <Box sx={{ width: "100%", flexDirection: "row", gap: "10rem" }}>
+    <Box ref={modalContentRef} sx={{ width: "100%", overflowY: "auto", maxHeight: "500px" }}>
       {useMediaQuery("(min-width:600px)") ? (
         <>
           {props.renderStepContent(activeStep)}
@@ -177,11 +159,16 @@ export default function StepperComponent(props) {
               <Stepper
                 activeStep={activeStep}
                 connector={<QontoConnector />}
-                sx={{ flex: "1 1 auto", width: "20%", paddingLeft: "10rem", paddingRight: "10rem", justifyItems: "center" }}
+                sx={{
+                  flex: "1 1 auto",
+                  width: "20%",
+                  paddingLeft: "10rem",
+                  paddingRight: "10rem",
+                  justifyItems: "center",
+                }}
               >
                 {props.pages.map((page, index) => {
                   const stepProps = {};
-                  const labelProps = {};
                   if (isStepSkipped(index)) {
                     stepProps.completed = false;
                   }
