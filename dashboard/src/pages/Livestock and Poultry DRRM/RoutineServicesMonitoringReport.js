@@ -4,6 +4,8 @@ import ConfirmationModal from "../../component/ConfirmationModal"; // Import the
 import { Add, Save } from "@mui/icons-material";
 import Papa from "papaparse";
 import FormSubmit from "../../component/FormSubmit";
+import ErrorModal from "../../component/ErrorModal";
+import SuccessModal from "../../component/SuccessModal";
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -16,6 +18,13 @@ function RoutineServicesMonitoringReport() {
   const [municipality, setMunicipality] = useState("");
   const [reportingPeriod, setReportingPeriod] = useState("");
   const [livestockTechnician, setLivestockTechnician] = useState("");
+
+
+
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const addEntry = () => {
     setEntries([
@@ -223,10 +232,8 @@ function RoutineServicesMonitoringReport() {
   const closeModal = () => {
     setSelectedEntry(null);
   };
-
   const saveEntries = async () => {
     try {
-      // Replace with your backend API URL
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/RSM`,
         {
@@ -237,8 +244,12 @@ function RoutineServicesMonitoringReport() {
           entries,
         }
       );
+
       if (response.status === 201) {
-        alert("Entries saved successfully");
+        setSuccessMessage("Entries saved successfully");
+        setIsSuccessModalOpen(true);
+
+        // Clear form fields
         setEntries([]);
         setProvince("");
         setMunicipality("");
@@ -247,12 +258,29 @@ function RoutineServicesMonitoringReport() {
       }
     } catch (error) {
       console.error("Error saving entries:", error);
-      alert("Failed to save entries");
+
+
+      let errorMessage = "Failed to save entries: An unexpected error occurred";
+      if (error.response && error.response.data) {
+        const serverMessage = error.response.data.message || "An error occurred";
+        if (error.response.data.errors) {
+          const validationErrors = error.response.data.errors
+            .map((err) => err.msg)
+            .join(", ");
+          errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
+        } else {
+          errorMessage = `Failed to save entries: ${serverMessage}`;
+        }
+      }
+  
+
+      setErrorMessage(errorMessage);
+      setIsErrorModalOpen(true);
     }
   };
   return (
     <div className="container mx-auto p-4">
-      
+
       <h2 className="text-2xl font-bold mb-4">
         Routine Services Monitoring Report
       </h2>
@@ -371,7 +399,7 @@ function RoutineServicesMonitoringReport() {
         handleImportCSV={importCSV}
         handleSubmit={saveEntries}
       />
-      
+
       {/* Modal for Editing Entries */}
       {selectedEntry !== null && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
@@ -711,6 +739,23 @@ function RoutineServicesMonitoringReport() {
           message="Are you sure you want to remove this entry?"
         />
       )}
+
+
+    {isErrorModalOpen && (
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+        message={errorMessage}
+      />
+    )}
+
+    {isSuccessModalOpen && (
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        message={successMessage}
+      />
+    )}
     </div>
   );
 }

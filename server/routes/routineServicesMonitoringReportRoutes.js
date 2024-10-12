@@ -1,19 +1,67 @@
 // routes/routineServicesMonitoringReport.js
 const express = require('express');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 const RoutineServicesMonitoringReport = require('../models/RoutineServicesMonitoringReport');
-
 // Create a new report
-router.post('/RSM', async (req, res) => {
-  try {
-    console.log(req.body)
-    const report = new RoutineServicesMonitoringReport(req.body);
-    await report.save();
-    res.status(201).json(report);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+router.post(
+  '/RSM',
+  [
+    // Validate the main report fields
+    body('province').notEmpty().withMessage('Province is required.'),
+    body('municipality').notEmpty().withMessage('Municipality is required.'),
+    body('reportingPeriod').notEmpty().withMessage('Reporting period is required.'),
+    body('livestockTechnician').notEmpty().withMessage('Livestock technician is required.'),
+
+    // Validate the entries array
+    body('entries').isArray({ min: 1 }).withMessage('At least one entry is required.'),
+    body('entries.*.date').isISO8601().withMessage('Valid date is required for each entry.'),
+    body('entries.*.barangay').notEmpty().withMessage('Barangay is required.'),
+    body('entries.*.clientInfo.firstName').notEmpty().withMessage('Client first name is required.'),
+    body('entries.*.clientInfo.lastName').notEmpty().withMessage('Client last name is required.'),
+    body('entries.*.clientInfo.gender').isIn(['Male', 'Female']).withMessage('Gender must be either Male or Female.'),
+    body('entries.*.clientInfo.birthday').isISO8601().withMessage('Valid birthday is required.'),
+    body('entries.*.clientInfo.contactNo').notEmpty().withMessage('Contact number is required.'),
+    body('entries.*.animalInfo.species').notEmpty().withMessage('Animal species is required.'),
+    body('entries.*.animalInfo.sex').isIn(['Male', 'Female']).withMessage('Animal sex must be either Male or Female.'),
+    body('entries.*.animalInfo.age').notEmpty().withMessage('Animal age is required.'),
+    body('entries.*.animalInfo.animalRegistered').notEmpty().withMessage('Animal registration status is required.'),
+    body('entries.*.animalInfo.noOfHeads').isNumeric().withMessage('Number of heads must be a number.'),
+    body('entries.*.activity').notEmpty().withMessage('Activity is required.'),
+    body('entries.*.remark').notEmpty().withMessage('Remark is required.')
+  ],
+  async (req, res) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Check for duplicate reports
+    const { province, municipality, reportingPeriod, livestockTechnician } = req.body;
+
+    try {
+      const existingReport = await RoutineServicesMonitoringReport.findOne({
+        province,
+        municipality,
+        reportingPeriod,
+        livestockTechnician,
+      });
+
+      if (existingReport) {
+        return res.status(409).json({ message: 'Duplicate report found. A report with the same details already exists.' });
+      }
+
+      // If no duplicates, create a new report
+      const report = new RoutineServicesMonitoringReport(req.body);
+      await report.save();
+      res.status(201).json(report);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
-});
+);
+
 
 // Get all reports
 router.get('/RSM', async (req, res) => {

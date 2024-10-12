@@ -3,6 +3,10 @@ import axios from "axios"; // Import axios for HTTP requests
 import ConfirmationModal from "../../component/ConfirmationModal"; // Import the ConfirmationModal component
 import Papa from "papaparse";
 
+import ErrorModal from "../../component/ErrorModal";
+import SuccessModal from "../../component/SuccessModal";
+
+
 import { Add, Save } from "@mui/icons-material";
 import FormSubmit from "../../component/FormSubmit";
 
@@ -10,7 +14,11 @@ function VaccinationReport() {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [entryToRemove, setEntryToRemove] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
 
   // Main fields state
   const [municipality, setMunicipality] = useState("");
@@ -238,10 +246,13 @@ function VaccinationReport() {
     setSelectedEntry(null);
   };
 
-  // Function to save all entries
+
   const saveEntries = async () => {
+    // Reset modal states before making the API call
+    setIsErrorModalOpen(false);
+    setIsSuccessModalOpen(false);
+  
     try {
-      console.log(vaccine);
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/reports`,
         {
@@ -256,24 +267,45 @@ function VaccinationReport() {
           entries,
         }
       );
+  
       if (response.status === 201) {
-        alert("Entries saved successfully");
+        // Clear form fields after successful save
         setEntries([]);
-        setVaccine("");
-        setMunicipality("");
-        setProvince("Nueva Vizcaya");
-        setDateReported("");
-        setVaccineType("");
-        setBatchLotNo("");
-        setVaccineSource("");
-        setAgriculturalExtensionWorker("");
+        setVaccine('');
+        setMunicipality('');
+        setProvince('Nueva Vizcaya');
+        setDateReported('');
+        setVaccineType('');
+        setBatchLotNo('');
+        setVaccineSource('');
+        setAgriculturalExtensionWorker('');
+  
+        // Show success message in modal
+        setSuccessMessage('Entries saved successfully'); // New state for success message
+        setIsSuccessModalOpen(true); // Show success modal
       }
     } catch (error) {
       console.error("Error saving entries:", error);
-      alert("Failed to save entries");
+  
+      // Error handling
+      let errorMessage = "Failed to save entries: An unexpected error occurred";
+      if (error.response && error.response.data) {
+        const serverMessage = error.response.data.message || "An error occurred";
+        if (error.response.data.errors) {
+          const validationErrors = error.response.data.errors
+            .map((err) => err.msg)
+            .join(", ");
+          errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
+        } else {
+          errorMessage = `Failed to save entries: ${serverMessage}`;
+        }
+      }
+  
+      setErrorMessage(errorMessage);
+      setIsErrorModalOpen(true); // Show error message in modal
     }
   };
-
+  
   return (
     <>
       <div className="container mx-auto p-4">
@@ -450,8 +482,8 @@ function VaccinationReport() {
         <div className="mb-3" />
 
         <FormSubmit
-          handleImportCSV={importCSV}
-          handleExportCSV={exportAsCSV}
+          handleCSVImport={importCSV}
+          handleCSVExport={exportAsCSV}
           handleSubmit={saveEntries}
         />
         {/* Save Entries Button
@@ -770,7 +802,7 @@ function VaccinationReport() {
           </div>
         )}
 
-        
+
 
         {/* Confirmation Modal for Removing Entries */}
         {isConfirmationModalOpen && (
@@ -781,7 +813,10 @@ function VaccinationReport() {
             message="Are you sure you want to remove this entry?"
           />
         )}
+        {isErrorModalOpen && <ErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)} message={errorMessage} />}
+        {isSuccessModalOpen && <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message={successMessage} />}
       </div>
+
     </>
   );
 }

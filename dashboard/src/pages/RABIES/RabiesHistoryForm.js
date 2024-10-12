@@ -3,6 +3,8 @@ import axios from "axios";
 import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse";
 import FormSubmit from "../../component/FormSubmit";
+import ErrorModal from "../../component/ErrorModal";
+import SuccessModal from "../../component/SuccessModal";
 
 const RabiesHistoryForm = () => {
   const [siteOfBiteSpecify, setSiteOfBiteSpecify] = useState("");
@@ -55,6 +57,11 @@ const RabiesHistoryForm = () => {
   const [treatmentReceivedOther, setTreatmentReceivedOther] = useState("");
   const [dateOfTreatmentReceived, setDateOfTreatmentReceived] = useState("");
   const [StepperActiveStep, setStepperActiveStep] = useState();
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
@@ -102,9 +109,76 @@ const RabiesHistoryForm = () => {
         `${process.env.REACT_APP_API_BASE_URL}/RH`,
         formData
       );
-      console.log("Form submitted successfully:", response.data);
+      console.log('Form submitted successfully:', response.data);
+
+      // Clear form fields
+      setOwnershipType('');
+      setPetManagement('');
+      setCauseOfDeath('');
+      setVaccinationHistory('');
+      setBitchVaccinated('');
+      setContactWithAnimals('');
+      setContactLocation('');
+      setSiteOfBite('');
+      setBiteProvoked('');
+      setLocationOfBite('');
+      setTreatmentReceived('');
+      setAnimalResidence('');
+      setSpecies('');
+      setBreed('');
+      setSex('');
+      setAge('');
+      setDateOfDeath('');
+      setTimeOfDeath('');
+      setTypeOfVaccine('');
+      setDateOfLastVaccination('');
+      setDurationIllnessFrom('');
+      setDurationIllnessTo('');
+      setBehavioralChanges({
+        restlessness: false,
+        apprehensiveWatchfulLook: false,
+        runningAimlessly: false,
+        bitingInanimateObjects: false,
+        hyperactivity: false,
+        others: false,
+        specify: '',
+      });
+      setVictimName('');
+      setVictimAge('');
+      setVictimSex('');
+      setVictimAddress('');
+      setDateOfBite('');
+      setTimeOfBite('');
+      setSiteOfBiteOther('');
+      setNatureOfBite('');
+      setBiteProvokedSpecify('');
+      setLocationOfBiteOther('');
+      setOtherVictims('');
+      setTreatmentReceivedOther('');
+      setDateOfTreatmentReceived('');
+      setStepperActiveStep(0); // Optionally reset the stepper to the first step
+      setModalMessage('Form submitted successfully!');
+      setIsSuccessModalOpen(true); // Show success modal
+
     } catch (error) {
-      console.error("Error submitting form:", error);
+
+      // Error handling
+      let errorMessage = "Failed to save entries: An unexpected error occurred";
+      if (error.response && error.response.data) {
+        const serverMessage = error.response.data.message || "An error occurred";
+        if (error.response.data.errors) {
+          const validationErrors = error.response.data.errors
+            .map((err) => err.msg)
+            .join(", ");
+          errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
+        } else {
+          errorMessage = `Failed to save entries: ${serverMessage}`;
+        }
+      }
+
+      console.error('Error submitting form:', error);
+      setModalMessage(errorMessage);
+      setIsErrorModalOpen(true); // Show error modal
     }
   };
 
@@ -981,6 +1055,17 @@ const RabiesHistoryForm = () => {
         handleImportCSV={handleImportCSV}
         handleExportCSV={handleExportCSV}
         handleSubmit={handleSubmit}
+      />
+      {/* Error and Success Modals */}
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+        message={modalMessage}
+      />
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        message={modalMessage}
       />
       {/* <div className="flex flex-row">
         <label htmlFor="fileinput">

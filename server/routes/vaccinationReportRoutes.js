@@ -1,21 +1,92 @@
 const express = require('express');
 const router = express.Router();
 const VaccinationReport = require('../models/VaccinationReportModel'); // Update the path
-
+const { check, validationResult } = require('express-validator');
 // Route to create a new vaccination report
-router.post('/api/reports', async (req, res) => {
-  try {
-    console.log(req.body)
-    const vaccinationReportData = req.body;
-    const vaccinationReport = new VaccinationReport(vaccinationReportData);
-    await vaccinationReport.save();
-    res.status(201).json({ message: 'Report created successfully', report: vaccinationReport });
-  } catch (error) {
-    console.error('Error creating report:', error);
-    res.status(500).json({ message: 'Failed to create report' });
-  }
-});
+router.post(
+  '/api/reports',
+  [
+    // Validate fields for the vaccination report
+    check('vaccine').notEmpty().withMessage('Vaccine is required'),
+    check('municipality').notEmpty().withMessage('Municipality is required'),
+    check('dateReported').isISO8601().toDate().withMessage('Valid dateReported is required'),
+    check('vaccineType')
+      .isIn(['Live', 'Killed', 'Attenuated'])
+      .withMessage('VaccineType must be one of Live, Killed, or Attenuated'),
+    check('batchLotNo').notEmpty().withMessage('Batch lot number is required'),
+    check('vaccineSource')
+      .isIn(['MLGU', 'PLGU', 'RFU'])
+      .withMessage('VaccineSource must be one of MLGU, PLGU, or RFU'),
+    check('agriculturalExtensionWorker')
+      .notEmpty()
+      .withMessage('Agricultural extension worker name is required'),
 
+    // Validate each entry in the 'entries' array
+    check('entries').isArray({ min: 1 }).withMessage('At least one entry is required'),
+    check('entries.*.no').isInt().withMessage('Entry number must be an integer'),
+    check('entries.*.date').isISO8601().toDate().withMessage('Entry date must be a valid date'),
+    check('entries.*.barangay').notEmpty().withMessage('Barangay is required'),
+    check('entries.*.reason')
+      .isIn(['Mass', 'Routine', 'Outbreak'])
+      .withMessage('Reason must be one of Mass, Routine, or Outbreak'),
+
+    // Validate clientInfo fields
+    check('entries.*.clientInfo.firstName').notEmpty().withMessage('Client first name is required'),
+    check('entries.*.clientInfo.lastName').notEmpty().withMessage('Client last name is required'),
+    check('entries.*.clientInfo.gender')
+      .isIn(['Male', 'Female'])
+      .withMessage('Client gender must be Male or Female'),
+    check('entries.*.clientInfo.birthday')
+      .isISO8601()
+      .toDate()
+      .withMessage('Client birthday must be a valid date'),
+    check('entries.*.clientInfo.contactNo').notEmpty().withMessage('Client contact number is required'),
+
+    // Validate animalInfo fields
+    check('entries.*.animalInfo.species').notEmpty().withMessage('Animal species is required'),
+    check('entries.*.animalInfo.sex')
+      .isIn(['Male', 'Female'])
+      .withMessage('Animal sex must be Male or Female'),
+    check('entries.*.animalInfo.age').notEmpty().withMessage('Animal age is required'),
+  ],
+  async (req, res) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      // Create an object to check for duplicates, excluding the entries field
+      const { vaccine, municipality, dateReported, vaccineType, batchLotNo, vaccineSource, agriculturalExtensionWorker } = req.body;
+      
+      // Find existing reports based on unique fields
+      const existingReport = await VaccinationReport.findOne({ 
+        vaccine,
+        municipality,
+        dateReported,
+        vaccineType,
+        batchLotNo,
+        vaccineSource,
+        agriculturalExtensionWorker,
+      });
+
+      // Check if a report already exists with the same unique fields
+      if (existingReport) {
+        return res.status(409).json({ message: 'Duplicate entry found. Report already exists with the same details.' });
+      }
+
+      console.log(req.body);
+      const vaccinationReportData = req.body;
+      const vaccinationReport = new VaccinationReport(vaccinationReportData);
+      await vaccinationReport.save();
+      res.status(201).json({ message: 'Report created successfully', report: vaccinationReport });
+    } catch (error) {
+      console.error('Error creating report:', error);
+      res.status(500).json({ message: 'Failed to create report' });
+    }
+  
+  }
+);
 // Route to get all vaccination reports
 router.get('/api/reports', async (req, res) => {
   try {
