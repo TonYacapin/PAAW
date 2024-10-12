@@ -170,18 +170,22 @@ const RabiesReportChart = () => {
     {
       label: "Vaccinations per Municipality",
       content: <Line data={data.lineChart} />,
+      style:"col-span-2"
     },
     {
       label: "Vaccinations per Vaccine Type",
       content: <Bar data={data.barChart} />,
+      style:"col-span-2"
     },
     {
       label: "Vaccinations by Animal Sex",
-      content: <div className="flex relative h-[40vh] w-full items-center"><Pie data={data.pieChart} /></div>,
+      content: <Pie data={data.pieChart} />,
+      style:"col-span-1 relative h-[40vh] w-full items-center"
     },
     {
       label: "Vaccine Distribution",
       content: <Doughnut data={data.doughnutChart} />,
+      style:"col-span-1"
     },
   ];
 
