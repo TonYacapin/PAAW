@@ -180,12 +180,12 @@ const RabiesReportChart = () => {
     {
       label: "Vaccinations by Animal Sex",
       content: <Pie data={data.pieChart} />,
-      style:"col-span-1 relative h-[40vh] w-full items-center"
+      style:"col-span-2"
     },
     {
       label: "Vaccine Distribution",
       content: <Doughnut data={data.doughnutChart} />,
-      style:"col-span-1"
+      style:"col-span-2"
     },
   ];
 
