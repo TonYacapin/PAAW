@@ -91,6 +91,7 @@ export default function StepperComponent(props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const modalContentRef = useRef(null);
+  const isMobile = !useMediaQuery("(min-width:600px)"); // Check if the screen is mobile
 
   const isStepSkipped = (step) => skipped.has(step);
 
@@ -105,8 +106,8 @@ export default function StepperComponent(props) {
     setActiveStep(nextStep);
     setSkipped(newSkipped);
 
-    // Scroll to top of the modal content
-    if (modalContentRef.current) {
+    // Scroll to top only for mobile
+    if (isMobile && modalContentRef.current) {
       modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -120,8 +121,8 @@ export default function StepperComponent(props) {
     const prevStep = activeStep - 1;
     setActiveStep(prevStep);
 
-    // Scroll to top of the modal content
-    if (modalContentRef.current) {
+    // Scroll to top only for mobile
+    if (isMobile && modalContentRef.current) {
       modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
 

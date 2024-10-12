@@ -148,7 +148,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
 
   return (
     <>
-    <div className="max-h-[55vh] overflow-y-auto">
+    <div className="max-h-[55vh]">
     <h1 className="text-xl font-semibold text-gray-700">
         Municipality Routine Services Accomplishment Report
       </h1>
