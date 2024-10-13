@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import FormSubmit from '../../component/FormSubmit';
+import Papa from 'papaparse';
 
 function SlaughterReportForm() {
   const municipalities = [
@@ -30,6 +32,53 @@ function SlaughterReportForm() {
       updatedAnimals[index][name] = value;
       setFormData({ ...formData, slaughterAnimals: updatedAnimals });
     }
+  };
+
+  const handleImportCSV = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        complete: (result) => {
+          const importedData = result.data[0];
+          setFormData({
+            ...formData,
+            municipality: importedData.municipality || '',
+            month: importedData.month || '',
+            year: importedData.year || '',
+            slaughterAnimals: animals.map((animal) => ({
+              name: animal,
+              number: importedData[`${animal}_number`] || '',
+              weight: importedData[`${animal}_weight`] || '',
+            }))
+          });
+        }
+      });
+    }
+  };
+
+  const handleExportCSV = () => {
+    const csvData = [
+      {
+        municipality: formData.municipality,
+        month: formData.month,
+        year: formData.year,
+        ...formData.slaughterAnimals.reduce((acc, animal) => {
+          acc[`${animal.name}_number`] = animal.number;
+          acc[`${animal.name}_weight`] = animal.weight;
+          return acc;
+        }, {})
+      }
+    ];
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'slaughter_report.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSubmit = (e) => {
@@ -144,14 +193,11 @@ function SlaughterReportForm() {
       </div>
 
       {/* Submit Button */}
-      <div>
-        <button
-          type="submit"
-          className="w-full bg-darkgreen text-white py-2 rounded-md shadow-md hover:bg-darkergreen focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-darkgreen"
-        >
-          Submit Report
-        </button>
-      </div>
+      <FormSubmit 
+        handleImportCSV={handleImportCSV} 
+        handleExportCSV={handleExportCSV} 
+        handleSubmit={handleSubmit} 
+      />
     </form>
   );
 }
