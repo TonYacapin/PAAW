@@ -1,49 +1,59 @@
+// React and core libraries
 import React, { useState, useEffect, createContext, useContext } from "react";
-import Navbar from "../../component/Navbar";
 import { useNavigate } from "react-router-dom";
+
+// Layout components
+import Navbar from "../../component/Navbar";
+import Modal from "../../component/Modal";
+import Select from "react-select";
+
+// Chart components
 import ChartComponent from "../../component/ChartComponent";
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
 import OffSpringMonitoringChart from "../../component/OffSpringMonitoringChart";
 import UpgradingServicesChart from "../../component/UpgradingServicesChart";
-import Modal from "../../component/Modal";
-import Select from "react-select";
-
-import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
-import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
-import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
-import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import TechnicianQuarterlyCharts from "../../component/TechnicianQuarterlyCharts";
-import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
-import AccomplishmentReport from "../AccomplishmentReport";
-import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
-import TechnicianQuarterlyReportForm from "../TechnicianQuarterlyReportForm";
-import MonthlyAccomplishmentReportUpgradingServices from "../MonthlyAccomplishmentReportUpgradingServices";
-import MonthlyAccomplishmentReportLivestock from "../MonthlyAccomplishmentReportLivestock";
-//Charts
-
 import RabiesReportChart from "../../component/RabiesReportChart ";
 import DiseaseInvestigationChart from "../../component/DiseaseInvestigationChart";
 import VaccinationReportChart from "../../component/VaccinationReportChart";
 import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
 
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import VaccinesIcon from "@mui/icons-material/Vaccines";
-import ReportIcon from "@mui/icons-material/Report";
-import HealingIcon from "@mui/icons-material/Healing";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import PetsIcon from "@mui/icons-material/Pets";
-import AssignmentIcon from "@mui/icons-material/Assignment";
+// Form components
+import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
+import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
+import RoutineServicesMonitoringReport from "../Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
+import DiseaseInvestigationForm from "../Livestock and Poultry DRRM/DiseaseInvestigationForm";
+import RabiesHistoryForm from "../RABIES/RabiesHistoryForm";
+import AccomplishmentReport from "../AccomplishmentReport";
+import RSMAccomplishmentReport from "../RSMAccomplishmentReport";
+import TechnicianQuarterlyReportForm from "../TechnicianQuarterlyReportForm";
+import MonthlyAccomplishmentReportUpgradingServices from "../MonthlyAccomplishmentReportUpgradingServices";
+import MonthlyAccomplishmentReportLivestock from "../MonthlyAccomplishmentReportLivestock";
 import MonthlyAccomplishmentReport from "../MonthlyAccomplismentReport";
 import RequisitionIssueSlip from "../RequisitionIssueSlip ";
-import { Inventory, Outbox } from "@mui/icons-material";
-
 import UserManagement from "../Admin Pages/UserManagement";
 import UpgradingServices from "../UpgradingServices";
 import OffspringMonitoring from "../OffspringMonitoring";
 import { useMediaQuery } from "@mui/material";
+import SlaughterReportList from "../Regulatory and Monitoring Division/SlaughterReportList";
+import VeterinaryShipmentList from "../Regulatory and Monitoring Division/VeterinaryShipmentList";
+import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingReportList";
+import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
+
+// Icon components (Material-UI)
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ReportIcon from '@mui/icons-material/Report';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HealingIcon from '@mui/icons-material/Healing';
+import SearchIcon from '@mui/icons-material/Search';
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import VaccinesIcon from "@mui/icons-material/Vaccines";
+import PetsIcon from "@mui/icons-material/Pets";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import { Inventory, Outbox } from "@mui/icons-material";
 
 export const FilterContext = createContext(null);
 
@@ -109,6 +119,25 @@ function Home() {
         return <TechnicianQuarterlyReportForm />;
       case "AccomplishmentReportLivestock":
         return <MonthlyAccomplishmentReportLivestock />;
+      case "SlaughterReportList":
+        return <SlaughterReportList />;
+      case "VeterinaryShipmentList":
+        return <VeterinaryShipmentList />;
+      case "OutgoingReportList":
+        return <OutgoingReportList />;
+      case "IncomingReportList":
+        return <IncomingReportList />;
+
+
+
+     
+
+
+
+
+
+
+
 
       default:
         return null;
@@ -417,12 +446,11 @@ function Home() {
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
 
-                  <button
-                    onClick={() => openModalWithContent("CalfDrop")}
-                    className={buttonClasses}
-                  >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
-                    Drop Report
+                  <button onClick={() =>
+                    openModalWithContent("CalfDrop")
+                  }
+                    className={buttonClasses} >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
                   </button>
 
                   <button
@@ -456,17 +484,33 @@ function Home() {
                   </button>
                 </div>
               </div>
+
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  Shipment
+                  FORMS
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Veterinary Shipment
+                  <button onClick={() =>
+                    openModalWithContent("IncomingReportList")
+                  } className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Incoming Report
                   </button>
-                  <button className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Slaughter Shipment
+                  <button onClick={() =>
+                    openModalWithContent("OutgoingReportList")
+                  } className={buttonClasses}>
+                    <ReportIcon className="mr-2" /> Outgoing Report
                   </button>
+                  <button onClick={() =>
+                    openModalWithContent("SlaughterReportList")
+                  } className={buttonClasses}>
+                    <AssessmentIcon className="mr-2" /> Slaughter Report (consolidated)
+                  </button>
+                  <button onClick={() =>
+                    openModalWithContent("VeterinaryShipmentList")
+                  } className={buttonClasses}>
+                    <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
+                  </button>
+
                 </div>
               </div>
             </div>

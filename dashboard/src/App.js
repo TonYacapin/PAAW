@@ -7,7 +7,6 @@ import Home from "./pages/Home/Home";
 import DiseaseInvestigationForm from "./pages/Livestock and Poultry DRRM/DiseaseInvestigationForm";
 import SignupForm from "./pages/SignupPage";
 import RoutineServicesMonitoringReport from "./pages/Livestock and Poultry DRRM/RoutineServicesMonitoringReport";
-import VeterinaryQuarantineInspectionReport from "./pages/Regulatory and Monitoring Division/VeterinaryQuarantineInspectionReport";
 import VaccinationReport from "./pages/Animal Disease Prevention Control and Eradication/VaccinationReport";
 import RabiesHistoryForm from "./pages/RABIES/RabiesHistoryForm";
 import ChartComponent from "./component/ChartComponent";
@@ -69,10 +68,7 @@ const App = () => {
 
           {/* Regulatory Division */}
           {/* Veterinary Quarantine Operation */}
-          <Route
-            path="/vqir"
-            element={<VeterinaryQuarantineInspectionReport />}
-          />
+       
           {/* Meat Inspection Operation */}
           {/* (kulang to) */}
 

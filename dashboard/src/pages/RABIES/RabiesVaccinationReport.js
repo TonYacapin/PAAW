@@ -3,12 +3,23 @@ import axios from "axios"; // Import axios for HTTP requests
 import ConfirmationModal from "../../component/ConfirmationModal"; // Import the ConfirmationModal component
 import Papa from "papaparse"; // Import PapaParse for CSV handling
 import FormSubmit from "../../component/FormSubmit";
+import ErrorModal from "../../component/ErrorModal";
+import SuccessModal from "../../component/SuccessModal";
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [entryToRemove, setEntryToRemove] = useState(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+
+  // Error modal state
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+
+
 
   // Main fields state
   const [municipality, setMunicipality] = useState("");
@@ -102,11 +113,13 @@ function RabiesVaccinationReport() {
     setSelectedEntry(null);
   };
 
-  // Function to save all entries
   const saveEntries = async () => {
+
+    setErrorModalOpen(false);
+    setIsSuccessModalOpen(false);
+
     try {
       console.log(entries);
-      // Replace with your backend API URL
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/entries`,
         {
@@ -119,20 +132,41 @@ function RabiesVaccinationReport() {
         }
       );
       if (response.status === 201) {
-        alert("Entries saved successfully");
-        setEntries([]); // Clear entries after successful save
-        // Clear main fields after successful save
+     
+        setEntries([]);
         setMunicipality("");
         setDateReported("");
         setVaccineUsed("");
         setBatchLotNo("");
         setVaccineSource("");
+
+
+        setSuccessMessage('Entries saved successfully'); // New state for success message
+        setIsSuccessModalOpen(true); // Show success modal
       }
     } catch (error) {
       console.error("Error saving entries:", error);
-      alert("Failed to save entries");
+      // Set the error message and open the modal
+
+         // Error handling
+         let errorMessage = "Failed to save entries: An unexpected error occurred";
+         if (error.response && error.response.data) {
+           const serverMessage = error.response.data.message || "An error occurred";
+           if (error.response.data.errors) {
+             const validationErrors = error.response.data.errors
+               .map((err) => err.msg)
+               .join(", ");
+             errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
+           } else {
+             errorMessage = `Failed to save entries: ${serverMessage}`;
+           }
+         }
+      setErrorMessage(errorMessage);
+      setErrorModalOpen(true);
     }
   };
+
+
 
   const exportAsCSV = () => {
     // Create an array to hold all the data
@@ -385,13 +419,14 @@ function RabiesVaccinationReport() {
             </div>
           ))}
         </div>
-        <div className="mb-3"/>
+        <div className="mb-3" />
       </div>
 
       <FormSubmit
-        handleFormSubmit={saveEntries}
+      
         handleImportCSV={importCSV}
         handleExportCSV={exportAsCSV}
+        handleSubmit={saveEntries}
       />
       {/* Save Entries Button
       <div className="flex justify-end mb-4">
@@ -666,7 +701,12 @@ function RabiesVaccinationReport() {
         onCancel={handleCancelRemove}
         message="Are you sure you want to remove this entry?"
       />
-    </div>
+
+      {/* Error Modal */}
+      {errorModalOpen && <ErrorModal isOpen={errorModalOpen} onClose={() => setErrorModalOpen(false)} message={errorMessage} />}
+      {isSuccessModalOpen && <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message={successMessage} />}
+
+    </div >
   );
 }
 
