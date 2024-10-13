@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
 
+import { FilterContext } from '../pages/Home/Home';
+
 const DiseaseInvestigationChart = () => {
   const [data, setData] = useState({
     lineChart: { labels: [], datasets: [{ data: [], label: '' }] },
