@@ -73,8 +73,7 @@ const TargetForm = ({ onClose, target }) => {
       </h2>
       {error && <p className="text-red-500">{error}</p>}
       {success && <p className="w-full mt-4 bg-darkgreen text-white p-2 rounded-md hover:bg-darkergreen">{success}</p>}
-      <CardBox
-        content={
+      <CardBox>
           <>
             <form onSubmit={handleSubmit} className="bg-white space-y-4">
               <div>
@@ -152,8 +151,7 @@ const TargetForm = ({ onClose, target }) => {
               </button>
             </form>
           </>
-        }
-      />
+        </CardBox>
     </div>
   );
 };
