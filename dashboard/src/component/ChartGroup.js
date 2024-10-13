@@ -17,8 +17,7 @@ export default function ChartGroup(props) {
 
   return (
     <>
-      <CardBox
-        content={
+      <CardBox>
           <>
             <h1 className="md:text-2xl font-bold mb-6">{props.title}</h1>
             <div className="lg:max-h-[100vh] overflow-auto">
@@ -59,8 +58,7 @@ export default function ChartGroup(props) {
               </div>
             </div>
           </>
-        }
-      />
+          </CardBox>
     </>
   );
 }
