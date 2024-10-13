@@ -174,9 +174,9 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     Municipality Vaccination Accomplishment Report
                 </h1>
                 <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-                    {/* Form to select year, month, and species */}
-                    <form className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    
+                    <div className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                             <div>
                                 <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
                                 <input
@@ -184,7 +184,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                     id="year"
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[ffe356] text-[#252525]"
                                 />
                             </div>
                             <div>
@@ -218,7 +218,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                 </select>
                             </div>
                         </div>
-                    </form>
+                    </div>
 
                     {/* Display loading spinner or table */}
                     {loading ? (
