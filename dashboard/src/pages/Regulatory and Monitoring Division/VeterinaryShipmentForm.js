@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import StepperComponent from '../../component/StepperComponent';
+import FormSubmit from '../../component/FormSubmit';
+import Papa from 'papaparse';  // For CSV handling
 
 const VeterinaryShipmentForm = () => {
   const [shipmentType, setShipmentType] = useState('');
@@ -7,7 +9,7 @@ const VeterinaryShipmentForm = () => {
   const [date, setDate] = useState('');
   const [pointOfOrigin, setPointOfOrigin] = useState('');
   const [remarks, setRemarks] = useState('');
-  
+
   const [liveAnimals, setLiveAnimals] = useState({
     Carabao: 0,
     Cattle: 0,
@@ -35,6 +37,57 @@ const VeterinaryShipmentForm = () => {
     setAnimalByProducts({ ...animalByProducts, [e.target.name]: e.target.value });
   };
 
+  // CSV Export function
+  const handleExportCSV = () => {
+    const data = [
+      { 
+        shipmentType, shipperName, date, pointOfOrigin, remarks, 
+        ...liveAnimals, ...animalByProducts 
+      }
+    ];
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'veterinary_shipment_form.csv');
+    link.click();
+  };
+
+  // CSV Import function
+  const handleImportCSV = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    Papa.parse(file, {
+      header: true,
+      complete: (results) => {
+        const importedData = results.data[0];  // Assuming only one row of data for now
+        setShipmentType(importedData.shipmentType || '');
+        setShipperName(importedData.shipperName || '');
+        setDate(importedData.date || '');
+        setPointOfOrigin(importedData.pointOfOrigin || '');
+        setRemarks(importedData.remarks || '');
+        setLiveAnimals({
+          Carabao: importedData.Carabao || 0,
+          Cattle: importedData.Cattle || 0,
+          Swine: importedData.Swine || 0,
+          Horse: importedData.Horse || 0,
+          Chicken: importedData.Chicken || 0,
+          Duck: importedData.Duck || 0,
+          Other: importedData.Other || 0,
+        });
+        setAnimalByProducts({
+          Beef: importedData.Beef || 0,
+          Carabeef: importedData.Carabeef || 0,
+          Pork: importedData.Pork || 0,
+          PoultryMeat: importedData.PoultryMeat || 0,
+          Egg: importedData.Egg || 0,
+          ChickenDung: importedData.ChickenDung || 0,
+        });
+      },
+    });
+  };
+
+  // Form Submit function
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({
@@ -46,6 +99,7 @@ const VeterinaryShipmentForm = () => {
       liveAnimals,
       animalByProducts,
     });
+    // Here you can add an API call to submit the data
   };
 
   const renderStepContent = (step) => {
@@ -53,8 +107,9 @@ const VeterinaryShipmentForm = () => {
       case 0:
         return (
           <div className="space-y-4">
+            {/* Shipment Type and Shipper's Name */}
             <fieldset className="border border-gray-300 rounded p-4">
-              <legend className="font-semibold text-darkgreen">Shipment Type</legend>
+              <legend className="font-semibold text-black">Shipment Type</legend>
               <div className="flex space-x-8">
                 <div className="flex items-center">
                   <input
@@ -62,7 +117,7 @@ const VeterinaryShipmentForm = () => {
                     value="Outgoing"
                     checked={shipmentType === 'Outgoing'}
                     onChange={(e) => setShipmentType(e.target.value)}
-                    className="mr-2 text-darkgreen border-gray-300 focus:ring-darkgreen"
+                    className="mr-2 text-black border-gray-300 focus:ring-black"
                   />
                   <label className="text-black">Outgoing Shipment</label>
                 </div>
@@ -72,7 +127,7 @@ const VeterinaryShipmentForm = () => {
                     value="Incoming"
                     checked={shipmentType === 'Incoming'}
                     onChange={(e) => setShipmentType(e.target.value)}
-                    className="mr-2 text-darkgreen border-gray-300 focus:ring-darkgreen"
+                    className="mr-2 text-black border-gray-300 focus:ring-black"
                   />
                   <label className="text-black">Incoming Shipment</label>
                 </div>
@@ -87,7 +142,7 @@ const VeterinaryShipmentForm = () => {
                   onChange={(e) => setShipperName(e.target.value)}
                   required
                   placeholder="Enter shipper's name"
-                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </label>
             </div>
@@ -99,7 +154,7 @@ const VeterinaryShipmentForm = () => {
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   required
-                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </label>
             </div>
@@ -108,7 +163,7 @@ const VeterinaryShipmentForm = () => {
       case 1:
         return (
           <fieldset className="border border-gray-300 rounded p-4">
-            <legend className="font-semibold text-darkgreen">Live Animals</legend>
+            <legend className="font-semibold text-black">Live Animals</legend>
             {Object.keys(liveAnimals).map((animal) => (
               <div key={animal} className="flex justify-between items-center mb-2">
                 <label className="block text-black">{animal}:</label>
@@ -119,7 +174,7 @@ const VeterinaryShipmentForm = () => {
                   onChange={handleLiveAnimalChange}
                   min="0"
                   placeholder="0"
-                  className="border border-gray-300 rounded p-3 w-1/3 focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-1/3 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
             ))}
@@ -128,7 +183,7 @@ const VeterinaryShipmentForm = () => {
       case 2:
         return (
           <fieldset className="border border-gray-300 rounded p-4">
-            <legend className="font-semibold text-darkgreen">Animal By Products</legend>
+            <legend className="font-semibold text-black">Animal By Products</legend>
             {Object.keys(animalByProducts).map((product) => (
               <div key={product} className="flex justify-between items-center mb-2">
                 <label className="block text-black">{product}:</label>
@@ -139,7 +194,7 @@ const VeterinaryShipmentForm = () => {
                   onChange={handleAnimalByProductChange}
                   min="0"
                   placeholder="0"
-                  className="border border-gray-300 rounded p-3 w-1/3 focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-1/3 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
             ))}
@@ -156,7 +211,7 @@ const VeterinaryShipmentForm = () => {
                   value={pointOfOrigin}
                   onChange={(e) => setPointOfOrigin(e.target.value)}
                   placeholder="Enter point of origin"
-                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </label>
             </div>
@@ -167,7 +222,7 @@ const VeterinaryShipmentForm = () => {
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   placeholder="Additional remarks (optional)"
-                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-darkgreen"
+                  className="border border-gray-300 rounded p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
                   rows="4"
                 />
               </label>
@@ -181,17 +236,16 @@ const VeterinaryShipmentForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg space-y-6">
-      <h2 className="text-2xl font-bold text-darkgreen text-center">Veterinary Shipment Form</h2>
+      <h2 className="text-2xl font-bold text-black text-center">Veterinary Shipment Form</h2>
       <StepperComponent
         pages={['Step 1', 'Step 2', 'Step 3', 'Step 4']}
         renderStepContent={renderStepContent}
       />
-      <button
-        type="submit"
-        className="bg-darkgreen text-white p-4 rounded hover:bg-darkergreen transition duration-200 w-full"
-      >
-        Submit
-      </button>
+      <FormSubmit
+        handleExportCSV={handleExportCSV}
+        handleImportCSV={handleImportCSV}
+        onSubmit={handleSubmit}
+      />
     </form>
   );
 };
