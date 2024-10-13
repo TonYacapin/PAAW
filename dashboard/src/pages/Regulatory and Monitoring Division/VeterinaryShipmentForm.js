@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import StepperComponent from '../../component/StepperComponent';
 import FormSubmit from '../../component/FormSubmit';
-import Papa from 'papaparse';  // For CSV handling
+import Papa from 'papaparse';  
 
 const VeterinaryShipmentForm = () => {
   const [shipmentType, setShipmentType] = useState('');
