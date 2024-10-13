@@ -4,10 +4,10 @@ import SlaughterReportForm from './SlaughterReportForm';
 
 function SlaughterReportList() {
     const municipalities = [
-        'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon',
-        'Solano', 'Villaverde', 'Alfonso Castañeda', 'Aritao',
-        'Bambang', 'Dupax del Norte', 'Dupax del Sur', 'Kayapa',
-        'Kasibu', 'Santa Fe'
+        'Bagabag', 'Bayombong',
+        'Solano', 'Villaverde', 'Aritao',
+        'Bambang', 'Dupax del Norte',
+
     ];
 
     const animals = ['Cattle', 'Carabao', 'Goat', 'Sheep', 'Hog', 'Chicken'];
@@ -19,28 +19,27 @@ function SlaughterReportList() {
         municipality: '',
         month: '',
         year: '',
-    });
-    const [reports, setReports] = useState([
+    }); const [reports, setReports] = useState([
         { id: 1, municipality: 'Bayombong', month: '5', year: '2024', animal: 'Cattle', number: 10, weight: 1500 },
         { id: 2, municipality: 'Solano', month: '6', year: '2023', animal: 'Carabao', number: 5, weight: 800 },
         { id: 3, municipality: 'Dupax del Norte', month: '8', year: '2024', animal: 'Goat', number: 12, weight: 240 },
         { id: 4, municipality: 'Bayombong', month: '5', year: '2024', animal: 'Hog', number: 20, weight: 600 },
-        { id: 5, municipality: 'Kayapa', month: '7', year: '2024', animal: 'Chicken', number: 50, weight: 75 },
-        { id: 6, municipality: 'Ambaguio', month: '4', year: '2024', animal: 'Cattle', number: 15, weight: 2100 },
-        { id: 7, municipality: 'Quezon', month: '3', year: '2023', animal: 'Carabao', number: 7, weight: 900 },
-        { id: 8, municipality: 'Diadi', month: '2', year: '2024', animal: 'Goat', number: 18, weight: 360 },
+        { id: 5, municipality: 'Bagabag', month: '7', year: '2024', animal: 'Chicken', number: 50, weight: 75 },
+        { id: 6, municipality: 'Solano', month: '4', year: '2024', animal: 'Cattle', number: 15, weight: 2100 },
+        { id: 7, municipality: 'Villaverde', month: '3', year: '2023', animal: 'Carabao', number: 7, weight: 900 },
+        { id: 8, municipality: 'Aritao', month: '2', year: '2024', animal: 'Goat', number: 18, weight: 360 },
         { id: 9, municipality: 'Villaverde', month: '1', year: '2024', animal: 'Hog', number: 25, weight: 750 },
-        { id: 10, municipality: 'Aritao', month: '6', year: '2024', animal: 'Chicken', number: 100, weight: 150 },
-        { id: 11, municipality: 'Bambang', month: '7', year: '2023', animal: 'Cattle', number: 8, weight: 1200 },
-        { id: 12, municipality: 'Dupax del Sur', month: '8', year: '2024', animal: 'Carabao', number: 3, weight: 500 },
-        { id: 13, municipality: 'Kayapa', month: '9', year: '2023', animal: 'Goat', number: 20, weight: 400 },
-        { id: 14, municipality: 'Kasibu', month: '10', year: '2023', animal: 'Hog', number: 15, weight: 450 },
-        { id: 15, municipality: 'Santa Fe', month: '11', year: '2024', animal: 'Chicken', number: 80, weight: 100 },
-        { id: 16, municipality: 'Bayombong', month: '12', year: '2023', animal: 'Cattle', number: 5, weight: 700 },
-        { id: 17, municipality: 'Solano', month: '4', year: '2024', animal: 'Carabao', number: 10, weight: 1200 },
-        { id: 18, municipality: 'Diadi', month: '5', year: '2024', animal: 'Goat', number: 22, weight: 440 },
-        { id: 19, municipality: 'Villaverde', month: '1', year: '2023', animal: 'Hog', number: 30, weight: 900 },
-        { id: 20, municipality: 'Quezon', month: '8', year: '2023', animal: 'Chicken', number: 65, weight: 80 },
+        { id: 10, municipality: 'Bambang', month: '6', year: '2024', animal: 'Chicken', number: 100, weight: 150 },
+        { id: 11, municipality: 'Dupax del Norte', month: '7', year: '2023', animal: 'Cattle', number: 8, weight: 1200 },
+        { id: 12, municipality: 'Aritao', month: '8', year: '2024', animal: 'Carabao', number: 3, weight: 500 },
+        { id: 13, municipality: 'Bagabag', month: '9', year: '2023', animal: 'Goat', number: 20, weight: 400 },
+        { id: 14, municipality: 'Bambang', month: '10', year: '2023', animal: 'Hog', number: 15, weight: 450 },
+        { id: 15, municipality: 'Bayombong', month: '11', year: '2024', animal: 'Chicken', number: 80, weight: 100 },
+        { id: 16, municipality: 'Solano', month: '12', year: '2023', animal: 'Cattle', number: 5, weight: 700 },
+        { id: 17, municipality: 'Villaverde', month: '4', year: '2024', animal: 'Carabao', number: 10, weight: 1200 },
+        { id: 18, municipality: 'Dupax del Norte', month: '5', year: '2024', animal: 'Goat', number: 22, weight: 440 },
+        { id: 19, municipality: 'Aritao', month: '1', year: '2023', animal: 'Hog', number: 30, weight: 900 },
+        { id: 20, municipality: 'Bagabag', month: '8', year: '2023', animal: 'Chicken', number: 65, weight: 80 },
     ]);
 
 
@@ -147,8 +146,8 @@ function SlaughterReportList() {
             </div>
 
             {/* Slaughter Reports Table */}
-            <div className="mb-6">
-                <h2 className="text-lg font-medium text-darkgreen mb-2">Filtered Reports</h2>
+            <h2 className="text-lg font-medium text-darkgreen mb-2">Filtered Reports</h2>
+            <div className="mb-6 overflow-x-auto">
                 {filteredReports.length > 0 ? (
                     <table className="min-w-full bg-white rounded-lg shadow-md">
                         <thead className="bg-darkgreen text-white">

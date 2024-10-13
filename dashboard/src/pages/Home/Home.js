@@ -39,6 +39,8 @@ import UpgradingServices from "../UpgradingServices";
 import OffspringMonitoring from "../OffspringMonitoring";
 import SlaughterReportList from "../Regulatory and Monitoring Division/SlaughterReportList";
 import VeterinaryShipmentList from "../Regulatory and Monitoring Division/VeterinaryShipmentList";
+import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingReportList";
+import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -120,6 +122,16 @@ function Home() {
         return <SlaughterReportList />;
       case "VeterinaryShipmentList":
         return <VeterinaryShipmentList />;
+      case "OutgoingReportList":
+        return <OutgoingReportList />;
+      case "IncomingReportList":
+        return <IncomingReportList />;
+
+
+
+     
+
+
 
 
 
@@ -467,16 +479,20 @@ function Home() {
                   </button>
                 </div>
               </div>
-             
+
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   FORMS
                 </h4>
                 <div className="space-y-2">
-                  <button  className={buttonClasses}>
+                  <button onClick={() =>
+                    openModalWithContent("IncomingReportList")
+                  } className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Incoming Report
                   </button>
-                  <button className={buttonClasses}>
+                  <button onClick={() =>
+                    openModalWithContent("OutgoingReportList")
+                  } className={buttonClasses}>
                     <ReportIcon className="mr-2" /> Outgoing Report
                   </button>
                   <button onClick={() =>
@@ -486,10 +502,10 @@ function Home() {
                   </button>
                   <button onClick={() =>
                     openModalWithContent("VeterinaryShipmentList")
-                  }className={buttonClasses}>
+                  } className={buttonClasses}>
                     <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
                   </button>
-              
+
                 </div>
               </div>
             </div>

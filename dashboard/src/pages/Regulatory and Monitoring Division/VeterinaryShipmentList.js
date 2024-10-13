@@ -76,7 +76,6 @@ const VeterinaryShipmentList = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
             <h2 className="text-2xl font-bold text-darkgreen text-center">Veterinary Shipment List</h2>
 
-
             {/* Filter Section */}
             <div className="flex justify-between mb-4">
                 <button
@@ -86,8 +85,6 @@ const VeterinaryShipmentList = () => {
                     {showFilters ? 'Hide Filters' : 'Show Filters'}
                 </button>
             </div>
-
-          
 
             {showFilters && (
                 <div className="flex flex-wrap space-x-4 mb-4">
@@ -140,8 +137,9 @@ const VeterinaryShipmentList = () => {
                     </select>
                 </div>
             )}
-              {/* Analysis Section */}
-              <div className="mb-4">
+              
+            {/* Analysis Section */}
+            <div className="mb-4">
                 <h3 className="text-xl font-semibold">Analysis</h3>
                 <p>Total Shipments: {analysisData.totalShipments}</p>
                 <p>Total Live Animals: {analysisData.totalLiveAnimals}</p>
@@ -178,21 +176,25 @@ const VeterinaryShipmentList = () => {
                             count > 0 && (!filter.animalByProduct || product === filter.animalByProduct)
                         );
 
-                        const rowsToRender = Math.max(liveAnimalEntries.length, animalByProductEntries.length);
+                        const maxRows = Math.max(liveAnimalEntries.length, animalByProductEntries.length);
 
-                        return Array.from({ length: rowsToRender }).map((_, index) => (
+                        return Array.from({ length: maxRows }).map((_, index) => (
                             <tr key={`${shipment.id}-${index}`}>
                                 {index === 0 && (
                                     <>
-                                        <td className="border border-gray-300 p-2" rowSpan={rowsToRender}>{shipment.shipmentType}</td>
-                                        <td className="border border-gray-300 p-2" rowSpan={rowsToRender}>{shipment.shipperName}</td>
-                                        <td className="border border-gray-300 p-2" rowSpan={rowsToRender}>{shipment.date}</td>
-                                        <td className="border border-gray-300 p-2" rowSpan={rowsToRender}>{shipment.pointOfOrigin}</td>
-                                        <td className="border border-gray-300 p-2" rowSpan={rowsToRender}>{shipment.remarks}</td>
+                                        <td className="border border-gray-300 p-2" rowSpan={maxRows}>{shipment.shipmentType}</td>
+                                        <td className="border border-gray-300 p-2" rowSpan={maxRows}>{shipment.shipperName}</td>
+                                        <td className="border border-gray-300 p-2" rowSpan={maxRows}>{shipment.date}</td>
+                                        <td className="border border-gray-300 p-2" rowSpan={maxRows}>{shipment.pointOfOrigin}</td>
+                                        <td className="border border-gray-300 p-2" rowSpan={maxRows}>{shipment.remarks}</td>
                                     </>
                                 )}
-                                <td className="border border-gray-300 p-2">{liveAnimalEntries[index]?.[0] || '-'}</td>
-                                <td className="border border-gray-300 p-2">{animalByProductEntries[index]?.[0] || '-'}</td>
+                                <td className="border border-gray-300 p-2">
+                                    {liveAnimalEntries[index]?.[0] || ''} - {liveAnimalEntries[index]?.[1] || 0}
+                                </td>
+                                <td className="border border-gray-300 p-2">
+                                    {animalByProductEntries[index]?.[0] || ''} - {animalByProductEntries[index]?.[1] || 0}
+                                </td>
                             </tr>
                         ));
                     })}
