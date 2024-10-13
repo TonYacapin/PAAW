@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { format, isSameMonth, subMonths } from "date-fns";
-
+import PrintableRSMAccomplishmentReport from "../component/PrintComponents/PrintableRSMAccomplishmentReport";
+ 
 function RSMAccomplishmentReport() {
   const [activityData, setActivityData] = useState([]);
   const [totals, setTotals] = useState({
@@ -16,7 +17,7 @@ function RSMAccomplishmentReport() {
   const [selectedActivity, setSelectedActivity] = useState('All');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-
+ 
   const activityOptions = [
     "Deworming",
     "Wound Treatment",
@@ -25,7 +26,7 @@ function RSMAccomplishmentReport() {
     "Consultation",
     "Support",
   ];
-
+ 
   const monthOptions = [
     { value: 1, label: "January" },
     { value: 2, label: "February" },
@@ -40,37 +41,37 @@ function RSMAccomplishmentReport() {
     { value: 11, label: "November" },
     { value: 12, label: "December" },
   ];
-
+ 
   const yearOptions = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
-
+ 
   useEffect(() => {
     fetchData();
   }, [selectedYear, selectedMonth]);
-
+ 
   useEffect(() => {
     calculatePercentages();
   }, [totals, targets, selectedActivity]);
-
+ 
   const fetchData = async () => {
     try {
       const [activityResponse, targetsResponse] = await Promise.all([
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/species-activity-count?year=${selectedYear}&month=${selectedMonth}`),
         axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RoutineServiceMonitoring`)
       ]);
-
+ 
       processActivityData(activityResponse.data);
       processTargets(targetsResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+ 
   const processTargets = (targetsData) => {
     if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
       console.error("Invalid targets data format:", targetsData);
       return;
     }
-
+ 
     const targetsObj = targetsData.targets.reduce((acc, target) => {
       acc[target.Type] = {
         quarterly: target.target,
@@ -78,21 +79,21 @@ function RSMAccomplishmentReport() {
       };
       return acc;
     }, {});
-
+ 
     setTargets({
       ...targetsObj,
       totalTarget: targetsData.totalTarget,
       totalSemiAnnualTarget: targetsData.totalSemiAnnualTarget
     });
   };
-
+ 
   const processActivityData = (data) => {
     const processedData = {};
     let totalPreviousMonth = 0;
     let totalThisMonth = 0;
     let totalCombined = 0;
     let totalOverall = 0;
-
+ 
     data.forEach((item) => {
       if (!processedData[item.activity]) {
         processedData[item.activity] = {
@@ -104,7 +105,7 @@ function RSMAccomplishmentReport() {
           total: 0,
         };
       }
-
+ 
       processedData[item.activity].speciesData.push({
         species: item.species,
         previousMonth: item.previousMonthCount,
@@ -112,18 +113,18 @@ function RSMAccomplishmentReport() {
         combined: item.previousMonthCount + item.thisMonthCount,
         total: item.totalCount,
       });
-
+ 
       processedData[item.activity].previousMonth += item.previousMonthCount;
       processedData[item.activity].thisMonth += item.thisMonthCount;
       processedData[item.activity].combined += item.previousMonthCount + item.thisMonthCount;
       processedData[item.activity].total += item.totalCount;
-
+ 
       totalPreviousMonth += item.previousMonthCount;
       totalThisMonth += item.thisMonthCount;
       totalCombined += item.previousMonthCount + item.thisMonthCount;
       totalOverall += item.totalCount;
     });
-
+ 
     setActivityData(Object.values(processedData));
     setTotals({
       previousMonth: totalPreviousMonth,
@@ -132,12 +133,12 @@ function RSMAccomplishmentReport() {
       total: totalOverall,
     });
   };
-
+ 
   const calculatePercentages = () => {
     if (selectedActivity === 'All') {
       const totalQuarterly = targets.totalTarget || 0;
       const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
-
+ 
       setQuarterlyPercentage(totalQuarterly === 0 ? "No target set" : `${((totals.combined / totalQuarterly) * 100).toFixed(2)}%`);
       setSemiAnnualPercentage(totalSemiAnnual === 0 ? "No target set" : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`);
     } else {
@@ -147,38 +148,64 @@ function RSMAccomplishmentReport() {
         setSemiAnnualPercentage("No target set");
         return;
       }
-
+ 
       const vaccineTotal = filteredActivityData.reduce((sum, species) => sum + species.combined, 0);
-
+ 
       setQuarterlyPercentage(target.quarterly > 0 ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%` : "No target set");
       setSemiAnnualPercentage(target.semiAnnual > 0 ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%` : "No target set");
     }
   };
-
+ 
   const activityTotal = activityData.find(activity => activity.activity === selectedActivity)?.combined || 0;
   const handleActivityChange = (e) => {
     setSelectedActivity(e.target.value);
   };
-
+ 
   const handleMonthChange = (e) => {
     setSelectedMonth(Number(e.target.value));
   };
-
+ 
   const handleYearChange = (e) => {
     setSelectedYear(Number(e.target.value));
   };
-
+ 
   const filteredActivityData =
     selectedActivity === "All"
       ? activityData
       : activityData.filter((data) => data.activity === selectedActivity);
-
+ 
+  const printRef = useRef();
+ 
+  const handlePrint = () => {
+    const printContent = document.getElementById("printable-content");
+    const windowPrint = window.open("", "", "left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0");
+    windowPrint.document.write(printContent.innerHTML);
+    windowPrint.document.close();
+    windowPrint.focus();
+    windowPrint.print();
+    windowPrint.close();
+  };
+ 
+ 
   return (
     <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-y-auto">
+     
+      <div id="printable-content" style={{ display: 'none' }}>
+        <PrintableRSMAccomplishmentReport
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          selectedActivity={selectedActivity}
+          filteredActivityData={filteredActivityData}
+          totals={totals}
+          targets={targets}
+          quarterlyPercentage={quarterlyPercentage}
+          semiAnnualPercentage={semiAnnualPercentage}
+        />
+      </div>
       <h1 className="text-xl font-semibold mb-6 text-gray-700">
         Routine Service Monitoring Accomplishment
       </h1>
-
+ 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
@@ -196,7 +223,7 @@ function RSMAccomplishmentReport() {
             ))}
           </select>
         </div>
-
+ 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
             Select Month
@@ -213,7 +240,7 @@ function RSMAccomplishmentReport() {
             ))}
           </select>
         </div>
-
+ 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
             Select Activity
@@ -231,7 +258,7 @@ function RSMAccomplishmentReport() {
             ))}
           </select>
         </div>
-
+ 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
           <input
@@ -246,7 +273,7 @@ function RSMAccomplishmentReport() {
             Percentage: {quarterlyPercentage}
           </p>
         </div>
-
+ 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
           <input
@@ -262,9 +289,9 @@ function RSMAccomplishmentReport() {
           </p>
         </div>
       </div>
-
+ 
       <div className="mt-8">
-        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
+        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
           <thead>
             <tr className="bg-[#1b5b40] text-white">
               <th className="py-2 px-4 text-left">Activity</th>
@@ -311,9 +338,15 @@ function RSMAccomplishmentReport() {
           </tbody>
         </table>
       </div>
+      <button
+        onClick={handlePrint}
+        className="mt-4 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#123c29] transition duration-300"
+      >
+        Print Report
+      </button>
     </div>
-
+ 
   );
 }
-
+ 
 export default RSMAccomplishmentReport;

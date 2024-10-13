@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+    import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
+import PrintableMunicipalityAccomplishmentReportVaccination from '../component/PrintComponents/PrintableMunicipalityAccomplishmentReportVaccination';
 
 const MunicipalityAccomplishmentReportVaccination = () => {
     const [reportData, setReportData] = useState([]);
@@ -134,10 +135,41 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                 return 'Vaccination Report';
         }
     };
+    const printComponentRef = useRef();
+
+
+    const handlePrint = () => {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write('<html><head><title>Vaccination Report</title>');
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+            body { font-family: Arial, sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+        `);
+        printWindow.document.write('</style></head><body>');
+        printWindow.document.write(document.getElementById('printable-content').innerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    };
 
     return (
         <>
-            <div className="max-h-[55vh] scrollbar-hide">
+            <div className="max-h-[70vh] scrollbar-hide">
+
+                
+                {/* Hidden printable content */}
+                <div id="printable-content" style={{ display: "none" }}>
+                    <PrintableMunicipalityAccomplishmentReportVaccination
+                        reportData={reportData}
+                        selectedYear={selectedYear}
+                        selectedMonth={selectedMonth}
+                        selectedSpecies={selectedSpecies}
+                        semiAnnualTargets={semiAnnualTargets}
+                    />
+                </div>
                 <h1 className="text-xl font-semibold text-gray-700">
                     Municipality Vaccination Accomplishment Report
                 </h1>
@@ -249,9 +281,13 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     )}
                 </div>
 
-                <div className="">
+                <button
+                    onClick={handlePrint}
+                    className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
+                >
+                    Print Report
+                </button>
 
-                </div>
 
             </div>
         </>
