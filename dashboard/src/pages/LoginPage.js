@@ -3,22 +3,22 @@ import axios from 'axios';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 import { useNavigate } from 'react-router-dom';
-
+ 
 // SplashScreen Component
 const SplashScreen = ({ onFinish }) => {
   const [currentScreen, setCurrentScreen] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
-
+ 
   useEffect(() => {
     const timers = [
       setTimeout(() => setCurrentScreen(1), 1000), // Show second logo after 1 second
       setTimeout(() => setFadeOut(true), 2000), // Start fading out after 2 seconds
       setTimeout(() => onFinish(), 2500), // Finish splash screen after 2.5 seconds
     ];
-
+ 
     return () => timers.forEach(timer => clearTimeout(timer));
   }, [onFinish]);
-
+ 
   return (
     <div
       className={`min-h-screen flex items-center justify-center bg-[#FFFAFA] transition-opacity duration-500 ${
@@ -34,14 +34,14 @@ const SplashScreen = ({ onFinish }) => {
     </div>
   );
 };
-
+ 
 // LoginPage Component
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+ 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -50,11 +50,11 @@ const LoginPage = () => {
         email,
         password,
       });
-
+ 
       const { token, userRole } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', userRole);
-
+ 
       console.log('Logged in successfully:', response.data);
       navigate('/Home');
     } catch (error) {
@@ -62,24 +62,24 @@ const LoginPage = () => {
       setError('Invalid email or password');
     }
   };
-
+ 
   const handleSignup = () => {
     navigate('/signup');
   };
-
+ 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FFFAFA] ">
       <div className="w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10">
         <div className="text-center">
           <div className="flex justify-center space-x-4 mb-6">
-            <img 
-              src={placeholder1} 
-              alt="Placeholder 1" 
+            <img
+              src={placeholder1}
+              alt="Placeholder 1"
               className="w-24 h-24 object-cover border-gray-300"
             />
-            <img 
-              src={placeholder2} 
-              alt="Placeholder 2" 
+            <img
+              src={placeholder2}
+              alt="Placeholder 2"
               className="w-24 h-24 object-cover border-gray-300"
             />
           </div>
@@ -101,7 +101,7 @@ const LoginPage = () => {
                 placeholder="Email address"
               />
             </div>
-            
+           
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
               <input
@@ -116,7 +116,7 @@ const LoginPage = () => {
               />
             </div>
             </div>
-            
+           
           </div>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <div className="flex gap-4">
@@ -149,30 +149,31 @@ const LoginPage = () => {
     </div>
   );
 };
-
+ 
 // App Component
 const App = () => {
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768); // 768px is a common breakpoint for mobile
     };
-
+ 
     handleResize(); // Check on mount
     window.addEventListener('resize', handleResize);
-
+ 
     // Start splash screen only on mobile
     if (isMobile) {
       setLoading(true);
       setTimeout(() => setLoading(false), 2500); // 2.5 seconds for splash screen
     }
-
+ 
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobile]);
-
+ 
   return loading ? <SplashScreen onFinish={() => setLoading(false)} /> : <LoginPage />;
 };
-
+ 
 export default App;
+ 
