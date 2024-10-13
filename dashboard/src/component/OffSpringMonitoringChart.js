@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Bar, Pie, Line } from 'react-chartjs-2';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { Bar, Pie, Line } from "react-chartjs-2";
+import axios from "axios";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,8 +12,9 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-  TimeScale
-} from 'chart.js';
+  TimeScale,
+} from "chart.js";
+import ChartGroup from "./ChartGroup";
 
 ChartJS.register(
   CategoryScale,
@@ -32,13 +33,15 @@ const OffSpringMonitoringChart = () => {
   const [chartData, setChartData] = useState({
     municipalityData: { labels: [], datasets: [] },
     speciesData: { labels: [], datasets: [] },
-    timeData: { labels: [], datasets: [] }
+    timeData: { labels: [], datasets: [] },
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/offspring-monitoring`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/api/offspring-monitoring`
+        );
         const data = response.data;
 
         // Process data for all charts
@@ -49,10 +52,10 @@ const OffSpringMonitoringChart = () => {
         setChartData({
           municipalityData,
           speciesData,
-          timeData
+          timeData,
         });
       } catch (error) {
-        console.error('Error fetching data', error);
+        console.error("Error fetching data", error);
       }
     };
 
@@ -71,19 +74,21 @@ const OffSpringMonitoringChart = () => {
 
     return {
       labels: Object.keys(municipalityData),
-      datasets: [{
-        label: 'Offspring Monitored by Municipality',
-        data: Object.values(municipalityData),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      }]
+      datasets: [
+        {
+          label: "Offspring Monitored by Municipality",
+          data: Object.values(municipalityData),
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+        },
+      ],
     };
   };
 
   const processDataBySpecies = (data) => {
     const speciesData = data.reduce((acc, curr) => {
-      curr.entries.forEach(entry => {
+      curr.entries.forEach((entry) => {
         const { species } = entry;
         if (!acc[species]) {
           acc[species] = 0;
@@ -95,27 +100,29 @@ const OffSpringMonitoringChart = () => {
 
     return {
       labels: Object.keys(speciesData),
-      datasets: [{
-        label: 'Offspring Distribution by Species',
-        data: Object.values(speciesData),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      }]
+      datasets: [
+        {
+          label: "Offspring Distribution by Species",
+          data: Object.values(speciesData),
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
     };
   };
 
@@ -132,14 +139,16 @@ const OffSpringMonitoringChart = () => {
 
     return {
       labels: Object.keys(timeData),
-      datasets: [{
-        label: 'Offspring Monitored Over Time',
-        data: Object.values(timeData),
-        fill: false,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderWidth: 1,
-      }]
+      datasets: [
+        {
+          label: "Offspring Monitored Over Time",
+          data: Object.values(timeData),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderWidth: 1,
+        },
+      ],
     };
   };
 
@@ -147,43 +156,56 @@ const OffSpringMonitoringChart = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
- 
       },
     },
   };
 
+  const charts = [
+    {
+      label: "Offspring Monitored by Municipality",
+      content: (
+        <>
+          {chartData.municipalityData.datasets.length > 0 && (
+            <Bar data={chartData.municipalityData} options={chartOptions} />
+          )}{" "}
+        </>
+      ),
+      style: "col-span-2",
+    },
+    {
+      label: "Offspring Distribution by Species",
+      content: (
+        <>
+          {" "}
+          {chartData.speciesData.datasets.length > 0 && (
+            <Pie data={chartData.speciesData} options={chartOptions} />
+          )}
+        </>
+      ),
+      style: "col-span-2",
+    },
+    {
+      label: "Offspring Monitoring Over Time",
+      content: (
+        <>
+          {" "}
+          {chartData.timeData.datasets.length > 0 && (
+            <Line data={chartData.timeData} options={chartOptions} />
+          )}
+        </>
+      ),
+      style: "col-span-2",
+    },
+  ];
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-center text-2xl mb-4">Offspring Monitoring</h1>
-
-      {/* Bar Chart - Municipality Data */}
-      <div className="mb-10">
-        <h2 className="text-lg font-bold mb-2">Offspring Monitored by Municipality</h2>
-        {chartData.municipalityData.datasets.length > 0 && (
-          <Bar data={chartData.municipalityData} options={chartOptions} />
-        )}
-      </div>
-
-      {/* Pie Chart - Species Data */}
-      <div className="mb-10">
-        <h2 className="text-lg font-bold mb-2">Offspring Distribution by Species</h2>
-        {chartData.speciesData.datasets.length > 0 && (
-          <Pie data={chartData.speciesData} options={chartOptions} />
-        )}
-      </div>
-
-      {/* Line Chart - Monitoring Activity Over Time */}
-      <div>
-        <h2 className="text-lg font-bold mb-2">Offspring Monitoring Over Time</h2>
-        {chartData.timeData.datasets.length > 0 && (
-          <Line data={chartData.timeData} options={chartOptions} />
-        )}
-      </div>
-    </div>
+    <>
+    <ChartGroup charts={charts} title="Offspring Monitoring Report" />
+    </>
   );
 };
 

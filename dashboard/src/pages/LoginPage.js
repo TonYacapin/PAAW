@@ -135,7 +135,7 @@ const LoginPage = () => {
             </button>
           </div>
         </form>
-        <div className="mt-8 bg-gray-100 p-4 rounded-md">
+        {/* <div className="mt-8 bg-gray-100 p-4 rounded-md">
           <h3 className="text-lg font-semibold text-gray-800">Users for Debugging:</h3>
           <ul className="mt-2 space-y-1 text-sm text-gray-600">
             <li>Email: user@gmail.com | Password: user</li>
@@ -144,7 +144,7 @@ const LoginPage = () => {
             <li>Email: animalhealth@gmail.com | Password: animalhealth</li>
             <li>Email: livestock@gmail.com | Password: livestock</li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );
