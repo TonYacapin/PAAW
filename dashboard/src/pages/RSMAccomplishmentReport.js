@@ -189,12 +189,7 @@ function RSMAccomplishmentReport() {
 
   return (
     <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-y-auto">
-      <button
-        onClick={handlePrint}
-        className="mt-4 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#15432f] transition duration-300"
-      >
-        Print Report
-      </button>
+      
       <div id="printable-content" style={{ display: 'none' }}>
         <PrintableRSMAccomplishmentReport
           selectedYear={selectedYear}
@@ -207,7 +202,7 @@ function RSMAccomplishmentReport() {
           semiAnnualPercentage={semiAnnualPercentage}
         />
       </div>
-      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+      <h1 className="text-xl font-semibold mb-6 text-gray-700">
         Routine Service Monitoring Accomplishment
       </h1>
 
@@ -296,7 +291,7 @@ function RSMAccomplishmentReport() {
       </div>
 
       <div className="mt-8">
-        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
+        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
           <thead>
             <tr className="bg-[#1b5b40] text-white">
               <th className="py-2 px-4 text-left">Activity</th>
@@ -343,6 +338,12 @@ function RSMAccomplishmentReport() {
           </tbody>
         </table>
       </div>
+      <button
+        onClick={handlePrint}
+        className="mt-4 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#123c29] transition duration-300"
+      >
+        Print Report
+      </button>
     </div>
 
   );

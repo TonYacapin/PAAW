@@ -157,15 +157,10 @@ function AccomplishmentReport() {
   };
 
   return (
-    <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-auto">
-      <button
-        onClick={handlePrint}
-        className="mt-2 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#15432f] transition duration-300"
-      >
-        Print Report
-      </button>
+    <div className="p-6 bg-[#FFFAFA] max-h-[70vh]">
+      
       <h1 className="text-xl font-semibold mb-6 text-gray-700">Accomplishment Report</h1>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-7">
 
         {/* Year Selector */}
 
@@ -267,8 +262,8 @@ function AccomplishmentReport() {
 
       </div>
 
-      <div className="overflow-x-auto mt-6 shadow-lg">
-        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
+      <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
           <thead className="bg-darkgreen text-white">
             <tr>
               <th className="py-3 px-4 text-left">Vaccine Type</th>
@@ -313,7 +308,16 @@ function AccomplishmentReport() {
           </tbody>
         </table>
       </div>
+      <div className="mb-4"/>
+      <button
+        onClick={handlePrint}
+        className="mt-2 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#15432f] transition duration-300 justify-end text-right"
+      >
+        Print Report
+      </button>
     </div>
+
+    
   );
 }
 

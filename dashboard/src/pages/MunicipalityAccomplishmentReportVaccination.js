@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+    import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import PrintableMunicipalityAccomplishmentReportVaccination from '../component/PrintComponents/PrintableMunicipalityAccomplishmentReportVaccination';
 
@@ -157,14 +157,9 @@ const MunicipalityAccomplishmentReportVaccination = () => {
 
     return (
         <>
-            <div className="max-h-[55vh] scrollbar-hide">
+            <div className="max-h-[70vh] scrollbar-hide">
 
-                <button
-                    onClick={handlePrint}
-                    className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#155724] transition"
-                >
-                    Print Report
-                </button>
+                
                 {/* Hidden printable content */}
                 <div id="printable-content" style={{ display: "none" }}>
                     <PrintableMunicipalityAccomplishmentReportVaccination
@@ -285,6 +280,13 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                         </div>
                     )}
                 </div>
+
+                <button
+                    onClick={handlePrint}
+                    className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
+                >
+                    Print Report
+                </button>
 
 
             </div>

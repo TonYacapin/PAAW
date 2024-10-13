@@ -112,12 +112,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
     return (
         <>
             <div className="max-h-[55vh] overflow-y-hidden">
-                <button
-                    onClick={handlePrint}
-                    className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#155724] transition"
-                >
-                    Print Report
-                </button>
+                
 
                 <div id="printable-content" style={{ display: "none" }}>
                     <PrintableMunicipalityAccomplishmentReportRabies
@@ -203,6 +198,13 @@ const MunicipalityAccomplishmentReportRabies = () => {
                         </table>
                     </div>
                 </div>
+
+                <button
+                    onClick={handlePrint}
+                    className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
+                >
+                    Print Report
+                </button>
             </div>
 
         </>

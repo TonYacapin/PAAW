@@ -114,14 +114,7 @@ function RabiesVaccinationAccomplishmentReport() {
     <div className="p-6 bg-[#FFFAFA] h-[55vh]">
 
       {/* Button to trigger print */}
-      <div className="mb-4">
-        <button
-          onClick={handlePrint}
-          className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#155724] transition"
-        >
-          Print Report
-        </button>
-      </div>
+      
 
       {/* Hidden content for printing */}
       <div id="printable-content" style={{ display: 'none' }}>
@@ -135,7 +128,7 @@ function RabiesVaccinationAccomplishmentReport() {
         />
       </div>
 
-      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
+      <h1 className="text-xl font-semibold text-gray-700 mb-5">
         Rabies Vaccination Accomplishment Report
       </h1>
 
@@ -229,6 +222,15 @@ function RabiesVaccinationAccomplishmentReport() {
           </tbody>
         </table>
 
+      </div>
+
+      <div className="mt-5">
+        <button
+          onClick={handlePrint}
+          className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition"
+        >
+          Print Report
+        </button>
       </div>
     </div>
   );

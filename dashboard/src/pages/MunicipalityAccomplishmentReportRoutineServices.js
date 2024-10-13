@@ -168,14 +168,9 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
 
   return (
     <>
-      <div className="max-h-[55vh]">
+      <div className="max-h-[70vh]">
         <h1 className="text-xl font-semibold text-gray-700">
-          <button
-            onClick={handlePrint}
-            className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#155724] transition"
-          >
-            Print Report
-          </button>
+          
 
           <div id="printable-content" style={{ display: "none" }}>
             <PrintableMunicipalityAccomplishmentReportRoutineServices
@@ -185,10 +180,10 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
               selectedSpecies={selectedSpecies}
               semiAnnualTargets={semiAnnualTargets}
             />
-          </div>
+            </div>
+       
 
-
-          Municipality Routine Services Accomplishment Report
+            Municipality Routine Services Accomplishment Report
         </h1>
 
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -336,6 +331,12 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
             </div>
           )}
         </div>
+        <button
+            onClick={handlePrint}
+            className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
+          >
+            Print Report
+          </button>
       </div>
 
     </>
