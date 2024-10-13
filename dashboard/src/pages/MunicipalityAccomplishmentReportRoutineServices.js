@@ -188,11 +188,11 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
 
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
           <form className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               <div>
                 <label
                   htmlFor="year"
-                  className="block text-sm font-medium text-gray-700"
+                  className="text-xl font-semibold text-[#1b5b40] mb-2"
                 >
                   Year
                 </label>
@@ -202,13 +202,13 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   value={selectedYear}
                   min="2000" // Assuming a reasonable minimum year
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 />
               </div>
               <div>
                 <label
                   htmlFor="month"
-                  className="block text-sm font-medium text-gray-700"
+                  className="text-xl font-semibold text-[#1b5b40] mb-2"
                 >
                   Month
                 </label>
@@ -216,7 +216,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   id="month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 >
                   {[...Array(12)].map((_, i) => (
                     <option key={i + 1} value={i + 1}>
@@ -230,7 +230,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
               <div>
                 <label
                   htmlFor="species"
-                  className="block text-sm font-medium text-gray-700"
+                  className="text-xl font-semibold text-[#1b5b40] mb-2"
                 >
                   Species
                 </label>
@@ -238,7 +238,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   id="species"
                   value={selectedSpecies}
                   onChange={(e) => setSelectedSpecies(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 >
                   <option value="Swine">Swine</option>
                   <option value="Poultry">Poultry</option>

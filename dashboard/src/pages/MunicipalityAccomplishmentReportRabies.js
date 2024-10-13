@@ -111,7 +111,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
 
     return (
         <>
-            <div className="max-h-[55vh] overflow-y-hidden">
+            <div className="max-h-[70vh] overflow-y-hidden">
                 
 
                 <div id="printable-content" style={{ display: "none" }}>
@@ -125,21 +125,21 @@ const MunicipalityAccomplishmentReportRabies = () => {
                 <h1 className="text-xl font-semibold text-gray-700">
                     Municipality Rabies Vaccination Accomplishment Report
                 </h1>
-                <div className="p-4">
-                    <div className="mb-4">
-                        <label className="mr-2">Year:</label>
+                <div className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
+                    <div className="mb-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+                        <label className="text-xl font-semibold text-[#1b5b40] mb-2">Year:</label>
                         <input
                             type="number"
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
-                            className="border rounded px-2 py-1 mr-4"
+                            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                         />
 
-                        <label className="mr-2">Month:</label>
+                        <label className="text-xl font-semibold text-[#1b5b40] mb-2">Month:</label>
                         <select
                             value={month}
                             onChange={(e) => setMonth(e.target.value)}
-                            className="border rounded px-2 py-1 mr-4"
+                            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                         >
                             {monthNames.map((name, index) => (
                                 <option key={index + 1} value={index + 1}>{name}</option>

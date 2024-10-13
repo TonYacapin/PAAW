@@ -178,22 +178,22 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     <div className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                             <div>
-                                <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
+                                <label htmlFor="year" className="text-xl font-semibold text-[#1b5b40] mb-2">Year</label>
                                 <input
                                     type="number"
                                     id="year"
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[ffe356] text-[#252525]"
+                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 />
                             </div>
                             <div>
-                                <label htmlFor="month" className="block text-sm font-medium text-gray-700">Month</label>
+                                <label htmlFor="month" className="text-xl font-semibold text-[#1b5b40] mb-2">Month</label>
                                 <select
                                     id="month"
                                     value={selectedMonth}
                                     onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 >
                                     {[...Array(12)].map((_, i) => (
                                         <option key={i + 1} value={i + 1}>
@@ -203,12 +203,12 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="species" className="block text-sm font-medium text-gray-700">Species</label>
+                                <label htmlFor="species" className="text-xl font-semibold text-[#1b5b40] mb-2">Species</label>
                                 <select
                                     id="species"
                                     value={selectedSpecies}
                                     onChange={(e) => setSelectedSpecies(e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 >
                                     <option value="Carabao">Carabao</option>
                                     <option value="Cattle">Cattle</option>
