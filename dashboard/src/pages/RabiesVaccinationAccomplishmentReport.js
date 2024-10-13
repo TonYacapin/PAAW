@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
+import PrintableRabiesVaccinationReport from "../component/PrintComponents/PrintableRabiesVaccinationReport";
 
 function RabiesVaccinationAccomplishmentReport() {
   const [immunizationData, setImmunizationData] = useState({
@@ -10,7 +11,7 @@ function RabiesVaccinationAccomplishmentReport() {
   });
   const [targets, setTargets] = useState({
     quarterly: 0,
-    semiAnnual: 0
+    semiAnnual: 0,
   });
   const [quarterlyPercentage, setQuarterlyPercentage] = useState(null);
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
@@ -24,13 +25,16 @@ function RabiesVaccinationAccomplishmentReport() {
   const fetchData = async () => {
     try {
       const [immunizationResponse, targetsResponse] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/rabies-report/entry-count?year=${selectedYear}&month=${selectedMonth}`),
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`)
+        axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/rabies-report/entry-count?year=${selectedYear}&month=${selectedMonth}`
+        ),
+        axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`
+        ),
       ]);
 
       setImmunizationData(immunizationResponse.data);
       processTargets(targetsResponse.data);
-
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -42,11 +46,13 @@ function RabiesVaccinationAccomplishmentReport() {
       return;
     }
 
-    const rabiesTarget = targetsData.targets.find(target => target.Type === "No. of dogs immunized against rabies and registered");
+    const rabiesTarget = targetsData.targets.find(
+      (target) => target.Type === "No. of dogs immunized against rabies and registered"
+    );
     if (rabiesTarget) {
       setTargets({
         quarterly: rabiesTarget.target,
-        semiAnnual: rabiesTarget.semiAnnualTarget
+        semiAnnual: rabiesTarget.semiAnnualTarget,
       });
     }
   };
@@ -78,11 +84,61 @@ function RabiesVaccinationAccomplishmentReport() {
     setSelectedMonth(Number(e.target.value));
   };
 
+  const handlePrint = () => {
+    const printContent = document.getElementById("printable-content");
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Rabies Vaccination Accomplishment Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            th { background-color: #1b5b40; color: white; }
+          </style>
+        </head>
+        <body>
+          <h1>Rabies Vaccination Accomplishment Report</h1>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   return (
-    <div className="p-6 bg-[#FFFAFA] h-[55vh] ">
-      <h1 className="text-xl font-semibold mb-6 text-gray-700">
+    <div className="p-6 bg-[#FFFAFA] h-[55vh]">
+
+      {/* Button to trigger print */}
+      <div className="mb-4">
+        <button
+          onClick={handlePrint}
+          className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#155724] transition"
+        >
+          Print Report
+        </button>
+      </div>
+
+      {/* Hidden content for printing */}
+      <div id="printable-content" style={{ display: 'none' }}>
+        <PrintableRabiesVaccinationReport
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          immunizationData={immunizationData}
+          targets={targets}
+          quarterlyPercentage={quarterlyPercentage}
+          semiAnnualPercentage={semiAnnualPercentage}
+        />
+      </div>
+
+      <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
         Rabies Vaccination Accomplishment Report
       </h1>
+
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
@@ -118,10 +174,9 @@ function RabiesVaccinationAccomplishmentReport() {
           </select>
         </div>
 
+        {/* Targets and percentage display */}
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Quarterly Target
-          </h2>
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
           <input
             type="number"
             value={targets.quarterly}
@@ -136,9 +191,7 @@ function RabiesVaccinationAccomplishmentReport() {
         </div>
 
         <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
-            Semi-annual Target
-          </h2>
+          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
           <input
             type="number"
             value={targets.semiAnnual}
@@ -153,27 +206,29 @@ function RabiesVaccinationAccomplishmentReport() {
         </div>
       </div>
 
-      <div className="mt-8">
+      <div  className="mt-8" >
+        {/* Table for displaying immunization data */}
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
           <thead>
             <tr className="bg-[#1b5b40] text-white">
-              <th className="py-2 px-4 text-left">Activity</th>
-              <th className="py-2 px-4 text-left">Previous Month</th>
-              <th className="py-2 px-4 text-left">This Month</th>
-              <th className="py-2 px-4 text-left">Combined</th>
-              <th className="py-2 px-4 text-left">Total Accomplishment</th>
+              <th className="py-2 px-2 text-left border border-[#000]">Activity</th>
+              <th className="py-2 px-2 text-left border border-[#000]">Previous Month</th>
+              <th className="py-2 px-2 text-left border border-[#000]">This Month</th>
+              <th className="py-2 px-2 text-left border border-[#000]">Combined</th>
+              <th className="py-2 px-2 text-left border border-[#000]">Total Accomplishment</th>
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-[#1b5b40] hover:bg-[#f9f9f9]">
-              <td className="py-2 px-4 text-[#252525]">No. of Dogs immunized against Rabies and Registered</td>
-              <td className="py-2 px-4 text-[#252525]">{immunizationData.previousMonthCount}</td>
-              <td className="py-2 px-4 text-[#252525]">{immunizationData.thisMonthCount}</td>
-              <td className="py-2 px-4 text-[#252525]">{immunizationData.previousMonthCount + immunizationData.thisMonthCount}</td>
-              <td className="py-2 px-4 text-[#252525]">{immunizationData.totalCount}</td>
+            <tr>
+              <td className="border border-[#000]">No. of Dogs immunized against Rabies and Registered</td>
+              <td className="border border-[#000]">{immunizationData.previousMonthCount}</td>
+              <td className="border border-[#000]">{immunizationData.thisMonthCount}</td>
+              <td className="border border-[#000]">{immunizationData.previousMonthCount + immunizationData.thisMonthCount}</td>
+              <td className="border border-[#000]">{immunizationData.totalCount}</td>
             </tr>
           </tbody>
         </table>
+
       </div>
     </div>
   );

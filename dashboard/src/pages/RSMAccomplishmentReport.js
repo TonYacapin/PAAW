@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { format, isSameMonth, subMonths } from "date-fns";
+import PrintableRSMAccomplishmentReport from "../component/PrintComponents/PrintableRSMAccomplishmentReport";
 
 function RSMAccomplishmentReport() {
   const [activityData, setActivityData] = useState([]);
@@ -173,8 +174,39 @@ function RSMAccomplishmentReport() {
       ? activityData
       : activityData.filter((data) => data.activity === selectedActivity);
 
+  const printRef = useRef();
+
+  const handlePrint = () => {
+    const printContent = document.getElementById("printable-content");
+    const windowPrint = window.open("", "", "left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0");
+    windowPrint.document.write(printContent.innerHTML);
+    windowPrint.document.close();
+    windowPrint.focus();
+    windowPrint.print();
+    windowPrint.close();
+  };
+
+
   return (
     <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-y-auto">
+      <button
+        onClick={handlePrint}
+        className="mt-4 bg-[#1b5b40] text-white py-2 px-4 rounded hover:bg-[#15432f] transition duration-300"
+      >
+        Print Report
+      </button>
+      <div id="printable-content" style={{ display: 'none' }}>
+        <PrintableRSMAccomplishmentReport
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          selectedActivity={selectedActivity}
+          filteredActivityData={filteredActivityData}
+          totals={totals}
+          targets={targets}
+          quarterlyPercentage={quarterlyPercentage}
+          semiAnnualPercentage={semiAnnualPercentage}
+        />
+      </div>
       <h1 className="text-3xl font-extrabold mb-6 text-[#1b5b40]">
         Routine Service Monitoring Accomplishment
       </h1>
