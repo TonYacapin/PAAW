@@ -20,7 +20,7 @@ export default function ChartGroup(props) {
       <CardBox>
           <>
             <h1 className="md:text-2xl font-bold mb-6">{props.title}</h1>
-            <div className="lg:max-h-[100vh] overflow-auto">
+            <div className="lg:max-h-[100vh]">
               {props.others}
               <div
                 className={`grid ${
@@ -37,7 +37,7 @@ export default function ChartGroup(props) {
                     } ${selectedChart === index ? "col-span-4" : "col-span-2"}`}
                     onClick={() => handleOpenChart(index)}
                   >
-                    <div className="flex flex-row ">
+                    <div className="flex flex-row">
                       <h3 className="md:text-lg font-bold mb-6">
                         {chart.label}
                       </h3>
