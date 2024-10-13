@@ -29,8 +29,6 @@ import VaccinationReportChart from "../../component/VaccinationReportChart";
 import RoutineServicesMonitoringReportChart from "../../component/RoutineServicesMonitoringReportChart ";
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
 
-
-
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
 import ReportIcon from "@mui/icons-material/Report";
@@ -45,6 +43,7 @@ import { Inventory, Outbox } from "@mui/icons-material";
 import UserManagement from "../Admin Pages/UserManagement";
 import UpgradingServices from "../UpgradingServices";
 import OffspringMonitoring from "../OffspringMonitoring";
+import { useMediaQuery } from "@mui/material";
 
 export const FilterContext = createContext(null);
 
@@ -61,7 +60,7 @@ function Home() {
     dateRange: [null, null],
     municipality: "",
   });
-  const [showAll, setShowAll] = useState(false); // State to toggle between all data and filtered data
+  const [showAll, setShowAll] = useState(true); // State to toggle between all data and filtered data
 
   // const [filterOptions, setFilterOptions] = useState({ filters, showAll });
 
@@ -153,14 +152,10 @@ function Home() {
     { value: "rabiesHistory", label: "Rabies History Charts" },
     { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
     { value: "UpgradingServices", label: "Upgrading Services Charts" },
-    { value: "TechnicianQuarterly", label: "Technician Quarterly Calf Drop Charts" },
-
-
-
-
-
-
-
+    {
+      value: "TechnicianQuarterly",
+      label: "Technician Quarterly Calf Drop Charts",
+    },
   ];
 
   const getChartOptions = () => {
@@ -205,11 +200,15 @@ function Home() {
             <RoutineServicesMonitoringReportChart />
           )}
           {selectedCharts.includes("rabiesHistory") && <RabiesHistoryCharts />}
-          {selectedCharts.includes("offSringMonitoring") && <OffSpringMonitoringChart />}
-          {selectedCharts.includes("UpgradingServices") && <UpgradingServicesChart />}
-          {selectedCharts.includes("TechnicianQuarterly") && <TechnicianQuarterlyCharts />}
-
-
+          {selectedCharts.includes("offSringMonitoring") && (
+            <OffSpringMonitoringChart />
+          )}
+          {selectedCharts.includes("UpgradingServices") && (
+            <UpgradingServicesChart />
+          )}
+          {selectedCharts.includes("TechnicianQuarterly") && (
+            <TechnicianQuarterlyCharts />
+          )}
         </div>
       );
     }
@@ -221,7 +220,7 @@ function Home() {
     );
   };
 
-  const renderForms = () => {
+  function renderForms() {
     const buttonClasses =
       "w-full   flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
     // hendre: sm:w-3/6 sm:h-40 sm:flex-col sm:flex-wrap
@@ -345,11 +344,12 @@ function Home() {
                 <div className="space-y-2">
                   <button
                     onClick={() => openModalWithContent("AccomplishmentReport")}
-                    className={buttonClasses}
+                    className={buttonClasses + " lg:block hidden text-left"}
                   >
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment
                     Report
                   </button>
+
                   <button
                     onClick={() =>
                       openModalWithContent("RoutineServicesMonitoringReport")
@@ -416,17 +416,21 @@ function Home() {
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
-                  
-                  <button onClick={() =>
-                    openModalWithContent("CalfDrop")
-                  }
-                    className={buttonClasses} >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+
+                  <button
+                    onClick={() => openModalWithContent("CalfDrop")}
+                    className={buttonClasses}
+                  >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
+                    Drop Report
                   </button>
 
-                  <button onClick={() =>
-                    openModalWithContent("AccomplishmentReportLivestock")
-                  } className={buttonClasses}>
+                  <button
+                    onClick={() =>
+                      openModalWithContent("AccomplishmentReportLivestock")
+                    }
+                    className={buttonClasses  + " lg:block hidden text-left"}
+                  >
                     <AssignmentIcon className="mr-2" /> Generate Monthly
                     Accomplishment Reports
                   </button>
@@ -471,7 +475,7 @@ function Home() {
       default:
         return null;
     }
-  };
+  }
 
   const customSelectStyles = {
     control: (provided) => ({
@@ -531,82 +535,83 @@ function Home() {
           selectedDivision={selectedDivision}
         />
         {/* Add relative positioning */}
-        <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-scroll max-h-[100vh]">
+        <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col-reverse lg:flex-row w-full">
-            {/* Left Side - Charts */}
-            <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-left">
-                Select Charts to Display
-              </h3>
+            {useMediaQuery("(min-width:1024px)") && (
+              <>
+                {" "}
+                {/* Left Side - Charts */}
+                <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-left">
+                    Select Charts to Display
+                  </h3>
 
-              {/* Chart Selection Dropdown */}
-              <div className="grid grid-cols-5 gap-5">
-                <div className="w-full col-span-4 z-10">
-                  {" "}
-                  {/* Increase z-index for dropdown */}
-                  <Select
-                    isMulti
-                    options={getChartOptions()}
-                    onChange={handleChartSelect}
-                    styles={customSelectStyles}
-                    placeholder="Select charts..."
-                    className="text-sm sm:text-base z-0"
-                  />
-                </div>
-                <button
-                  className="w-full flex items-center col-span-1 text-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                  onClick={() => toggleFilter()}
-                >
-                  Apply Filters
-                </button>
-                {openFilters && (
-                  <div className="sticky grow col-span-5 flex flex-row lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col gap-x-3">
-                    <label className="mb-2 text-lg ">
-                      <div className="font-bold">Start Date:</div>
-                      <input
-                        className="border"
-                        type="date"
-                        name="startDate"
-                        onChange={handleDateChange}
-                        disabled={showAll}
+                  {/* Chart Selection Dropdown */}
+                  <div className="grid grid-cols-5 gap-5">
+                    <div className="w-full col-span-4 z-10">
+                      {" "}
+                      {/* Increase z-index for dropdown */}
+                      <Select
+                        isMulti
+                        options={getChartOptions()}
+                        onChange={handleChartSelect}
+                        styles={customSelectStyles}
+                        placeholder="Select charts..."
+                        className="text-sm sm:text-base z-0"
                       />
-                    </label>
-                    <label className="mb-2 text-lg">
-                      <div className="font-bold">End Date:</div>
-
-                      <input
-                        className="border"
-                        type="date"
-                        name="endDate"
-                        onChange={handleDateChange}
-                        disabled={showAll}
-                      />
-                    </label>
-                    <label className="mb-2 text-lg">
-                      <div className="font-bold">Municipality:</div>
-                      <input
-                        className="border"
-                        type="text"
-                        value={filters.municipality}
-                        onChange={handleMunicipalityChange}
-                        disabled={showAll}
-                      />
-                    </label>
+                    </div>
                     <button
-                      className="w-full bg-darkgreen text-white rounded hover:bg-darkergreen"
-                      onClick={toggleShowAll}
+                      className="w-full flex items-center col-span-1 text-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                      onClick={() => {toggleFilter(); toggleShowAll();}}
                     >
-                      {showAll ? "Enable" : "Disable"}
+                      Apply Filters
                     </button>
+                    {openFilters && (
+                      <div className="col-span-5 flex flex-row lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col gap-x-3">
+                        <label className="mb-2 text-lg ">
+                          <div className="font-bold">Start Date:</div>
+                          <input
+                            className="border"
+                            type="date"
+                            name="startDate"
+                            onChange={handleDateChange}
+                            disabled={showAll}
+                          />
+                        </label>
+                        <label className="mb-2 text-lg">
+                          <div className="font-bold">End Date:</div>
+
+                          <input
+                            className="border"
+                            type="date"
+                            name="endDate"
+                            onChange={handleDateChange}
+                            disabled={showAll}
+                          />
+                        </label>
+                        <label className="mb-2 text-lg">
+                          <div className="font-bold">Municipality:</div>
+                          <input
+                            className="border"
+                            type="text"
+                            value={filters.municipality}
+                            onChange={handleMunicipalityChange}
+                            disabled={showAll}
+                          />
+                        </label>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <FilterContext.Provider value={{ filters, showAll }}>
-                {/* Conditional Rendering for Charts */}
-                <div className="w-full">{renderCharts()}</div>
-              </FilterContext.Provider>
-            </div>
+                  <FilterContext.Provider value={{ filters, showAll }}>
+                    {/* Conditional Rendering for Charts */}
+                    <div className="w-full h-[70vh] overflow-auto">
+                      {renderCharts()}
+                    </div>
+                  </FilterContext.Provider>
+                </div>
+              </>
+            )}
 
             {/* Right Side - Forms */}
             <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 lg:mt-8 lg:mb-5 lg:h-screen">
