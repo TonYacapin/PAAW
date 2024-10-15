@@ -97,6 +97,7 @@ export default function StepperComponent(props) {
 
   const handleNext = () => {
     let newSkipped = skipped;
+    // Scroll to top only for mobile
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -105,11 +106,6 @@ export default function StepperComponent(props) {
     const nextStep = activeStep + 1;
     setActiveStep(nextStep);
     setSkipped(newSkipped);
-
-    // Scroll to top only for mobile
-    if (isMobile && modalContentRef.current) {
-      modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
 
     // Call onStepChange callback
     if (props.onStepChange) {
@@ -121,73 +117,78 @@ export default function StepperComponent(props) {
     const prevStep = activeStep - 1;
     setActiveStep(prevStep);
 
-    // Scroll to top only for mobile
-    if (isMobile && modalContentRef.current) {
-      modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
     // Call onStepChange callback
     if (props.onStepChange) {
       props.onStepChange(prevStep);
     }
   };
 
+  function timedDisable(params) {
+    setTimeout(() => {
+      if (modalContentRef.current) {
+        modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 0);
+    return params;
+  }
+
   return (
-    <Box ref={modalContentRef} sx={{ width: "100%", overflowY: "auto", maxHeight: "500px" }}>
+    <Box
+      ref={modalContentRef}
+      sx={{ width: "100%", overflowY: "auto", maxHeight: "60vh" }}
+    >
       {useMediaQuery("(min-width:600px)") ? (
         <>
           {props.renderStepContent(activeStep)}
-          <React.Fragment>
-            <Box
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              pt: 2,
+              marginBottom: "2rem",
+              marginTop: "2rem",
+            }}
+          >
+            <Button
+              variant="contained"
+              disabled={timedDisable(activeStep === 0)}
+              onClick={handleBack}
+              sx={{ mr: 1, bgcolor: "#1b5b40", color: "#fffafa" }}
+            >
+              <KeyboardArrowLeft /> Back
+            </Button>
+            <Stepper
+              activeStep={activeStep}
+              connector={<QontoConnector />}
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                pt: 2,
-                marginBottom: "2rem",
-                marginTop: "2rem",
+                flex: "1 1 auto",
+                width: "20%",
+                paddingLeft: "10rem",
+                paddingRight: "10rem",
+                justifyItems: "center",
               }}
             >
-              <Button
-                variant="contained"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1, bgcolor: "#1b5b40", color: "#fffafa" }}
-              >
-                <KeyboardArrowLeft /> Back
-              </Button>
-              <Stepper
-                activeStep={activeStep}
-                connector={<QontoConnector />}
-                sx={{
-                  flex: "1 1 auto",
-                  width: "20%",
-                  paddingLeft: "10rem",
-                  paddingRight: "10rem",
-                  justifyItems: "center",
-                }}
-              >
-                {props.pages.map((page, index) => {
-                  const stepProps = {};
-                  if (isStepSkipped(index)) {
-                    stepProps.completed = false;
-                  }
-                  return (
-                    <Step key={index} {...stepProps}>
-                      <StepLabel StepIconComponent={QontoStepIcon}></StepLabel>
-                    </Step>
-                  );
-                })}
-              </Stepper>
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                disabled={activeStep === props.pages.length - 1}
-                sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
-              >
-                Next <KeyboardArrowRight />
-              </Button>
-            </Box>
-          </React.Fragment>
+              {props.pages.map((page, index) => {
+                const stepProps = {};
+                if (isStepSkipped(index)) {
+                  stepProps.completed = false;
+                }
+                return (
+                  <Step key={index} {...stepProps}>
+                    <StepLabel StepIconComponent={QontoStepIcon} onClick={() => setActiveStep(index)}></StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              disabled={timedDisable(activeStep === props.pages.length - 1)}
+              sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
+            >
+              Next <KeyboardArrowRight />
+            </Button>
+          </Box>
         </>
       ) : (
         <>
@@ -204,7 +205,7 @@ export default function StepperComponent(props) {
               <Button
                 size="small"
                 onClick={handleNext}
-                disabled={activeStep === props.pages.length - 1}
+                disabled={timedDisable(activeStep === props.pages.length - 1)}
                 sx={{ color: "#fffafa" }}
               >
                 Next
@@ -215,7 +216,7 @@ export default function StepperComponent(props) {
               <Button
                 size="small"
                 onClick={handleBack}
-                disabled={activeStep === 0}
+                disabled={timedDisable(activeStep === 0, 500)}
                 sx={{ color: "#fffafa" }}
               >
                 <KeyboardArrowLeft />

@@ -107,7 +107,7 @@ function Home() {
         return <RoutineServicesMonitoringReport />;
       case "DiseaseInvestigationForm":
         return <DiseaseInvestigationForm />;
-      case "RequisisionSlip":
+      case "RequisitionSlip":
         return <RequisitionIssueSlip />;
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
@@ -324,7 +324,7 @@ function Home() {
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => setSelectedDivision("user")}
+                onClick={() => openModalWithContent("RequisitionSlip")}
               >
                 <Outbox className="mr-2" /> Manage Requisition Forms
               </button>
@@ -349,7 +349,7 @@ function Home() {
                 Requisition Forms
               </h4>
               <div className="space-y-2">
-                <button className={buttonClasses}>
+                <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
                   <Outbox className="mr-2" /> Requisition Form
                 </button>
               </div>
@@ -382,24 +382,7 @@ function Home() {
                   Reports
                 </h4>
                 <div className="space-y-2">
-                  <button
-                    onClick={() => openModalWithContent("AccomplishmentReport")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
-                    Report
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      openModalWithContent("RoutineServicesMonitoringReport")
-                    }
-                    className={buttonClasses}
-                  >
-                    <AssignmentIcon className="mr-2" /> Routine Service
-                    Monitoring Reports
-                  </button>
-                  <button
+                <button
                     onClick={() =>
                       openModalWithContent("DiseaseInvestigationForm")
                     }
@@ -416,6 +399,22 @@ function Home() {
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Rabies History
+                  </button>
+                  <button
+                    onClick={() =>
+                      openModalWithContent("RoutineServicesMonitoringReport")
+                    }
+                    className={buttonClasses}
+                  >
+                    <AssignmentIcon className="mr-2" /> Routine Service
+                    Monitoring Reports
+                  </button>
+                  <button
+                    onClick={() => openModalWithContent("AccomplishmentReport")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
+                    Report
                   </button>
                 </div>
               </div>
@@ -434,7 +433,7 @@ function Home() {
                   Requisition Forms
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
+                  <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
                     <ManageAccountsIcon className="mr-2" /> Requisition Form
                   </button>
                 </div>

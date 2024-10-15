@@ -139,20 +139,20 @@ function RSMAccomplishmentReport() {
       const totalQuarterly = targets.totalTarget || 0;
       const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
  
-      setQuarterlyPercentage(totalQuarterly === 0 ? "No target set" : `${((totals.combined / totalQuarterly) * 100).toFixed(2)}%`);
-      setSemiAnnualPercentage(totalSemiAnnual === 0 ? "No target set" : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`);
+      setQuarterlyPercentage(totalQuarterly === 0 ? "NA" : `${((totals.combined / totalQuarterly) * 100).toFixed(2)}%`);
+      setSemiAnnualPercentage(totalSemiAnnual === 0 ? "NA" : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`);
     } else {
       const target = targets[selectedActivity];
       if (!target) {
-        setQuarterlyPercentage("No target set");
-        setSemiAnnualPercentage("No target set");
+        setQuarterlyPercentage("NA");
+        setSemiAnnualPercentage("NA");
         return;
       }
  
       const vaccineTotal = filteredActivityData.reduce((sum, species) => sum + species.combined, 0);
  
-      setQuarterlyPercentage(target.quarterly > 0 ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%` : "No target set");
-      setSemiAnnualPercentage(target.semiAnnual > 0 ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%` : "No target set");
+      setQuarterlyPercentage(target.quarterly > 0 ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%` : "NA");
+      setSemiAnnualPercentage(target.semiAnnual > 0 ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%` : "NA");
     }
   };
  
@@ -188,7 +188,7 @@ function RSMAccomplishmentReport() {
  
  
   return (
-    <div className="p-6 bg-[#FFFAFA] max-h-[55vh] overflow-y-auto">
+    <div className="p-6 bg-[#FFFAFA]">
      
       <div id="printable-content" style={{ display: 'none' }}>
         <PrintableRSMAccomplishmentReport
@@ -206,15 +206,15 @@ function RSMAccomplishmentReport() {
         Routine Service Monitoring Accomplishment
       </h1>
  
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-7">
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
             Select Year
           </h2>
           <select
             value={selectedYear}
             onChange={handleYearChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
           >
             {yearOptions.map((year) => (
               <option key={year} value={year}>
@@ -224,14 +224,14 @@ function RSMAccomplishmentReport() {
           </select>
         </div>
  
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
             Select Month
           </h2>
           <select
             value={selectedMonth}
             onChange={handleMonthChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
           >
             {monthOptions.map((month) => (
               <option key={month.value} value={month.value}>
@@ -241,14 +241,14 @@ function RSMAccomplishmentReport() {
           </select>
         </div>
  
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
             Select Activity
           </h2>
           <select
             value={selectedActivity}
             onChange={handleActivityChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
           >
             <option value="All">All</option>
             {activityOptions.map((activity) => (
@@ -259,33 +259,37 @@ function RSMAccomplishmentReport() {
           </select>
         </div>
  
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">Quarterly Target</h2>
           <input
             type="number"
             value={selectedActivity === 'All'
               ? targets.totalTarget || ''
               : targets[selectedActivity]?.quarterly || ''}
             disabled
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-            Percentage: {quarterlyPercentage}
-          </p>
+
         </div>
  
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">Semi-annual Target</h2>
           <input
             type="number"
             value={selectedActivity === 'All'
               ? targets.totalSemiAnnualTarget || ''
               : targets[selectedActivity]?.semiAnnual || ''}
             disabled
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-            Percentage: {semiAnnualPercentage}
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+        <p className="text-md font-semibold text-gray-700 mb-2 text-center">
+            Semi Annual Percentage: {semiAnnualPercentage}
+          </p>
+        <p className="text-md font-semibold text-gray-700 mb-2 text-center">
+            Quartely Percentage: {quarterlyPercentage}
           </p>
         </div>
       </div>
