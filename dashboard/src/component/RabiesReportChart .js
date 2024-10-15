@@ -28,10 +28,8 @@ const RabiesReportChart = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const filterOptions = useContext(FilterContext);
-  // const [filters, setFilters] = useState({
-  //   dateRange: [null, null],
-  //   municipality: "",
-  // });
+  const [selectedChart, setSelectedChart] = useState(null);
+  const [analysis, setAnalysis] = useState(""); // State for storing analysis
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,9 +39,7 @@ const RabiesReportChart = () => {
         );
         let reports = response.data;
 
-        // If "Show All" is selected, skip applying filters
         if (!filterOptions.showAll) {
-          // Apply filters
           if (filterOptions.filters.dateRange[0] && filterOptions.filters.dateRange[1]) {
             reports = reports.filter((report) => {
               const reportDate = new Date(report.dateReported).getTime();
@@ -61,96 +57,189 @@ const RabiesReportChart = () => {
           }
         }
 
-        // Data structures for charts
         const municipalityCounts = {};
         const vaccineCounts = {};
         const dateCounts = {};
         const sexCounts = {};
+        const speciesCounts = {};
+        const vaccineSourceCounts = {};
+        const ageCounts = {};
+        const barangayCounts = {};
+        const clientGenderCounts = {};
 
-        // Process each filtered report
         reports.forEach((report) => {
-          const { municipality, vaccineUsed, entries } = report;
+          const { municipality, vaccineUsed, vaccineSource, entries, dateReported } = report;
 
-          // Municipality and vaccine data
-          if (!municipalityCounts[municipality])
-            municipalityCounts[municipality] = 0;
+          if (!municipalityCounts[municipality]) municipalityCounts[municipality] = 0;
           if (!vaccineCounts[vaccineUsed]) vaccineCounts[vaccineUsed] = 0;
+          if (!vaccineSourceCounts[vaccineSource]) vaccineSourceCounts[vaccineSource] = 0;
+
+          const reportDate = new Date(dateReported).toLocaleDateString();
+          if (!dateCounts[reportDate]) dateCounts[reportDate] = 0;
+          dateCounts[reportDate] += entries.length;
 
           entries.forEach((entry) => {
-            const date = new Date(entry.date).toLocaleDateString();
-            const sex = entry.clientInfo.gender;
+            const { clientInfo, animalInfo, barangay } = entry;
 
-            // Municipality data
             municipalityCounts[municipality] += 1;
-
-            // Vaccine type data
             vaccineCounts[vaccineUsed] += 1;
+            vaccineSourceCounts[vaccineSource] += 1;
 
-            // Date-based data
-            if (!dateCounts[date]) dateCounts[date] = 0;
-            dateCounts[date] += 1;
+            if (!speciesCounts[animalInfo.species]) speciesCounts[animalInfo.species] = 0;
+            speciesCounts[animalInfo.species] += 1;
 
-            // Sex-based data
-            if (!sexCounts[sex]) sexCounts[sex] = 0;
-            sexCounts[sex] += 1;
+            if (!ageCounts[animalInfo.age]) ageCounts[animalInfo.age] = 0;
+            ageCounts[animalInfo.age] += 1;
+
+            if (!barangayCounts[barangay]) barangayCounts[barangay] = 0;
+            barangayCounts[barangay] += 1;
+
+            if (!sexCounts[animalInfo.sex]) sexCounts[animalInfo.sex] = 0;
+            sexCounts[animalInfo.sex] += 1;
+
+            if (!clientGenderCounts[clientInfo.gender]) clientGenderCounts[clientInfo.gender] = 0;
+            clientGenderCounts[clientInfo.gender] += 1;
           });
         });
 
-        // Prepare chart data
+        const chartOptions = {
+          plugins: {
+            legend: {
+              display: selectedChart !== null,
+            },
+          },
+        };
+
+        // Update chart data
         setData({
-          lineChart: {
+          municipalityChart: {
             labels: Object.keys(municipalityCounts),
-            datasets: [
-              {
-                label: "Vaccinations per Municipality",
-                data: Object.values(municipalityCounts),
-                borderColor: "rgba(75, 192, 192, 1)",
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderWidth: 1,
-              },
-            ],
+            datasets: [{
+              label: "Vaccinations per Municipality",
+              data: Object.values(municipalityCounts),
+              backgroundColor: "#1b5b40",
+            }],
+            options: chartOptions,
           },
-          barChart: {
+          vaccineTypeChart: {
             labels: Object.keys(vaccineCounts),
-            datasets: [
-              {
-                label: "Vaccinations per Vaccine Type",
-                data: Object.values(vaccineCounts),
-                backgroundColor: "rgba(153, 102, 255, 0.6)",
-                borderWidth: 1,
-              },
-            ],
+            datasets: [{
+              label: "Vaccinations per Vaccine Type",
+              data: Object.values(vaccineCounts),
+              backgroundColor: [
+                "#ffe459", // pastelyellow
+                "#e5cd50", // darkerpastelyellow
+                "#1b5b40", // darkgreen
+                "#123c29", // darkergreen
+                "#252525", // black
+              ],
+            }],
+            options: chartOptions,
           },
-          pieChart: {
+          speciesChart: {
+            labels: Object.keys(speciesCounts),
+            datasets: [{
+              label: "Vaccinations by Animal Species",
+              data: Object.values(speciesCounts),
+              backgroundColor: ["#1b5b40", "#ffe459", "#123c29", "#e5cd50"],
+            }],
+            options: chartOptions,
+          },
+          dateReportedChart: {
+            labels: Object.keys(dateCounts),
+            datasets: [{
+              label: "Vaccinations by Date Reported",
+              data: Object.values(dateCounts),
+              borderColor: "#1b5b40",
+              backgroundColor: "rgba(27, 91, 64, 0.2)",
+              fill: true,
+            }],
+            options: chartOptions,
+          },
+          vaccineSourceChart: {
+            labels: Object.keys(vaccineSourceCounts),
+            datasets: [{
+              label: "Vaccinations by Vaccine Source",
+              data: Object.values(vaccineSourceCounts),
+              backgroundColor: ["#1b5b40", "#ffe459", "#123c29"],
+            }],
+            options: chartOptions,
+          },
+          ageChart: {
+            labels: Object.keys(ageCounts),
+            datasets: [{
+              label: "Vaccinations by Animal Age",
+              data: Object.values(ageCounts),
+              backgroundColor: "#123c29",
+            }],
+            options: chartOptions,
+          },
+          barangayChart: {
+            labels: Object.keys(barangayCounts),
+            datasets: [{
+              label: "Vaccinations by Barangay",
+              data: Object.values(barangayCounts),
+              backgroundColor: "#e5cd50",
+            }],
+            options: chartOptions,
+          },
+          animalGenderChart: {
             labels: Object.keys(sexCounts),
-            datasets: [
-              {
-                label: "Vaccinations by Animal Sex",
-                data: Object.values(sexCounts),
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.6)",
-                  "rgba(54, 162, 235, 0.6)",
-                ],
-                borderWidth: 1,
-              },
-            ],
+            datasets: [{
+              label: "Vaccinations by Animal Gender",
+              data: Object.values(sexCounts),
+              backgroundColor: ["#1b5b40", "#ffe459"],
+            }],
+            options: chartOptions,
           },
-          doughnutChart: {
-            labels: Object.keys(vaccineCounts),
-            datasets: [
-              {
-                label: "Vaccine Distribution",
-                data: Object.values(vaccineCounts),
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.6)",
-                  "rgba(54, 162, 235, 0.6)",
-                  "rgba(255, 206, 86, 0.6)",
-                ],
-                borderWidth: 1,
-              },
-            ],
+          clientGenderChart: {
+            labels: Object.keys(clientGenderCounts),
+            datasets: [{
+              label: "Vaccinations by Client Gender",
+              data: Object.values(clientGenderCounts),
+              backgroundColor: ["#1b5b40", "#ffe459"],
+            }],
+            options: chartOptions,
           },
         });
+
+        // Analysis Section
+        const totalVaccinations = Object.values(vaccineCounts).reduce((acc, curr) => acc + curr, 0);
+        const mostVaccinatedMunicipality = Object.keys(municipalityCounts).reduce(
+          (a, b) => (municipalityCounts[a] > municipalityCounts[b] ? a : b),
+          ""
+        );
+        const mostUsedVaccine = Object.keys(vaccineCounts).reduce(
+          (a, b) => (vaccineCounts[a] > vaccineCounts[b] ? a : b),
+          ""
+        );
+        const mostVaccinatedSpecies = Object.keys(speciesCounts).reduce(
+          (a, b) => (speciesCounts[a] > speciesCounts[b] ? a : b),
+          ""
+        );
+        const mostVaccinatedBarangay = Object.keys(barangayCounts).reduce(
+          (a, b) => (barangayCounts[a] > barangayCounts[b] ? a : b),
+          ""
+        );
+        setAnalysis(
+          <>
+            <p>
+              <strong>Total vaccinations:</strong> {totalVaccinations}.
+            </p>
+
+            <p>
+              <strong>Most Vaccinated Municipality:</strong> {mostVaccinatedMunicipality} ({municipalityCounts[mostVaccinatedMunicipality]} vaccinations).
+            </p>
+            <p>
+              <strong>Most used vaccine:</strong> {mostUsedVaccine}.
+            </p>
+            <p>
+              <strong>Most Vaccinated Barangay:</strong> {mostVaccinatedBarangay} ({barangayCounts[mostVaccinatedBarangay]} vaccinations).
+            </p>
+          </>
+        );
+
+
 
         setLoading(false);
       } catch (error) {
@@ -160,39 +249,86 @@ const RabiesReportChart = () => {
     };
 
     fetchData();
-  }, [filterOptions.filters, filterOptions.showAll]); // Reload data if filters or showAll changes
+  }, [filterOptions.filters, filterOptions.showAll, selectedChart]);
 
   if (loading) {
-    return <div>Loading chart data...</div>;
+    return <div className="text-center text-lg py-10">Loading chart data...</div>;
   }
 
   const charts = [
     {
       label: "Vaccinations per Municipality",
-      content: <Line data={data.lineChart} />,
-      style:"col-span-2"
+      content: <Bar data={data.municipalityChart} options={data.municipalityChart.options} />,
+      style: "col-span-2",
     },
     {
       label: "Vaccinations per Vaccine Type",
-      content: <Bar data={data.barChart} />,
-      style:"col-span-2"
+      content: <Pie data={data.vaccineTypeChart} options={data.vaccineTypeChart.options} />,
+      style: "col-span-2",
     },
     {
-      label: "Vaccinations by Animal Sex",
-      content: <Pie data={data.pieChart} />,
-      style:"col-span-2"
+      label: "Vaccinations by Animal Species",
+      content: <Doughnut data={data.speciesChart} options={data.speciesChart.options} />,
+      style: "col-span-2",
     },
     {
-      label: "Vaccine Distribution",
-      content: <Doughnut data={data.doughnutChart} />,
-      style:"col-span-2"
+      label: "Vaccinations by Date Reported",
+      content: <Line data={data.dateReportedChart} options={data.dateReportedChart.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Vaccinations by Vaccine Source",
+      content: <Pie data={data.vaccineSourceChart} options={data.vaccineSourceChart.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Vaccinations by Animal Age",
+      content: <Bar data={data.ageChart} options={data.ageChart.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Vaccinations by Barangay",
+      content: <Bar data={data.barangayChart} options={data.barangayChart.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Vaccinations by Animal Gender",
+      content: <Bar data={data.animalGenderChart} options={data.animalGenderChart.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Vaccinations by Client Gender",
+      content: <Bar data={data.clientGenderChart} options={data.clientGenderChart.options} />,
+      style: "col-span-2",
     },
   ];
 
   return (
-    <>
-      <ChartGroup charts={charts} title="Rabies Vaccination Report" />
-    </>
+    <div className="container mx-auto px-4 py-6">
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
+          Rabies Vaccination Report
+        </h2>
+        {/* Analysis Section */}
+        <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+            Analysis
+          </h3>
+          <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+            {analysis}
+          </p>
+        </div>
+
+        <ChartGroup
+          charts={charts}
+          title="Rabies Vaccination Report"
+          selectedChart={selectedChart}
+          setSelectedChart={setSelectedChart}
+        />
+
+      </div>
+
+    </div>
   );
 };
 

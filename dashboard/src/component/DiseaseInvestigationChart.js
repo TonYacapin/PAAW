@@ -1,165 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Line, Pie, Doughnut, Bar, Bubble } from 'react-chartjs-2';
+import React, { useState, useEffect, useContext } from 'react';
+import { Bar, Pie, Line, Scatter } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
-
 import { FilterContext } from '../pages/Home/Home';
 
-const DiseaseInvestigationChart = () => {
-  const [data, setData] = useState({
-    lineChart: { labels: [], datasets: [{ data: [], label: '' }] },
-    pieChartStatus: { labels: [], datasets: [{ data: [], label: '' }] },
-    pieChartFarmType: { labels: [], datasets: [{ data: [], label: '' }] },
-    barChartSpeciesCasesDeaths: { labels: [], datasets: [{ data: [], label: '' }] },
-    bubbleChartSpeciesPopulation: { labels: [], datasets: [{ data: [], label: '' }] },
-    pieChartControlMeasures: { labels: [], datasets: [{ data: [], label: '' }] },
-    pieChartProbableSource: { labels: [], datasets: [{ data: [], label: '' }] },
-    barChartCFRBySpecies: { labels: [], datasets: [{ data: [], label: '' }] },
-  });
-
+function DiseaseInvestigationChart() {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedChart, setSelectedChart] = useState(null);
+  const { filters, showAll } = useContext(FilterContext);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/disease-investigation`);
-        const reports = response.data;
-
-        // Line Chart: Investigations over Time
-        const investigationDates = {};
-        reports.forEach(report => {
-          const date = new Date(report.dateReported).toLocaleDateString();
-          if (investigationDates[date]) {
-            investigationDates[date] += 1;
-          } else {
-            investigationDates[date] = 1;
-          }
-        });
-        const processedLineChartData = {
-          labels: Object.keys(investigationDates),
-          datasets: [{
-            label: 'Investigations Over Time',
-            data: Object.values(investigationDates),
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderWidth: 1,
-          }]
-        };
-
-        // Pie Chart: Investigation Status
-        const statusCounts = { new: 0, 'on-going': 0 };
-        reports.forEach(report => { statusCounts[report.status] += 1; });
-        const processedPieChartStatus = {
-          labels: ['New', 'On-going'],
-          datasets: [{ data: [statusCounts.new, statusCounts['on-going']], backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'] }]
-        };
-
-        // Pie Chart: Farm Type Distribution
-        const farmTypeCounts = {};
-        reports.forEach(report => {
-          report.farmType.forEach(type => {
-            if (farmTypeCounts[type]) {
-              farmTypeCounts[type] += 1;
-            } else {
-              farmTypeCounts[type] = 1;
-            }
-          });
-        });
-        const processedPieChartFarmType = {
-          labels: Object.keys(farmTypeCounts),
-          datasets: [{ data: Object.values(farmTypeCounts), backgroundColor: ['rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'] }]
-        };
-
-        // Bar Chart: Cases and Deaths by Species
-        const speciesCasesDeaths = {};
-        reports.forEach(report => {
-          report.detailsRows.forEach(detail => {
-            if (speciesCasesDeaths[detail.species]) {
-              speciesCasesDeaths[detail.species].cases += parseInt(detail.cases) || 0;
-              speciesCasesDeaths[detail.species].deaths += parseInt(detail.deaths) || 0;
-            } else {
-              speciesCasesDeaths[detail.species] = {
-                cases: parseInt(detail.cases) || 0,
-                deaths: parseInt(detail.deaths) || 0,
-              };
-            }
-          });
-        });
-        const processedBarChartSpeciesCasesDeaths = {
-          labels: Object.keys(speciesCasesDeaths),
-          datasets: [
-            { label: 'Cases', data: Object.values(speciesCasesDeaths).map(item => item.cases), backgroundColor: 'rgba(255, 159, 64, 0.6)' },
-            { label: 'Deaths', data: Object.values(speciesCasesDeaths).map(item => item.deaths), backgroundColor: 'rgba(255, 99, 132, 0.6)' }
-          ]
-        };
-
-        // Bubble Chart: Species vs Population Affected
-        const bubbleData = reports.map(report => report.detailsRows.map(detail => ({
-          x: parseInt(detail.population),
-          y: parseInt(detail.cases),
-          r: parseInt(detail.deaths) * 3, // Radius scaled by deaths
-          species: detail.species
-        }))).flat();
-        const processedBubbleChartSpeciesPopulation = {
-          labels: bubbleData.map(data => data.species),
-          datasets: [{ label: 'Population vs Cases', data: bubbleData, backgroundColor: 'rgba(54, 162, 235, 0.6)' }]
-        };
-
-        // Pie Chart: Control Measures Used
-        const controlMeasureCounts = {};
-        reports.forEach(report => {
-          if (controlMeasureCounts[report.controlmeasures]) {
-            controlMeasureCounts[report.controlmeasures] += 1;
-          } else {
-            controlMeasureCounts[report.controlmeasures] = 1;
-          }
-        });
-        const processedPieChartControlMeasures = {
-          labels: Object.keys(controlMeasureCounts),
-          datasets: [{ data: Object.values(controlMeasureCounts), backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'] }]
-        };
-
-        // Pie Chart: Probable Source of Infection
-        const sourceOfInfectionCounts = {};
-        reports.forEach(report => {
-          if (sourceOfInfectionCounts[report.propablesourceofinfection]) {
-            sourceOfInfectionCounts[report.propablesourceofinfection] += 1;
-          } else {
-            sourceOfInfectionCounts[report.propablesourceofinfection] = 1;
-          }
-        });
-        const processedPieChartProbableSource = {
-          labels: Object.keys(sourceOfInfectionCounts),
-          datasets: [{ data: Object.values(sourceOfInfectionCounts), backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(75, 192, 192, 0.6)'] }]
-        };
-
-        // Bar Chart: Case Fatality Rate (CFR) by Species
-        const caseFatalityRates = {};
-        Object.keys(speciesCasesDeaths).forEach(species => {
-          const cases = speciesCasesDeaths[species].cases;
-          const deaths = speciesCasesDeaths[species].deaths;
-          const cfr = (deaths / cases) * 100;
-          caseFatalityRates[species] = cfr.toFixed(2); // Case Fatality Rate %
-        });
-        const processedBarChartCFRBySpecies = {
-          labels: Object.keys(caseFatalityRates),
-          datasets: [{ label: 'Case Fatality Rate (%)', data: Object.values(caseFatalityRates), backgroundColor: 'rgba(255, 99, 132, 0.6)' }]
-        };
-
-        setData({
-          lineChart: processedLineChartData,
-          pieChartStatus: processedPieChartStatus,
-          pieChartFarmType: processedPieChartFarmType,
-          barChartSpeciesCasesDeaths: processedBarChartSpeciesCasesDeaths,
-          bubbleChartSpeciesPopulation: processedBubbleChartSpeciesPopulation,
-          pieChartControlMeasures: processedPieChartControlMeasures,
-          pieChartProbableSource: processedPieChartProbableSource,
-          barChartCFRBySpecies: processedBarChartCFRBySpecies,
-        });
+        setData(response.data);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } catch (err) {
+        setError('Error fetching data');
         setLoading(false);
       }
     };
@@ -167,81 +27,214 @@ const DiseaseInvestigationChart = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading chart data...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  const filterData = (data) => {
+    if (showAll) return data;
+    return data.filter(item => {
+      return (
+        (!filters.dateFrom || new Date(item.dateReported) >= new Date(filters.dateFrom)) &&
+        (!filters.dateTo || new Date(item.dateReported) <= new Date(filters.dateTo)) &&
+        (!filters.status || item.status === filters.status)
+      );
+    });
+  };
+
+  const filteredData = filterData(data);
+
+  const placeAffectedCounts = filteredData.reduce((acc, item) => {
+    acc[item.placeAffected] = (acc[item.placeAffected] || 0) + 1;
+    return acc;
+  }, {});
+
+  const farmTypeCounts = filteredData.reduce((acc, item) => {
+    item.farmType.forEach(type => {
+      acc[type] = (acc[type] || 0) + 1;
+    });
+    return acc;
+  }, {});
+
+  const reportedDates = filteredData.reduce((acc, item) => {
+    const date = new Date(item.dateReported).toLocaleDateString();
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+
+  const speciesDetails = filteredData.flatMap(item =>
+    item.details.map(detail => ({
+      species: detail.species,
+      population: parseInt(detail.population) || 0,
+      cases: parseInt(detail.cases) || 0,
+      deaths: parseInt(detail.deaths) || 0,
+      destroyed: parseInt(detail.destroyed) || 0,
+      slaughtered: parseInt(detail.slaughtered) || 0
+    }))
+  );
+
+  const speciesSummary = speciesDetails.reduce((acc, item) => {
+    if (!acc[item.species]) {
+      acc[item.species] = { population: 0, cases: 0, deaths: 0, destroyed: 0, slaughtered: 0 };
+    }
+    acc[item.species].population += item.population;
+    acc[item.species].cases += item.cases;
+    acc[item.species].deaths += item.deaths;
+    acc[item.species].destroyed += item.destroyed;
+    acc[item.species].slaughtered += item.slaughtered;
+    return acc;
+  }, {});
 
   const charts = [
     {
-      label: "Investigations Over Time",
-      content: data.lineChart.labels.length > 0 ? (
-        <Line data={data.lineChart} />
-      ) : (
-        <div>No data available</div>
+      label: 'Place Affected',
+      content: (
+        <Pie
+          data={{
+            labels: Object.keys(placeAffectedCounts),
+            datasets: [{
+              data: Object.values(placeAffectedCounts),
+              backgroundColor: [
+                "#ffe459", // pastelyellow
+                "#e5cd50", // darkerpastelyellow
+                "#1b5b40", // darkgreen
+                "#123c29", // darkergreen
+                "#252525", // black
+              ],
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Distribution of Places Affected'
+              }
+            }
+          }}
+        />
       ),
+      style: 'col-span-2'
     },
     {
-      label: "Investigation Status",
-      content: data.pieChartStatus.labels.length > 0 ? (
-        <Pie data={data.pieChartStatus} />
-      ) : (
-        <div>No data available</div>
+      label: 'Farm Type',
+      content: (
+        <Bar
+          data={{
+            labels: Object.keys(farmTypeCounts),
+            datasets: [{
+              label: 'Number of Farms',
+              data: Object.values(farmTypeCounts),
+              backgroundColor: '#1b5b40',
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Distribution of Farm Types'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }}
+        />
       ),
+      style: 'col-span-2'
     },
     {
-      label: "Farm Type Distribution",
-      content: data.pieChartFarmType.labels.length > 0 ? (
-        <Doughnut data={data.pieChartFarmType} />
-      ) : (
-        <div>No data available</div>
+      label: 'Date Reported',
+      content: (
+        <Line
+          data={{
+            labels: Object.keys(reportedDates),
+            datasets: [{
+              label: 'Reports',
+              data: Object.values(reportedDates),
+              borderColor: '#FFCE56',
+              fill: false,
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Date-wise Reported Cases'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }}
+        />
       ),
+      style: 'col-span-4'
     },
     {
-      label: "Cases and Deaths by Species",
-      content: data.barChartSpeciesCasesDeaths.labels.length > 0 ? (
-        <Bar data={data.barChartSpeciesCasesDeaths} />
-      ) : (
-        <div>No data available</div>
+      label: 'Species Impact Analysis',
+      content: (
+        <Bar
+          data={{
+            labels: Object.keys(speciesSummary),
+            datasets: [
+              {
+                label: 'Population',
+                data: Object.values(speciesSummary).map(d => d.population),
+                backgroundColor: '#ffe459',
+              },
+              {
+                label: 'Cases',
+                data: Object.values(speciesSummary).map(d => d.cases),
+                backgroundColor: '#e5cd50',
+              },
+              {
+                label: 'Deaths',
+                data: Object.values(speciesSummary).map(d => d.deaths),
+                backgroundColor: '#1b5b40',
+              },
+              {
+                label: 'Destroyed',
+                data: Object.values(speciesSummary).map(d => d.destroyed),
+                backgroundColor: '#123c29',
+              },
+              {
+                label: 'Slaughtered',
+                data: Object.values(speciesSummary).map(d => d.slaughtered),
+                backgroundColor: '#ffe459',
+              }
+            ]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Species Impact Analysis'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                stacked: true
+              }
+            }
+          }}
+        />
       ),
-    },
-    {
-      label: "Species vs Population Affected",
-      content: data.bubbleChartSpeciesPopulation.labels.length > 0 ? (
-        <Bubble data={data.bubbleChartSpeciesPopulation} />
-      ) : (
-        <div>No data available</div>
-      ),
-    },
-    {
-      label: "Control Measures Used",
-      content: data.pieChartControlMeasures.labels.length > 0 ? (
-        <Pie data={data.pieChartControlMeasures} />
-      ) : (
-        <div>No data available</div>
-      ),
-    },
-    {
-      label: "Probable Source of Infection",
-      content: data.pieChartProbableSource.labels.length > 0 ? (
-        <Doughnut data={data.pieChartProbableSource} />
-      ) : (
-        <div>No data available</div>
-      ),
-    },
-    {
-      label: "Case Fatality Rate by Species",
-      content: data.barChartCFRBySpecies.labels.length > 0 ? (
-        <Bar data={data.barChartCFRBySpecies} />
-      ) : (
-        <div>No data available</div>
-      ),
+      style: 'col-span-4'
     },
   ];
-  
 
   return (
-    <ChartGroup charts={charts} title="Disease Investigation Report" />
+    <ChartGroup
+      charts={charts}
+      title="Disease Investigation Analytics Dashboard"
+      selectedChart={selectedChart}
+      setSelectedChart={setSelectedChart}
+    />
   );
-};
+}
 
 export default DiseaseInvestigationChart;

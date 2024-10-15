@@ -13,14 +13,16 @@ const RoutineServicesMonitoringReportChart = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [selectedChart, setSelectedChart] = useState(null); // State for selected chart
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
-
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/RSM`);
         const reports = response.data;
-        console.log(reports)
+
+        // Process the data for each chart as before...
+
         // 1. Bar Chart: Number of Entries by Municipality
         const municipalityCounts = {};
         reports.forEach(report => {
@@ -99,7 +101,7 @@ const RoutineServicesMonitoringReportChart = () => {
             data: Object.values(headsOverTime),
             borderColor: 'rgba(54, 162, 235, 1)',
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderWidth: 2
+
           }]
         };
 
@@ -124,9 +126,9 @@ const RoutineServicesMonitoringReportChart = () => {
     return <div>Loading chart data...</div>;
   }
 
-
   const charts = [
     {
+      style: "col-span-2",
       label: "Number of Entries by Municipality",
       content: data.barChartMunicipality.labels.length > 0 ? (
         <Bar data={data.barChartMunicipality} />
@@ -134,16 +136,17 @@ const RoutineServicesMonitoringReportChart = () => {
         <div>No data available</div>
       ),
     },
-
     {
+      style: "col-span-2",
       label: "Number of Animals by Species",
-      content: data.pieChartSpecies.labels.length > 0 ?  (
+      content: data.pieChartSpecies.labels.length > 0 ? (
         <Pie data={data.pieChartSpecies} />
       ) : (
         <div>No data available</div>
       ),
     },
     {
+      style: "col-span-2",
       label: "Activities Conducted",
       content: data.barChartActivities.labels.length > 0 ? (
         <Bar data={data.barChartActivities} />
@@ -152,6 +155,7 @@ const RoutineServicesMonitoringReportChart = () => {
       ),
     },
     {
+      style: "col-span-2",
       label: "Number of Heads per Animal over Time",
       content: data.lineChartNoOfHeads.labels.length > 0 ? (
         <Line data={data.lineChartNoOfHeads} />
@@ -159,14 +163,21 @@ const RoutineServicesMonitoringReportChart = () => {
         <div>No data available</div>
       ),
     },
-
-    
-  ]
+  ];
 
   return (
-    <ChartGroup charts={charts} title="Routine Services Monitoring Report" />
+
+    <div className="container mx-auto px-4 py-6">
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <ChartGroup
+          charts={charts}
+          title="Routine Services Monitoring Report"
+          selectedChart={selectedChart}
+          setSelectedChart={setSelectedChart}
+        />
+      </div>
+    </div>
   );
 };
-
 
 export default RoutineServicesMonitoringReportChart;
