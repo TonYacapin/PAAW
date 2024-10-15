@@ -62,9 +62,9 @@ function MonthlyAccomplishmentReport() {
     <>
       {/* This will display the content for screens larger than medium (md) */}
       <div className="hidden lg:block">
-        <div className="p-6 space-y-8 bg-gray-50 min-h-0">
+        <div className="p-6 space-y-8 bg- min-h-0">
           {/* Button to open the modal */}
-          <div className="p-6 bg-white shadow-md rounded-lg">
+          <div className="p-6 bg-[#fffafa] shadow-md rounded-lg">
             <div className="flex flex-row mb-4 justify-between">
               <h2 className="text-3xl font-extrabold mb-6 text-darkgreen">
                 Monthly Accomplishment Report

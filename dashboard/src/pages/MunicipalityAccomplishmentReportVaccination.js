@@ -157,9 +157,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
 
     return (
         <>
-            <div className="max-h-[70vh] scrollbar-hide">
-
-                
+            <div className="">
                 {/* Hidden printable content */}
                 <div id="printable-content" style={{ display: "none" }}>
                     <PrintableMunicipalityAccomplishmentReportVaccination
@@ -174,26 +172,24 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     Municipality Vaccination Accomplishment Report
                 </h1>
                 <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-                    
-                    <div className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-                            <div>
-                                <label htmlFor="year" className="text-xl font-semibold text-[#1b5b40] mb-2">Year</label>
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
+                            <div className="flex flex-col">
+                                <label htmlFor="year" className="text-md font-semibold text-gray-700 mb-2">Year</label>
                                 <input
                                     type="number"
                                     id="year"
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="month" className="text-xl font-semibold text-[#1b5b40] mb-2">Month</label>
+                            <div  className="flex flex-col">
+                                <label htmlFor="month" className="text-md font-semibold text-gray-700 mb-2 ">Month</label>
                                 <select
                                     id="month"
                                     value={selectedMonth}
                                     onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 >
                                     {[...Array(12)].map((_, i) => (
                                         <option key={i + 1} value={i + 1}>
@@ -202,13 +198,13 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div>
-                                <label htmlFor="species" className="text-xl font-semibold text-[#1b5b40] mb-2">Species</label>
+                            <div  className="flex flex-col">
+                                <label htmlFor="species" className="text-md font-semibold text-gray-700 mb-2">Species</label>
                                 <select
                                     id="species"
                                     value={selectedSpecies}
                                     onChange={(e) => setSelectedSpecies(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                                 >
                                     <option value="Carabao">Carabao</option>
                                     <option value="Cattle">Cattle</option>
@@ -218,7 +214,6 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                                 </select>
                             </div>
                         </div>
-                    </div>
 
                     {/* Display loading spinner or table */}
                     {loading ? (
