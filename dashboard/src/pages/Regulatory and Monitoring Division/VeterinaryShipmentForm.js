@@ -288,11 +288,15 @@ const resetForm = () => {
     }
   };
 
-  {success && <div className="text-green-600">{success}</div>}
-      {error && <div className="text-red-600">{error}</div>}
+  
 
   return (
+
+    
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg space-y-6">
+      {success && <div className="text-green-600">{setSuccess}</div>}
+  {error && <div className="text-red-600">{setError}</div>}
+      
       <h2 className="text-2xl font-bold text-black text-center">Veterinary Shipment Form</h2>
       <StepperComponent
         pages={['Step 1', 'Step 2', 'Step 3', 'Step 4']}

@@ -9,6 +9,18 @@ const VeterinaryShipmentList = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [showFilters, setShowFilters] = useState(false); // Added state for filter visibility
     
+    const fetchShipments = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`);
+            setShipments(response.data); // Set fetched data to state
+        } catch (error) {
+            console.error('Error fetching shipments:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchShipments(); // Fetch shipments on component mount
+    }, [shipments]);
     // Fetch data from the API
     useEffect(() => {
         const fetchShipments = async () => {
