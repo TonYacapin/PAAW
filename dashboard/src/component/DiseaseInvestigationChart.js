@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Bar, Pie, Line, Scatter } from 'react-chartjs-2';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
@@ -43,24 +43,6 @@ function DiseaseInvestigationChart() {
 
   const filteredData = filterData(data);
 
-  const placeAffectedCounts = filteredData.reduce((acc, item) => {
-    acc[item.placeAffected] = (acc[item.placeAffected] || 0) + 1;
-    return acc;
-  }, {});
-
-  const farmTypeCounts = filteredData.reduce((acc, item) => {
-    item.farmType.forEach(type => {
-      acc[type] = (acc[type] || 0) + 1;
-    });
-    return acc;
-  }, {});
-
-  const reportedDates = filteredData.reduce((acc, item) => {
-    const date = new Date(item.dateReported).toLocaleDateString();
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {});
-
   const speciesDetails = filteredData.flatMap(item =>
     item.details.map(detail => ({
       species: detail.species,
@@ -68,45 +50,112 @@ function DiseaseInvestigationChart() {
       cases: parseInt(detail.cases) || 0,
       deaths: parseInt(detail.deaths) || 0,
       destroyed: parseInt(detail.destroyed) || 0,
-      slaughtered: parseInt(detail.slaughtered) || 0
+      slaughtered: parseInt(detail.slaughtered) || 0,
+      vaccineHistory: detail.vaccineHistory || 'Unknown'
     }))
   );
 
-  const speciesSummary = speciesDetails.reduce((acc, item) => {
-    if (!acc[item.species]) {
-      acc[item.species] = { population: 0, cases: 0, deaths: 0, destroyed: 0, slaughtered: 0 };
+  const casesVsDeaths = speciesDetails.reduce((acc, item) => {
+    acc.cases += item.cases;
+    acc.deaths += item.deaths;
+    return acc;
+  }, { cases: 0, deaths: 0 });
+
+  const populationVsCases = speciesDetails.reduce((acc, item) => {
+    acc.population += item.population;
+    acc.cases += item.cases;
+    return acc;
+  }, { population: 0, cases: 0 });
+
+  const vaccineHistoryCounts = speciesDetails.reduce((acc, item) => {
+    acc[item.vaccineHistory] = (acc[item.vaccineHistory] || 0) + 1;
+    return acc;
+  }, {});
+
+  const slaughteredPerSpecies = speciesDetails.reduce((acc, item) => {
+    acc[item.species] = (acc[item.species] || 0) + item.slaughtered;
+    return acc;
+  }, {});
+
+  const destroyedPerSpecies = speciesDetails.reduce((acc, item) => {
+    acc[item.species] = (acc[item.species] || 0) + item.destroyed;
+    return acc;
+  }, {});
+
+  const confirmedCases = filteredData.filter(item => item.finaldiagnosis).length;
+
+  const natureOfDiagnosisCounts = filteredData.reduce((acc, item) => {
+    if (item.finaldiagnosis) {
+      acc[item.natureofdiagnosis] = (acc[item.natureofdiagnosis] || 0) + 1;
     }
-    acc[item.species].population += item.population;
-    acc[item.species].cases += item.cases;
-    acc[item.species].deaths += item.deaths;
-    acc[item.species].destroyed += item.destroyed;
-    acc[item.species].slaughtered += item.slaughtered;
     return acc;
   }, {});
 
   const charts = [
     {
-      label: 'Place Affected',
+      label: 'Cases vs Deaths',
+      content: (
+        <Bar
+          data={{
+            labels: ['Cases', 'Deaths'],
+            datasets: [{
+              label: 'Number',
+              data: [casesVsDeaths.cases, casesVsDeaths.deaths],
+              backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Number of Cases vs Deaths'
+              }
+            }
+          }}
+        />
+      ),
+      style: 'col-span-2'
+    },
+    {
+      label: 'Population vs Cases',
+      content: (
+        <Bar
+          data={{
+            labels: ['Population', 'Cases'],
+            datasets: [{
+              label: 'Number',
+              data: [populationVsCases.population, populationVsCases.cases],
+              backgroundColor: ['#FFCE56', '#FF6384']
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Population vs Cases'
+              }
+            }
+          }}
+        />
+      ),
+      style: 'col-span-2'
+    },
+    {
+      label: 'Vaccine History per Case',
       content: (
         <Pie
           data={{
-            labels: Object.keys(placeAffectedCounts),
+            labels: Object.keys(vaccineHistoryCounts),
             datasets: [{
-              data: Object.values(placeAffectedCounts),
-              backgroundColor: [
-                "#ffe459", // pastelyellow
-                "#e5cd50", // darkerpastelyellow
-                "#1b5b40", // darkgreen
-                "#123c29", // darkergreen
-                "#252525", // black
-              ],
+              data: Object.values(vaccineHistoryCounts),
+              backgroundColor: ['#FFCE56', '#FF6384', '#36A2EB']
             }]
           }}
           options={{
             plugins: {
               title: {
                 display: true,
-                text: 'Distribution of Places Affected'
+                text: 'Vaccine History per Cases'
               }
             }
           }}
@@ -115,28 +164,26 @@ function DiseaseInvestigationChart() {
       style: 'col-span-2'
     },
     {
-      label: 'Farm Type',
+      label: 'Slaughtered per Species',
       content: (
         <Bar
           data={{
-            labels: Object.keys(farmTypeCounts),
+            labels: Object.keys(slaughteredPerSpecies),
             datasets: [{
-              label: 'Number of Farms',
-              data: Object.values(farmTypeCounts),
-              backgroundColor: '#1b5b40',
+              label: 'Number Slaughtered',
+              data: Object.values(slaughteredPerSpecies),
+              backgroundColor: '#FFCE56'
             }]
           }}
           options={{
             plugins: {
               title: {
                 display: true,
-                text: 'Distribution of Farm Types'
+                text: 'Number Slaughtered per Species'
               }
             },
             scales: {
-              y: {
-                beginAtZero: true
-              }
+              y: { beginAtZero: true }
             }
           }}
         />
@@ -144,87 +191,82 @@ function DiseaseInvestigationChart() {
       style: 'col-span-2'
     },
     {
-      label: 'Date Reported',
+      label: 'Destroyed per Species',
       content: (
-        <Line
+        <Bar
           data={{
-            labels: Object.keys(reportedDates),
+            labels: Object.keys(destroyedPerSpecies),
             datasets: [{
-              label: 'Reports',
-              data: Object.values(reportedDates),
-              borderColor: '#FFCE56',
-              fill: false,
+              label: 'Number Destroyed',
+              data: Object.values(destroyedPerSpecies),
+              backgroundColor: '#36A2EB'
             }]
           }}
           options={{
             plugins: {
               title: {
                 display: true,
-                text: 'Date-wise Reported Cases'
+                text: 'Number Destroyed per Species'
               }
             },
             scales: {
-              y: {
-                beginAtZero: true
-              }
+              y: { beginAtZero: true }
             }
           }}
         />
       ),
-      style: 'col-span-4'
+      style: 'col-span-2'
     },
     {
-      label: 'Species Impact Analysis',
+      label: 'Number of Confirmed Cases',
       content: (
         <Bar
           data={{
-            labels: Object.keys(speciesSummary),
-            datasets: [
-              {
-                label: 'Population',
-                data: Object.values(speciesSummary).map(d => d.population),
-                backgroundColor: '#ffe459',
-              },
-              {
-                label: 'Cases',
-                data: Object.values(speciesSummary).map(d => d.cases),
-                backgroundColor: '#e5cd50',
-              },
-              {
-                label: 'Deaths',
-                data: Object.values(speciesSummary).map(d => d.deaths),
-                backgroundColor: '#1b5b40',
-              },
-              {
-                label: 'Destroyed',
-                data: Object.values(speciesSummary).map(d => d.destroyed),
-                backgroundColor: '#123c29',
-              },
-              {
-                label: 'Slaughtered',
-                data: Object.values(speciesSummary).map(d => d.slaughtered),
-                backgroundColor: '#ffe459',
-              }
-            ]
+            labels: ['Confirmed Cases'],
+            datasets: [{
+              label: 'Number',
+              data: [confirmedCases],
+              backgroundColor: '#36A2EB'
+            }]
           }}
           options={{
             plugins: {
               title: {
                 display: true,
-                text: 'Species Impact Analysis'
+                text: 'Number of Confirmed Cases'
               }
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                stacked: true
+              y: { beginAtZero: true }
+            }
+          }}
+        />
+      ),
+      style: 'col-span-2'
+    },
+    {
+      label: 'Nature of Diagnosis per Confirmed Case',
+      content: (
+        <Pie
+          data={{
+            labels: Object.keys(natureOfDiagnosisCounts),
+            datasets: [{
+              data: Object.values(natureOfDiagnosisCounts),
+              backgroundColor: ['#FFCE56', '#FF6384', '#36A2EB']
+            }]
+          }}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: 'Nature of Diagnosis per Confirmed Cases'
               }
             }
           }}
         />
       ),
-      style: 'col-span-4'
-    },
+      style: 'col-span-2'
+    }
   ];
 
   return (
