@@ -1040,7 +1040,7 @@ const RabiesHistoryForm = () => {
         return pages[6];
       default:
     }
-  };
+  };  
 
   return (
     <>
@@ -1067,52 +1067,7 @@ const RabiesHistoryForm = () => {
         onClose={() => setIsSuccessModalOpen(false)}
         message={modalMessage}
       />
-      {/* <div className="flex flex-row">
-        <label htmlFor="fileinput">
-          <div className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen">
-            Load Form Progress
-          </div>
-          <input
-            id="fileinput"
-            type="file"
-            accept=".csv"
-            onChange={handleImportCSV}
-            style={{ display: "none" }}
-          />
-        </label>
-        <div className="grow" />
-        <div className="flex space-x-4">
-          <button
-            onClick={handleExportCSV}
-            className="bg-pastelyellow text-white py-2 px-4 rounded hover:bg-yellow-600"
-          >
-            Save Form As CSV
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
-          >
-            Submit Form
-          </button>
-        </div>
-      </div> */}
-
-      {/* <Button
-        variant="contained"
-        color="primary"
-        type="submit"
-        onClick={handleSubmit}
-      >
-        Submit
-      </Button>
-
-      <button
-        type="button"
-        onClick={handleExportCSV}
-        className="bg-green-500 text-white p-2 rounded mt-4"
-      >
-        Export CSV
-      </button> */}
+      
     </>
   );
 };
