@@ -8,7 +8,7 @@ import Modal from "../../component/Modal";
 import Select from "react-select";
 
 // Chart components
-import ChartComponent from "../../component/ChartComponent";
+
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
 import LivestockChartComponent from "../../component/LivestockChartComponent";
 import RegulatoryChartComponent from "../../component/RegulatoryChartComponent";
@@ -209,13 +209,14 @@ function Home() {
 
   const renderCharts = () => {
     const chartClasses =
-      "md:h-2/5 bg-white shadow-md rounded-lg p-6 flex items-center justify-center text-center";
+      "md:h-2/5 bg-white shadow-md rounded-lg p-6 flex flex-wrap items-center justify-center text-center";
+
     const chartTextClasses = "text-gray-700 font-semibold text-lg";
 
     if (selectedCharts.length > 0) {
       return (
         <div className="space-y-6">
-          {selectedCharts.includes("admin") && <ChartComponent />}
+
           {selectedCharts.includes("animalhealth") && (
             <AnimalHealthChartComponent />
           )}
@@ -625,10 +626,7 @@ function Home() {
                     </div>
                     <button
                       className="w-full flex items-center col-span-1 text-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                      onClick={() => {
-                        toggleFilter();
-                        toggleShowAll();
-                      }}
+                      onClick={() => { toggleFilter(); toggleShowAll(); }}
                     >
                       Apply Filters
                     </button>
