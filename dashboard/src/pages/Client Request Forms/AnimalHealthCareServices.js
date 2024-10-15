@@ -185,24 +185,16 @@ function AnimalHealthCareServices() {
                 className="border w-full p-2 rounded"
               />
   
+             
+  
               <label className="block mb-2 font-medium">Municipality</label>
-              <input
-                type="text"
+              <select
                 name="municipality"
-                placeholder="Municipality"
                 value={clientInfo.municipality}
                 onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
                 className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Province</label>
-              <select
-                name="province"
-                value={clientInfo.province}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
               >
-                <option value="">Select Province</option>
+                <option value="">Select Municipality</option>
                 <option value="Ambaguio">Ambaguio</option>
                 <option value="Bagabag">Bagabag</option>
                 <option value="Bayombong">Bayombong</option>
@@ -219,6 +211,16 @@ function AnimalHealthCareServices() {
                 <option value="Kasibu">Kasibu</option>
                 <option value="Santa Fe">Santa Fe</option>
               </select>
+
+              <label className="block mb-2 font-medium">Province</label>
+              <input
+                type="text"
+                name="province"
+                placeholder="Province"
+                value={clientInfo.province}
+                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
+                className="border w-full p-2 rounded"
+              />
   
               <label className="block mb-2 font-medium">Birthday</label>
               <input
