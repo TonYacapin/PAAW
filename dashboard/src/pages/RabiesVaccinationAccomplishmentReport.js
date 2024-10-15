@@ -41,13 +41,18 @@ function RabiesVaccinationAccomplishmentReport() {
   };
 
   const processTargets = (targetsData) => {
-    if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
+    if (
+      !targetsData ||
+      !targetsData.targets ||
+      !Array.isArray(targetsData.targets)
+    ) {
       console.error("Invalid targets data format:", targetsData);
       return;
     }
 
     const rabiesTarget = targetsData.targets.find(
-      (target) => target.Type === "No. of dogs immunized against rabies and registered"
+      (target) =>
+        target.Type === "No. of dogs immunized against rabies and registered"
     );
     if (rabiesTarget) {
       setTargets({
@@ -62,7 +67,8 @@ function RabiesVaccinationAccomplishmentReport() {
   }, [immunizationData, targets]);
 
   const calculatePercentages = () => {
-    const combined = immunizationData.previousMonthCount + immunizationData.thisMonthCount;
+    const combined =
+      immunizationData.previousMonthCount + immunizationData.thisMonthCount;
     if (targets.quarterly > 0) {
       setQuarterlyPercentage(((combined / targets.quarterly) * 100).toFixed(2));
     } else {
@@ -70,7 +76,9 @@ function RabiesVaccinationAccomplishmentReport() {
     }
 
     if (targets.semiAnnual > 0) {
-      setSemiAnnualPercentage(((immunizationData.totalCount / targets.semiAnnual) * 100).toFixed(2));
+      setSemiAnnualPercentage(
+        ((immunizationData.totalCount / targets.semiAnnual) * 100).toFixed(2)
+      );
     } else {
       setSemiAnnualPercentage(null);
     }
@@ -111,13 +119,10 @@ function RabiesVaccinationAccomplishmentReport() {
   };
 
   return (
-    <div className="p-6 bg-[#FFFAFA] h-[55vh]">
-
+    <div className="p-6 bg-[#FFFAFA]">
       {/* Button to trigger print */}
-      
-
       {/* Hidden content for printing */}
-      <div id="printable-content" style={{ display: 'none' }}>
+      <div id="printable-content" style={{ display: "none" }}>
         <PrintableRabiesVaccinationReport
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
@@ -132,14 +137,15 @@ function RabiesVaccinationAccomplishmentReport() {
         Rabies Vaccination Accomplishment Report
       </h1>
 
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Year</h2>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
+            Select Year
+          </h2>
           <select
             value={selectedYear}
             onChange={handleYearChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
           >
             {[...Array(10)].map((_, i) => {
               const year = new Date().getFullYear() - i;
@@ -152,76 +158,105 @@ function RabiesVaccinationAccomplishmentReport() {
           </select>
         </div>
 
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Select Month</h2>
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
+            Select Month
+          </h2>
           <select
             value={selectedMonth}
             onChange={handleMonthChange}
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525]"
           >
             {[...Array(12)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
-                {format(new Date(2000, i, 1), 'MMMM')}
+                {format(new Date(2000, i, 1), "MMMM")}
               </option>
             ))}
           </select>
         </div>
 
         {/* Targets and percentage display */}
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Quarterly Target</h2>
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
+            Quarterly Target
+          </h2>
           <input
             type="number"
             value={targets.quarterly}
             disabled
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
-          {quarterlyPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {quarterlyPercentage}%
-            </p>
-          )}
         </div>
 
-        <div className="bg-white p-4 border border-[#1b5b40] rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold text-[#1b5b40] mb-2">Semi-annual Target</h2>
+        <div className="flex flex-col">
+          <h2 className="text-md font-semibold text-gray-700 mb-2">
+            Semi-annual Target
+          </h2>
           <input
             type="number"
             value={targets.semiAnnual}
             disabled
-            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+            className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
           />
+        </div>
+
+        <div className="flex flex-col">
           {semiAnnualPercentage !== null && (
-            <p className="mt-2 text-lg font-semibold text-[#1b5b40]">
-              Percentage: {semiAnnualPercentage}%
+            <p className="text-md font-semibold text-gray-700 mb-2">
+              Semi Annual Percentage: {semiAnnualPercentage}%
+            </p>
+          )}
+          {quarterlyPercentage !== null && (
+            <p className="text-md font-semibold text-gray-700 mb-2">
+              Percentage: {quarterlyPercentage}%
             </p>
           )}
         </div>
       </div>
 
-      <div  className="mt-8" >
+      <div className="mt-8">
         {/* Table for displaying immunization data */}
         <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg overflow-hidden shadow-lg">
           <thead>
             <tr className="bg-[#1b5b40] text-white">
-              <th className="py-2 px-2 text-left border border-[#000]">Activity</th>
-              <th className="py-2 px-2 text-left border border-[#000]">Previous Month</th>
-              <th className="py-2 px-2 text-left border border-[#000]">This Month</th>
-              <th className="py-2 px-2 text-left border border-[#000]">Combined</th>
-              <th className="py-2 px-2 text-left border border-[#000]">Total Accomplishment</th>
+              <th className="py-2 px-2 text-left border border-[#000]">
+                Activity
+              </th>
+              <th className="py-2 px-2 text-left border border-[#000]">
+                Previous Month
+              </th>
+              <th className="py-2 px-2 text-left border border-[#000]">
+                This Month
+              </th>
+              <th className="py-2 px-2 text-left border border-[#000]">
+                Combined
+              </th>
+              <th className="py-2 px-2 text-left border border-[#000]">
+                Total Accomplishment
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td className="border border-[#000]">No. of Dogs immunized against Rabies and Registered</td>
-              <td className="border border-[#000]">{immunizationData.previousMonthCount}</td>
-              <td className="border border-[#000]">{immunizationData.thisMonthCount}</td>
-              <td className="border border-[#000]">{immunizationData.previousMonthCount + immunizationData.thisMonthCount}</td>
-              <td className="border border-[#000]">{immunizationData.totalCount}</td>
+              <td className="border border-[#000]">
+                No. of Dogs immunized against Rabies and Registered
+              </td>
+              <td className="border border-[#000]">
+                {immunizationData.previousMonthCount}
+              </td>
+              <td className="border border-[#000]">
+                {immunizationData.thisMonthCount}
+              </td>
+              <td className="border border-[#000]">
+                {immunizationData.previousMonthCount +
+                  immunizationData.thisMonthCount}
+              </td>
+              <td className="border border-[#000]">
+                {immunizationData.totalCount}
+              </td>
             </tr>
           </tbody>
         </table>
-
       </div>
 
       <div className="mt-5">

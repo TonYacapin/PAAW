@@ -44,16 +44,20 @@ import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingRe
 import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
 
 // Icon components (Material-UI)
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import ReportIcon from '@mui/icons-material/Report';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import HealingIcon from '@mui/icons-material/Healing';
-import SearchIcon from '@mui/icons-material/Search';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import ReportIcon from "@mui/icons-material/Report";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import HealingIcon from "@mui/icons-material/Healing";
+import SearchIcon from "@mui/icons-material/Search";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VaccinesIcon from "@mui/icons-material/Vaccines";
 import PetsIcon from "@mui/icons-material/Pets";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { Inventory, Outbox } from "@mui/icons-material";
+import AnimalHealthCareServices from "../Client Request Forms/AnimalHealthCareServices";
+import AnimalProductionServices from "../Client Request Forms/AnimalProductionServices";
+import RegulatoryCareServices from "../Client Request Forms/RegulatoryCareServices";
+import VeterinaryInformationServices from "../Client Request Forms/VeterinaryInformationServices";
 
 export const FilterContext = createContext(null);
 
@@ -103,7 +107,7 @@ function Home() {
         return <RoutineServicesMonitoringReport />;
       case "DiseaseInvestigationForm":
         return <DiseaseInvestigationForm />;
-      case "RequisisionSlip":
+      case "RequisitionSlip":
         return <RequisitionIssueSlip />;
       case "RabiesHistoryForm":
         return <RabiesHistoryForm />;
@@ -127,17 +131,14 @@ function Home() {
         return <OutgoingReportList />;
       case "IncomingReportList":
         return <IncomingReportList />;
-
-
-
-
-
-
-
-
-
-
-
+      case "AnimalHealthCareServices":
+        return <AnimalHealthCareServices />;
+      case "AnimalProductionServices":
+        return <AnimalProductionServices />;
+      case "RegulatoryCareServices":
+        return <RegulatoryCareServices />;
+      case "VeterinaryInformationServices":
+        return <VeterinaryInformationServices />;
 
       default:
         return null;
@@ -262,37 +263,46 @@ function Home() {
               Browse Forms from Client Forms
             </h3>
             <div className="space-y-6">
-              {/* <div>
-                <h4 className="text-lg font-medium text-gray-700 mb-2">Requisition Forms</h4>
-                <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <ManageAccountsIcon className="mr-2" />  Requisition Form
-
-
-                  </button>
-                </div>
-              </div> */}
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   Request Services Forms
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <VaccinesIcon className="mr-2" /> Animal Production Services
-                    Request Form
-                  </button>
-                  <button className={buttonClasses}>
-                    <ReportIcon className="mr-2" /> Veterinary Information
-                    Services Request Form
-                  </button>
-                  <button className={buttonClasses}>
+                <button
+                    onClick={() => openModalWithContent("AnimalHealthCareServices")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
                     <HealingIcon className="mr-2" /> Animal Health Care Services
-                    Request Form
                   </button>
-                  <button className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Regulatory Care
-                    Services Request Form
+
+                  <button
+                    onClick={() => openModalWithContent("AnimalProductionServices")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
+                    <VaccinesIcon className="mr-2" /> Animal Production Services
                   </button>
+
+
+                  <button
+                    onClick={() => openModalWithContent("VeterinaryInformationServices")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
+                    <ReportIcon className="mr-2" /> Veterinary Information Services
+                  </button>
+
+                  <button
+                    onClick={() => openModalWithContent("RegulatoryCareServices")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
+                    <LocalShippingIcon className="mr-2" /> Regulatory Services
+                  </button>
+
+                  {/* VaccinesIcon
+                  ReportIcon
+                  HealingIcon
+                  LocalShippingIcon */}
+
+
                 </div>
               </div>
             </div>
@@ -314,7 +324,7 @@ function Home() {
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => setSelectedDivision("user")}
+                onClick={() => openModalWithContent("RequisitionSlip")}
               >
                 <Outbox className="mr-2" /> Manage Requisition Forms
               </button>
@@ -339,7 +349,7 @@ function Home() {
                 Requisition Forms
               </h4>
               <div className="space-y-2">
-                <button className={buttonClasses}>
+                <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
                   <Outbox className="mr-2" /> Requisition Form
                 </button>
               </div>
@@ -372,24 +382,7 @@ function Home() {
                   Reports
                 </h4>
                 <div className="space-y-2">
-                  <button
-                    onClick={() => openModalWithContent("AccomplishmentReport")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
-                    Report
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      openModalWithContent("RoutineServicesMonitoringReport")
-                    }
-                    className={buttonClasses}
-                  >
-                    <AssignmentIcon className="mr-2" /> Routine Service
-                    Monitoring Reports
-                  </button>
-                  <button
+                <button
                     onClick={() =>
                       openModalWithContent("DiseaseInvestigationForm")
                     }
@@ -406,6 +399,22 @@ function Home() {
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Rabies History
+                  </button>
+                  <button
+                    onClick={() =>
+                      openModalWithContent("RoutineServicesMonitoringReport")
+                    }
+                    className={buttonClasses}
+                  >
+                    <AssignmentIcon className="mr-2" /> Routine Service
+                    Monitoring Reports
+                  </button>
+                  <button
+                    onClick={() => openModalWithContent("AccomplishmentReport")}
+                    className={buttonClasses + " lg:block hidden text-left"}
+                  >
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
+                    Report
                   </button>
                 </div>
               </div>
@@ -424,7 +433,7 @@ function Home() {
                   Requisition Forms
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses}>
+                  <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
                     <ManageAccountsIcon className="mr-2" /> Requisition Form
                   </button>
                 </div>
@@ -447,11 +456,12 @@ function Home() {
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
 
-                  <button onClick={() =>
-                    openModalWithContent("CalfDrop")
-                  }
-                    className={buttonClasses} >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+                  <button
+                    onClick={() => openModalWithContent("CalfDrop")}
+                    className={buttonClasses}
+                  >
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
+                    Drop Report
                   </button>
 
                   <button
@@ -491,27 +501,34 @@ function Home() {
                   FORMS
                 </h4>
                 <div className="space-y-2">
-                  <button onClick={() =>
-                    openModalWithContent("IncomingReportList")
-                  } className={buttonClasses}>
+                  <button
+                    onClick={() => openModalWithContent("IncomingReportList")}
+                    className={buttonClasses}
+                  >
                     <ReportIcon className="mr-2" /> Incoming Report
                   </button>
-                  <button onClick={() =>
-                    openModalWithContent("OutgoingReportList")
-                  } className={buttonClasses}>
+                  <button
+                    onClick={() => openModalWithContent("OutgoingReportList")}
+                    className={buttonClasses}
+                  >
                     <ReportIcon className="mr-2" /> Outgoing Report
                   </button>
-                  <button onClick={() =>
-                    openModalWithContent("SlaughterReportList")
-                  } className={buttonClasses}>
-                    <AssessmentIcon className="mr-2" /> Slaughter Report (consolidated)
+                  <button
+                    onClick={() => openModalWithContent("SlaughterReportList")}
+                    className={buttonClasses}
+                  >
+                    <AssessmentIcon className="mr-2" /> Slaughter Report
+                    (consolidated)
                   </button>
-                  <button onClick={() =>
-                    openModalWithContent("VeterinaryShipmentList")
-                  } className={buttonClasses}>
-                    <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
+                  <button
+                    onClick={() =>
+                      openModalWithContent("VeterinaryShipmentList")
+                    }
+                    className={buttonClasses}
+                  >
+                    <LocalShippingIcon className="mr-2" /> Veterinary Shipment
+                    Report
                   </button>
-
                 </div>
               </div>
             </div>

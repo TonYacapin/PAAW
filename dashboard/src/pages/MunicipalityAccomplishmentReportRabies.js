@@ -111,7 +111,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
 
     return (
         <>
-            <div className="max-h-[70vh] overflow-y-hidden">
+            <div className="">
                 
 
                 <div id="printable-content" style={{ display: "none" }}>

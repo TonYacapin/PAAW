@@ -23,6 +23,10 @@ import RSMAccomplishmentReport from "./pages/RSMAccomplishmentReport";
 import MunicipalityTargetList from "./pages/Admin Pages/MunicipalityTargetList";
 
 import OffspringMonitoring from "./pages/OffspringMonitoring";
+import AnimalHealthCareServices from "./pages/Client Request Forms/AnimalHealthCareServices";
+import AnimalProductionServices from "./pages/Client Request Forms/AnimalProductionServices";
+import RegulatoryCareServices from "./pages/Client Request Forms/RegulatoryCareServices";
+import VeterinaryInformationServices from "./pages/Client Request Forms/VeterinaryInformationServices";
 const App = () => {
   return (
     <Router>
@@ -73,6 +77,10 @@ const App = () => {
           {/* (kulang to) */}
 
           {/* Client */}
+          <Route path="/ahcs" element={<AnimalHealthCareServices />} />
+          <Route path="/aps" element={<AnimalProductionServices />} />
+          <Route path="/rcs" element={<RegulatoryCareServices />} />
+          <Route path="/vis" element={<VeterinaryInformationServices />} />
           {/* Submitted Forms */}
 
           {/* Admin Division */}

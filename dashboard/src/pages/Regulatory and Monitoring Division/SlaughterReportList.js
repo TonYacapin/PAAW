@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Modal from '../../component/Modal';
 import SlaughterReportForm from './SlaughterReportForm';
 
 function SlaughterReportList() {
     const municipalities = [
-        'Bagabag', 'Bayombong',
-        'Solano', 'Villaverde', 'Aritao',
-        'Bambang', 'Dupax del Norte',
-
+        'Bagabag', 'Bayombong', 'Solano', 'Villaverde', 'Aritao', 'Bambang', 'Dupax del Norte',
     ];
 
     const animals = ['Cattle', 'Carabao', 'Goat', 'Sheep', 'Hog', 'Chicken'];
@@ -19,29 +17,38 @@ function SlaughterReportList() {
         municipality: '',
         month: '',
         year: '',
-    }); const [reports, setReports] = useState([
-        { id: 1, municipality: 'Bayombong', month: '5', year: '2024', animal: 'Cattle', number: 10, weight: 1500 },
-        { id: 2, municipality: 'Solano', month: '6', year: '2023', animal: 'Carabao', number: 5, weight: 800 },
-        { id: 3, municipality: 'Dupax del Norte', month: '8', year: '2024', animal: 'Goat', number: 12, weight: 240 },
-        { id: 4, municipality: 'Bayombong', month: '5', year: '2024', animal: 'Hog', number: 20, weight: 600 },
-        { id: 5, municipality: 'Bagabag', month: '7', year: '2024', animal: 'Chicken', number: 50, weight: 75 },
-        { id: 6, municipality: 'Solano', month: '4', year: '2024', animal: 'Cattle', number: 15, weight: 2100 },
-        { id: 7, municipality: 'Villaverde', month: '3', year: '2023', animal: 'Carabao', number: 7, weight: 900 },
-        { id: 8, municipality: 'Aritao', month: '2', year: '2024', animal: 'Goat', number: 18, weight: 360 },
-        { id: 9, municipality: 'Villaverde', month: '1', year: '2024', animal: 'Hog', number: 25, weight: 750 },
-        { id: 10, municipality: 'Bambang', month: '6', year: '2024', animal: 'Chicken', number: 100, weight: 150 },
-        { id: 11, municipality: 'Dupax del Norte', month: '7', year: '2023', animal: 'Cattle', number: 8, weight: 1200 },
-        { id: 12, municipality: 'Aritao', month: '8', year: '2024', animal: 'Carabao', number: 3, weight: 500 },
-        { id: 13, municipality: 'Bagabag', month: '9', year: '2023', animal: 'Goat', number: 20, weight: 400 },
-        { id: 14, municipality: 'Bambang', month: '10', year: '2023', animal: 'Hog', number: 15, weight: 450 },
-        { id: 15, municipality: 'Bayombong', month: '11', year: '2024', animal: 'Chicken', number: 80, weight: 100 },
-        { id: 16, municipality: 'Solano', month: '12', year: '2023', animal: 'Cattle', number: 5, weight: 700 },
-        { id: 17, municipality: 'Villaverde', month: '4', year: '2024', animal: 'Carabao', number: 10, weight: 1200 },
-        { id: 18, municipality: 'Dupax del Norte', month: '5', year: '2024', animal: 'Goat', number: 22, weight: 440 },
-        { id: 19, municipality: 'Aritao', month: '1', year: '2023', animal: 'Hog', number: 30, weight: 900 },
-        { id: 20, municipality: 'Bagabag', month: '8', year: '2023', animal: 'Chicken', number: 65, weight: 80 },
-    ]);
-
+    });
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const fetchSlaughterReports = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/slaugtherform`);
+            const fetchedReports = response.data;
+    
+            // Flatten the API data to match the table structure
+            const processedReports = fetchedReports.flatMap(report =>
+                report.slaughterAnimals.map(animal => ({
+                    id: report._id,
+                    municipality: report.municipality,
+                    month: report.month.toString(), // Ensure month is a string for matching
+                    year: report.year.toString(),  // Ensure year is a string for matching
+                    animal: animal.name,
+                    number: animal.number,
+                    weight: parseInt(animal.weight, 10),  // Convert weight to integer
+                }))
+            );
+    
+            setReports(processedReports);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching slaughter reports:", error);
+            setLoading(false);
+        }
+    };
+    
+    useEffect(() => {
+        fetchSlaughterReports();
+    }, []);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -137,7 +144,7 @@ function SlaughterReportList() {
                 )}
             </div>
 
-            {/* Analysis Section in a Card */}
+            {/* Analysis Section */}
             <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
                 <h2 className="text-lg font-medium text-darkgreen">Analysis</h2>
                 <p>Total Reports: {filteredReports.length}</p>
@@ -147,36 +154,40 @@ function SlaughterReportList() {
 
             {/* Slaughter Reports Table */}
             <h2 className="text-lg font-medium text-darkgreen mb-2">Filtered Reports</h2>
-            <div className="mb-6 overflow-x-auto">
-                {filteredReports.length > 0 ? (
-                    <table className="min-w-full bg-white rounded-lg shadow-md">
-                        <thead className="bg-darkgreen text-white">
-                            <tr>
-                                <th className="py-2 px-4">Animal</th>
-                                <th className="py-2 px-4">Municipality</th>
-                                <th className="py-2 px-4">Month</th>
-                                <th className="py-2 px-4">Year</th>
-                                <th className="py-2 px-4">Number</th>
-                                <th className="py-2 px-4">Weight (kg)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredReports.map((report) => (
-                                <tr key={report.id} className="border-b">
-                                    <td className="py-2 px-4">{report.animal}</td>
-                                    <td className="py-2 px-4">{report.municipality}</td>
-                                    <td className="py-2 px-4">{report.month}</td>
-                                    <td className="py-2 px-4">{report.year}</td>
-                                    <td className="py-2 px-4">{report.number}</td>
-                                    <td className="py-2 px-4">{report.weight}</td>
+            {loading ? (
+                <p>Loading...</p>
+            ) : (
+                <div className="mb-6 overflow-x-auto">
+                    {filteredReports.length > 0 ? (
+                        <table className="min-w-full bg-white rounded-lg shadow-md">
+                            <thead className="bg-darkgreen text-white">
+                                <tr>
+                                    <th className="py-2 px-4">Animal</th>
+                                    <th className="py-2 px-4">Municipality</th>
+                                    <th className="py-2 px-4">Month</th>
+                                    <th className="py-2 px-4">Year</th>
+                                    <th className="py-2 px-4">Number</th>
+                                    <th className="py-2 px-4">Weight (kg)</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p className="text-gray-500">No reports found for the selected filters.</p>
-                )}
-            </div>
+                            </thead>
+                            <tbody>
+                                {filteredReports.map((report) => (
+                                    <tr key={report.id} className="border-b">
+                                        <td className="py-2 px-4">{report.animal}</td>
+                                        <td className="py-2 px-4">{report.municipality}</td>
+                                        <td className="py-2 px-4">{report.month}</td>
+                                        <td className="py-2 px-4">{report.year}</td>
+                                        <td className="py-2 px-4">{report.number}</td>
+                                        <td className="py-2 px-4">{report.weight}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p className="text-gray-500">No reports found for the selected filters.</p>
+                    )}
+                </div>
+            )}
 
             {/* Button to Open Slaughter Report Form Modal */}
             <div className="text-center">
