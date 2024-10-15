@@ -421,7 +421,7 @@ function RegulatoryCareServices() {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-4">Regulatory Care Services</h2>
+      <h2 className="text-3xl font-bold mb-4">Regulatory Service</h2>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
       <FormSubmit
         handleImportCSV={handleImportCSV}
