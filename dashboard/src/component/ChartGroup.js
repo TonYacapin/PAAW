@@ -20,7 +20,7 @@ export default function ChartGroup(props) {
       <CardBox>
           <>
             <h1 className="md:text-2xl font-bold mb-6">{props.title}</h1>
-            <div className="lg:max-h-[100vh]">
+            <div className="w-fit">
               {props.others}
               <div
                 className={`grid ${
