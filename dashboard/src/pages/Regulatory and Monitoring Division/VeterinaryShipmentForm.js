@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import StepperComponent from '../../component/StepperComponent';
 import FormSubmit from '../../component/FormSubmit';
-import Papa from 'papaparse';  
+import Papa from 'papaparse';
+import axios from "axios";
 
 const VeterinaryShipmentForm = () => {
   const [shipmentType, setShipmentType] = useState('');
@@ -9,6 +10,8 @@ const VeterinaryShipmentForm = () => {
   const [date, setDate] = useState('');
   const [pointOfOrigin, setPointOfOrigin] = useState('');
   const [remarks, setRemarks] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [liveAnimals, setLiveAnimals] = useState({
     Carabao: 0,
@@ -88,19 +91,70 @@ const VeterinaryShipmentForm = () => {
   };
 
   // Form Submit function
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      shipmentType,
-      shipperName,
-      date,
-      pointOfOrigin,
-      remarks,
-      liveAnimals,
-      animalByProducts,
-    });
-    // Here you can add an API call to submit the data
+  // Form Submit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Prepare the data to send
+  const data = {
+    shipmentType,
+    shipperName,
+    date,
+    pointOfOrigin,
+    remarks,
+    liveAnimals,
+    animalByProducts,
   };
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`, // Your API endpoint
+      data
+    );
+
+    // Handle the response
+    if (response.status === 201) { // Assuming 201 is the success status code
+      setSuccess("Veterinary shipment report successfully submitted!");
+      // Optionally, reset the form state after submission
+      resetForm();
+    } else {
+      setError("Unexpected response from the server.");
+    }
+
+    console.log(response.data);
+  } catch (err) {
+    setError("Error submitting the report. Please try again.");
+    console.error(err);
+  }
+};
+
+// Function to reset the form state
+const resetForm = () => {
+  setShipmentType('');
+  setShipperName('');
+  setDate('');
+  setPointOfOrigin('');
+  setRemarks('');
+  setLiveAnimals({
+    Carabao: 0,
+    Cattle: 0,
+    Swine: 0,
+    Horse: 0,
+    Chicken: 0,
+    Duck: 0,
+    Other: 0,
+  });
+  setAnimalByProducts({
+    Beef: 0,
+    Carabeef: 0,
+    Pork: 0,
+    PoultryMeat: 0,
+    Egg: 0,
+    ChickenDung: 0,
+  });
+  setError("");
+  setSuccess("");
+};
 
   const renderStepContent = (step) => {
     switch (step) {
@@ -233,6 +287,9 @@ const VeterinaryShipmentForm = () => {
         return null;
     }
   };
+
+  {success && <div className="text-green-600">{success}</div>}
+      {error && <div className="text-red-600">{error}</div>}
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg space-y-6">
