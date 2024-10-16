@@ -165,94 +165,120 @@ function AnimalHealthCareServices() {
           <>
             <h3 className="text-2xl font-bold mb-6">Client Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="block mb-2 font-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={clientInfo.name}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Barangay</label>
-              <input
-                type="text"
-                name="barangay"
-                placeholder="Barangay"
-                value={clientInfo.barangay}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              />
-  
-             
-  
-              <label className="block mb-2 font-medium">Municipality</label>
-              <select
-                name="municipality"
-                value={clientInfo.municipality}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              >
-                <option value="">Select Municipality</option>
-                <option value="Ambaguio">Ambaguio</option>
-                <option value="Bagabag">Bagabag</option>
-                <option value="Bayombong">Bayombong</option>
-                <option value="Diadi">Diadi</option>
-                <option value="Quezon">Quezon</option>
-                <option value="Solano">Solano</option>
-                <option value="Villaverde">Villaverde</option>
-                <option value="Alfonso Castañeda">Alfonso Castañeda</option>
-                <option value="Aritao">Aritao</option>
-                <option value="Bambang">Bambang</option>
-                <option value="Dupax del Norte">Dupax del Norte</option>
-                <option value="Dupax del Sur">Dupax del Sur</option>
-                <option value="Kayapa">Kayapa</option>
-                <option value="Kasibu">Kasibu</option>
-                <option value="Santa Fe">Santa Fe</option>
-              </select>
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={clientInfo.name}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
 
-              <label className="block mb-2 font-medium">Province</label>
-              <input
-                type="text"
-                name="province"
-                placeholder="Province"
-                value={clientInfo.province}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Birthday</label>
-              <input
-                type="text"
-                name="birthday"
-                placeholder="Birthday"
-                value={clientInfo.birthday}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Gender</label>
-              <select
-                name="type"
-                value={clientInfo.type}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-  
-              <label className="block mb-2 font-medium">Contact Number</label>
-              <input
-                type="text"
-                name="contact"
-                placeholder="Contact Number"
-                value={clientInfo.contact}
-                onChange={(e) => handleInputChange(e, "clientInfo", setClientInfo)}
-                className="border w-full p-2 rounded"
-              />
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Barangay</label>
+                <input
+                  type="text"
+                  name="barangay"
+                  placeholder="Barangay"
+                  value={clientInfo.barangay}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Municipality</label>
+                <select
+                  name="municipality"
+                  value={clientInfo.municipality}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                >
+                  <option value="">Select Municipality</option>
+                  <option value="Ambaguio">Ambaguio</option>
+                  <option value="Bagabag">Bagabag</option>
+                  <option value="Bayombong">Bayombong</option>
+                  <option value="Diadi">Diadi</option>
+                  <option value="Quezon">Quezon</option>
+                  <option value="Solano">Solano</option>
+                  <option value="Villaverde">Villaverde</option>
+                  <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+                  <option value="Aritao">Aritao</option>
+                  <option value="Bambang">Bambang</option>
+                  <option value="Dupax del Norte">Dupax del Norte</option>
+                  <option value="Dupax del Sur">Dupax del Sur</option>
+                  <option value="Kayapa">Kayapa</option>
+                  <option value="Kasibu">Kasibu</option>
+                  <option value="Santa Fe">Santa Fe</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Province</label>
+                <input
+                  type="text"
+                  name="province"
+                  placeholder="Province"
+                  value={clientInfo.province}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Birthday</label>
+                <input
+                  type="text"
+                  name="birthday"
+                  placeholder="Birthday"
+                  value={clientInfo.birthday}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Gender</label>
+                <select
+                  name="type"
+                  value={clientInfo.type}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Contact Number</label>
+                <input
+                  type="text"
+                  name="contact"
+                  placeholder="Contact Number"
+                  value={clientInfo.contact}
+                  onChange={(e) =>
+                    handleInputChange(e, "clientInfo", setClientInfo)
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
             </div>
           </>
         );
@@ -261,79 +287,114 @@ function AnimalHealthCareServices() {
           <>
             <h3 className="text-2xl font-bold mb-6">Rabies Vaccination</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="block mb-2 font-medium">Name of Pet</label>
-              <input
-                type="text"
-                name="petName"
-                placeholder="Name of Pet"
-                value={rabiesVaccination.petName}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Species</label>
-              <input
-                type="text"
-                name="species"
-                placeholder="Species"
-                value={rabiesVaccination.species}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Gender</label>
-              <select
-                name="type"
-                value={rabiesVaccination.type}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-  
-              <label className="block mb-2 font-medium">Age</label>
-              <input
-                type="text"
-                name="age"
-                placeholder="Age"
-                value={rabiesVaccination.age}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Color</label>
-              <input
-                type="text"
-                name="color"
-                placeholder="Color"
-                value={rabiesVaccination.color}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              />
-  
-              <label className="block mb-2 font-medium">Remarks</label>
-              <input
-                type="text"
-                name="remarks"
-                placeholder="Remarks"
-                value={rabiesVaccination.remarks}
-                onChange={(e) =>
-                  handleInputChange(e, "rabiesVaccination", setRabiesVaccination)
-                }
-                className="border w-full p-2 rounded"
-              />
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Name of Pet</label>
+                <input
+                  type="text"
+                  name="petName"
+                  placeholder="Name of Pet"
+                  value={rabiesVaccination.petName}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Species</label>
+                <input
+                  type="text"
+                  name="species"
+                  placeholder="Species"
+                  value={rabiesVaccination.species}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Gender</label>
+                <select
+                  name="type"
+                  value={rabiesVaccination.type}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Age</label>
+                <input
+                  type="text"
+                  name="age"
+                  placeholder="Age"
+                  value={rabiesVaccination.age}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Color</label>
+                <input
+                  type="text"
+                  name="color"
+                  placeholder="Color"
+                  value={rabiesVaccination.color}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block mb-2 font-medium">Remarks</label>
+                <input
+                  type="text"
+                  name="remarks"
+                  placeholder="Remarks"
+                  value={rabiesVaccination.remarks}
+                  onChange={(e) =>
+                    handleInputChange(
+                      e,
+                      "rabiesVaccination",
+                      setRabiesVaccination
+                    )
+                  }
+                  className="border w-full p-2 rounded"
+                />
+              </div>
             </div>
           </>
         );
@@ -343,6 +404,7 @@ function AnimalHealthCareServices() {
             <h3 className="text-2xl font-bold mb-6">Vaccination</h3>
             <h3 className="text-md font-semibold mb-6">Walk-in/Home Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col">
               <label className="block mb-2 font-medium">Vaccination Type</label>
               <select
                 name="type"
@@ -358,7 +420,8 @@ function AnimalHealthCareServices() {
                 <option value="newCastleDisease">New Castle Disease</option>
                 <option value="blackleg">Blackleg</option>
               </select>
-  
+            </div>
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Species</label>
               <input
                 type="text"
@@ -370,7 +433,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">No. of Heads</label>
               <input
                 type="text"
@@ -382,7 +447,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+              
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Gender</label>
               <select
                 name="gender"
@@ -396,7 +463,9 @@ function AnimalHealthCareServices() {
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Age</label>
               <input
                 type="text"
@@ -408,7 +477,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+              
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Vaccine</label>
               <input
                 type="text"
@@ -420,7 +491,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Quantity</label>
               <input
                 type="text"
@@ -432,6 +505,7 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
+              </div>
             </div>
           </>
         );
@@ -441,6 +515,7 @@ function AnimalHealthCareServices() {
             <h3 className="text-2xl font-bold mb-6">Routine Services</h3>
             <h3 className="text-md font-semibold mb-6">Walk-in/Home Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Service Type</label>
               <select
                 name="serviceType"
@@ -451,12 +526,16 @@ function AnimalHealthCareServices() {
                 className="border w-full p-2 rounded"
               >
                 <option value="">Select Service</option>
-                <option value="treatmentConsultation">Treatment/Consultation</option>
+                <option value="treatmentConsultation">
+                  Treatment/Consultation
+                </option>
                 <option value="deworming">Deworming</option>
                 <option value="iecMaterials">IEC Materials</option>
                 <option value="others">Others</option>
               </select>
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Species</label>
               <input
                 type="text"
@@ -468,7 +547,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">No. of Heads</label>
               <input
                 type="text"
@@ -480,7 +561,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Gender</label>
               <select
                 name="type"
@@ -494,7 +577,9 @@ function AnimalHealthCareServices() {
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Age</label>
               <input
                 type="text"
@@ -506,7 +591,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Vaccine</label>
               <input
                 type="text"
@@ -518,7 +605,9 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
-  
+              </div>
+
+              <div className="flex flex-col">
               <label className="block mb-2 font-medium">Quantity</label>
               <input
                 type="text"
@@ -530,6 +619,7 @@ function AnimalHealthCareServices() {
                 }
                 className="border w-full p-2 rounded"
               />
+              </div>
             </div>
           </>
         );
@@ -537,8 +627,6 @@ function AnimalHealthCareServices() {
         return null;
     }
   };
-  
-  
 
   return (
     <div className="container mx-auto p-4">
