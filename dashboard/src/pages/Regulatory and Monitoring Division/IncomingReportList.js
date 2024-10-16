@@ -1,154 +1,205 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function IncomingReportList() {
-  // Dummy data for incoming reports
-  const [data, setData] = useState([
-    {
-      item: 'Carabao',
-      year: '2024',
-      monthlyShipments: [10, 12, 15, 9, 8, 14, 10, 12, 18, 20, 17, 15],
-    },
-    {
-      item: 'Cattle',
-      year: '2023',
-      monthlyShipments: [20, 18, 22, 25, 21, 19, 24, 22, 20, 17, 23, 26],
-    },
-    {
-      item: 'Swine',
-      year: '2024',
-      monthlyShipments: [30, 25, 28, 22, 27, 31, 29, 30, 32, 35, 36, 40],
-    },
-    {
-      item: 'Broiler',
-      year: '2023',
-      monthlyShipments: [15, 14, 16, 20, 18, 22, 24, 20, 21, 23, 19, 17],
-    },
-    {
-      item: 'Table',
-      year: '2022',
-      monthlyShipments: [50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105],
-    },
-    {
-      item: 'Doc',
-      year: '2024',
-      monthlyShipments: [5, 10, 15, 5, 8, 12, 10, 11, 13, 10, 9, 8],
-    },
-    {
-      item: 'Culled',
-      year: '2022',
-      monthlyShipments: [2, 4, 3, 5, 2, 3, 6, 5, 7, 4, 3, 2],
-    },
-    {
-      item: 'Poultry',
-      year: '2024',
-      monthlyShipments: [40, 35, 30, 45, 50, 55, 52, 58, 60, 62, 65, 70],
-    },
-    {
-      item: 'Pork',
-      year: '2023',
-      monthlyShipments: [22, 20, 18, 25, 24, 26, 28, 30, 32, 31, 29, 27],
-    },
-    {
-      item: 'Beef',
-      year: '2024',
-      monthlyShipments: [18, 20, 15, 22, 25, 28, 30, 32, 35, 34, 38, 40],
-    },
-    {
-      item: 'Chicken Dung',
-      year: '2024',
-      monthlyShipments: [70, 80, 75, 90, 85, 100, 95, 92, 98, 110, 120, 115],
-    },
-    {
-      item: 'Goat',
-      year: '2023',
-      monthlyShipments: [5, 6, 8, 7, 9, 10, 11, 9, 8, 7, 6, 5],
-    },
-    {
-      item: 'Pullet',
-      year: '2022',
-      monthlyShipments: [12, 14, 10, 16, 18, 20, 22, 24, 26, 28, 30, 32],
-    },
-    {
-      item: 'Sheep',
-      year: '2024',
-      monthlyShipments: [3, 5, 7, 4, 6, 8, 5, 4, 3, 5, 6, 7],
-    },
-    {
-      item: 'No. of Shipment',
-      year: '2024',
-      monthlyShipments: [200, 220, 250, 230, 240, 260, 270, 280, 290, 300, 310, 320],
-    },
-  ]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [year, setYear] = useState('2024');
+  // Date filter state
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-  // Create a mapping of item names to their shipments for the selected year
-  const shipmentsByYear = {};
-  data.forEach((report) => {
-    if (!shipmentsByYear[report.item]) {
-      shipmentsByYear[report.item] = {
-        monthlyShipments: Array(12).fill(0), // Initialize with 0 for each month
-        year: report.year,
-      };
-    }
-    // Only fill in the shipments for the selected year
-    if (report.year === year) {
-      shipmentsByYear[report.item].monthlyShipments = report.monthlyShipments;
-    }
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`);
+        setData(response.data);
+      } catch (err) {
+        console.error('Error fetching data:', err.message);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Convert the shipmentsByYear object back into an array
-  const filteredData = Object.keys(shipmentsByYear).map((key) => ({
-    item: key,
-    monthlyShipments: shipmentsByYear[key].monthlyShipments,
-  }));
+    fetchData();
+  }, []);
 
-  // Function to calculate the total for each row
-  const calculateTotal = (monthlyShipments) => {
-    return monthlyShipments.reduce((total, num) => total + num, 0);
+  // Filter data by date range
+  const filterDataByDate = (shipments, start, end) => {
+    const startFilterDate = new Date(start);
+    const endFilterDate = new Date(end);
+
+    return shipments.filter((shipment) => {
+      const shipmentDate = new Date(shipment.date);
+      return shipmentDate >= startFilterDate && shipmentDate <= endFilterDate;
+    });
   };
+
+  // Process shipment data: sum up all incoming shipments per month
+  const getFilteredIncomingShipmentsByMonth = () => {
+    const filteredShipments = startDate && endDate ? filterDataByDate(data, startDate, endDate) : data;
+
+    // Array to hold data for each month
+    const incomingShipmentsByMonth = Array(12).fill(null).map(() => ({
+      Carabao: 0,
+      Cattle: 0,
+      Swine: 0,
+      Horse: 0,
+      Chicken: 0,
+      Duck: 0,
+      Other: 0,
+    }));
+
+    filteredShipments.forEach((shipment) => {
+      if (shipment.shipmentType === 'Incoming') {
+        const shipmentDate = new Date(shipment.date);
+        const monthIndex = shipmentDate.getMonth();
+        const liveAnimals = shipment.liveAnimals || {};
+
+        // Accumulate counts for each animal type in the appropriate month
+        incomingShipmentsByMonth[monthIndex].Carabao += liveAnimals.Carabao || 0;
+        incomingShipmentsByMonth[monthIndex].Cattle += liveAnimals.Cattle || 0;
+        incomingShipmentsByMonth[monthIndex].Swine += liveAnimals.Swine || 0;
+        incomingShipmentsByMonth[monthIndex].Horse += liveAnimals.Horse || 0;
+        incomingShipmentsByMonth[monthIndex].Chicken += liveAnimals.Chicken || 0;
+        incomingShipmentsByMonth[monthIndex].Duck += liveAnimals.Duck || 0;
+        incomingShipmentsByMonth[monthIndex].Other += liveAnimals.Other || 0;
+      }
+    });
+
+    return incomingShipmentsByMonth;
+  };
+
+  // Function to calculate the total for each month
+  const calculateTotal = (monthlyShipments) => {
+    return Object.values(monthlyShipments).reduce((total, count) => total + count, 0);
+  };
+
+  // Print function
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    const incomingShipmentsByMonth = getFilteredIncomingShipmentsByMonth();
+    const tableRows = incomingShipmentsByMonth.map((monthlyShipments, index) => {
+      const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+      return `
+        <tr>
+          <td>${new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+          <td>${monthlyShipments.Carabao}</td>
+          <td>${monthlyShipments.Cattle}</td>
+          <td>${monthlyShipments.Swine}</td>
+          <td>${monthlyShipments.Horse}</td>
+          <td>${monthlyShipments.Chicken}</td>
+          <td>${monthlyShipments.Duck}</td>
+          <td>${monthlyShipments.Other}</td>
+          <td>${total}</td>
+        </tr>`;
+    }).join('');
+
+    const printContent = `
+      <html>
+        <head>
+          <title>Incoming Shipments Report</title>
+          <style>
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background-color: #1b5b40; color: white; }
+          </style>
+        </head>
+        <body>
+          <h2>Incoming Shipments Report</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Carabao</th>
+                <th>Cattle</th>
+                <th>Swine</th>
+                <th>Horse</th>
+                <th>Chicken</th>
+                <th>Duck</th>
+                <th>Other</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </body>
+      </html>`;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // Get the filtered incoming shipments by month
+  const incomingShipmentsByMonth = getFilteredIncomingShipmentsByMonth();
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      {/* Year filter as number input */}
       <div className="mb-4">
-        <label htmlFor="year" className="mr-2 text-darkgreen font-semibold">Filter by Year:</label>
+        <label className="mr-2">Start Date:</label>
         <input
-          type="number"
-          id="year"
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-          className="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-darkgreen"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="p-2 border rounded"
+        />
+
+        <label className="ml-4 mr-2">End Date:</label>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="p-2 border rounded"
         />
       </div>
 
-      {/* Empty State Message */}
-      {filteredData.length === 0 ? (
-        <div className="text-center text-gray-500">No data available for the selected year.</div>
+      <button onClick={handlePrint} className="mb-4 p-2 bg-blue-500 text-white rounded">
+        Print Report
+      </button>
+
+      {incomingShipmentsByMonth.every(month => Object.values(month).every(count => count === 0)) ? (
+        <div>No shipments found for the selected date range.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-darkgreen text-white">
-                <th className="border border-gray-300 p-2" title="Name of the item being reported">Item</th>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <th key={i} className="border border-gray-300 p-2" title={`Shipments for ${new Date(0, i).toLocaleString('default', { month: 'long' })}`}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</th>
-                ))}
-                <th className="border border-gray-300 p-2" title="Total shipments for the year">Total</th>
+                <th className="border border-gray-300 p-2">Month</th>
+                <th className="border border-gray-300 p-2">Carabao</th>
+                <th className="border border-gray-300 p-2">Cattle</th>
+                <th className="border border-gray-300 p-2">Swine</th>
+                <th className="border border-gray-300 p-2">Horse</th>
+                <th className="border border-gray-300 p-2">Chicken</th>
+                <th className="border border-gray-300 p-2">Duck</th>
+                <th className="border border-gray-300 p-2">Other</th>
+                <th className="border border-gray-300 p-2">Total</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((report, index) => (
-                <tr key={index} className="hover:bg-gray-100 transition">
-                  <td className="border border-gray-300 p-2 font-medium">{report.item}</td>
-                  {report.monthlyShipments.map((shipment, i) => (
-                    <td key={i} className="border border-gray-300 p-2 text-center">{shipment}</td>
-                  ))}
-                  <td className="border border-gray-300 p-2 font-bold text-darkgreen">
-                    {calculateTotal(report.monthlyShipments)}
-                  </td>
-                </tr>
-              ))}
+              {incomingShipmentsByMonth.map((monthlyShipments, index) => {
+                const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+                return (
+                  <tr key={index} className="hover:bg-gray-100">
+                    <td className="border border-gray-300 p-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Carabao}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Cattle}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Swine}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Horse}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Chicken}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Duck}</td>
+                    <td className="border border-gray-300 p-2">{monthlyShipments.Other}</td>
+                    <td className="border border-gray-300 p-2">{total}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
