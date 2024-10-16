@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import axios from 'axios';
+import ChartGroup from './ChartGroup'; // Import ChartGroup
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,6 +45,8 @@ const TechnicianQuarterlyCharts = () => {
     labels: [],
     datasets: [],
   });
+
+  const [selectedChart, setSelectedChart] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,41 +152,39 @@ const TechnicianQuarterlyCharts = () => {
     fetchData();
   }, []);
 
+  // Create an array of chart objects to be passed to ChartGroup
+  const charts = [
+    {
+      label: 'Technician Activity by Municipality',
+      content: <Bar data={technicianActivityData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
+    {
+      label: 'Sex Distribution of Calves',
+      content: <Pie data={sexDistributionData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
+    {
+      label: 'Breed Diversity',
+      content: <Bar data={breedDiversityData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
+    {
+      label: 'Calving Date Trends',
+      content: <Line data={calvingDateData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
+  ];
+
   return (
     <div>
-      <h2>Technician Quarterly Charts</h2>
-
-      {/* Technician Activity by Municipality */}
-      {technicianActivityData.datasets.length > 0 && (
-        <div>
-          <h3>Technician Activity by Municipality</h3>
-          <Bar data={technicianActivityData} />
-        </div>
-      )}
-
-      {/* Sex Distribution of Calves */}
-      {sexDistributionData.datasets.length > 0 && (
-        <div>
-          <h3>Sex Distribution of Calves</h3>
-          <Pie data={sexDistributionData} />
-        </div>
-      )}
-
-      {/* Breed Diversity */}
-      {breedDiversityData.datasets.length > 0 && (
-        <div>
-          <h3>Breed Diversity</h3>
-          <Bar data={breedDiversityData} />
-        </div>
-      )}
-
-      {/* Calving Date Trends */}
-      {calvingDateData.datasets.length > 0 && (
-        <div>
-          <h3>Calving Date Trends</h3>
-          <Line data={calvingDateData} />
-        </div>
-      )}
+  
+      <ChartGroup
+        charts={charts}
+        title="Technician Quarterly Performance"
+        selectedChart={selectedChart}
+        setSelectedChart={setSelectedChart}
+      />
     </div>
   );
 };

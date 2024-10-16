@@ -1,31 +1,44 @@
-import React, { useState } from 'react';
-import FormSubmit from '../../component/FormSubmit';
-import Papa from 'papaparse';
+import React, { useState } from "react";
+import FormSubmit from "../../component/FormSubmit";
+import Papa from "papaparse";
+import axios from "axios";
 
 function SlaughterReportForm() {
   const municipalities = [
-    'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon', 
-    'Solano', 'Villaverde', 'Alfonso Castañeda', 'Aritao', 
-    'Bambang', 'Dupax del Norte', 'Dupax del Sur', 'Kayapa', 
-    'Kasibu', 'Santa Fe'
+    "Ambaguio",
+    "Bagabag",
+    "Bayombong",
+    "Diadi",
+    "Quezon",
+    "Solano",
+    "Villaverde",
+    "Alfonso Castañeda",
+    "Aritao",
+    "Bambang",
+    "Dupax del Norte",
+    "Dupax del Sur",
+    "Kayapa",
+    "Kasibu",
+    "Santa Fe",
   ];
 
-  const animals = ['Cattle', 'Carabao', 'Goat', 'Sheep', 'Hog', 'Chicken'];
-
+  const animals = ["Cattle", "Carabao", "Goat", "Sheep", "Hog", "Chicken"];
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
-    municipality: '',
-    month: '',
-    year: '',
-    slaughterAnimals: animals.map(animal => ({
+    municipality: "",
+    month: "",
+    year: "",
+    slaughterAnimals: animals.map((animal) => ({
       name: animal,
-      number: '',
-      weight: ''
-    }))
+      number: "",
+      weight: "",
+    })),
   });
 
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
-    if (name === 'municipality' || name === 'month' || name === 'year') {
+    if (name === "municipality" || name === "month" || name === "year") {
       setFormData({ ...formData, [name]: value });
     } else {
       const updatedAnimals = [...formData.slaughterAnimals];
@@ -43,16 +56,16 @@ function SlaughterReportForm() {
           const importedData = result.data[0];
           setFormData({
             ...formData,
-            municipality: importedData.municipality || '',
-            month: importedData.month || '',
-            year: importedData.year || '',
+            municipality: importedData.municipality || "",
+            month: importedData.month || "",
+            year: importedData.year || "",
             slaughterAnimals: animals.map((animal) => ({
               name: animal,
-              number: importedData[`${animal}_number`] || '',
-              weight: importedData[`${animal}_weight`] || '',
-            }))
+              number: importedData[`${animal}_number`] || "",
+              weight: importedData[`${animal}_weight`] || "",
+            })),
           });
-        }
+        },
       });
     }
   };
@@ -67,31 +80,60 @@ function SlaughterReportForm() {
           acc[`${animal.name}_number`] = animal.number;
           acc[`${animal.name}_weight`] = animal.weight;
           return acc;
-        }, {})
-      }
+        }, {}),
+      },
     ];
 
     const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'slaughter_report.csv');
+    link.setAttribute("download", "slaughter_report.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/slaugtherform`,
+        formData
+      );
+      setSuccess("Slaughter report successfully submitted!");
+  
+      // // Reset formData to initial state
+      // setFormData({
+      //   municipality: '',
+      //   month: '',
+      //   year: '',
+      //   slaughterAnimals: animals.map(animal => ({
+      //     name: animal,
+      //     number: '',
+      //     weight: ''
+      //   }))
+      // });
+  
+      console.log(response.data);
+    } catch (err) {
+      setError("Error submitting the report. Please try again.");
+      console.error(err);
+    }
   };
+  
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white rounded-lg shadow-md space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 bg-white rounded-lg shadow-md space-y-6"
+    >
       {/* Municipality Dropdown */}
       <div>
-        <label htmlFor="municipality" className="block text-sm font-medium text-black mb-1">
+        <label
+          htmlFor="municipality"
+          className="block text-sm font-medium text-black mb-1"
+        >
           Municipality
         </label>
         <select
@@ -114,7 +156,10 @@ function SlaughterReportForm() {
       {/* Month and Year Input */}
       <div className="flex flex-col md:flex-row md:space-x-4">
         <div className="flex-1">
-          <label htmlFor="month" className="block text-sm font-medium text-black mb-1">
+          <label
+            htmlFor="month"
+            className="block text-sm font-medium text-black mb-1"
+          >
             Month
           </label>
           <input
@@ -131,7 +176,10 @@ function SlaughterReportForm() {
           />
         </div>
         <div className="flex-1">
-          <label htmlFor="year" className="block text-sm font-medium text-black mb-1">
+          <label
+            htmlFor="year"
+            className="block text-sm font-medium text-black mb-1"
+          >
             Year
           </label>
           <input
@@ -157,7 +205,10 @@ function SlaughterReportForm() {
             <h4 className="text-md font-medium text-black">{animal.name}</h4>
             <div className="flex flex-col md:flex-row md:space-x-4">
               <div className="flex-1">
-                <label htmlFor={`number-${index}`} className="block text-sm font-medium text-black mb-1">
+                <label
+                  htmlFor={`number-${index}`}
+                  className="block text-sm font-medium text-black mb-1"
+                >
                   Number
                 </label>
                 <input
@@ -173,7 +224,10 @@ function SlaughterReportForm() {
                 />
               </div>
               <div className="flex-1">
-                <label htmlFor={`weight-${index}`} className="block text-sm font-medium text-black mb-1">
+                <label
+                  htmlFor={`weight-${index}`}
+                  className="block text-sm font-medium text-black mb-1"
+                >
                   Weight (kg)
                 </label>
                 <input
@@ -192,11 +246,15 @@ function SlaughterReportForm() {
         ))}
       </div>
 
+      {/* Success and Error Messages */}
+      {success && <div className="text-green-600">{success}</div>}
+      {error && <div className="text-red-600">{error}</div>}
+
       {/* Submit Button */}
-      <FormSubmit 
-        handleImportCSV={handleImportCSV} 
-        handleExportCSV={handleExportCSV} 
-        handleSubmit={handleSubmit} 
+      <FormSubmit
+        handleImportCSV={handleImportCSV}
+        handleExportCSV={handleExportCSV}
+        handleSubmit={handleSubmit}
       />
     </form>
   );

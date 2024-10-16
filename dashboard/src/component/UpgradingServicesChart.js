@@ -30,6 +30,7 @@ const UpgradingServicesChart = () => {
     speciesData: { labels: [], datasets: [] },
     genderData: { labels: [], datasets: [] },
   });
+  const [selectedChart, setSelectedChart] = useState("Number of Entries by Municipality");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -237,44 +238,18 @@ const UpgradingServicesChart = () => {
       style: "col-span-2",
     },
   ];
+
   return (
     <>
-    <ChartGroup charts={charts} title="Upgrading Services Dashboard"/>
-
-      {/* Bar Chart - Municipality Data */}
-      {/* <div className="mb-10">
-        <h2 className="text-lg font-bold mb-2"></h2>
-        {chartData.municipalityData.datasets.length > 0 && (
-          <Bar data={chartData.municipalityData} options={chartOptions} />
-        )}
-      </div> */}
-
-      {/* Pie Chart - Activity Data */}
-      {/* <div className="mb-10">
-        <h2 className="text-lg font-bold mb-2">Distribution of Activities</h2>
-        {chartData.activityData.datasets.length > 0 && (
-          <Pie data={chartData.activityData} options={chartOptions} />
-        )}
-      </div> */}
-
-      {/* Doughnut Chart - Species Data */}
-      {/* <div className="mb-10">
-        <h2 className="text-lg font-bold mb-2">Distribution of Species</h2>
-        {chartData.speciesData.datasets.length > 0 && (
-          <Doughnut data={chartData.speciesData} options={chartOptions} />
-        )}
-      </div> */}
-
-      {/* Pie Chart - Gender Data */}
-      {/* <div>
-        <h2 className="text-lg font-bold mb-2">
-          Gender Distribution of Clients
-        </h2>
-        {chartData.genderData.datasets.length > 0 && (
-          <Pie data={chartData.genderData} options={chartOptions} />
-        )}
-      </div> */}
-    {/* </div> */}
+      <ChartGroup
+        charts={charts}
+        title="Upgrading Services Dashboard"
+        selectedChart={selectedChart}
+        onSelectChart={(chartLabel) => setSelectedChart(chartLabel)}
+      />
+      <div className="mt-4">
+        {charts.find((chart) => chart.label === selectedChart)?.content}
+      </div>
     </>
   );
 };

@@ -11,9 +11,14 @@ const RabiesHistoryCharts = () => {
     causeOfDeath: { labels: [], datasets: [{ data: [] }] },
     vaccinationHistory: { labels: [], datasets: [{ data: [] }] },
     behavioralChanges: { labels: [], datasets: [{ data: [] }] },
+    numberOfBreeds: { labels: [], datasets: [{ data: [] }] },
+    deathsPerDay: { labels: [], datasets: [{ data: [] }] },
+    rabiesCasesWithVaccination: { labels: [], datasets: [{ data: [] }] },
+    behavioralChangesPerSpecies: { labels: [], datasets: [{ data: [] }] },
   });
 
   const [loading, setLoading] = useState(true);
+  const [selectedChart, setSelectedChart] = useState(null);
 
   useEffect(() => {
     const fetchRabiesHistory = async () => {
@@ -39,9 +44,11 @@ const RabiesHistoryCharts = () => {
             {
               data: Object.values(speciesCounts),
               backgroundColor: [
-                "rgba(75, 192, 192, 0.6)",
-                "rgba(255, 99, 132, 0.6)",
-                "rgba(255, 206, 86, 0.6)",
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
               ],
             },
           ],
@@ -64,8 +71,8 @@ const RabiesHistoryCharts = () => {
               label: "Sex Distribution of Animals",
               data: [sexCounts.Male, sexCounts.Female],
               backgroundColor: [
-                "rgba(54, 162, 235, 0.6)",
-                "rgba(255, 99, 132, 0.6)",
+                "#1b5b40",  // darkgreen
+                "#ffe459",  // pastelyellow
               ],
             },
           ],
@@ -87,9 +94,11 @@ const RabiesHistoryCharts = () => {
             {
               data: Object.values(causeOfDeathCounts),
               backgroundColor: [
-                "rgba(153, 102, 255, 0.6)",
-                "rgba(255, 159, 64, 0.6)",
-                "rgba(75, 192, 192, 0.6)",
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
               ],
             },
           ],
@@ -99,7 +108,7 @@ const RabiesHistoryCharts = () => {
         const vaccinationCounts = { Vaccinated: 0, "Not Vaccinated": 0 };
         rabiesHistories.forEach((history) => {
           const vaccinated =
-            history.vaccinationHistory === "Yes"
+            history.vaccinationHistory === "rabies"
               ? "Vaccinated"
               : "Not Vaccinated";
           vaccinationCounts[vaccinated] += 1;
@@ -114,8 +123,8 @@ const RabiesHistoryCharts = () => {
                 vaccinationCounts["Not Vaccinated"],
               ],
               backgroundColor: [
-                "rgba(54, 162, 235, 0.6)",
-                "rgba(255, 206, 86, 0.6)",
+                "#1b5b40",  // darkgreen
+                "#252525",  // black
               ],
             },
           ],
@@ -150,7 +159,102 @@ const RabiesHistoryCharts = () => {
             {
               label: "Behavioral Changes in Animals",
               data: Object.values(behavioralChangeCounts),
-              backgroundColor: "rgba(75, 192, 192, 0.6)",
+              backgroundColor: [
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+                "#ffe459",  // pastelyellow
+              ],
+            },
+          ],
+        };
+
+        // 6. Number of Breeds
+        const breedCounts = {};
+        rabiesHistories.forEach((history) => {
+          const breed = history.animalProfile.breed;
+          if (breedCounts[breed]) {
+            breedCounts[breed] += 1;
+          } else {
+            breedCounts[breed] = 1;
+          }
+        });
+        const numberOfBreeds = {
+          labels: Object.keys(breedCounts),
+          datasets: [
+            {
+              data: Object.values(breedCounts),
+              backgroundColor: ["#ffe459", "#1b5b40", "#123c29", "#252525"],
+            },
+          ],
+        };
+
+        // 7. Number of Animal Deaths per Day
+        const deathCounts = {};
+        rabiesHistories.forEach((history) => {
+          const date = new Date(history.dateOfDeath).toLocaleDateString();
+          if (deathCounts[date]) {
+            deathCounts[date] += 1;
+          } else {
+            deathCounts[date] = 1;
+          }
+        });
+        const deathsPerDay = {
+          labels: Object.keys(deathCounts),
+          datasets: [
+            {
+              data: Object.values(deathCounts),
+              backgroundColor: ["#e5cd50", "#1b5b40", "#123c29", "#252525"],
+            },
+          ],
+        };
+
+        // 8. Number of Rabies Cases with Vaccination History
+        const rabiesCasesWithVaccinationCounts = rabiesHistories.filter(
+          (history) => history.vaccinationHistory === "rabies"
+        ).length;
+        const rabiesCasesWithVaccination = {
+          labels: ["Rabies Vaccinated", "Not Vaccinated"],
+          datasets: [
+            {
+              data: [rabiesCasesWithVaccinationCounts, rabiesHistories.length - rabiesCasesWithVaccinationCounts],
+              backgroundColor: ["#1b5b40", "#252525"],
+            },
+          ],
+        };
+
+        // 9. Number of Behavioral Changes per Species
+        const behavioralChangeCountsPerSpecies = {};
+        rabiesHistories.forEach((history) => {
+          const species = history.animalProfile.species;
+          if (!behavioralChangeCountsPerSpecies[species]) {
+            behavioralChangeCountsPerSpecies[species] = {
+              Restlessness: 0,
+              "Apprehensive/Watchful Look": 0,
+              "Running Aimlessly": 0,
+              "Biting Inanimate Objects": 0,
+              Hyperactivity: 0,
+              Others: 0,
+              None: 0,
+            };
+          }
+          const changes = history.behavioralChanges;
+          if (changes.restlessness) behavioralChangeCountsPerSpecies[species].Restlessness += 1;
+          if (changes.apprehensiveWatchfulLook) behavioralChangeCountsPerSpecies[species]["Apprehensive/Watchful Look"] += 1;
+          if (changes.runningAimlessly) behavioralChangeCountsPerSpecies[species]["Running Aimlessly"] += 1;
+          if (changes.bitingInanimateObjects) behavioralChangeCountsPerSpecies[species]["Biting Inanimate Objects"] += 1;
+          if (changes.hyperactivity) behavioralChangeCountsPerSpecies[species].Hyperactivity += 1;
+          if (changes.others) behavioralChangeCountsPerSpecies[species].Others += 1;
+          if (changes.none) behavioralChangeCountsPerSpecies[species].None += 1;
+        });
+        const behavioralChangesPerSpecies = {
+          labels: Object.keys(behavioralChangeCountsPerSpecies),
+          datasets: [
+            {
+              label: "Behavioral Changes",
+              data: Object.values(behavioralChangeCountsPerSpecies).map(counts => Object.values(counts).reduce((a, b) => a + b, 0)),
+              backgroundColor: ["#e5cd50", "#1b5b40", "#123c29", "#252525"],
             },
           ],
         };
@@ -162,6 +266,10 @@ const RabiesHistoryCharts = () => {
           causeOfDeath,
           vaccinationHistory,
           behavioralChanges,
+          numberOfBreeds,
+          deathsPerDay,
+          rabiesCasesWithVaccination,
+          behavioralChangesPerSpecies,
         });
         setLoading(false);
       } catch (error) {
@@ -180,27 +288,58 @@ const RabiesHistoryCharts = () => {
   const charts = [
     {
       label: "Species Distribution",
-      content: <Pie data={data.speciesDistribution} />,
+      content: <Pie data={data.speciesDistribution} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
     },
     {
       label: "Sex Distribution of Animals",
-      content: <Bar data={data.sexDistribution} />,
+      content: <Bar data={data.sexDistribution} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
     },
     {
       label: "Cause of Death",
-      content: <Pie data={data.causeOfDeath} />,
+      content: <Pie data={data.causeOfDeath} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
     },
     {
       label: "Vaccination History",
-      content: <Bar data={data.vaccinationHistory} />,
+      content: <Bar data={data.vaccinationHistory} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
     },
     {
       label: "Behavioral Changes in Animals",
-      content: <Bar data={data.behavioralChanges} />,
+      content: <Bar data={data.behavioralChanges} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Breeds",
+      content: <Pie data={data.numberOfBreeds} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Animal Deaths per Day",
+      content: <Bar data={data.deathsPerDay} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Rabies Cases with Vaccination History",
+      content: <Pie data={data.rabiesCasesWithVaccination} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Behavioral Changes per Species",
+      content: <Bar data={data.behavioralChangesPerSpecies} options={{ plugins: { legend: { display: false } } }} />,
+      style: "col-span-2",
     },
   ];
+
   return (
-    <ChartGroup charts={charts} title="Rabies History Charts" />
+    <ChartGroup
+      charts={charts}
+      title="Rabies History Charts"
+      selectedChart={selectedChart}
+      setSelectedChart={setSelectedChart}
+    />
   );
 };
 

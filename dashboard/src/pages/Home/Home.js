@@ -294,7 +294,7 @@ function Home() {
                     onClick={() => openModalWithContent("RegulatoryCareServices")}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <LocalShippingIcon className="mr-2" /> RegulatoryCareServices
+                    <LocalShippingIcon className="mr-2" /> Regulatory Services
                   </button>
 
                   {/* VaccinesIcon
