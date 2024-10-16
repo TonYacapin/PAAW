@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
@@ -7,9 +7,12 @@ import ChartGroup from './ChartGroup';
 const RoutineServicesMonitoringReportChart = () => {
   const [data, setData] = useState({
     barChartMunicipality: { labels: [], datasets: [{ data: [] }] },
-    pieChartSpecies: { labels: [], datasets: [{ data: [] }] },
+    barChartSpecies: { labels: [], datasets: [{ data: [] }] },
     barChartActivities: { labels: [], datasets: [{ data: [] }] },
-    lineChartNoOfHeads: { labels: [], datasets: [{ data: [] }] }
+    lineChartNoOfHeads: { labels: [], datasets: [{ data: [] }] },
+    lineChartHeadsPerDate: { labels: [], datasets: [{ data: [] }] },
+    barChartSpeciesActivity: { labels: [], datasets: [{ data: [] }] },
+    doughnutChartRoutineServices: { labels: [], datasets: [{ data: [] }] }
   });
 
   const [loading, setLoading] = useState(true);
@@ -21,7 +24,7 @@ const RoutineServicesMonitoringReportChart = () => {
         const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/RSM`);
         const reports = response.data;
 
-        // Process the data for each chart as before...
+        // Processing the data for each chart
 
         // 1. Bar Chart: Number of Entries by Municipality
         const municipalityCounts = {};
@@ -37,11 +40,11 @@ const RoutineServicesMonitoringReportChart = () => {
           datasets: [{
             label: 'Number of Entries by Municipality',
             data: Object.values(municipalityCounts),
-            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"]
           }]
         };
 
-        // 2. Pie Chart: Number of Animals by Species
+        // 2. Bar Chart: Number of Animals by Species (fixing this to a bar chart)
         const speciesCounts = {};
         reports.forEach(report => {
           report.entries.forEach(entry => {
@@ -53,11 +56,12 @@ const RoutineServicesMonitoringReportChart = () => {
             }
           });
         });
-        const processedPieChartSpecies = {
+        const processedBarChartSpecies = {
           labels: Object.keys(speciesCounts),
           datasets: [{
+            label: 'Number of Animals by Species',
             data: Object.values(speciesCounts),
-            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)']
+            backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"]
           }]
         };
 
@@ -78,39 +82,84 @@ const RoutineServicesMonitoringReportChart = () => {
           datasets: [{
             label: 'Activities Conducted',
             data: Object.values(activityCounts),
-            backgroundColor: 'rgba(153, 102, 255, 0.6)'
+            backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"]
           }]
         };
 
-        // 4. Line Chart: Number of Heads per Animal over Time
-        const headsOverTime = {};
+        // 4. Line Chart: Number of Heads per Date
+        const headsPerDate = {};
         reports.forEach(report => {
           report.entries.forEach(entry => {
             const date = new Date(entry.date).toLocaleDateString();
-            if (headsOverTime[date]) {
-              headsOverTime[date] += entry.animalInfo.noOfHeads;
+            if (headsPerDate[date]) {
+              headsPerDate[date] += entry.animalInfo.noOfHeads;
             } else {
-              headsOverTime[date] = entry.animalInfo.noOfHeads;
+              headsPerDate[date] = entry.animalInfo.noOfHeads;
             }
           });
         });
-        const processedLineChartNoOfHeads = {
-          labels: Object.keys(headsOverTime),
+        const processedLineChartHeadsPerDate = {
+          labels: Object.keys(headsPerDate),
           datasets: [{
-            label: 'Number of Heads per Animal',
-            data: Object.values(headsOverTime),
+            label: 'Number of Heads per Date',
+            data: Object.values(headsPerDate),
             borderColor: 'rgba(54, 162, 235, 1)',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)'
+          }]
+        };
 
+        // 5. Bar Chart: Species per Activity
+        const speciesPerActivity = {};
+        reports.forEach(report => {
+          report.entries.forEach(entry => {
+            const activity = entry.activity;
+            const species = entry.animalInfo.species;
+            if (speciesPerActivity[activity]) {
+              if (speciesPerActivity[activity][species]) {
+                speciesPerActivity[activity][species] += entry.animalInfo.noOfHeads;
+              } else {
+                speciesPerActivity[activity][species] = entry.animalInfo.noOfHeads;
+              }
+            } else {
+              speciesPerActivity[activity] = { [species]: entry.animalInfo.noOfHeads };
+            }
+          });
+        });
+        const processedBarChartSpeciesActivity = {
+          labels: Object.keys(speciesPerActivity),
+          datasets: Object.keys(speciesCounts).map(species => ({
+            label: species,
+            data: Object.values(speciesPerActivity).map(activityData => activityData[species] || 0),
+            backgroundColor: "#ffe459"
+          }))
+        };
+
+        // 6. Doughnut Chart: Percentage of Animals Registered that Received Routine Services
+        const totalAnimals = reports.reduce((sum, report) => {
+          return sum + report.entries.reduce((entrySum, entry) => entrySum + entry.animalInfo.noOfHeads, 0);
+        }, 0);
+        const registeredAnimals = reports.reduce((sum, report) => {
+          return sum + report.entries.reduce((entrySum, entry) => {
+            return entry.animalInfo.animalRegistered ? entrySum + entry.animalInfo.noOfHeads : entrySum;
+          }, 0);
+        }, 0);
+        const processedDoughnutChartRoutineServices = {
+          labels: ['Registered', 'Not Registered'],
+          datasets: [{
+            data: [registeredAnimals, totalAnimals - registeredAnimals],
+            backgroundColor: ["#1b5b40", "#e5cd50"]
           }]
         };
 
         // Set the processed data to the component state
         setData({
           barChartMunicipality: processedBarChartMunicipality,
-          pieChartSpecies: processedPieChartSpecies,
+          barChartSpecies: processedBarChartSpecies,
           barChartActivities: processedBarChartActivities,
-          lineChartNoOfHeads: processedLineChartNoOfHeads
+          lineChartNoOfHeads: processedLineChartHeadsPerDate,
+          lineChartHeadsPerDate: processedLineChartHeadsPerDate,
+          barChartSpeciesActivity: processedBarChartSpeciesActivity,
+          doughnutChartRoutineServices: processedDoughnutChartRoutineServices
         });
         setLoading(false);
       } catch (error) {
@@ -131,42 +180,57 @@ const RoutineServicesMonitoringReportChart = () => {
       style: "col-span-2",
       label: "Number of Entries by Municipality",
       content: data.barChartMunicipality.labels.length > 0 ? (
-        <Bar data={data.barChartMunicipality} />
-      ) : (
-        <div>No data available</div>
-      ),
+        <Bar data={data.barChartMunicipality} options={{ plugins: { legend: { display: false } } }} />
+      ) : <div>No data available</div>
     },
     {
       style: "col-span-2",
       label: "Number of Animals by Species",
-      content: data.pieChartSpecies.labels.length > 0 ? (
-        <Pie data={data.pieChartSpecies} />
-      ) : (
-        <div>No data available</div>
-      ),
+      content: data.barChartSpecies.labels.length > 0 ? (
+        <Bar data={data.barChartSpecies} options={{ plugins: { legend: { display: false } } }} />
+      ) : <div>No data available</div>
     },
     {
       style: "col-span-2",
       label: "Activities Conducted",
       content: data.barChartActivities.labels.length > 0 ? (
-        <Bar data={data.barChartActivities} />
-      ) : (
-        <div>No data available</div>
-      ),
+        <Bar data={data.barChartActivities} options={{ plugins: { legend: { display: false } } }} />
+      ) : <div>No data available</div>
     },
     {
       style: "col-span-2",
-      label: "Number of Heads per Animal over Time",
-      content: data.lineChartNoOfHeads.labels.length > 0 ? (
-        <Line data={data.lineChartNoOfHeads} />
+      label: "Number of Heads per Date",
+      content: data.lineChartHeadsPerDate.labels.length > 0 ? (
+        <Line data={data.lineChartHeadsPerDate} options={{ plugins: { legend: { display: false } } }} />
+      ) : <div>No data available</div>
+    },
+    {
+      style: "col-span-2",
+      label: "Species per Activity",
+      content: data.barChartSpeciesActivity.labels.length > 0 ? (
+        <Bar
+          data={data.barChartSpeciesActivity}
+          options={{ plugins: { legend: { display: true } } }} // Show legend to distinguish species
+        />
       ) : (
         <div>No data available</div>
-      ),
+      )
     },
+    {
+      style: "col-span-2",
+      label: "Percentage of Animals Registered that Received Routine Services",
+      content: data.doughnutChartRoutineServices.labels.length > 0 ? (
+        <Doughnut
+          data={data.doughnutChartRoutineServices}
+          options={{ plugins: { legend: { display: true } } }}
+        />
+      ) : (
+        <div>No data available</div>
+      )
+    }
   ];
 
   return (
-
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-md rounded-lg p-6">
         <ChartGroup
@@ -181,3 +245,4 @@ const RoutineServicesMonitoringReportChart = () => {
 };
 
 export default RoutineServicesMonitoringReportChart;
+

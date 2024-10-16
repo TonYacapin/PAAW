@@ -39,6 +39,7 @@ const RabiesReportChart = () => {
         );
         let reports = response.data;
 
+        // Apply filters
         if (!filterOptions.showAll) {
           if (filterOptions.filters.dateRange[0] && filterOptions.filters.dateRange[1]) {
             reports = reports.filter((report) => {
@@ -57,6 +58,7 @@ const RabiesReportChart = () => {
           }
         }
 
+        // Initialize count objects
         const municipalityCounts = {};
         const vaccineCounts = {};
         const dateCounts = {};
@@ -66,6 +68,7 @@ const RabiesReportChart = () => {
         const ageCounts = {};
         const barangayCounts = {};
         const clientGenderCounts = {};
+        const vaccineSpeciesCounts = {};
 
         reports.forEach((report) => {
           const { municipality, vaccineUsed, vaccineSource, entries, dateReported } = report;
@@ -77,6 +80,10 @@ const RabiesReportChart = () => {
           const reportDate = new Date(dateReported).toLocaleDateString();
           if (!dateCounts[reportDate]) dateCounts[reportDate] = 0;
           dateCounts[reportDate] += entries.length;
+
+          if (!vaccineSpeciesCounts[vaccineUsed]) {
+            vaccineSpeciesCounts[vaccineUsed] = {};
+          }
 
           entries.forEach((entry) => {
             const { clientInfo, animalInfo, barangay } = entry;
@@ -99,8 +106,31 @@ const RabiesReportChart = () => {
 
             if (!clientGenderCounts[clientInfo.gender]) clientGenderCounts[clientInfo.gender] = 0;
             clientGenderCounts[clientInfo.gender] += 1;
+
+            if (!vaccineSpeciesCounts[vaccineUsed][animalInfo.species]) {
+              vaccineSpeciesCounts[vaccineUsed][animalInfo.species] = 0;
+            }
+            vaccineSpeciesCounts[vaccineUsed][animalInfo.species] += 1;
           });
         });
+
+        // Transform data for the "Species per Vaccine" chart
+        const vaccineSpeciesLabels = Object.keys(vaccineSpeciesCounts);
+        const speciesLabels = Array.from(
+          new Set(
+            vaccineSpeciesLabels.flatMap((vaccine) =>
+              Object.keys(vaccineSpeciesCounts[vaccine])
+            )
+          )
+        );
+
+        const speciesPerVaccineDatasets = speciesLabels.map((species) => ({
+          label: species,
+          data: vaccineSpeciesLabels.map(
+            (vaccine) => vaccineSpeciesCounts[vaccine][species] || 0
+          ),
+          backgroundColor: "#1b5b40", // Customize color as needed
+        }));
 
         const chartOptions = {
           plugins: {
@@ -110,7 +140,7 @@ const RabiesReportChart = () => {
           },
         };
 
-        // Update chart data
+        // Update chart data in the component state
         setData({
           municipalityChart: {
             labels: Object.keys(municipalityCounts),
@@ -127,11 +157,7 @@ const RabiesReportChart = () => {
               label: "Vaccinations per Vaccine Type",
               data: Object.values(vaccineCounts),
               backgroundColor: [
-                "#ffe459", // pastelyellow
-                "#e5cd50", // darkerpastelyellow
-                "#1b5b40", // darkgreen
-                "#123c29", // darkergreen
-                "#252525", // black
+                "#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525",
               ],
             }],
             options: chartOptions,
@@ -201,6 +227,11 @@ const RabiesReportChart = () => {
             }],
             options: chartOptions,
           },
+          speciesPerVaccineChart: {
+            labels: vaccineSpeciesLabels,
+            datasets: speciesPerVaccineDatasets,
+            options: chartOptions,
+          },
         });
 
         // Analysis Section
@@ -221,25 +252,26 @@ const RabiesReportChart = () => {
           (a, b) => (barangayCounts[a] > barangayCounts[b] ? a : b),
           ""
         );
+
         setAnalysis(
           <>
             <p>
               <strong>Total vaccinations:</strong> {totalVaccinations}.
             </p>
-
             <p>
               <strong>Most Vaccinated Municipality:</strong> {mostVaccinatedMunicipality} ({municipalityCounts[mostVaccinatedMunicipality]} vaccinations).
             </p>
             <p>
-              <strong>Most used vaccine:</strong> {mostUsedVaccine}.
+              <strong>Most Used Vaccine:</strong> {mostUsedVaccine}.
             </p>
             <p>
               <strong>Most Vaccinated Barangay:</strong> {mostVaccinatedBarangay} ({barangayCounts[mostVaccinatedBarangay]} vaccinations).
             </p>
+            <p>
+              <strong>Most Vaccinated Species:</strong> {mostVaccinatedSpecies}.
+            </p>
           </>
         );
-
-
 
         setLoading(false);
       } catch (error) {
@@ -256,6 +288,11 @@ const RabiesReportChart = () => {
   }
 
   const charts = [
+    {
+      label: "Species per Vaccine",
+      content: <Bar data={data.speciesPerVaccineChart} options={data.speciesPerVaccineChart.options} />,
+      style: "col-span-2",
+    },
     {
       label: "Vaccinations per Municipality",
       content: <Bar data={data.municipalityChart} options={data.municipalityChart.options} />,

@@ -81,7 +81,7 @@ function VaccinationReportChart() {
         </p>
       </>
     );
-    
+
 
     setAnalysis(analysisText);
   };
@@ -119,6 +119,20 @@ function VaccinationReportChart() {
   const animalSexCounts = filteredData.reduce((acc, item) => {
     item.entries.forEach(entry => {
       acc[entry.animalInfo.sex] = (acc[entry.animalInfo.sex] || 0) + 1;
+    });
+    return acc;
+  }, {});
+
+  const speciesPerAge = filteredData.reduce((acc, item) => {
+    item.entries.forEach(entry => {
+      const species = entry.animalInfo.species;
+      const age = parseInt(entry.animalInfo.age);
+      const ageGroup = age <= 1 ? '0-1' : age <= 5 ? '2-5' : '6+';
+
+      if (!acc[species]) {
+        acc[species] = { '0-1': 0, '2-5': 0, '6+': 0 };
+      }
+      acc[species][ageGroup] += 1;
     });
     return acc;
   }, {});
@@ -161,11 +175,41 @@ function VaccinationReportChart() {
     }
   });
 
-  
 
-  
+
+
 
   const charts = [
+    {
+      label: 'Vaccinated Species per Age',
+      content: (
+        <Bar
+          data={{
+            labels: Object.keys(speciesPerAge),
+            datasets: [
+              {
+                label: '0-1 years',
+                data: Object.values(speciesPerAge).map(s => s['0-1']),
+                backgroundColor: '#FFCE56',
+              },
+              {
+                label: '2-5 years',
+                data: Object.values(speciesPerAge).map(s => s['2-5']),
+                backgroundColor: '#1b5b40',
+              },
+              {
+                label: '6+ years',
+                data: Object.values(speciesPerAge).map(s => s['6+']),
+                backgroundColor: '#123c29',
+              },
+            ],
+          }}
+          options={getChartOptions('Vaccinated Species by Age')}
+        />
+      ),
+      style: 'col-span-4',
+    },
+
     {
       label: 'Vaccine Distribution',
       content: (
@@ -371,15 +415,15 @@ function VaccinationReportChart() {
 
   return (
     <>
-    {/* Analysis Section */}
-    <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
-          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
-            Analysis
-          </h3>
-          <p className="text-gray-800 mt-4 text-lg leading-relaxed">
-            {analysis}
-          </p>
-        </div>
+      {/* Analysis Section */}
+      <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+        <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+          Analysis
+        </h3>
+        <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+          {analysis}
+        </p>
+      </div>
 
       <ChartGroup
         charts={charts}

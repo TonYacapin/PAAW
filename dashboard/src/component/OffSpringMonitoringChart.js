@@ -36,6 +36,8 @@ const OffSpringMonitoringChart = () => {
     timeData: { labels: [], datasets: [] },
   });
 
+  const [selectedChart, setSelectedChart] = useState(null); // State for tracking selected chart
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -97,7 +99,7 @@ const OffSpringMonitoringChart = () => {
       });
       return acc;
     }, {});
-
+  
     return {
       labels: Object.keys(speciesData),
       datasets: [
@@ -105,20 +107,18 @@ const OffSpringMonitoringChart = () => {
           label: "Offspring Distribution by Species",
           data: Object.values(speciesData),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "#ffe459", // pastelyellow
+            "#e5cd50", // darkerpastelyellow
+            "#1b5b40", // darkgreen
+            "#123c29", // darkergreen
+            "#252525", // black
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
+            "rgba(255, 99, 132, 1)", // Keeping the borders for visibility
             "rgba(54, 162, 235, 1)",
             "rgba(255, 206, 86, 1)",
             "rgba(75, 192, 192, 1)",
             "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
           ],
           borderWidth: 1,
         },
@@ -168,44 +168,29 @@ const OffSpringMonitoringChart = () => {
     {
       label: "Offspring Monitored by Municipality",
       content: (
-        <>
-          {chartData.municipalityData.datasets.length > 0 && (
-            <Bar data={chartData.municipalityData} options={chartOptions} />
-          )}{" "}
-        </>
+        <Bar data={chartData.municipalityData} options={chartOptions} />
       ),
       style: "col-span-2",
     },
     {
       label: "Offspring Distribution by Species",
-      content: (
-        <>
-          {" "}
-          {chartData.speciesData.datasets.length > 0 && (
-            <Pie data={chartData.speciesData} options={chartOptions} />
-          )}
-        </>
-      ),
+      content: <Pie data={chartData.speciesData} options={chartOptions} />,
       style: "col-span-2",
     },
     {
       label: "Offspring Monitoring Over Time",
-      content: (
-        <>
-          {" "}
-          {chartData.timeData.datasets.length > 0 && (
-            <Line data={chartData.timeData} options={chartOptions} />
-          )}
-        </>
-      ),
+      content: <Line data={chartData.timeData} options={chartOptions} />,
       style: "col-span-2",
     },
   ];
 
   return (
-    <>
-    <ChartGroup charts={charts} title="Offspring Monitoring Report" />
-    </>
+    <ChartGroup
+      charts={charts}
+      title="Offspring Monitoring Report"
+      selectedChart={selectedChart}
+      setSelectedChart={setSelectedChart}
+    />
   );
 };
 
