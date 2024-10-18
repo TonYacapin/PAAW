@@ -161,7 +161,7 @@ function IncomingReportList() {
         />
       </div>
 
-      <button onClick={handlePrint} className="mb-4 p-2 bg-blue-500 text-white rounded">
+      <button onClick={handlePrint} className="mb-4 p-2 bg-darkgreen text-white rounded">
         Print Report
       </button>
 
