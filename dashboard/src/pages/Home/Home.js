@@ -627,7 +627,7 @@ function Home() {
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col-reverse lg:flex-row w-full">
-            {useMediaQuery("(min-width:1024px)") && (
+            { useMediaQuery("(min-width:1024px)") && !(userRole === "user") && (
               <>
                 {" "}
                 {/* Left Side - Charts */}
