@@ -160,7 +160,7 @@ function OutgoingReportList() {
 
       <button 
         onClick={handlePrint} 
-        className="mb-4 bg-blue-500 text-white p-2 rounded"
+        className="mb-4 bg-darkgreen text-white p-2 rounded"
       >
         Print Report
       </button>
@@ -180,7 +180,7 @@ function OutgoingReportList() {
                 <th className="border border-gray-300 p-2">Chicken</th>
                 <th className="border border-gray-300 p-2">Duck</th>
                 <th className="border border-gray-300 p-2">Other</th>
-                <th className="border border-gray-300 p-2">Total</th>
+                <th className="border border-gray-300 p-2 bg-darkerpastelyellow">Total</th>
               </tr>
             </thead>
             <tbody>
