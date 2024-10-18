@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../component/Navbar";
 import Modal from "../../component/Modal";
 import Select from "react-select";
+import { jwtDecode } from "jwt-decode";
+
 
 
 
@@ -44,6 +46,7 @@ import SlaughterReportList from "../Regulatory and Monitoring Division/Slaughter
 import VeterinaryShipmentList from "../Regulatory and Monitoring Division/VeterinaryShipmentList";
 import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingReportList";
 import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
+import AuditLogList from "../Admin Pages/AuditLogList";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -141,6 +144,10 @@ function Home() {
         return <RegulatoryCareServices />;
       case "VeterinaryInformationServices":
         return <VeterinaryInformationServices />;
+      case "AuditLogList":
+        return <AuditLogList />;
+
+  
 
       default:
         return null;
@@ -158,8 +165,17 @@ function Home() {
   const toggleFilter = () => setOpenFilters(!openFilters);
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    setUserRole(role);
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const role = decodedToken.role;
+        console.log(role) // Adjust this key based on your token's structure
+        setUserRole(role);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -280,21 +296,21 @@ function Home() {
                       >
                         <HealingIcon className="mr-2" /> Animal Health Care Services
                       </button>
-        
+
                       <button
                         onClick={() => openModalWithContent("AnimalProductionServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <VaccinesIcon className="mr-2" /> Animal Production Services
                       </button>
-        
+
                       <button
                         onClick={() => openModalWithContent("VeterinaryInformationServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <ReportIcon className="mr-2" /> Veterinary Information Services
                       </button>
-        
+
                       <button
                         onClick={() => openModalWithContent("RegulatoryCareServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
@@ -303,7 +319,7 @@ function Home() {
                       </button>
                     </>
                   )}
-        
+
                   {/* Show only Regulatory Services if userRole is "regulatory" */}
                   {userRole === "regulatory" && (
                     <button
@@ -313,7 +329,7 @@ function Home() {
                       <LocalShippingIcon className="mr-2" /> Regulatory Services
                     </button>
                   )}
-        
+
                   {/* Show only Animal Production Services if userRole is "livestock" */}
                   {userRole === "livestock" && (
                     <button
@@ -323,7 +339,7 @@ function Home() {
                       <VaccinesIcon className="mr-2" /> Animal Production Services
                     </button>
                   )}
-        
+
                   {/* Show only Veterinary Information Services if userRole is "animalhealth" */}
                   {userRole === "animalhealth" && (
                     <button
@@ -347,10 +363,15 @@ function Home() {
             <div className="space-y-2">
               <button
                 className={buttonClasses}
-                // onClick={() => setSelectedDivision("user")}
                 onClick={() => openModalWithContent("UserManagement")}
               >
                 <ManageAccountsIcon className="mr-2" /> Manage Users
+              </button>
+              <button
+                className={buttonClasses}
+                onClick={() => openModalWithContent("AuditLogList")}
+              >
+                <Outbox className="mr-2" />AuditLog
               </button>
               <button
                 className={buttonClasses}
@@ -630,7 +651,7 @@ function Home() {
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col-reverse lg:flex-row w-full">
-            { useMediaQuery("(min-width:1024px)") && !(userRole === "user") && (
+            {useMediaQuery("(min-width:1024px)") && !(userRole === "user") && (
               <>
                 {" "}
                 {/* Left Side - Charts */}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 import Logo from "../pages/assets/PAAW.png";
 import {
   People,
@@ -20,11 +22,29 @@ import {
 } from "@mui/material";
 
 function Navbar({ onDivisionChange, selectedDivision }) {
-  const role = localStorage.getItem("userRole");
+  const [role, setRole] = useState(null); // State to store the decoded user role
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false); // State for modal
   const menuRef = useRef(null);
+
+
+   // Decode the token to get the user role
+   useEffect(() => {
+    const token = localStorage.getItem("token"); // Get the token from localStorage
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log(decodedToken)
+        setRole(decodedToken.role); // Extract and set the user role from the token
+        
+      } catch (error) {
+        console.error("Invalid token", error);
+        setRole(null);
+      }
+    }
+  }, []);
+
 
   function onDivisionButtonClick(division) {
     setIsMenuOpen(false);

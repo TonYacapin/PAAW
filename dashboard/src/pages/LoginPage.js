@@ -10,26 +10,41 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // Error state for login errors
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false); // Control modal visibility
+  const [loginAttempts, setLoginAttempts] = useState(0); // Track login attempts
+  const [isPageDisabled, setIsPageDisabled] = useState(false); // Disable page after 5 attempts
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loginAttempts >= 5) {
+      setError('Too many failed login attempts. Please try again later.');
+      setIsErrorModalOpen(true);
+      return;
+    }
+
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
         email,
         password,
       });
 
-      const { token, userRole } = response.data;
+      const { token} = response.data;
       localStorage.setItem('token', token);
-      localStorage.setItem('userRole', userRole);
+    
 
       console.log('Logged in successfully:', response.data);
       navigate('/Home');
     } catch (error) {
       console.error('Error logging in:', error.response?.data?.message || error.message);
       setError(error.response?.data?.message || error.message);
-      setIsErrorModalOpen(true); // Open modal on error
+      setIsErrorModalOpen(true);
+      setLoginAttempts((prevAttempts) => {
+        const newAttempts = prevAttempts + 1;
+        if (newAttempts >= 5) {
+          setIsPageDisabled(true); // Disable page after 5 attempts
+        }
+        return newAttempts;
+      });
     }
   };
 
@@ -39,7 +54,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FFFAFA]">
-      <div className="w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10">
+      <div className={`w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10 ${isPageDisabled && 'opacity-50 pointer-events-none'}`}>
         <div className="text-center">
           <div className="flex justify-center space-x-4 mb-6">
             <img
@@ -69,6 +84,7 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-[#252525] rounded-t-md focus:outline-none focus:ring-[#1b5b40] focus:border-[#1b5b40] focus:z-10 sm:text-sm"
                   placeholder="Email address"
+                  disabled={isPageDisabled} // Disable field on 5 attempts
                 />
               </div>
               <div>
@@ -82,6 +98,7 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-[#252525] rounded-b-md focus:outline-none focus:ring-[#1b5b40] focus:border-[#1b5b40] focus:z-10 sm:text-sm"
                   placeholder="Password"
+                  disabled={isPageDisabled} // Disable field on 5 attempts
                 />
               </div>
             </div>
@@ -90,6 +107,7 @@ const LoginPage = () => {
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
+              disabled={isPageDisabled} // Disable button on 5 attempts
             >
               Login
             </button>
@@ -97,6 +115,7 @@ const LoginPage = () => {
               type="button"
               onClick={handleSignup}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
+              disabled={isPageDisabled} // Disable button on 5 attempts
             >
               Sign up
             </button>
@@ -116,9 +135,9 @@ const LoginPage = () => {
 
       {/* Error Modal */}
       <ErrorModal
-        isOpen={isErrorModalOpen}
+        isOpen={isErrorModalOpen || isPageDisabled}
         onClose={() => setIsErrorModalOpen(false)}
-        message={error}
+        message={isPageDisabled ? 'Too many failed login attempts. Please try again later.' : `Login attempt failed. ${error}. Attempts: ${loginAttempts}`}
       />
     </div>
   );
