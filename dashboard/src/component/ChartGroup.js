@@ -1,6 +1,7 @@
 import React from "react";
 import CardBox from "./CardBox";
 
+
 export default function ChartGroup({ charts, title, selectedChart, setSelectedChart }) {
   // Handle when a chart is clicked
   function handleOpenChart(index) {

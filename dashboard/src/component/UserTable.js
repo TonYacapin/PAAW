@@ -1,25 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // Assuming you're using Axios to fetch data
+import axios from 'axios';
 import EditUserModal from '../pages/Admin Pages/EditUserModal ';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [filterRole, setFilterRole] = useState('');
+  const [filterActive, setFilterActive] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch users from API or server
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`); // Adjust API URL as needed
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
       setUsers(response.data);
+      setFilteredUsers(response.data); // Initially show all users
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   };
 
   useEffect(() => {
-    fetchUsers(); // Fetch users when the component loads
+    fetchUsers();
   }, []);
+
+  // Filter and search users whenever filters or search query change
+  useEffect(() => {
+    let filtered = users;
+
+    // Filter by role
+    if (filterRole) {
+      filtered = filtered.filter(user => user.role === filterRole);
+    }
+
+    // Filter by active status
+    if (filterActive) {
+      filtered = filtered.filter(user => 
+        filterActive === 'active' ? user.isActive : !user.isActive
+      );
+    }
+
+    // Filter by search query (search in first name, last name, or email)
+    if (searchQuery) {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      filtered = filtered.filter(user => 
+        user.firstname.toLowerCase().includes(lowerCaseQuery) ||
+        user.lastname.toLowerCase().includes(lowerCaseQuery) ||
+        user.email.toLowerCase().includes(lowerCaseQuery)
+      );
+    }
+
+    setFilteredUsers(filtered);
+  }, [filterRole, filterActive, searchQuery, users]);
 
   const handleEdit = (userId) => {
     setCurrentUserId(userId);
@@ -28,11 +62,41 @@ const UserTable = () => {
 
   const handleUserUpdated = () => {
     setEditModalOpen(false);
-    fetchUsers(); // Refetch users after a successful update
+    fetchUsers();
   };
 
   return (
     <div className="overflow-x-auto">
+      <div className="flex mb-4">
+        <select
+          className="mr-4 p-2 border rounded"
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+        >
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+          <option value="regulatory">Regulatory</option>
+          <option value="livestock">Livestock</option>
+          <option value="animalhealth">Animal Health</option>
+        </select>
+        <select
+          className="mr-4 p-2 border rounded"
+          value={filterActive}
+          onChange={(e) => setFilterActive(e.target.value)}
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <input
+          type="text"
+          placeholder="Search by name or email"
+          className="p-2 border rounded w-full"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <table className="min-w-full table-auto bg-[#fffafa] border border-[#1b5b40] rounded-lg shadow-md">
         <thead>
           <tr className="bg-[#1b5b40] text-white">
@@ -45,7 +109,7 @@ const UserTable = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <tr key={user._id} className="hover:bg-gray-100">
               <td className="py-2 px-4 border-b">{user.firstname}</td>
               <td className="py-2 px-4 border-b">{user.lastname}</td>
@@ -73,7 +137,6 @@ const UserTable = () => {
       />
     </div>
   );
-  
 };
 
 export default UserTable;
