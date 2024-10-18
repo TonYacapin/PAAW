@@ -63,6 +63,7 @@ import AnimalHealthCareServices from "../Client Request Forms/AnimalHealthCareSe
 import AnimalProductionServices from "../Client Request Forms/AnimalProductionServices";
 import RegulatoryCareServices from "../Client Request Forms/RegulatoryCareServices";
 import VeterinaryInformationServices from "../Client Request Forms/VeterinaryInformationServices";
+import EquipmentInventory from "../Admin Pages/EquipmentInventory";
 
 export const FilterContext = createContext(null);
 
@@ -146,6 +147,8 @@ function Home() {
         return <VeterinaryInformationServices />;
       case "AuditLogList":
         return <AuditLogList />;
+        case "Inventory":
+        return <EquipmentInventory />;
 
   
 
@@ -259,6 +262,7 @@ function Home() {
           {selectedCharts.includes("TechnicianQuarterly") && (
             <TechnicianQuarterlyCharts />
           )}
+          
         </div>
       );
     }
@@ -381,9 +385,9 @@ function Home() {
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => setSelectedDivision("user")}
+                onClick={() => openModalWithContent("Inventory")}
               >
-                <Inventory className="mr-2" /> Manage Equipment Inventory
+                <Inventory className="mr-2" /> Inventory Equipment
               </button>
             </div>
           </>

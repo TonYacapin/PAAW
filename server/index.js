@@ -16,7 +16,7 @@ const technicianQuarterlyReportRoutes = require('./routes/technicianQuarterlyRep
 const slaughterformRoutes = require('./routes/slaughterformroutes');
 const vetshipformroutes = require('./routes/vetshipformroutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
-
+const inventoryRoutes = require('./routes/inventoryRoutes')
 
 
 
@@ -53,6 +53,7 @@ app.use('/', RabiesHistoryRoutes);
 app.use('/api', user);
 app.use('/', auth);
 app.use('/api', auditLogRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 
 app.listen(PORT, () => {
