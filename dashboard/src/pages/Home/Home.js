@@ -7,6 +7,8 @@ import Navbar from "../../component/Navbar";
 import Modal from "../../component/Modal";
 import Select from "react-select";
 
+
+
 // Chart components
 
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
@@ -186,6 +188,7 @@ function Home() {
       value: "TechnicianQuarterly",
       label: "Technician Quarterly Calf Drop Charts",
     },
+    { value: "regulatory", label: "Regulatory Chart" },
   ];
 
   const getChartOptions = () => {

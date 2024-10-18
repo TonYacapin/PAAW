@@ -45,6 +45,14 @@ const TechnicianQuarterlyCharts = () => {
     labels: [],
     datasets: [],
   });
+  const [entriesPerMunicipalityData, setEntriesPerMunicipalityData] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [reportsPerMunicipalityData, setReportsPerMunicipalityData] = useState({
+    labels: [],
+    datasets: [],
+  });
 
   const [selectedChart, setSelectedChart] = useState(null);
 
@@ -70,6 +78,26 @@ const TechnicianQuarterlyCharts = () => {
                 data: Object.values(municipalityCount),
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+              },
+            ],
+          });
+
+          // Number of Reports Per Municipality (Bar Chart)
+          const reportCount = data.reduce((acc, curr) => {
+            const municipality = curr.municipality;
+            acc[municipality] = (acc[municipality] || 0) + 1; // Each entry is a report
+            return acc;
+          }, {});
+
+          setReportsPerMunicipalityData({
+            labels: Object.keys(reportCount),
+            datasets: [
+              {
+                label: 'Reports per Municipality',
+                data: Object.values(reportCount),
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1,
               },
             ],
@@ -143,6 +171,20 @@ const TechnicianQuarterlyCharts = () => {
               },
             ],
           });
+
+          // Number of Calves According to Sex (Bar Chart)
+          setEntriesPerMunicipalityData({
+            labels: ['Male', 'Female'],
+            datasets: [
+              {
+                label: 'Calves Count',
+                data: [sexCount.male, sexCount.female],
+                backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1,
+              },
+            ],
+          });
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -160,6 +202,11 @@ const TechnicianQuarterlyCharts = () => {
       style: 'col-span-2',
     },
     {
+      label: 'Number of Reports Per Municipality',
+      content: <Bar data={reportsPerMunicipalityData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
+    {
       label: 'Sex Distribution of Calves',
       content: <Pie data={sexDistributionData} options={{ responsive: true }} />,
       style: 'col-span-2',
@@ -174,11 +221,15 @@ const TechnicianQuarterlyCharts = () => {
       content: <Line data={calvingDateData} options={{ responsive: true }} />,
       style: 'col-span-2',
     },
+    {
+      label: 'Number of Calves According to Sex',
+      content: <Bar data={entriesPerMunicipalityData} options={{ responsive: true }} />,
+      style: 'col-span-2',
+    },
   ];
 
   return (
     <div>
-  
       <ChartGroup
         charts={charts}
         title="Technician Quarterly Performance"
