@@ -95,8 +95,8 @@ function EquipmentInventory() {
   };
 
   const handleDelete = (inventory) => {
-    setInventoryToDelete(inventory); // Set the inventory item to delete
-    setIsConfirmationOpen(true); // Open confirmation modal
+    setInventoryToDelete(inventory); 
+    setIsConfirmationOpen(true); 
   };
 
   const confirmDelete = async () => {
