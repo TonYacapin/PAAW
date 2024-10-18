@@ -268,41 +268,68 @@ function Home() {
                   Request Services Forms
                 </h4>
                 <div className="space-y-2">
-                <button
-                    onClick={() => openModalWithContent("AnimalHealthCareServices")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <HealingIcon className="mr-2" /> Animal Health Care Services
-                  </button>
-
-                  <button
-                    onClick={() => openModalWithContent("AnimalProductionServices")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <VaccinesIcon className="mr-2" /> Animal Production Services
-                  </button>
-
-
-                  <button
-                    onClick={() => openModalWithContent("VeterinaryInformationServices")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <ReportIcon className="mr-2" /> Veterinary Information Services
-                  </button>
-
-                  <button
-                    onClick={() => openModalWithContent("RegulatoryCareServices")}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <LocalShippingIcon className="mr-2" /> Regulatory Services
-                  </button>
-
-                  {/* VaccinesIcon
-                  ReportIcon
-                  HealingIcon
-                  LocalShippingIcon */}
-
-
+                  {/* Show all buttons if userRole is "admin" or "client" */}
+                  {(userRole === "admin" || userRole === "user") && (
+                    <>
+                      <button
+                        onClick={() => openModalWithContent("AnimalHealthCareServices")}
+                        className={buttonClasses + " lg:block hidden text-left"}
+                      >
+                        <HealingIcon className="mr-2" /> Animal Health Care Services
+                      </button>
+        
+                      <button
+                        onClick={() => openModalWithContent("AnimalProductionServices")}
+                        className={buttonClasses + " lg:block hidden text-left"}
+                      >
+                        <VaccinesIcon className="mr-2" /> Animal Production Services
+                      </button>
+        
+                      <button
+                        onClick={() => openModalWithContent("VeterinaryInformationServices")}
+                        className={buttonClasses + " lg:block hidden text-left"}
+                      >
+                        <ReportIcon className="mr-2" /> Veterinary Information Services
+                      </button>
+        
+                      <button
+                        onClick={() => openModalWithContent("RegulatoryCareServices")}
+                        className={buttonClasses + " lg:block hidden text-left"}
+                      >
+                        <LocalShippingIcon className="mr-2" /> Regulatory Services
+                      </button>
+                    </>
+                  )}
+        
+                  {/* Show only Regulatory Services if userRole is "regulatory" */}
+                  {userRole === "regulatory" && (
+                    <button
+                      onClick={() => openModalWithContent("RegulatoryCareServices")}
+                      className={buttonClasses + " lg:block hidden text-left"}
+                    >
+                      <LocalShippingIcon className="mr-2" /> Regulatory Services
+                    </button>
+                  )}
+        
+                  {/* Show only Animal Production Services if userRole is "livestock" */}
+                  {userRole === "livestock" && (
+                    <button
+                      onClick={() => openModalWithContent("AnimalProductionServices")}
+                      className={buttonClasses + " lg:block hidden text-left"}
+                    >
+                      <VaccinesIcon className="mr-2" /> Animal Production Services
+                    </button>
+                  )}
+        
+                  {/* Show only Veterinary Information Services if userRole is "animalhealth" */}
+                  {userRole === "animalhealth" && (
+                    <button
+                      onClick={() => openModalWithContent("VeterinaryInformationServices")}
+                      className={buttonClasses + " lg:block hidden text-left"}
+                    >
+                      <ReportIcon className="mr-2" /> Veterinary Information Services
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -382,7 +409,7 @@ function Home() {
                   Reports
                 </h4>
                 <div className="space-y-2">
-                <button
+                  <button
                     onClick={() =>
                       openModalWithContent("DiseaseInvestigationForm")
                     }
@@ -600,7 +627,7 @@ function Home() {
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col-reverse lg:flex-row w-full">
-            {useMediaQuery("(min-width:1024px)") && (
+            { useMediaQuery("(min-width:1024px)") && !(userRole === "user") && (
               <>
                 {" "}
                 {/* Left Side - Charts */}

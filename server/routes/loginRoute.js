@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
         if (!user.isActive) {
             return res.status(403).json({ message: 'Account is inactive' });
         }
-
+        
         // Generate JWT
         const token = jwt.sign({ userId: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
         const userRole = user.role
