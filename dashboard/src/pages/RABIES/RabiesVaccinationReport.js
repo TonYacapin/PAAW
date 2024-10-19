@@ -5,6 +5,7 @@ import Papa from "papaparse"; // Import PapaParse for CSV handling
 import FormSubmit from "../../component/FormSubmit";
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
+import CardBox from "../../component/CardBox";
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -12,14 +13,11 @@ function RabiesVaccinationReport() {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [entryToRemove, setEntryToRemove] = useState(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
 
   // Error modal state
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-
-
 
   // Main fields state
   const [municipality, setMunicipality] = useState("");
@@ -114,7 +112,6 @@ function RabiesVaccinationReport() {
   };
 
   const saveEntries = async () => {
-
     setErrorModalOpen(false);
     setIsSuccessModalOpen(false);
 
@@ -132,7 +129,6 @@ function RabiesVaccinationReport() {
         }
       );
       if (response.status === 201) {
-     
         setEntries([]);
         setMunicipality("");
         setDateReported("");
@@ -140,33 +136,31 @@ function RabiesVaccinationReport() {
         setBatchLotNo("");
         setVaccineSource("");
 
-
-        setSuccessMessage('Entries saved successfully'); // New state for success message
+        setSuccessMessage("Entries saved successfully"); // New state for success message
         setIsSuccessModalOpen(true); // Show success modal
       }
     } catch (error) {
       console.error("Error saving entries:", error);
       // Set the error message and open the modal
 
-         // Error handling
-         let errorMessage = "Failed to save entries: An unexpected error occurred";
-         if (error.response && error.response.data) {
-           const serverMessage = error.response.data.message || "An error occurred";
-           if (error.response.data.errors) {
-             const validationErrors = error.response.data.errors
-               .map((err) => err.msg)
-               .join(", ");
-             errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
-           } else {
-             errorMessage = `Failed to save entries: ${serverMessage}`;
-           }
-         }
+      // Error handling
+      let errorMessage = "Failed to save entries: An unexpected error occurred";
+      if (error.response && error.response.data) {
+        const serverMessage =
+          error.response.data.message || "An error occurred";
+        if (error.response.data.errors) {
+          const validationErrors = error.response.data.errors
+            .map((err) => err.msg)
+            .join(", ");
+          errorMessage = `Failed to save entries: ${serverMessage}. Details: ${validationErrors}`;
+        } else {
+          errorMessage = `Failed to save entries: ${serverMessage}`;
+        }
+      }
       setErrorMessage(errorMessage);
       setErrorModalOpen(true);
     }
   };
-
-
 
   const exportAsCSV = () => {
     // Create an array to hold all the data
@@ -297,89 +291,91 @@ function RabiesVaccinationReport() {
       </div> */}
       <h2 className="text-2xl font-bold mb-4">Rabies Vaccination Report</h2>
 
-      {/* Main fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label htmlFor="municipality" className="block mb-1">
-            Municipality
-          </label>
-          <select
-            id="municipality"
-            value={municipality}
-            onChange={(e) => setMunicipality(e.target.value)}
-            className="border p-2 rounded w-full"
-          >
-            <option value="">Select Municipality</option>
-            <option value="Ambaguio">Ambaguio</option>
-            <option value="Bagabag">Bagabag</option>
-            <option value="Bayombong">Bayombong</option>
-            <option value="Diadi">Diadi</option>
-            <option value="Quezon">Quezon</option>
-            <option value="Solano">Solano</option>
-            <option value="Villaverde">Villaverde</option>
-            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
-            <option value="Aritao">Aritao</option>
-            <option value="Bambang">Bambang</option>
-            <option value="Dupax del Norte">Dupax del Norte</option>
-            <option value="Dupax del Sur">Dupax del Sur</option>
-            <option value="Kayapa">Kayapa</option>
-            <option value="Kasibu">Kasibu</option>
-            <option value="Santa Fe">Santa Fe</option>
-          </select>
-        </div>
+      <CardBox>
+        {/* Main fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="municipality" className="block mb-1">
+              Municipality
+            </label>
+            <select
+              id="municipality"
+              value={municipality}
+              onChange={(e) => setMunicipality(e.target.value)}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">Select Municipality</option>
+              <option value="Ambaguio">Ambaguio</option>
+              <option value="Bagabag">Bagabag</option>
+              <option value="Bayombong">Bayombong</option>
+              <option value="Diadi">Diadi</option>
+              <option value="Quezon">Quezon</option>
+              <option value="Solano">Solano</option>
+              <option value="Villaverde">Villaverde</option>
+              <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+              <option value="Aritao">Aritao</option>
+              <option value="Bambang">Bambang</option>
+              <option value="Dupax del Norte">Dupax del Norte</option>
+              <option value="Dupax del Sur">Dupax del Sur</option>
+              <option value="Kayapa">Kayapa</option>
+              <option value="Kasibu">Kasibu</option>
+              <option value="Santa Fe">Santa Fe</option>
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="dateReported" className="block mb-1">
-            Date Reported
-          </label>
-          <input
-            id="dateReported"
-            type="date"
-            value={dateReported}
-            onChange={(e) => setDateReported(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+          <div>
+            <label htmlFor="dateReported" className="block mb-1">
+              Date Reported
+            </label>
+            <input
+              id="dateReported"
+              type="date"
+              value={dateReported}
+              onChange={(e) => setDateReported(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="vaccineUsed" className="block mb-1">
-            Vaccine Used
-          </label>
-          <input
-            id="vaccineUsed"
-            type="text"
-            value={vaccineUsed}
-            onChange={(e) => setVaccineUsed(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+          <div>
+            <label htmlFor="vaccineUsed" className="block mb-1">
+              Vaccine Used
+            </label>
+            <input
+              id="vaccineUsed"
+              type="text"
+              value={vaccineUsed}
+              onChange={(e) => setVaccineUsed(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="batchLotNo" className="block mb-1">
-            Batch/Lot No.
-          </label>
-          <input
-            id="batchLotNo"
-            type="text"
-            value={batchLotNo}
-            onChange={(e) => setBatchLotNo(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+          <div>
+            <label htmlFor="batchLotNo" className="block mb-1">
+              Batch/Lot No.
+            </label>
+            <input
+              id="batchLotNo"
+              type="text"
+              value={batchLotNo}
+              onChange={(e) => setBatchLotNo(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="vaccineSource" className="block mb-1">
-            Vaccine Source
-          </label>
-          <input
-            id="vaccineSource"
-            type="text"
-            value={vaccineSource}
-            onChange={(e) => setVaccineSource(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
+          <div>
+            <label htmlFor="vaccineSource" className="block mb-1">
+              Vaccine Source
+            </label>
+            <input
+              id="vaccineSource"
+              type="text"
+              value={vaccineSource}
+              onChange={(e) => setVaccineSource(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
         </div>
-      </div>
+      </CardBox>
 
       {/* Entries section */}
       <div>
@@ -392,7 +388,7 @@ function RabiesVaccinationReport() {
         </button>
         <div className="max-h-[40vh] overflow-auto">
           {entries.map((entry, index) => (
-            <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
+            <CardBox key={index}>
               <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <p>Date: {entry.date || "N/A"}</p>
@@ -416,14 +412,13 @@ function RabiesVaccinationReport() {
               >
                 Remove
               </button>
-            </div>
+            </CardBox>
           ))}
         </div>
         <div className="mb-3" />
       </div>
 
       <FormSubmit
-      
         handleImportCSV={importCSV}
         handleExportCSV={exportAsCSV}
         handleSubmit={saveEntries}
@@ -703,10 +698,21 @@ function RabiesVaccinationReport() {
       />
 
       {/* Error Modal */}
-      {errorModalOpen && <ErrorModal isOpen={errorModalOpen} onClose={() => setErrorModalOpen(false)} message={errorMessage} />}
-      {isSuccessModalOpen && <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message={successMessage} />}
-
-    </div >
+      {errorModalOpen && (
+        <ErrorModal
+          isOpen={errorModalOpen}
+          onClose={() => setErrorModalOpen(false)}
+          message={errorMessage}
+        />
+      )}
+      {isSuccessModalOpen && (
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          message={successMessage}
+        />
+      )}
+    </div>
   );
 }
 
