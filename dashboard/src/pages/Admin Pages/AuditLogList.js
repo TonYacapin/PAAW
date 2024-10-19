@@ -71,7 +71,7 @@ const AuditLogList = () => {
             <div className="mb-6">
                 <button
                     onClick={() => setShowStats(!showStats)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
+                    className="bg-darkgreen text-white px-4 py-2 rounded hover:bg-darkergreen mb-4"
                 >
                     {showStats ? 'Hide Statistics' : 'Show Statistics'}
                 </button>

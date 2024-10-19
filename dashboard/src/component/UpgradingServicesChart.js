@@ -1,36 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Bar, Pie, Doughnut } from "react-chartjs-2";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
-import ChartGroup from "./ChartGroup";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
+import ChartGroup from "./ChartGroup"; // Ensure this component is set up properly
+import { FilterContext } from "../pages/Home/Home"; // Ensure this context is correct
 
 const UpgradingServicesChart = () => {
-  const [chartData, setChartData] = useState({
-    municipalityData: { labels: [], datasets: [] },
-    activityData: { labels: [], datasets: [] },
-    speciesData: { labels: [], datasets: [] },
-    genderData: { labels: [], datasets: [] },
+  const [data, setData] = useState({
+    municipalityChart: {},
+    dateReportedChart: {},
+    activityChart: {},
+    speciesChart: {},
+    estrusChart: {},
   });
-  const [selectedChart, setSelectedChart] = useState("Number of Entries by Municipality");
+  const [loading, setLoading] = useState(true);
+  const filterOptions = useContext(FilterContext);
+  const [selectedChart, setSelectedChart] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,219 +22,141 @@ const UpgradingServicesChart = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/api/upgrading-services`
         );
-        const data = response.data;
 
-        setChartData({
-          municipalityData: processDataByMunicipality(data),
-          activityData: processDataByActivity(data),
-          speciesData: processDataBySpecies(data),
-          genderData: processDataByGender(data),
+        let services = response.data;
+
+        // Initialize count objects
+        const municipalityCounts = {};
+        const dateCounts = {};
+        const activityCounts = {};
+        const speciesCounts = {};
+        const estrusCounts = {};
+
+        services.forEach((service) => {
+          const { municipality, dateReported, entries } = service;
+
+          // Count entries by municipality
+          if (!municipalityCounts[municipality]) municipalityCounts[municipality] = 0;
+          municipalityCounts[municipality] += entries.length;
+
+          // Count entries by date
+          const reportDate = new Date(dateReported).toLocaleDateString();
+          if (!dateCounts[reportDate]) dateCounts[reportDate] = 0;
+          dateCounts[reportDate] += entries.length;
+
+          entries.forEach((entry) => {
+            const { activityType, animalInfo } = entry;
+
+            // Count activities
+            if (!activityCounts[activityType]) activityCounts[activityType] = 0;
+            activityCounts[activityType] += 1;
+
+            // Count estrus occurrences
+            if (animalInfo.isEstrus) {
+              if (!estrusCounts[activityType]) estrusCounts[activityType] = 0;
+              estrusCounts[activityType] += 1;
+            }
+
+            // Count species
+            if (!speciesCounts[animalInfo.species]) speciesCounts[animalInfo.species] = 0;
+            speciesCounts[animalInfo.species] += 1;
+          });
         });
+
+        // Set the chart data
+        setData({
+          municipalityChart: {
+            labels: Object.keys(municipalityCounts),
+            datasets: [{
+              label: "Number of Entries Per Municipality",
+              data: Object.values(municipalityCounts),
+              backgroundColor: "#1b5b40",
+            }],
+          },
+          dateReportedChart: {
+            labels: Object.keys(dateCounts),
+            datasets: [{
+              label: "Number of Entries Per Dates Reported",
+              data: Object.values(dateCounts),
+              borderColor: "#ff5722",
+              backgroundColor: "rgba(255, 87, 34, 0.2)",
+              fill: true,
+            }],
+          },
+          activityChart: {
+            labels: Object.keys(activityCounts),
+            datasets: [{
+              label: "Number of Activities",
+              data: Object.values(activityCounts),
+              backgroundColor: "#ffe459",
+            }],
+          },
+          speciesChart: {
+            labels: Object.keys(speciesCounts),
+            datasets: [{
+              label: "Number of Activities Per Species",
+              data: Object.values(speciesCounts),
+              backgroundColor: ["#1b5b40", "#ffe459", "#123c29", "#e5cd50"],
+            }],
+          },
+          estrusChart: {
+            labels: Object.keys(estrusCounts),
+            datasets: [{
+              label: "Number of Estrus Per Activity",
+              data: Object.values(estrusCounts),
+              backgroundColor: "#f44336",
+            }],
+          },
+        });
+
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching data: ", error);
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [filterOptions.filters, filterOptions.showAll]);
 
-  const processDataByMunicipality = (data) => {
-    const municipalityData = data.reduce((acc, curr) => {
-      const { municipality, entries } = curr;
-      if (!acc[municipality]) {
-        acc[municipality] = 0;
-      }
-      acc[municipality] += entries.length;
-      return acc;
-    }, {});
+  if (loading) {
+    return <div className="text-center text-lg py-10">Loading chart data...</div>;
+  }
 
-    return {
-      labels: Object.keys(municipalityData),
-      datasets: [
-        {
-          label: "Number of Entries by Municipality",
-          data: Object.values(municipalityData),
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
-  const processDataByActivity = (data) => {
-    const activityData = data
-      .flatMap((item) => item.entries)
-      .reduce((acc, entry) => {
-        const { activity } = entry;
-        if (!acc[activity]) {
-          acc[activity] = 0;
-        }
-        acc[activity] += 1;
-        return acc;
-      }, {});
-
-    return {
-      labels: Object.keys(activityData),
-      datasets: [
-        {
-          label: "Distribution of Activities",
-          data: Object.values(activityData),
-          backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-          ],
-          borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
-  const processDataBySpecies = (data) => {
-    const speciesData = data
-      .flatMap((item) => item.entries)
-      .reduce((acc, entry) => {
-        const { species } = entry.animalInfo;
-        if (!acc[species]) {
-          acc[species] = 0;
-        }
-        acc[species] += 1;
-        return acc;
-      }, {});
-
-    return {
-      labels: Object.keys(speciesData),
-      datasets: [
-        {
-          label: "Distribution of Species",
-          data: Object.values(speciesData),
-          backgroundColor: [
-            "rgba(255, 159, 64, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-          ],
-          borderColor: [
-            "rgba(255, 159, 64, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
-  const processDataByGender = (data) => {
-    const genderData = data
-      .flatMap((item) => item.entries)
-      .reduce((acc, entry) => {
-        const { gender } = entry.clientInfo;
-        if (!acc[gender]) {
-          acc[gender] = 0;
-        }
-        acc[gender] += 1;
-        return acc;
-      }, {});
-
-    return {
-      labels: Object.keys(genderData),
-      datasets: [
-        {
-          label: "Gender Distribution of Clients",
-          data: Object.values(genderData),
-          backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-          ],
-          borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Upgrading Services Analysis",
-      },
-    },
-  };
-
+  // Prepare charts for ChartGroup
   const charts = [
     {
-      label: "Number of Entries by Municipality",
-      content: (
-        <>
-          {chartData.municipalityData.datasets.length > 0 && (
-            <Bar data={chartData.municipalityData} options={chartOptions} />
-          )}
-        </>
-      ),
-      style: "col-span-2",
+      label: "Municipality Chart",
+      content: <Bar data={data.municipalityChart} />,
     },
     {
-      label: "Distribution of Activities",
-      content: (
-        <>
-          {chartData.activityData.datasets.length > 0 && (
-            <Pie data={chartData.activityData} options={chartOptions} />
-          )}
-        </>
-      ),
-      style: "col-span-2",
+      label: "Date Reported Chart",
+      content: <Line data={data.dateReportedChart} />,
     },
     {
-      label: "Distribution of Species",
-      content: (
-        <>
-          {chartData.speciesData.datasets.length > 0 && (
-            <Doughnut data={chartData.speciesData} options={chartOptions} />
-          )}
-        </>
-      ),
-      style: "col-span-2",
+      label: "Activity Chart",
+      content: <Bar data={data.activityChart} />,
     },
     {
-      label: "Gender Distribution of Clients",
-      content: (
-        <>
-          {chartData.genderData.datasets.length > 0 && (
-            <Pie data={chartData.genderData} options={chartOptions} />
-          )}
-        </>
-      ),
-      style: "col-span-2",
+      label: "Species Chart",
+      content: <Pie data={data.speciesChart} />,
+    },
+    {
+      label: "Estrus Chart",
+      content: <Doughnut data={data.estrusChart} />,
     },
   ];
 
   return (
-    <>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">Upgrading Services Report</h2>
       <ChartGroup
         charts={charts}
-        title="Upgrading Services Dashboard"
+        title="Chart Overview"
         selectedChart={selectedChart}
-        onSelectChart={(chartLabel) => setSelectedChart(chartLabel)}
+        setSelectedChart={setSelectedChart}
       />
-      <div className="mt-4">
-        {charts.find((chart) => chart.label === selectedChart)?.content}
-      </div>
-    </>
+    </div>
   );
 };
 

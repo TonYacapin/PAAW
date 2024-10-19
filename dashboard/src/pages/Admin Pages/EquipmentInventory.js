@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ConfirmationModal from './ConfirmationModal'; // Import the ConfirmationModal
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -17,8 +16,6 @@ function EquipmentInventory() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
-  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false); // Confirmation modal state
-  const [inventoryToDelete, setInventoryToDelete] = useState(null); // Store the item to delete
 
   useEffect(() => {
     fetchInventories();
@@ -94,25 +91,15 @@ function EquipmentInventory() {
     setIsModalOpen(true); // Open modal for editing
   };
 
-  const handleDelete = (inventory) => {
-    setInventoryToDelete(inventory); 
-    setIsConfirmationOpen(true); 
-  };
-
-  const confirmDelete = async () => {
-    if (inventoryToDelete) {
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/inventory/${inventoryToDelete._id}`);
+        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/inventory/${id}`);
         fetchInventories(); // Refresh inventory list after deletion
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
     }
-    setIsConfirmationOpen(false); // Close confirmation modal
-  };
-
-  const cancelDelete = () => {
-    setIsConfirmationOpen(false); // Close confirmation modal
   };
 
   return (
@@ -210,14 +197,6 @@ function EquipmentInventory() {
         </div>
       )}
 
-      {/* Confirmation Modal for Delete */}
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
-        message="Are you sure you want to delete this item?"
-      />
-
       {/* Table to display inventories */}
       <table className="min-w-full border border-gray-300 mt-6">
         <thead>
@@ -241,20 +220,8 @@ function EquipmentInventory() {
               <td className="border border-gray-300 p-2">{inventory.out}</td>
               <td className="border border-gray-300 p-2">{inventory.total}</td>
               <td className="border border-gray-300 p-2">
-                <button
-                  onClick={() => handleEdit(inventory)}
-                  className="px-2 py-1 bg-blue-500 text-white rounded-md mr-2"
-                  
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(inventory)}
-                  className="px-2 py-1 bg-red-500 text-white rounded-md"
-
-                >
-                  Delete
-                </button>
+                <button onClick={() => handleEdit(inventory)} className="text-blue-600">Edit</button>
+                <button onClick={() => handleDelete(inventory._id)} className="text-red-600 ml-2">Delete</button>
               </td>
             </tr>
           ))}

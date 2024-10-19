@@ -17,7 +17,7 @@ const technicianQuarterlyReportRoutes = require('./routes/technicianQuarterlyRep
 const slaughterformRoutes = require('./routes/slaughterformroutes');
 const vetshipformroutes = require('./routes/vetshipformroutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
-const user = require('./routes/userRoutes');
+const inventoryRoutes = require('./routes/inventoryRoutes')const user = require('./routes/userRoutes');
 const auth = require('./routes/loginRoute');
 
 // Import the audit log middleware
@@ -64,6 +64,7 @@ app.use('/', RabiesHistoryRoutes);
 
 
 app.use('/api', auditLogRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

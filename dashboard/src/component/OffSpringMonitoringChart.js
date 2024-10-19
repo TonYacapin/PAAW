@@ -34,6 +34,8 @@ const OffSpringMonitoringChart = () => {
     municipalityData: { labels: [], datasets: [] },
     speciesData: { labels: [], datasets: [] },
     timeData: { labels: [], datasets: [] },
+    sexData: { labels: [], datasets: [] },  // Added for sex data
+    reportsData: { labels: [], datasets: [] }, // Added for reports data
   });
 
   const [selectedChart, setSelectedChart] = useState(null); // State for tracking selected chart
@@ -50,11 +52,15 @@ const OffSpringMonitoringChart = () => {
         const municipalityData = processDataByMunicipality(data);
         const speciesData = processDataBySpecies(data);
         const timeData = processDataByTime(data);
+        const sexData = processDataBySex(data); // New function for sex data
+        const reportsData = processDataByReports(data); // New function for reports data
 
         setChartData({
           municipalityData,
           speciesData,
           timeData,
+          sexData,  // Include sex data
+          reportsData, // Include reports data
         });
       } catch (error) {
         console.error("Error fetching data", error);
@@ -99,7 +105,7 @@ const OffSpringMonitoringChart = () => {
       });
       return acc;
     }, {});
-  
+
     return {
       labels: Object.keys(speciesData),
       datasets: [
@@ -152,6 +158,64 @@ const OffSpringMonitoringChart = () => {
     };
   };
 
+  // New function to process the number of calves by sex
+  const processDataBySex = (data) => {
+    const sexData = data.reduce((acc, curr) => {
+      curr.entries.forEach((entry) => {
+        const { sex } = entry; // Assuming entries have a sex property
+        if (!acc[sex]) {
+          acc[sex] = 0;
+        }
+        acc[sex] += 1;
+      });
+      return acc;
+    }, {});
+
+    return {
+      labels: Object.keys(sexData),
+      datasets: [
+        {
+          label: "Number of Calves by Sex",
+          data: Object.values(sexData),
+          backgroundColor: [
+            "#ff6384", // Red for females
+            "#36a2eb", // Blue for males
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)", 
+            "rgba(54, 162, 235, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  // New function to process reports per date
+  const processDataByReports = (data) => {
+    const reportsData = data.reduce((acc, curr) => {
+      const date = new Date(curr.dateReported).toLocaleDateString();
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date] += 1; // Count each report by date
+      return acc;
+    }, {});
+
+    return {
+      labels: Object.keys(reportsData),
+      datasets: [
+        {
+          label: "Number of Reports Per Date",
+          data: Object.values(reportsData),
+          backgroundColor: "rgba(153, 102, 255, 0.2)",
+          borderColor: "rgba(153, 102, 255, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -180,6 +244,16 @@ const OffSpringMonitoringChart = () => {
     {
       label: "Offspring Monitoring Over Time",
       content: <Line data={chartData.timeData} options={chartOptions} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Calves by Sex",
+      content: <Bar data={chartData.sexData} options={chartOptions} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Number of Reports Per Date",
+      content: <Line data={chartData.reportsData} options={chartOptions} />,
       style: "col-span-2",
     },
   ];

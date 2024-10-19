@@ -1,26 +1,26 @@
-import React from "react";
-import { Bar, Pie, Line, Doughnut } from "react-chartjs-2";
+import React from 'react';
+import { Bar, Doughnut, Pie } from 'react-chartjs-2';
 
 const ChartComponent = ({ title, data, options, chartType }) => {
-  const renderChart = () => {
-    switch (chartType) {
-      case "bar":
-        return <Bar data={data} options={options} />;
-      case "pie":
-        return <Pie data={data} options={options} />;
-      case "line":
-        return <Line data={data} options={options} />;
-      case "doughnut":
-        return <Doughnut data={data} options={options} />;
-      default:
-        return null;
-    }
-  };
+  let Chart;
+  switch (chartType) {
+    case 'bar':
+      Chart = Bar;
+      break;
+    case 'doughnut':
+      Chart = Doughnut;
+      break;
+    case 'pie':
+      Chart = Pie;
+      break;
+    default:
+      Chart = Bar; // Fallback to Bar if no type is provided
+  }
 
   return (
-    <div className="col-span-2">
-      <h4 className="text-lg font-bold">{title}</h4>
-      {renderChart()}
+    <div className="chart-container">
+      <h2>{title}</h2>
+      <Chart data={data} options={options} />
     </div>
   );
 };
