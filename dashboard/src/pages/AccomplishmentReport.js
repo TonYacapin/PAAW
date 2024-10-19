@@ -32,22 +32,34 @@ function AccomplishmentReport() {
   // Fetch data from the new species-count API
   const fetchData = async () => {
     try {
+      const token = localStorage.getItem('token'); // Retrieve token from local storage
+  
       const [speciesCountResponse, targetsResponse] = await Promise.all([
         axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`
+          `${process.env.REACT_APP_API_BASE_URL}/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Set the Authorization header
+            },
+          }
         ),
         axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`
+          `${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Set the Authorization header
+            },
+          }
         ),
       ]);
-
+  
       processSpeciesCount(speciesCountResponse.data);
       processTargets(targetsResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+  
   const processTargets = (targetsData) => {
     if (
       !targetsData ||

@@ -9,12 +9,23 @@
     useEffect(() => {
       const fetchUsers = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
-          setUsers(response.data);
+            // Retrieve the token from local storage
+            const token = localStorage.getItem('token');
+    
+            // Make the GET request with the Authorization header
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Set the Authorization header
+                },
+            });
+    
+            // Set the users state with the response data
+            setUsers(response.data);
         } catch (error) {
-          console.error('Error fetching users', error);
+            console.error('Error fetching users', error);
         }
-      };
+    };
+    
 
       fetchUsers();
     }, []);

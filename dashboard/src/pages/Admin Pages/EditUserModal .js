@@ -41,7 +41,19 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/users/${userId}`, userData)
+
+    // Retrieve the token from local storage or your preferred storage method
+    const token = localStorage.getItem('token'); // Adjust based on how you store the token
+
+    axios.put(
+      `${process.env.REACT_APP_API_BASE_URL}/api/users/${userId}`,
+      userData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}` // Set the Authorization header
+        }
+      }
+    )
       .then(() => {
         onUserUpdated();  // Refresh the user list after the update
         onClose();        // Close the modal after successful update
@@ -50,6 +62,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
         console.error("Error updating user", error);
       });
   };
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -67,7 +80,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               required
             />
           </div>
-  
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-[#1b5b40]">Last Name</label>
             <input
@@ -79,7 +92,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               required
             />
           </div>
-  
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-[#1b5b40]">Middle Name</label>
             <input
@@ -90,7 +103,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               className="mt-1 p-2 border border-[#1b5b40] rounded w-full bg-[#fffafa] text-[#1b5b40]"
             />
           </div>
-  
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-[#1b5b40]">Email</label>
             <input
@@ -102,7 +115,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               required
             />
           </div>
-  
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-[#1b5b40]">Password (Leave blank to keep unchanged)</label>
             <input
@@ -114,7 +127,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               placeholder="Enter new password"
             />
           </div>
-  
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-[#1b5b40]">Role</label>
             <select
@@ -130,7 +143,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               <option value="animalhealth">Animal Health</option>
             </select>
           </div>
-  
+
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input
@@ -143,7 +156,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               <span className="ml-2 text-[#1b5b40]">Active</span>
             </label>
           </div>
-  
+
           <div className="flex justify-end">
             <button
               type="submit"
@@ -163,7 +176,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
       </div>
     </Modal>
   );
-  
+
 };
 
 export default EditUserModal;
