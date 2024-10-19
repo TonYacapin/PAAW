@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import EditUserModal from '../pages/Admin Pages/EditUserModal ';
 
 const UserTable = () => {
@@ -18,7 +18,7 @@ const UserTable = () => {
         const token = localStorage.getItem('token');
 
         // Make the GET request with the Authorization header
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`, {
+        const response = await axiosInstance.get(`/api/users`, {
             headers: {
                 Authorization: `Bearer ${token}`, // Set the Authorization header
             },

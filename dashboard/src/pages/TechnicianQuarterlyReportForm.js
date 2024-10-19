@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import Papa from 'papaparse';
 import FormSubmit from '../component/FormSubmit';
 import ConfirmationModal from '../component/ConfirmationModal';
@@ -84,7 +84,7 @@ const TechnicianQuarterlyReportForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/technician-quarterly`, formData);
+            const response = await axiosInstance.post(`/api/technician-quarterly`, formData);
             if (response.status === 201) {
                 setAlert({ show: true, message: 'Report submitted successfully', type: 'success' });
 

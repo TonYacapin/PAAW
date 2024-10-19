@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { format, isSameMonth, subMonths } from "date-fns";
 import PrintableRSMAccomplishmentReport from "../component/PrintComponents/PrintableRSMAccomplishmentReport";
+import axiosInstance from "../component/axiosInstance";
  
 function RSMAccomplishmentReport() {
   const [activityData, setActivityData] = useState([]);
@@ -55,8 +55,8 @@ function RSMAccomplishmentReport() {
   const fetchData = async () => {
     try {
       const [activityResponse, targetsResponse] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/species-activity-count?year=${selectedYear}&month=${selectedMonth}`),
-        axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RoutineServiceMonitoring`)
+        axiosInstance.get(`/species-activity-count?year=${selectedYear}&month=${selectedMonth}`),
+        axiosInstance.get(`/api/targets/accomplishment?year=${selectedYear}&reportType=RoutineServiceMonitoring`)
       ]);
  
       processActivityData(activityResponse.data);

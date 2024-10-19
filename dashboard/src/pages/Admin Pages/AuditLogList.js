@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import MUI Calendar Icon
+import axiosInstance from '../../component/axiosInstance';
 
 const AuditLogList = () => {
     const [auditLogs, setAuditLogs] = useState([]);
@@ -18,15 +19,8 @@ const AuditLogList = () => {
     useEffect(() => {
         const fetchAuditLogs = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/audit-logs`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Set the Authorization header
-                    },
-                });
-                if (!response.ok) throw new Error('Failed to fetch audit logs');
-                const data = await response.json();
-                setAuditLogs(data);
+                const response = await axiosInstance.get('/api/audit-logs');
+                setAuditLogs(response.data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -177,8 +171,7 @@ const AuditLogList = () => {
                                 <td className="py-2 px-4 border">{log.collectionName}</td>
                                 <td className="py-2 px-4 border">{log.documentId}</td>
                                 <td className="py-2 px-4 border">{log.user}</td>
-                                <td className={`py-2 px-4 border ${log.status === 'success' ? 'text-green-600' : 'text-red-600'
-                                    }`}>
+                                <td className={`py-2 px-4 border ${log.status === 'success' ? 'text-green-600' : 'text-red-600'}`}>
                                     {log.status}
                                 </td>
                                 <td className="py-2 px-4 border">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import axiosInstance from '../component/axiosInstance';
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import ChartGroup from "./ChartGroup"; // Ensure this component is set up properly
 import { FilterContext } from "../pages/Home/Home"; // Ensure this context is correct
@@ -19,8 +19,8 @@ const UpgradingServicesChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/upgrading-services`
+        const response = await axiosInstance.get(
+          `/api/upgrading-services`
         );
 
         let services = response.data;

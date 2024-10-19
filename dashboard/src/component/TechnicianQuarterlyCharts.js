@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import axios from 'axios';
 import ChartGroup from './ChartGroup'; // Import ChartGroup
 import {
   Chart as ChartJS,
@@ -14,6 +13,7 @@ import {
   LineElement,
   PointElement,
 } from 'chart.js';
+import axiosInstance from './axiosInstance';
 
 // Register the necessary Chart.js components
 ChartJS.register(
@@ -59,7 +59,7 @@ const TechnicianQuarterlyCharts = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/technician-quarterly`);
+        const response = await axiosInstance.get(`/api/technician-quarterly`);
         const data = response.data;
 
         if (data && data.length > 0) {

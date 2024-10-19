@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
 import { FilterContext } from '../pages/Home/Home';
@@ -15,7 +15,7 @@ function DiseaseInvestigationChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/disease-investigation`);
+        const response = await axiosInstance.get(`/disease-investigation`);
         setData(response.data);
         setLoading(false);
       } catch (err) {

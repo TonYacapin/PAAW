@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import axiosInstance from '../../component/axiosInstance';
 
 const MunicipalityTargetForms = ({ targetData, allMunicipalityTargets }) => {
   const [type, setType] = useState(targetData?.type || '');
@@ -55,7 +56,7 @@ const MunicipalityTargetForms = ({ targetData, allMunicipalityTargets }) => {
 
     try {
       const targetsToSubmit = municipalitiesTargets.filter(target => target.semiAnnualTarget);
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets/bulk`, {
+      const response = await axiosInstance.post(`/api/mtargets/bulk`, {
         type,
         targetYear,
         targets: targetsToSubmit

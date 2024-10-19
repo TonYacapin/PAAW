@@ -1,6 +1,6 @@
 // MunicipalityAccomplishmentReportRoutineServices.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from '../component/axiosInstance';
 import PrintableMunicipalityAccomplishmentReportRoutineServices from "../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRoutineServices";
 
 const MunicipalityAccomplishmentReportRoutineServices = () => {
@@ -34,8 +34,8 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/routine-services/species-count`,
+      const response = await axiosInstance.get(
+        `/routine-services/species-count`,
         {
           params: { year, month, species },
         }
@@ -79,7 +79,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
   // Fetch the semi-annual targets
   const fetchSemiAnnualTargets = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+      const response = await axiosInstance.get(`/api/mtargets`, {
         params: { targetYear: selectedYear, type: getTypeBySpecies(selectedSpecies) }
       });
       const targets = response.data;

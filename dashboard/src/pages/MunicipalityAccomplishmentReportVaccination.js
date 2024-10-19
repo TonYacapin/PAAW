@@ -1,5 +1,5 @@
-    import React, { useEffect, useState, useRef} from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from 'react';
+import axiosInstance from '../component/axiosInstance';
 import PrintableMunicipalityAccomplishmentReportVaccination from '../component/PrintComponents/PrintableMunicipalityAccomplishmentReportVaccination';
 
 const MunicipalityAccomplishmentReportVaccination = () => {
@@ -19,7 +19,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
     const fetchData = async (year, month, species) => {
         setLoading(true);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/vaccination/species-count`, {
+            const response = await axiosInstance.get(`/vaccination/species-count`, {
                 params: { year, month, species }
             });
             const { currentMonth, previousMonth, total } = response.data[0]; // Access the first object of the returned array
@@ -71,7 +71,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
     // Fetch the semi-annual targets
     const fetchSemiAnnualTargets = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+            const response = await axiosInstance.get(`/api/mtargets`, {
                 params: { targetYear: selectedYear, type: getTypeBySpecies(selectedSpecies) }
             });
             const targets = response.data;
@@ -172,48 +172,48 @@ const MunicipalityAccomplishmentReportVaccination = () => {
                     Municipality Vaccination Accomplishment Report
                 </h1>
                 <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
-                            <div className="flex flex-col">
-                                <label htmlFor="year" className="text-md font-semibold text-gray-700 mb-2">Year</label>
-                                <input
-                                    type="number"
-                                    id="year"
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                                />
-                            </div>
-                            <div  className="flex flex-col">
-                                <label htmlFor="month" className="text-md font-semibold text-gray-700 mb-2 ">Month</label>
-                                <select
-                                    id="month"
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                                >
-                                    {[...Array(12)].map((_, i) => (
-                                        <option key={i + 1} value={i + 1}>
-                                            {new Date(0, i).toLocaleString('default', { month: 'long' })}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div  className="flex flex-col">
-                                <label htmlFor="species" className="text-md font-semibold text-gray-700 mb-2">Species</label>
-                                <select
-                                    id="species"
-                                    value={selectedSpecies}
-                                    onChange={(e) => setSelectedSpecies(e.target.value)}
-                                    className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                                >
-                                    <option value="Carabao">Carabao</option>
-                                    <option value="Cattle">Cattle</option>
-                                    <option value="Goat/Sheep">Goat/Sheep</option>
-                                    <option value="Swine">Swine</option>
-                                    <option value="Poultry">Poultry</option>
-                                </select>
-                            </div>
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
+                        <div className="flex flex-col">
+                            <label htmlFor="year" className="text-md font-semibold text-gray-700 mb-2">Year</label>
+                            <input
+                                type="number"
+                                id="year"
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(e.target.value)}
+                                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                            />
                         </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="month" className="text-md font-semibold text-gray-700 mb-2 ">Month</label>
+                            <select
+                                id="month"
+                                value={selectedMonth}
+                                onChange={(e) => setSelectedMonth(e.target.value)}
+                                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                            >
+                                {[...Array(12)].map((_, i) => (
+                                    <option key={i + 1} value={i + 1}>
+                                        {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="species" className="text-md font-semibold text-gray-700 mb-2">Species</label>
+                            <select
+                                id="species"
+                                value={selectedSpecies}
+                                onChange={(e) => setSelectedSpecies(e.target.value)}
+                                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                            >
+                                <option value="Carabao">Carabao</option>
+                                <option value="Cattle">Cattle</option>
+                                <option value="Goat/Sheep">Goat/Sheep</option>
+                                <option value="Swine">Swine</option>
+                                <option value="Poultry">Poultry</option>
+                            </select>
+                        </div>
+                    </div>
 
                     {/* Display loading spinner or table */}
                     {loading ? (

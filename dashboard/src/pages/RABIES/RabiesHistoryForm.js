@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../component/axiosInstance";
 import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse";
 import FormSubmit from "../../component/FormSubmit";
@@ -105,8 +105,8 @@ const RabiesHistoryForm = () => {
 
     try {
       console.log(formData);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/RH`,
+      const response = await axiosInstance.post(
+        `/RH`,
         formData
       );
       console.log('Form submitted successfully:', response.data);

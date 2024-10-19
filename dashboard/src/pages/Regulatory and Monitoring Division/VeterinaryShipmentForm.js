@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StepperComponent from '../../component/StepperComponent';
 import FormSubmit from '../../component/FormSubmit';
 import Papa from 'papaparse';
-import axios from "axios";
+import axiosInstance from '../../component/axiosInstance';
 
 const VeterinaryShipmentForm = () => {
   const [shipmentType, setShipmentType] = useState('');
@@ -107,8 +107,8 @@ const handleSubmit = async (e) => {
   };
 
   try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`, // Your API endpoint
+    const response = await axiosInstance.post(
+      `/api/vetshipform`, // Your API endpoint
       data
     );
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../component/axiosInstance';
 
 function IncomingReportList() {
   const [data, setData] = useState([]);
@@ -13,7 +13,7 @@ function IncomingReportList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`);
+        const response = await axiosInstance.get(`/api/vetshipform`);
         setData(response.data);
       } catch (err) {
         console.error('Error fetching data:', err.message);

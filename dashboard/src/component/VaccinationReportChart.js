@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import {
   Chart as ChartJS,
   Tooltip,
@@ -28,7 +28,7 @@ function VaccinationReportChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/reports`);
+        const response = await axiosInstance.get(`/api/reports`);
         setData(response.data);
         setLoading(false);
       } catch (err) {

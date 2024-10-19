@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../component/axiosInstance';
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -23,7 +23,7 @@ function EquipmentInventory() {
 
   const fetchInventories = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/inventory`);
+      const response = await axiosInstance.get(`/api/inventory`);
       setInventories(response.data);
     } catch (error) {
       console.error('Error fetching inventories:', error);
@@ -48,14 +48,14 @@ function EquipmentInventory() {
     
     if (isEditing) {
       try {
-        await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/inventory/${newInventory._id}`, newInventory);
+        await axiosInstance.put(`/api/inventory/${newInventory._id}`, newInventory);
         setIsEditing(false);
       } catch (error) {
         console.error('Error updating inventory:', error);
       }
     } else {
       try {
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/inventory`, newInventory);
+        await axiosInstance.post(`/api/inventory`, newInventory);
       } catch (error) {
         console.error('Error adding inventory:', error);
       }
@@ -94,7 +94,7 @@ function EquipmentInventory() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/inventory/${id}`);
+        await axiosInstance.delete(`/api/inventory/${id}`);
         fetchInventories(); // Refresh inventory list after deletion
       } catch (error) {
         console.error('Error deleting inventory:', error);

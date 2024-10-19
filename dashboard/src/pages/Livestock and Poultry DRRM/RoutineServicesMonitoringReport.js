@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios for HTTP requests
+import axiosInstance from "../../component/axiosInstance";
 import ConfirmationModal from "../../component/ConfirmationModal"; // Import the ConfirmationModal component
 import { Add, Save } from "@mui/icons-material";
 import Papa from "papaparse";
@@ -234,8 +234,8 @@ function RoutineServicesMonitoringReport() {
   };
   const saveEntries = async () => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/RSM`,
+      const response = await axiosInstance.post(
+        `/RSM`,
         {
           province,
           municipality,

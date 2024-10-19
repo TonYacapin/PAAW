@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import PrintableMunicipalityAccomplishmentReportRabies from '../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRabies';
 
 
@@ -22,7 +22,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rabies-vaccination-summary?year=${year}&month=${month}`);
+            const response = await axiosInstance.get(`/rabies-vaccination-summary?year=${year}&month=${month}`);
             const { currentMonth, previousMonth, total } = response.data;
 
             const aggregatedData = {};
@@ -57,7 +57,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
     // Fetch the semi-annual targets
     const fetchSemiAnnualTargets = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+            const response = await axiosInstance.get(`/api/mtargets`, {
                 params: { targetYear: year, type: "RABIES" }
             });
             const targets = response.data;
