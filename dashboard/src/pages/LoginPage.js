@@ -5,7 +5,7 @@ import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 import ErrorModal from '../component/ErrorModal'; // Import ErrorModal
 
-const LoginPage = ({ setIsAuthenticated }) => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // Error state for login errors
@@ -21,17 +21,19 @@ const LoginPage = ({ setIsAuthenticated }) => {
       setIsErrorModalOpen(true);
       return;
     }
-  
+
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
         email,
         password,
       });
-  
-      const { token } = response.data;
+
+      const { token} = response.data;
       localStorage.setItem('token', token);
-      setIsAuthenticated(true); // Add this line
-      navigate('/home');
+    
+
+      console.log('Logged in successfully:', response.data);
+      navigate('/Home');
     } catch (error) {
       console.error('Error logging in:', error.response?.data?.message || error.message);
       setError(error.response?.data?.message || error.message);
@@ -39,7 +41,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       setLoginAttempts((prevAttempts) => {
         const newAttempts = prevAttempts + 1;
         if (newAttempts >= 5) {
-          setIsPageDisabled(true);
+          setIsPageDisabled(true); // Disable page after 5 attempts
         }
         return newAttempts;
       });
