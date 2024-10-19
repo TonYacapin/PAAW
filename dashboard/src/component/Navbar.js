@@ -21,7 +21,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 
-function Navbar({ onDivisionChange, selectedDivision }) {
+function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
   const [role, setRole] = useState(null); // State to store the decoded user role
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -162,13 +162,14 @@ function Navbar({ onDivisionChange, selectedDivision }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogoutModal = () => {
     setLogoutModalOpen(true); // Open the logout modal
   };
 
   const confirmLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+    handleLogout(); // Call the handleLogout from props
+    navigate("/login", { replace: true }); // Use replace to prevent back navigation
+    setLogoutModalOpen(false);
   };
 
   return (
@@ -190,7 +191,7 @@ function Navbar({ onDivisionChange, selectedDivision }) {
             </div>
             {/* Logout button at the bottom */}
             <div className="mt-auto mb-10 w-full">
-              <div className={`${baseClasses}`} onClick={handleLogout}>
+              <div className={`${baseClasses}`} onClick={handleLogoutModal}>
                 <Logout />
                 <span>Logout</span>
               </div>

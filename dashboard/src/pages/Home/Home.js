@@ -67,7 +67,7 @@ import EquipmentInventory from "../Admin Pages/EquipmentInventory";
 
 export const FilterContext = createContext(null);
 
-function Home() {
+function Home({ handleLogout, setIsAuthenticated }) {
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
   const [selectedCharts, setSelectedCharts] = useState([]);
@@ -650,6 +650,7 @@ function Home() {
         <Navbar
           onDivisionChange={handleDivisionChange}
           selectedDivision={selectedDivision}
+          handleLogout={handleLogout}
         />
         {/* Add relative positioning */}
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
