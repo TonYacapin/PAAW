@@ -6,6 +6,7 @@ import Papa from "papaparse";
 import FormSubmit from "../../component/FormSubmit";
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
+import CardBox from "../../component/CardBox";
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -285,7 +286,9 @@ function RoutineServicesMonitoringReport() {
         Routine Services Monitoring Report
       </h2>
 
+      
       {/* Main fields */}
+      <CardBox>
       <div className="grid grid-cols-1 gap-4 mb-4">
         <div>
           <label htmlFor="province" className="block mb-1">
@@ -354,6 +357,7 @@ function RoutineServicesMonitoringReport() {
           />
         </div>
       </div>
+      </CardBox>
 
       {/* Entries section */}
       <div>

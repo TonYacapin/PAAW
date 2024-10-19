@@ -6,9 +6,9 @@ import Papa from "papaparse";
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
 
-
 import { Add, Save } from "@mui/icons-material";
 import FormSubmit from "../../component/FormSubmit";
+import CardBox from "../../component/CardBox";
 
 function VaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -17,8 +17,8 @@ function VaccinationReport() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [entryToRemove, setEntryToRemove] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
 
   // Main fields state
   const [municipality, setMunicipality] = useState("");
@@ -246,12 +246,11 @@ function VaccinationReport() {
     setSelectedEntry(null);
   };
 
-
   const saveEntries = async () => {
     // Reset modal states before making the API call
     setIsErrorModalOpen(false);
     setIsSuccessModalOpen(false);
-  
+
     try {
       const response = await axiosInstance.post(
         `/api/reports`,
@@ -267,30 +266,31 @@ function VaccinationReport() {
           entries,
         }
       );
-  
+
       if (response.status === 201) {
         // Clear form fields after successful save
         setEntries([]);
-        setVaccine('');
-        setMunicipality('');
-        setProvince('Nueva Vizcaya');
-        setDateReported('');
-        setVaccineType('');
-        setBatchLotNo('');
-        setVaccineSource('');
-        setAgriculturalExtensionWorker('');
-  
+        setVaccine("");
+        setMunicipality("");
+        setProvince("Nueva Vizcaya");
+        setDateReported("");
+        setVaccineType("");
+        setBatchLotNo("");
+        setVaccineSource("");
+        setAgriculturalExtensionWorker("");
+
         // Show success message in modal
-        setSuccessMessage('Entries saved successfully'); // New state for success message
+        setSuccessMessage("Entries saved successfully"); // New state for success message
         setIsSuccessModalOpen(true); // Show success modal
       }
     } catch (error) {
       console.error("Error saving entries:", error);
-  
+
       // Error handling
       let errorMessage = "Failed to save entries: An unexpected error occurred";
       if (error.response && error.response.data) {
-        const serverMessage = error.response.data.message || "An error occurred";
+        const serverMessage =
+          error.response.data.message || "An error occurred";
         if (error.response.data.errors) {
           const validationErrors = error.response.data.errors
             .map((err) => err.msg)
@@ -300,143 +300,150 @@ function VaccinationReport() {
           errorMessage = `Failed to save entries: ${serverMessage}`;
         }
       }
-  
+
       setErrorMessage(errorMessage);
       setIsErrorModalOpen(true); // Show error message in modal
     }
   };
-  
+
   return (
     <>
       <div className="container mx-auto p-4">
         <h2 className="text-2xl font-bold mb-4">Vaccination Report</h2>
 
         {/* Main fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="vaccine" className="block mb-1">
-              Vaccine
-            </label>
-            <select
-              id="vaccine"
-              value={vaccine}
-              onChange={(e) => setVaccine(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">Select Vaccine</option>
-              <option value="Hemorrhagic Septicemia">
-                Hemorrhagic Septicemia
-              </option>
-              <option value="Newcastle Disease">Newcastle Disease</option>
-              <option value="Hog Cholera">Hog Cholera</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="municipality" className="block mb-1">
-              Municipality
-            </label>
-            <select
-              id="municipality"
-              value={municipality}
-              onChange={(e) => setMunicipality(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">Select Municipality</option>
-              <option value="Ambaguio">Ambaguio</option>
-              <option value="Bagabag">Bagabag</option>
-              <option value="Bayombong">Bayombong</option>
-              <option value="Diadi">Diadi</option>
-              <option value="Quezon">Quezon</option>
-              <option value="Solano">Solano</option>
-              <option value="Villaverde">Villaverde</option>
-              <option value="Alfonso Castañeda">Alfonso Castañeda</option>
-              <option value="Aritao">Aritao</option>
-              <option value="Bambang">Bambang</option>
-              <option value="Dupax del Norte">Dupax del Norte</option>
-              <option value="Dupax del Sur">Dupax del Sur</option>
-              <option value="Kayapa">Kayapa</option>
-              <option value="Kasibu">Kasibu</option>
-              <option value="Santa Fe">Santa Fe</option>
-            </select>
-          </div>
 
-          <div>
-            <label htmlFor="dateReported" className="block mb-1">
-              Date Reported
-            </label>
-            <input
-              id="dateReported"
-              type="date"
-              value={dateReported}
-              onChange={(e) => setDateReported(e.target.value)}
-              className="border p-2 rounded w-full"
-            />
-          </div>
+        <CardBox>
+          {" "}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label htmlFor="vaccine" className="block mb-1">
+                Vaccine
+              </label>
+              <select
+                id="vaccine"
+                value={vaccine}
+                onChange={(e) => setVaccine(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
+                <option value="">Select Vaccine</option>
+                <option value="Hemorrhagic Septicemia">
+                  Hemorrhagic Septicemia
+                </option>
+                <option value="Newcastle Disease">Newcastle Disease</option>
+                <option value="Hog Cholera">Hog Cholera</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="municipality" className="block mb-1">
+                Municipality
+              </label>
+              <select
+                id="municipality"
+                value={municipality}
+                onChange={(e) => setMunicipality(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
+                <option value="">Select Municipality</option>
+                <option value="Ambaguio">Ambaguio</option>
+                <option value="Bagabag">Bagabag</option>
+                <option value="Bayombong">Bayombong</option>
+                <option value="Diadi">Diadi</option>
+                <option value="Quezon">Quezon</option>
+                <option value="Solano">Solano</option>
+                <option value="Villaverde">Villaverde</option>
+                <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+                <option value="Aritao">Aritao</option>
+                <option value="Bambang">Bambang</option>
+                <option value="Dupax del Norte">Dupax del Norte</option>
+                <option value="Dupax del Sur">Dupax del Sur</option>
+                <option value="Kayapa">Kayapa</option>
+                <option value="Kasibu">Kasibu</option>
+                <option value="Santa Fe">Santa Fe</option>
+              </select>
+            </div>
 
-          <div>
-            <label htmlFor="vaccineType" className="block mb-1">
-              Vaccine Type
-            </label>
-            <select
-              id="vaccineType"
-              value={vaccineType}
-              onChange={(e) => setVaccineType(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="" disabled>
-                Select Vaccine Type
-              </option>
-              <option value="Live">Live</option>
-              <option value="Killed">Killed</option>
-              <option value="Attenuated">Attenuated</option>
-            </select>
-          </div>
+            <div>
+              <label htmlFor="dateReported" className="block mb-1">
+                Date Reported
+              </label>
+              <input
+                id="dateReported"
+                type="date"
+                value={dateReported}
+                onChange={(e) => setDateReported(e.target.value)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="batchLotNo" className="block mb-1">
-              Batch/Lot No.
-            </label>
-            <input
-              id="batchLotNo"
-              type="text"
-              value={batchLotNo}
-              onChange={(e) => setBatchLotNo(e.target.value)}
-              className="border p-2 rounded w-full"
-            />
-          </div>
+            <div>
+              <label htmlFor="vaccineType" className="block mb-1">
+                Vaccine Type
+              </label>
+              <select
+                id="vaccineType"
+                value={vaccineType}
+                onChange={(e) => setVaccineType(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
+                <option value="" disabled>
+                  Select Vaccine Type
+                </option>
+                <option value="Live">Live</option>
+                <option value="Killed">Killed</option>
+                <option value="Attenuated">Attenuated</option>
+              </select>
+            </div>
 
-          <div>
-            <label htmlFor="vaccineSource" className="block mb-1">
-              Vaccine Source
-            </label>
-            <select
-              id="vaccineSource"
-              value={vaccineSource}
-              onChange={(e) => setVaccineSource(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="" disabled>
-                Select Vaccine Source
-              </option>
-              <option value="MLGU">MLGU</option>
-              <option value="PLGU">PLGU</option>
-              <option value="RFU">RFU</option>
-            </select>
-          </div>
+            <div>
+              <label htmlFor="batchLotNo" className="block mb-1">
+                Batch/Lot No.
+              </label>
+              <input
+                id="batchLotNo"
+                type="text"
+                value={batchLotNo}
+                onChange={(e) => setBatchLotNo(e.target.value)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="agriculturalExtensionWorker" className="block mb-1">
-              Agricultural Extension Worker
-            </label>
-            <input
-              id="agriculturalExtensionWorker"
-              type="text"
-              value={agriculturalExtensionWorker}
-              onChange={(e) => setAgriculturalExtensionWorker(e.target.value)}
-              className="border p-2 rounded w-full"
-            />
+            <div>
+              <label htmlFor="vaccineSource" className="block mb-1">
+                Vaccine Source
+              </label>
+              <select
+                id="vaccineSource"
+                value={vaccineSource}
+                onChange={(e) => setVaccineSource(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
+                <option value="" disabled>
+                  Select Vaccine Source
+                </option>
+                <option value="MLGU">MLGU</option>
+                <option value="PLGU">PLGU</option>
+                <option value="RFU">RFU</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="agriculturalExtensionWorker"
+                className="block mb-1"
+              >
+                Agricultural Extension Worker
+              </label>
+              <input
+                id="agriculturalExtensionWorker"
+                type="text"
+                value={agriculturalExtensionWorker}
+                onChange={(e) => setAgriculturalExtensionWorker(e.target.value)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
           </div>
-        </div>
+        </CardBox>
 
         {/* Entries section */}
 
@@ -451,31 +458,33 @@ function VaccinationReport() {
 
           <div className="max-h-[40vh] overflow-auto">
             {entries.map((entry, index) => (
-              <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
-                <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <p>Date: {entry.date || "N/A"}</p>
-                  <p>Barangay: {entry.barangay || "N/A"}</p>
-                  <p>
-                    Client: {entry.clientInfo.firstName || "N/A"}{" "}
-                    {entry.clientInfo.lastName || ""}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => openModal(index)}
-                  className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openConfirmationModal(index)}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
-                >
-                  Remove
-                </button>
-              </div>
+                <CardBox key={index}>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Entry {entry.no}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <p>Date: {entry.date || "N/A"}</p>
+                    <p>Barangay: {entry.barangay || "N/A"}</p>
+                    <p>
+                      Client: {entry.clientInfo.firstName || "N/A"}{" "}
+                      {entry.clientInfo.lastName || ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openModal(index)}
+                    className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openConfirmationModal(index)}
+                    className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                  >
+                    Remove
+                  </button>
+                </CardBox>
             ))}
           </div>
         </div>
@@ -802,8 +811,6 @@ function VaccinationReport() {
           </div>
         )}
 
-
-
         {/* Confirmation Modal for Removing Entries */}
         {isConfirmationModalOpen && (
           <ConfirmationModal
@@ -813,10 +820,21 @@ function VaccinationReport() {
             message="Are you sure you want to remove this entry?"
           />
         )}
-        {isErrorModalOpen && <ErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)} message={errorMessage} />}
-        {isSuccessModalOpen && <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message={successMessage} />}
+        {isErrorModalOpen && (
+          <ErrorModal
+            isOpen={isErrorModalOpen}
+            onClose={() => setIsErrorModalOpen(false)}
+            message={errorMessage}
+          />
+        )}
+        {isSuccessModalOpen && (
+          <SuccessModal
+            isOpen={isSuccessModalOpen}
+            onClose={() => setIsSuccessModalOpen(false)}
+            message={successMessage}
+          />
+        )}
       </div>
-
     </>
   );
 }
