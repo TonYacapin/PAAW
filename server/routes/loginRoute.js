@@ -5,16 +5,23 @@ const AuditLog = require('../models/AuditLog.model'); // Import the AuditLog mod
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Helper function to translate URLs to resource names
+const translateResource = (url) => {
+    if (url.includes('/login')) return 'User Login';
+    return 'Unknown Resource';
+};
+
 // Helper function to create an audit log
-async function createAuditLog(action, collectionName, documentId, user, status, message = '') {
+async function createAuditLog(action, resource, resourceId, user, outcome, description = '', details = {}) {
     try {
         const auditLog = new AuditLog({
             action,
-            collectionName,
-            documentId,
+            resource,
+            resourceId,
             user,
-            status,
-            message,
+            outcome,
+            description,
+            details,
         });
         await auditLog.save();
     } catch (error) {
@@ -24,14 +31,15 @@ async function createAuditLog(action, collectionName, documentId, user, status, 
 
 // Login route
 router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+    const { email, password } = req.body;
+    const details = { requestData: req.body }; // Include the request data
 
+    try {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             // Log failed login attempt
-            await createAuditLog('login', 'User', null, email, 'failure', 'Invalid credentials');
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, email, 'failed', 'Invalid credentials', { ...details });
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
@@ -39,29 +47,27 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             // Log failed login attempt
-            await createAuditLog('login', 'User', user._id, email, 'failure', 'Invalid credentials');
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Invalid credentials', { ...details });
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         // Check if user is active
         if (!user.isActive) {
             // Log failed login attempt due to inactive account
-            await createAuditLog('login', 'User', user._id, email, 'failure', 'Account is inactive');
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Account is inactive', { ...details });
             return res.status(403).json({ message: 'Account is inactive' });
         }
 
         // Generate JWT
         const token = jwt.sign({ userId: user._id, role: user.role, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
-        const userRole = user.role;
-        const userEmail = user.email;
-
+        
         // Log successful login
-        await createAuditLog('login', 'User', user._id, email, 'success', 'Login successful');
+        await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'successful', 'Login successful', { ...details });
 
-        res.json({ token, userRole, userEmail });
+        res.json({ token, userRole: user.role, userEmail: user.email });
     } catch (error) {
         // Log unexpected error during login
-        await createAuditLog('login', 'User', null, req.body.email, 'failure', error.message);
+        await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, req.body.email, 'failed', error.message, { ...details });
         res.status(500).json({ message: error.message });
     }
 });

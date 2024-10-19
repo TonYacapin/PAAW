@@ -40,7 +40,7 @@ db.once('open', () => {
 app.use(bodyParser.json());
 app.use(cors()); 
 
-app.use('/api', user);
+
 app.use('/', auth);
 
 // Use authMiddleware to authenticate users
@@ -48,6 +48,8 @@ app.use(authMiddleware); // Ensure this is before the audit log middleware
 
 // Use audit log middleware
 app.use(auditLogMiddleware);
+
+app.use('/api', user);
 
 // Use routes
 app.use('/api/vetshipform', vetshipformroutes);
