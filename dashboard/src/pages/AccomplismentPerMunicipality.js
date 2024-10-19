@@ -1,6 +1,6 @@
 import React from "react";
 import StepperComponent from "../component/StepperComponent";
-import axios from "axios";
+import axiosInstance from "../component/axiosInstance";
 
 const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
 const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -23,73 +23,73 @@ function AccomplismentPerMunicipality() {
     "Hog Cholera",
   ];
 
-  // const calculatePercentages = () => {
-  //   if (selectedVaccine === "All") {
-  //     const totalQuarterly = targets.totalTarget || 0;
-  //     const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
+  const calculatePercentages = () => {
+    if (selectedVaccine === "All") {
+      const totalQuarterly = targets.totalTarget || 0;
+      const totalSemiAnnual = targets.totalSemiAnnualTarget || 0;
 
-  //     setSemiAnnualPercentage(
-  //       totalSemiAnnual === 0
-  //         ? "No target set"
-  //         : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`
-  //     );
-  //   } else {
-  //     const target = targets[selectedVaccine];
-  //     if (!target) {
-  //       setSemiAnnualPercentage("No target set");
-  //       return;
-  //     }
+      setSemiAnnualPercentage(
+        totalSemiAnnual === 0
+          ? "No target set"
+          : `${((totals.total / totalSemiAnnual) * 100).toFixed(2)}%`
+      );
+    } else {
+      const target = targets[selectedVaccine];
+      if (!target) {
+        setSemiAnnualPercentage("No target set");
+        return;
+      }
 
-  //     const vaccineTotal = filteredSpeciesCount.reduce(
-  //       (sum, species) => sum + species.combined,
-  //       0
-  //     );
+      const vaccineTotal = filteredSpeciesCount.reduce(
+        (sum, species) => sum + species.combined,
+        0
+      );
 
-  //     setQuarterlyPercentage(
-  //       target.quarterly > 0
-  //         ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%`
-  //         : "No target set"
-  //     );
-  //     setSemiAnnualPercentage(
-  //       target.semiAnnual > 0
-  //         ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%`
-  //         : "No target set"
-  //     );
-  //   }
-  // };
+      setQuarterlyPercentage(
+        target.quarterly > 0
+          ? `${((totals.combined / target.quarterly) * 100).toFixed(2)}%`
+          : "No target set"
+      );
+      setSemiAnnualPercentage(
+        target.semiAnnual > 0
+          ? `${((totals.total / target.semiAnnual) * 100).toFixed(2)}%`
+          : "No target set"
+      );
+    }
+  };
 
-  // const processTargets = (targetsData) => {
-  //   if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
-  //     console.error("Invalid targets data format:", targetsData);
-  //     return;
-  //   }
+  const processTargets = (targetsData) => {
+    if (!targetsData || !targetsData.targets || !Array.isArray(targetsData.targets)) {
+      console.error("Invalid targets data format:", targetsData);
+      return;
+    }
 
-  //   const targetsObj = targetsData.targets.reduce((acc, target) => {
-  //     acc[target.Type] = {
-  //       semiAnnual: target.semiAnnualTarget
-  //     };
-  //     return acc;
-  //   }, {});
+    const targetsObj = targetsData.targets.reduce((acc, target) => {
+      acc[target.Type] = {
+        semiAnnual: target.semiAnnualTarget
+      };
+      return acc;
+    }, {});
 
-  //   setTargets({
-  //     ...targetsObj,
-  //     totalSemiAnnualTarget: targetsData.totalSemiAnnualTarget
-  //   });
-  // };
-  // const fetchData = async () => {
-  //   try {
-  //     const [speciesCountResponse, targetsResponse] = await Promise.all([
-  //       axios.get(`${process.env.REACT_APP_API_BASE_URL}/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`),
-  //       axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`)
-  //     ]);
+    setTargets({
+      ...targetsObj,
+      totalSemiAnnualTarget: targetsData.totalSemiAnnualTarget
+    });
+  };
+  const fetchData = async () => {
+    try {
+      const [speciesCountResponse, targetsResponse] = await Promise.all([
+        axiosInstance.get(`/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`),
+        axiosInstance.get(`/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`)
+      ]);
 
-  //     processSpeciesCount(speciesCountResponse.data);
-  //     processTargets(targetsResponse.data);
+      processSpeciesCount(speciesCountResponse.data);
+      processTargets(targetsResponse.data);
 
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../component/axiosInstance';
 import VeterinaryShipmentForm from './VeterinaryShipmentForm';
 import Modal from '../../component/Modal';
 
@@ -11,7 +11,7 @@ const VeterinaryShipmentList = () => {
     
     const fetchShipments = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`);
+            const response = await axiosInstance.get(`/api/vetshipform`);
             setShipments(response.data); // Set fetched data to state
         } catch (error) {
             console.error('Error fetching shipments:', error);
@@ -25,7 +25,7 @@ const VeterinaryShipmentList = () => {
     useEffect(() => {
         const fetchShipments = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`);
+                const response = await axiosInstance.get(`/api/vetshipform`);
                 setShipments(response.data); // Set fetched data to state
             } catch (error) {
                 console.error('Error fetching shipments:', error);
@@ -75,7 +75,7 @@ const VeterinaryShipmentList = () => {
 
     const handleNewShipment = async (data) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/vetshipform`, data);
+            const response = await axiosInstance.post(`/api/vetshipform`, data);
             setShipments([...shipments, response.data]); // Update the shipments list with the new shipment
             setModalOpen(false); // Close the modal
         } catch (error) {

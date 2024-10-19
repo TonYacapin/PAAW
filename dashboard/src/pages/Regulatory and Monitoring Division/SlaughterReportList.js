@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../component/axiosInstance';
 import Modal from '../../component/Modal';
 import SlaughterReportForm from './SlaughterReportForm';
 
@@ -22,7 +22,7 @@ function SlaughterReportList() {
     const [loading, setLoading] = useState(true);
     const fetchSlaughterReports = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/slaugtherform`);
+            const response = await axiosInstance.get(`/api/slaugtherform`);
             const fetchedReports = response.data;
     
             // Flatten the API data to match the table structure

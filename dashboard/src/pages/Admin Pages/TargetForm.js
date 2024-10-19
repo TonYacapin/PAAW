@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../component/axiosInstance";
 import CardBox from "../../component/CardBox";
 
 const TargetForm = ({ onClose, target }) => {
@@ -42,10 +42,10 @@ const TargetForm = ({ onClose, target }) => {
 
     try {
       const url = target
-        ? `${process.env.REACT_APP_API_BASE_URL}/api/targets/${target._id}`
-        : `${process.env.REACT_APP_API_BASE_URL}/api/targets`;
+        ? `/api/targets/${target._id}`
+        : `/api/targets`;
       const method = target ? "put" : "post";
-      const response = await axios[method](url, {
+      const response = await axiosInstance[method](url, {
         Type: type,
         target: Number(targetValue),
         semiAnnualTarget: Number(semiAnnualTarget),

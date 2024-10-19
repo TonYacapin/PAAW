@@ -1,6 +1,5 @@
 // EditUserModal.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 import Modal from '../../component/Modal';
 import axiosInstance from '../../component/axiosInstance';

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios for HTTP requests
+import axiosInstance from "../../component/axiosInstance";
 import ConfirmationModal from "../../component/ConfirmationModal"; // Import the ConfirmationModal component
 import Papa from "papaparse"; // Import PapaParse for CSV handling
 import FormSubmit from "../../component/FormSubmit";
@@ -117,8 +117,8 @@ function RabiesVaccinationReport() {
 
     try {
       console.log(entries);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/entries`,
+      const response = await axiosInstance.post(
+        `/api/entries`,
         {
           municipality,
           dateReported,

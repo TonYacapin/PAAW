@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
@@ -27,7 +27,7 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users`, formData);
+      const response = await axiosInstance.post(`/api/users`, formData);
       setMessage(`User created successfully: ${response.data.firstname}`);
       setMessageType('success'); // Set message type to success
       setFormData({

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios for HTTP requests
+import axiosInstance from "../../component/axiosInstance";
 import ConfirmationModal from "../../component/ConfirmationModal"; // Import the ConfirmationModal component
 import Papa from "papaparse";
 
@@ -252,8 +252,8 @@ function VaccinationReport() {
     setIsSuccessModalOpen(false);
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/reports`,
+      const response = await axiosInstance.post(
+        `/api/reports`,
         {
           vaccine,
           municipality,

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios for HTTP requests
+
 import Papa from "papaparse"; // Import PapaParse for CSV handling
 import FormSubmit from "../component/FormSubmit";
 import ConfirmationModal from "../component/ConfirmationModal";
+import axiosInstance from "../component/axiosInstance";
 
 const UpgradingServices = () => {
   const [entries, setEntries] = useState([]);
@@ -135,8 +136,8 @@ const UpgradingServices = () => {
   const saveEntries = async () => {
     try {
       console.log(entries);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/upgrading-services`,
+      const response = await axiosInstance.post(
+        `/api/upgrading-services`,
         {
           municipality,
           dateReported,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar, Pie, Line } from "react-chartjs-2";
-import axios from "axios";
+import axiosInstance from '../component/axiosInstance';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -43,8 +43,8 @@ const OffSpringMonitoringChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/offspring-monitoring`
+        const response = await axiosInstance.get(
+          `/api/offspring-monitoring`
         );
         const data = response.data;
 

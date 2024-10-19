@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import axios from "axios";
+import axiosInstance from "../component/axiosInstance";
 import { format, isSameMonth, subMonths } from "date-fns";
 import PrintableAccomplishmentReport from "../component/PrintComponents/PrintableAccomplishmentReport ";
 
@@ -35,16 +35,16 @@ function AccomplishmentReport() {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
   
       const [speciesCountResponse, targetsResponse] = await Promise.all([
-        axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`,
+        axiosInstance.get(
+          `/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Set the Authorization header
             },
           }
         ),
-        axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`,
+        axiosInstance.get(
+          `/api/targets/accomplishment?year=${selectedYear}&reportType=VaccinationReport`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Set the Authorization header

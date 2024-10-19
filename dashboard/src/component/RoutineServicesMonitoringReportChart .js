@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
 
@@ -21,7 +21,7 @@ const RoutineServicesMonitoringReportChart = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/RSM`);
+        const response = await axiosInstance.get(`/RSM`);
         const reports = response.data;
 
         // Processing the data for each chart

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import Modal from '../../component/Modal';
 import MunicipalityTargetForms from './MunicipalityTargetForms';
+import axiosInstance from '../../component/axiosInstance';
 
 const MunicipalityTargetList = () => {
     const [targets, setTargets] = useState([]);
@@ -23,7 +24,7 @@ const MunicipalityTargetList = () => {
 
     const fetchTargets = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+            const response = await axiosInstance.get(`/api/mtargets`, {
                 params: { municipality, targetYear, type }, // Include type in the API request
             });
             setTargets(response.data);
@@ -38,7 +39,7 @@ const MunicipalityTargetList = () => {
 
     const handleEditTarget = async (target) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/mtargets`, {
+            const response = await axiosInstance.get(`/api/mtargets`, {
                 params: { type: target.type, targetYear: target.targetYear },
             });
             setAllMunicipalityTargets(response.data);

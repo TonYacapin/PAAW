@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
@@ -23,7 +23,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
     }
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
+      const response = await axiosInstance.post(`/login`, {
         email,
         password,
       });

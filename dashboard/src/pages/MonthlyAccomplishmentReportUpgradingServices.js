@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 
 const MonthlyAccomplishmentReportUpgradingServices = () => {
     const [data, setData] = useState([]);
@@ -18,7 +18,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/upgrading-services`);
+                const response = await axiosInstance.get(`/api/upgrading-services`);
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filtered data
             } catch (error) {

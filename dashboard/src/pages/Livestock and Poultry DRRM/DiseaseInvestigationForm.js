@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
-import axios from "axios";
+import axiosInstance from "../../component/axiosInstance";
 import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
 
@@ -346,8 +346,8 @@ const DiseaseInvestigationForm = () => {
 
       console.log(data);
       // Send data to backend API
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/disease-investigation`,
+      const response = await axiosInstance.post(
+        `/disease-investigation`,
         data
       );
 

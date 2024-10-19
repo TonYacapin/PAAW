@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../component/axiosInstance';
 import Papa from 'papaparse';
 import FormSubmit from '../component/FormSubmit';
 import ConfirmationModal from '../component/ConfirmationModal';
@@ -80,7 +80,7 @@ const OffspringMonitoring = () => {
     const saveEntries = async () => {
         try {
             console.log(entries);
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/offspring-monitoring`, {
+            const response = await axiosInstance.post(`/api/offspring-monitoring`, {
                 municipality,
                 dateReported,
                 entries,

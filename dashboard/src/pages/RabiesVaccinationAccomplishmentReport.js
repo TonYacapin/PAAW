@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import { format } from "date-fns";
 import PrintableRabiesVaccinationReport from "../component/PrintComponents/PrintableRabiesVaccinationReport";
+import axiosInstance from "../component/axiosInstance";
 
 function RabiesVaccinationAccomplishmentReport() {
   const [immunizationData, setImmunizationData] = useState({
@@ -25,11 +26,11 @@ function RabiesVaccinationAccomplishmentReport() {
   const fetchData = async () => {
     try {
       const [immunizationResponse, targetsResponse] = await Promise.all([
-        axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/rabies-report/entry-count?year=${selectedYear}&month=${selectedMonth}`
+        axiosInstance.get(
+          `/rabies-report/entry-count?year=${selectedYear}&month=${selectedMonth}`
         ),
-        axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`
+        axiosInstance.get(
+          `/api/targets/accomplishment?year=${selectedYear}&reportType=RabiesVaccination`
         ),
       ]);
 

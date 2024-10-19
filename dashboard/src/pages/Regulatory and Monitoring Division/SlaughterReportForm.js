@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
-import axios from "axios";
+import axiosInstance from "../../component/axiosInstance";
 
 function SlaughterReportForm() {
   const municipalities = [
@@ -97,8 +97,8 @@ function SlaughterReportForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/slaugtherform`,
+      const response = await axiosInstance.post(
+        `/api/slaugtherform`,
         formData
       );
       setSuccess("Slaughter report successfully submitted!");

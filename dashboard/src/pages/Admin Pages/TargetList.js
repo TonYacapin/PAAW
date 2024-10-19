@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../component/axiosInstance';
 import Modal from '../../component/Modal';
 import TargetForm from './TargetForm';
 
@@ -11,7 +11,7 @@ const TargetList = () => {
 
     const fetchTargets = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/targets`);
+            const response = await axiosInstance.get(`/api/targets`);
             setTargets(response.data);
         } catch (err) {
             setError(err.response.data.message || 'An error occurred while fetching data');
