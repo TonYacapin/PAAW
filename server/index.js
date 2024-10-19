@@ -17,7 +17,8 @@ const technicianQuarterlyReportRoutes = require('./routes/technicianQuarterlyRep
 const slaughterformRoutes = require('./routes/slaughterformroutes');
 const vetshipformroutes = require('./routes/vetshipformroutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
-const inventoryRoutes = require('./routes/inventoryRoutes')const user = require('./routes/userRoutes');
+const inventoryRoutes = require('./routes/inventoryRoutes');
+const user = require('./routes/userRoutes');
 const auth = require('./routes/loginRoute');
 
 // Import the audit log middleware
