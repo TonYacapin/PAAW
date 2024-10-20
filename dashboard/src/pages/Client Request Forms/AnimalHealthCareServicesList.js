@@ -26,7 +26,7 @@ function AnimalHealthCareServicesList() {
         setServices(response.data);
 
         // Extract unique municipalities
-        const uniqueMunicipalities = [...new Set(response.data.map(service => 
+        const uniqueMunicipalities = [...new Set(response.data.map(service =>
           service?.clientInfo?.municipality
         ).filter(Boolean))];
 
@@ -101,7 +101,7 @@ function AnimalHealthCareServicesList() {
   const handleEditStatus = async (serviceId, newStatus) => {
     try {
       await axiosInstance.put(`/api/animal-health-care-services/${serviceId}`, { status: newStatus });
-      setServices(services.map(service => 
+      setServices(services.map(service =>
         service._id === serviceId ? { ...service, status: newStatus } : service
       ));
       setIsModalOpen(false);
@@ -114,16 +114,16 @@ function AnimalHealthCareServicesList() {
 
   const filteredServices = services.filter(service => {
     const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       (service?.clientInfo?.name || '').toLowerCase().includes(searchTerm) ||
       (service?.clientInfo?.municipality || '').toLowerCase().includes(searchTerm);
 
-    const matchesMunicipality = 
-      !filters.municipality || 
+    const matchesMunicipality =
+      !filters.municipality ||
       service?.clientInfo?.municipality === filters.municipality;
 
-    const matchesStatus = 
-      !filters.status || 
+    const matchesStatus =
+      !filters.status ||
       service.status === filters.status; // Status filter logic
 
     return matchesSearch && matchesMunicipality && matchesStatus; // Include status filter in return
@@ -151,7 +151,7 @@ function AnimalHealthCareServicesList() {
           type="text"
           placeholder="Search by name or municipality..."
           value={filters.search}
-          onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))} 
+          onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
           className="p-2 border rounded w-full"
         />
 
@@ -225,18 +225,20 @@ function AnimalHealthCareServicesList() {
                         </div>
                       ))}
                     </td>
-                    <td className="border border-gray-300 p-4">{formatDate(service.dateReported)}</td>
+                    <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
                     <td className="border border-gray-300 p-4">{service.status}</td>
                     <td className="border border-gray-300 p-4">
                       <button
-                        onClick={() => { 
-                          setSelectedService(service); 
-                          setIsModalOpen(true); 
+                        onClick={() => {
+                          setSelectedService(service);
+                          setIsModalOpen(true);
                         }}
                         className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
                       >
-                        Edit
+                        Edit Status
                       </button>
+
+
                     </td>
                   </tr>
                 );
@@ -246,31 +248,43 @@ function AnimalHealthCareServicesList() {
         </div>
       )}
 
-      {/* Status Edit Modal */}
-      {isModalOpen && (
+      {/* Edit Status Modal */}
+      {selectedService && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div className="p-6">
-            <h3 className="text-xl font-bold mb-4">Edit Service Status</h3>
-            <p className="mb-4">Update status for <strong>{selectedService?.clientInfo?.name}</strong></p>
+          <h3 className="text-xl font-bold mb-4">Edit Status for {selectedService.clientInfo.name}</h3>
+          <div className="mb-4">
+            <label htmlFor="status" className="block text-sm font-medium mb-2">Status:</label>
             <select
-              value={selectedService?.status}
-              onChange={(e) => handleEditStatus(selectedService?._id, e.target.value)}
+              id="status"
+              value={selectedService.status}
+              onChange={(e) => setSelectedService(prev => ({ ...prev, status: e.target.value }))}
               className="p-2 border rounded w-full"
             >
-              {statusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
+              {statusOptions.map(option => (
+                <option key={option} value={option}>{option}</option>
               ))}
             </select>
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => handleEditStatus(selectedService._id, selectedService.status)}
+              className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              Save Changes
+            </button>
+
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
           </div>
         </Modal>
       )}
 
-      {/* Animal Health Care Services Modal */}
-      {isHealthCareModalOpen && (
-        <Modal isOpen={isHealthCareModalOpen} onClose={() => setIsHealthCareModalOpen(false)}>
-          <AnimalHealthCareServices />
-        </Modal>
-      )}
+      {/* Existing Animal Health Care Services Modal */}
+      {isHealthCareModalOpen && <AnimalHealthCareServices onClose={() => setIsHealthCareModalOpen(false)} />}
     </div>
   );
 }

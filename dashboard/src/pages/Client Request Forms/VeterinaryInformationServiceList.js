@@ -4,129 +4,131 @@ import Modal from '../../component/Modal';
 import VeterinaryInformationService from './VeterinaryInformationServices';
 
 function VeterinaryInformationServiceList() {
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({
-    search: '',
-    municipality: '',
-    status: ''
-  });
-  const [statusOptions] = useState(['Pending', 'Ongoing', 'Finished', 'Cancelled']);
-  const [selectedService, setSelectedService] = useState(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false); // Add a new state for status modal
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [filters, setFilters] = useState({
+        search: '',
+        municipality: '',
+        status: ''
+    });
+    const [statusOptions] = useState(['Pending', 'Ongoing', 'Finished', 'Cancelled']);
+    const [selectedService, setSelectedService] = useState(null);
+    const [newStatus, setNewStatus] = useState(''); // Keep newStatus to track current status
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await axiosInstance.get('/api/veterinary-information-service');
-        setServices(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching services:", err);
-        setError("Failed to fetch services");
-        setLoading(false);
-      }
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await axiosInstance.get('/api/veterinary-information-service');
+                setServices(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching services:", err);
+                setError("Failed to fetch services");
+                setLoading(false);
+            }
+        };
+
+        fetchServices();
+    }, []);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
     };
 
-    fetchServices();
-  }, []);
+    const filteredServices = services.filter(service => {
+        const searchTerm = filters.search.toLowerCase();
+        const matchesSearch = (service.clientInfo.name || '').toLowerCase().includes(searchTerm) ||
+            (service.clientInfo.municipality || '').toLowerCase().includes(searchTerm);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
+        const matchesMunicipality = !filters.municipality ||
+            service.clientInfo.municipality === filters.municipality;
 
-  const filteredServices = services.filter(service => {
-    const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = (service.clientInfo.name || '').toLowerCase().includes(searchTerm) ||
-      (service.clientInfo.municipality || '').toLowerCase().includes(searchTerm);
+        const matchesStatus = !filters.status || service.status === filters.status;
 
-    const matchesMunicipality = !filters.municipality ||
-      service.clientInfo.municipality === filters.municipality;
+        return matchesSearch && matchesMunicipality && matchesStatus;
+    });
 
-    const matchesStatus = !filters.status || service.status === filters.status;
+    const openForm = (service = null) => {
+        setSelectedService(service);
+        setIsFormOpen(true);
+    };
 
-    return matchesSearch && matchesMunicipality && matchesStatus;
-  });
+    const closeForm = () => {
+        setSelectedService(null);
+        setIsFormOpen(false);
+    };
 
-  const openForm = (service = null) => {
-    setSelectedService(service);
-    setIsFormOpen(true);
-  };
+    const openStatusModal = (service) => {
+        setSelectedService(service);
+        setNewStatus(service.status); // Set current status to the state
+        setIsStatusModalOpen(true);
+    };
 
-  const closeForm = () => {
-    setSelectedService(null);
-    setIsFormOpen(false);
-  };
+    const closeStatusModal = () => {
+        setSelectedService(null);
+        setIsStatusModalOpen(false);
+    };
 
-  const openStatusModal = (service) => {
-    setSelectedService(service);
-    setIsStatusModalOpen(true);
-  };
+    const handleEditStatus = async () => {
+        try {
+            const updatedService = { ...selectedService, status: newStatus };
+            await axiosInstance.put(`/api/veterinary-information-service/${selectedService._id}`, updatedService);
+            setServices(services.map(service =>
+                service._id === selectedService._id ? updatedService : service
+            ));
+            closeStatusModal();
+        } catch (err) {
+            console.error("Error updating status:", err);
+            setError("Failed to update status");
+        }
+    };
 
-  const closeStatusModal = () => {
-    setSelectedService(null);
-    setIsStatusModalOpen(false);
-  };
+    if (loading) return <div className="flex justify-center p-8">Loading...</div>;
+    if (error) return <div className="text-red-500 p-8">{error}</div>;
 
-  const handleEditStatus = async (status) => {
-    try {
-      const updatedService = { ...selectedService, status };
-      await axiosInstance.put(`/api/veterinary-information-service/${selectedService._id}`, updatedService);
-      setServices(services.map(service =>
-        service._id === selectedService._id ? updatedService : service
-      ));
-      closeStatusModal();
-    } catch (err) {
-      console.error("Error updating status:", err);
-      setError("Failed to update status");
-    }
-  };
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Veterinary Information Services List</h2>
 
-  if (loading) return <div className="flex justify-center p-8">Loading...</div>;
-  if (error) return <div className="text-red-500 p-8">{error}</div>;
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <input
+                    type="text"
+                    placeholder="Search by name or municipality..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    className="p-2 border rounded w-full"
+                />
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Veterinary Information Services List</h2>
+                <select
+                    value={filters.municipality}
+                    onChange={(e) => setFilters(prev => ({ ...prev, municipality: e.target.value }))}
+                    className="p-2 border rounded w-full"
+                >
+                    <option value="">All Municipalities</option>
+                    {Array.from(new Set(services.map(service => service.clientInfo.municipality)))
+                        .filter(Boolean)
+                        .map(municipality => (
+                            <option key={municipality} value={municipality}>{municipality}</option>
+                        ))}
+                </select>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search by name or municipality..."
-          value={filters.search}
-          onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-          className="p-2 border rounded w-full"
-        />
-
-        <select
-          value={filters.municipality}
-          onChange={(e) => setFilters(prev => ({ ...prev, municipality: e.target.value }))}
-          className="p-2 border rounded w-full"
-        >
-          <option value="">All Municipalities</option>
-          {Array.from(new Set(services.map(service => service.clientInfo.municipality)))
-            .filter(Boolean)
-            .map(municipality => (
-              <option key={municipality} value={municipality}>{municipality}</option>
-            ))}
-        </select>
-
-        <select
-          value={filters.status}
-          onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-          className="p-2 border rounded w-full"
-        >
-          <option value="">All Statuses</option>
-          {statusOptions.map(status => (
-            <option key={status} value={status}>{status}</option>
-          ))}
-        </select>
+                <select
+                    value={filters.status}
+                    onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                    className="p-2 border rounded w-full"
+                >
+                    <option value="">All Statuses</option>
+                    {statusOptions.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                    ))}
+                </select>
 
         <button
           onClick={() => setFilters({ search: '', municipality: '', status: '' })}
@@ -206,41 +208,47 @@ function VeterinaryInformationServiceList() {
         </div>
       )}
 
-      {/* Form Modal */}
-      {isFormOpen && (
-        <Modal isOpen={isFormOpen} onClose={closeForm}>
-          <VeterinaryInformationService
-            service={selectedService}
-            onClose={closeForm}
-          />
-        </Modal>
-      )}
+            {/* Form Modal */}
+            {isFormOpen && (
+                <Modal isOpen={isFormOpen} onClose={closeForm}>
+                    <VeterinaryInformationService
+                        service={selectedService}
+                        onClose={closeForm}
+                    />
+                </Modal>
+            )}
 
-      {/* Status Edit Modal */}
-      {isStatusModalOpen && (
-        <Modal isOpen={isStatusModalOpen} onClose={closeStatusModal}>
-          <div className="p-4">
-            <h3 className="text-xl font-semibold mb-4">Edit Status</h3>
-            <select
-              value={selectedService.status}
-              onChange={(e) => handleEditStatus(e.target.value)}
-              className="p-2 border rounded w-full"
-            >
-              {statusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-            <button
-              onClick={closeStatusModal}
-              className="mt-4 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  );
+            {/* Status Edit Modal */}
+            {isStatusModalOpen && (
+                <Modal isOpen={isStatusModalOpen} onClose={closeStatusModal}>
+                    <h2 className="text-lg font-bold mb-4">Update Status</h2>
+                    <select
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value)}
+                        className="p-2 border rounded w-full mb-4"
+                    >
+                        {statusOptions.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                        ))}
+                    </select>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={handleEditStatus}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
+                        >
+                            Update
+                        </button>
+                        <button
+                            onClick={closeStatusModal}
+                            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </Modal>
+            )}
+        </div>
+    );
 }
 
 export default VeterinaryInformationServiceList;
