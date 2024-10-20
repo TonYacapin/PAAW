@@ -447,7 +447,7 @@ function RabiesVaccinationReport() {
 
       {/* Modal for Editing Entries */}
       {selectedEntry !== null && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen ">
             <h3 className="text-2xl font-bold mb-4">
               Edit Rabies Vaccination Entry {entries[selectedEntry].no}

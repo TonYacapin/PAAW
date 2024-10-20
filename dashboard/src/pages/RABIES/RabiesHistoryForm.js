@@ -403,9 +403,9 @@ const RabiesHistoryForm = () => {
       </div>
     </>,
     <>
-      <h3 className="text-lg font-bold mb-20">Animal Profile</h3>
+      <h3 className="text-lg font-bold mb-7">Animal Profile</h3>
 
-      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+      <div className="border p-6 rounded-lg mb-20 shadow-md bg-white space-y-8 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-2 font-medium">Pet Management</label>
@@ -474,7 +474,7 @@ const RabiesHistoryForm = () => {
               name="VaccinationHistory"
               value={vaccinationHistory}
               className="border w-full p-2 rounded"
-              onChange={(e) => setCauseOfDeath(e.target.value)}
+              onChange={(e) => setVaccinationHistory(e.target.value)}
             >
               <option value="" disabled>
                 Select Vaccination History
@@ -622,7 +622,7 @@ const RabiesHistoryForm = () => {
                 type="checkbox"
                 id="Restlessness"
                 name="Restlessness"
-                checked={behavioralChanges.restlessness}
+                checked={behavioralChanges.restlessness === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -642,6 +642,7 @@ const RabiesHistoryForm = () => {
                 id="ApprehensiveWatchfulLook"
                 name="ApprehensiveWatchfulLook"
                 value={behavioralChanges.apprehensiveWatchfulLook}
+                checked={behavioralChanges.apprehensiveWatchfulLook === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -662,6 +663,7 @@ const RabiesHistoryForm = () => {
                 id="RunningAimlessly"
                 name="RunningAimlessly"
                 value={behavioralChanges.runningAimlessly}
+                checked={behavioralChanges.runningAimlessly === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -681,6 +683,7 @@ const RabiesHistoryForm = () => {
                 id="BitingInanimateObjects"
                 name="BitingInanimateObjects"
                 value={behavioralChanges.bitingInanimateObjects}
+                checked={behavioralChanges.bitingInanimateObjects === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -698,6 +701,7 @@ const RabiesHistoryForm = () => {
                 id="Hyperactivity"
                 name="Hyperactivity"
                 value={behavioralChanges.hyperactivity}
+                checked={behavioralChanges.hyperactivity === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -714,6 +718,7 @@ const RabiesHistoryForm = () => {
                 id="Others"
                 name="Others"
                 value={behavioralChanges.others}
+                checked={behavioralChanges.others === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -811,8 +816,8 @@ const RabiesHistoryForm = () => {
       </div>
     </>,
     <>
-      <h3 className="text-lg font-bold mb-20 mt=20 ">Victim Profile</h3>
-      <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+      <h3 className="text-lg font-bold mb-7">Victim Profile</h3>
+      <div className="border p-6 rounded-lg  mb-20 shadow-md bg-white space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-2 font-medium">Date of Bite</label>

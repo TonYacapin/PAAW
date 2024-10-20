@@ -104,7 +104,8 @@ const UserTable = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <table className="min-w-full table-auto bg-[#fffafa] border border-[#1b5b40] rounded-lg shadow-md">
+      <div className="border rounded-lg">
+      <table className="min-w-full table-auto bg-[#fffafa] border border-[#1b5b40] shadow-md">
         <thead>
           <tr className="bg-[#1b5b40] text-white">
             <th className="py-2 px-4 border-b text-left">First Name</th>
@@ -135,6 +136,7 @@ const UserTable = () => {
           ))}
         </tbody>
       </table>
+      </div>
   
       <EditUserModal
         isOpen={isEditModalOpen}

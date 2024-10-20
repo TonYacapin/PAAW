@@ -520,7 +520,7 @@ function VaccinationReport() {
 
         {/* Modal for Editing Entries */}
         {selectedEntry !== null && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-8 rounded shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
               <h3 className="text-2xl font-bold mb-4">
                 Edit Vaccination Entry {entries[selectedEntry].no}
@@ -700,6 +700,7 @@ function VaccinationReport() {
                     }
                     className="border p-2 rounded w-full"
                   >
+                    <option value="" disabled>Enter Species</option>
                     <option value="Carabao">Carabao</option>
                     <option value="Cattle">Cattle</option>
                     <option value="Goat/Sheep">Goat/Sheep</option>

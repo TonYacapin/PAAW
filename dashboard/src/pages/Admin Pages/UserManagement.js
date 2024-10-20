@@ -28,7 +28,7 @@
 
     return (
       <div className="container mx-auto p-6 bg-[#fffafa] rounded-lg shadow-md">
-    <h1 className="text-3xl font-bold mb-6 text-[#1b5b40]">Manage Users</h1>
+    <h1 className="text-3xl font-bold mb-6 text-black">Manage Users</h1>
     <UserTable users={users} />
   </div>
 
