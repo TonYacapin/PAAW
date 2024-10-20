@@ -140,7 +140,7 @@ function AnimalProductionServicesList() {
                                 <th className="border border-gray-300 p-4">Client Name</th>
                                 <th className="border border-gray-300 p-4">Complete Address</th>
                                 <th className="border border-gray-300 p-4">Request Information</th>
-                                <th className="border border-gray-300 p-4">Training Date</th>
+                                <th className="border border-gray-300 p-4">Request Date</th>
                                 <th className="border border-gray-300 p-4">Status</th>
                                 <th className="border border-gray-300 p-4">Actions</th>
                             </tr>
@@ -212,7 +212,7 @@ function AnimalProductionServicesList() {
                                         )}
                                     </td>
 
-                                    <td className="border border-gray-300 p-4">{formatDate(service.trainingInfo.date)}</td>
+                                    <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
                                     <td className="border border-gray-300 p-4">{service.status}</td>
                                     <td className="border border-gray-300 p-4">
                                         <button
