@@ -21,6 +21,7 @@ const inventoryRoutes = require('./routes/inventoryRoutes');
 const user = require('./routes/userRoutes');
 const auth = require('./routes/loginRoute');
 const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcareservicesRoutes')
+const animalProductionServicesRoutes = require('./routes/Client/animalproductionservicesRoutes'); 
 
 // Import the audit log middleware
 const auditLogMiddleware = require('./middleware/auditlogMiddleware');
@@ -66,6 +67,7 @@ app.use('/', vaccinationReportRoutes);
 app.use('/', RoutineServicesMonitoringReport);
 app.use('/', RabiesHistoryRoutes);
 app.use('/api/animal-health-care-services', animalhealthcareservicesRoutes);
+app.use('/api/animal-production-services', animalProductionServicesRoutes);
 
 
 app.use('/api', auditLogRoutes);
