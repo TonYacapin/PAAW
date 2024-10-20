@@ -61,7 +61,7 @@ const translateResource = (url) => {
     if (url.includes('/api/offspring-monitoring')) return 'Offspring Monitoring';
     if (url.includes('/api/upgrading-services')) return 'Upgrading Services';
     if (url.includes('/api/mtargets')) return 'Municipality Targets';
-    if (url.includes('/api/targets')) return 'Targets';
+    if (url.includes('/api/targets')) return 'Vaccination Targets';
     if (url.includes('/api/inventory')) return 'Inventory';
     if (url.includes('/api/audit-logs')) return 'Audit Logs';
     if (url.includes('/api/users')) return 'User Management';
@@ -70,9 +70,15 @@ const translateResource = (url) => {
     if (url.includes('/api/entries')) return 'Rabies Vaccination Report';
     if (url.includes('/disease-investigation')) return 'Disease Investigation';
     if (url.includes('/RH')) return 'Rabies History';
+    if (url.includes('/species-count')) return 'Vaccination Accomplishment Report';
+    if (url.includes('/rabies-vaccination-summary')) return 'Vaccination Accomplishment Report';
+    if (url.includes('/rabies-report')) return 'Rabbies History Accomplishment Report';
+    if (url.includes('/species-activity-count')) return 'Routine Services Monitoring Report';
+
+
 
     // Default case if none of the patterns match
-    return 'Unknown Resource';
+    return url;
 };
 
 module.exports = auditLogMiddleware;
