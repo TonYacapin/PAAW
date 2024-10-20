@@ -49,6 +49,9 @@ import IncomingReportList from "../Regulatory and Monitoring Division/IncomingRe
 import AuditLogList from "../Admin Pages/AuditLogList";
 import AnimalHealthCareServicesList from "../Client Request Forms/AnimalHealthCareServicesList";
 import AnimalProductionServicesList from "../Client Request Forms/AnimalProductionServicesList";
+import VeterinaryInformationServiceList from "../Client Request Forms/VeterinaryInformationServiceList";
+import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareServicesList";
+
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -155,8 +158,17 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return < AnimalHealthCareServicesList />;
       case "AnimalProductionServicesList":
         return < AnimalProductionServicesList />;
+      case "VeterinaryInformationServiceList":
+        return < VeterinaryInformationServiceList />;
+      case "RegulatoryCareServicesList":
+        return < RegulatoryCareServicesList />;
 
-      
+
+
+
+
+
+
 
 
 
@@ -319,14 +331,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "VeterinaryInformationServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "VeterinaryInformationServiceList" : "VeterinaryInformationServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <ReportIcon className="mr-2" /> Veterinary Information Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "RegulatoryCareServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "RegulatoryCareServicesList" : "RegulatoryCareServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <LocalShippingIcon className="mr-2" /> Regulatory Services

@@ -22,7 +22,7 @@ function SlaughterReportList() {
     const [loading, setLoading] = useState(true);
     const fetchSlaughterReports = async () => {
         try {
-            const response = await axiosInstance.get(`/api/slaugtherform`);
+            const response = await axiosInstance.get(`/api/slaughterform`);
             const fetchedReports = response.data;
     
             // Flatten the API data to match the table structure

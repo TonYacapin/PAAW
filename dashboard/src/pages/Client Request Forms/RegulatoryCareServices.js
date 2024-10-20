@@ -3,6 +3,7 @@ import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
 import CardBox from "../../component/CardBox";
+import axiosInstance from "../../component/axiosInstance";
 
 function RegulatoryCareServices() {
   const [clientInfo, setClientInfo] = useState({
@@ -17,9 +18,6 @@ function RegulatoryCareServices() {
   });
 
   const [regulatoryService, setRegulatoryService] = useState({
-    serviceType: "",
-    complianceDate: "",
-    remarks: "",
     animalsToBeShipped: "",
     noOfHeads: "",
     purpose: "",
@@ -66,16 +64,52 @@ function RegulatoryCareServices() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       clientInfo,
       regulatoryService,
     };
-    console.log("Form Submitted Data:", formData);
-    // Add your API call or data processing here
+  
+    try {
+      const response = await axiosInstance.post("/api/regulatory-services", formData);
+      console.log("Response from API:", response.data);
+      
+      // Clear the form data upon successful submission
+      setClientInfo({
+        name: "",
+        address: "",
+        barangay: "",
+        municipality: "",
+        province: "",
+        birthday: "",
+        gender: "",
+        contact: "",
+      });
+  
+      setRegulatoryService({
+        serviceType: "",
+        complianceDate: "",
+        remarks: "",
+        animalsToBeShipped: "",
+        noOfHeads: "",
+        purpose: "",
+        ownerFarmName: "",
+        transportCarrierName: "",
+        vehiclePlateNumber: "",
+        origin: "",
+        destination: "",
+        loadingDate: "",
+        otherServices: [""],
+      });
+      
+      // Optionally provide feedback to the user (e.g., a success message)
+    } catch (error) {
+      console.error("Error submitting form:", error.response ? error.response.data : error.message);
+      // Handle error (e.g., show a notification)
+    }
   };
-
+  
   const handleImportCSV = (event) => {
     const file = event.target.files[0];
     Papa.parse(file, {
