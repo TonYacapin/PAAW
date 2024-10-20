@@ -234,7 +234,7 @@ function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
 
       {/* Logout Confirmation Modal */}
       {logoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Confirm Logout</h2>
             <p className="mb-6">Are you sure you want to logout?</p>
