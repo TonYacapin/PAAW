@@ -622,7 +622,7 @@ const RabiesHistoryForm = () => {
                 type="checkbox"
                 id="Restlessness"
                 name="Restlessness"
-                checked={behavioralChanges.restlessness}
+                checked={behavioralChanges.restlessness === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -642,6 +642,7 @@ const RabiesHistoryForm = () => {
                 id="ApprehensiveWatchfulLook"
                 name="ApprehensiveWatchfulLook"
                 value={behavioralChanges.apprehensiveWatchfulLook}
+                checked={behavioralChanges.apprehensiveWatchfulLook === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -662,6 +663,7 @@ const RabiesHistoryForm = () => {
                 id="RunningAimlessly"
                 name="RunningAimlessly"
                 value={behavioralChanges.runningAimlessly}
+                checked={behavioralChanges.runningAimlessly === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -681,6 +683,7 @@ const RabiesHistoryForm = () => {
                 id="BitingInanimateObjects"
                 name="BitingInanimateObjects"
                 value={behavioralChanges.bitingInanimateObjects}
+                checked={behavioralChanges.bitingInanimateObjects === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -698,6 +701,7 @@ const RabiesHistoryForm = () => {
                 id="Hyperactivity"
                 name="Hyperactivity"
                 value={behavioralChanges.hyperactivity}
+                checked={behavioralChanges.hyperactivity === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
@@ -714,6 +718,7 @@ const RabiesHistoryForm = () => {
                 id="Others"
                 name="Others"
                 value={behavioralChanges.others}
+                checked={behavioralChanges.others === true}
                 onChange={() =>
                   setBehavioralChanges({
                     ...behavioralChanges,
