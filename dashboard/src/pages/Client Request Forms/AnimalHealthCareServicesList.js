@@ -225,7 +225,7 @@ function AnimalHealthCareServicesList() {
                         </div>
                       ))}
                     </td>
-                    <td className="border border-gray-300 p-4">{formatDate(service.dateReported)}</td>
+                    <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
                     <td className="border border-gray-300 p-4">{service.status}</td>
                     <td className="border border-gray-300 p-4">
                       <button
