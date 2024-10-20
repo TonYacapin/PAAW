@@ -98,7 +98,7 @@ function SlaughterReportForm() {
     e.preventDefault();
     try {
       const response = await axiosInstance.post(
-        `/api/slaugtherform`,
+        `/api/slaughterform`,
         formData
       );
       setSuccess("Slaughter report successfully submitted!");
