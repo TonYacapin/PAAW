@@ -41,93 +41,94 @@ const clientInfoSchema = new Schema({
     trim: true
   }
 });
+
 // Rabies Vaccination Schema
 const rabiesVaccinationSchema = new Schema({
-    petName: {
-      type: String,
-      trim: true
-    },
-    species: {
-      type: String,
-      trim: true
-    },
-    sex: {
-      type: String,
-      enum: ['Male', 'Female']
-    },
-    age: {
-      type: String,
-      trim: true
-    },
-    color: {
-      type: String,
-      trim: true
-    },
-    remarks: {
-      type: String,
-      trim: true
-    }
-  });
-  
-  // Vaccination Schema
-  const vaccinationSchema = new Schema({
-    type: {
-      type: String,
-    },
-    walkInSpecies: {
-      type: String,
-      trim: true
-    },
-    noOfHeads: {
-      type: Number,
-      min: 1
-    },
-    sex: {
-      type: String,
-    },
-    age: {
-      type: String,
-      trim: true
-    },
-    aewVaccine: {
-      type: String,
-      trim: true
-    },
-    aewQuantity: {
-      type: Number,
-      min: 1
-    }
-  });
-  
-  // Routine Service Schema
-  const routineServiceSchema = new Schema({
-    serviceType: {
-      type: String,
-    },
-    species: {
-      type: String,
-      trim: true
-    },
-    noOfHeads: {
-      type: Number,
-      min: 1
-    },
-    sex: {
-      type: String,
-    },
-    age: {
-      type: String,
-      trim: true
-    },
-    aewVaccine: {
-      type: String,
-      trim: true
-    },
-    aewQuantity: {
-      type: Number,
-      min: 0
-    }
-  });
+  petName: {
+    type: String,
+    trim: true
+  },
+  species: {
+    type: String,
+    trim: true
+  },
+  sex: {
+    type: String,
+    enum: ['Male', 'Female']
+  },
+  age: {
+    type: String,
+    trim: true
+  },
+  color: {
+    type: String,
+    trim: true
+  },
+  remarks: {
+    type: String,
+    trim: true
+  }
+});
+
+// Vaccination Schema
+const vaccinationSchema = new Schema({
+  type: {
+    type: String,
+  },
+  walkInSpecies: {
+    type: String,
+    trim: true
+  },
+  noOfHeads: {
+    type: Number,
+    min: 1
+  },
+  sex: {
+    type: String,
+  },
+  age: {
+    type: String,
+    trim: true
+  },
+  aewVaccine: {
+    type: String,
+    trim: true
+  },
+  aewQuantity: {
+    type: Number,
+    min: 1
+  }
+});
+
+// Routine Service Schema
+const routineServiceSchema = new Schema({
+  serviceType: {
+    type: String,
+  },
+  species: {
+    type: String,
+    trim: true
+  },
+  noOfHeads: {
+    type: Number,
+    min: 1
+  },
+  sex: {
+    type: String,
+  },
+  age: {
+    type: String,
+    trim: true
+  },
+  aewVaccine: {
+    type: String,
+    trim: true
+  },
+  aewQuantity: {
+    type: Number,
+    min: 0
+  }
+});
 
 // Main Animal Health Care Services Schema
 const animalHealthCareServicesSchema = new Schema({
@@ -147,6 +148,11 @@ const animalHealthCareServicesSchema = new Schema({
     type: [routineServiceSchema],
     default: [] // Allow empty array by default
   },
+  status: { // New status field
+    type: String,
+    enum: ['Pending', 'Ongoing', 'Finished' ,'Cancelled'], // You can add more statuses as needed
+    default: 'Pending'
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -158,6 +164,7 @@ const animalHealthCareServicesSchema = new Schema({
 }, {
   timestamps: true
 });
+
 // Create indexes for common queries
 animalHealthCareServicesSchema.index({ 'clientInfo.name': 1 });
 animalHealthCareServicesSchema.index({ 'clientInfo.municipality': 1 });

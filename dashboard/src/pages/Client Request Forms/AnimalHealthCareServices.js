@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
+import axiosInstance from "../../component/axiosInstance";
 
 function AnimalHealthCareServices() {
   const [clientInfo, setClientInfo] = useState({
     name: "",
-    address: "",
     barangay: "",
     municipality: "",
     province: "",
@@ -51,7 +51,7 @@ function AnimalHealthCareServices() {
     },
   ]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       clientInfo,
@@ -59,9 +59,62 @@ function AnimalHealthCareServices() {
       vaccinations,
       routineServices,
     };
-    console.log("Form Submitted Data:", formData);
-    // Here you can send the formData to an API or process it as needed
+  
+    try {
+      // Send formData to the API using axiosInstance
+      const response = await axiosInstance.post('/api/animal-health-care-services', formData);
+      console.log("Form submitted successfully:", response.data);
+  
+      // Clear the form fields by resetting the state
+      setClientInfo({
+        name: "",
+        barangay: "",
+        municipality: "",
+        province: "",
+        birthday: "",
+        gender: "",
+        contact: "",
+      });
+      setRabiesVaccinations([
+        {
+          petName: "",
+          species: "",
+          sex: "",
+          age: "",
+          color: "",
+          remarks: "",
+        },
+      ]);
+      setVaccinations([
+        {
+          type: "",
+          walkInSpecies: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        },
+      ]);
+      setRoutineServices([
+        {
+          serviceType: "",
+          species: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        },
+      ]);
+  
+      // Optionally, provide feedback to the user, e.g., show a success message
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error response, e.g., show an error message to the user
+    }
   };
+  
 
   const handleImportCSV = (event) => {
     const file = event.target.files[0];
@@ -75,7 +128,6 @@ function AnimalHealthCareServices() {
         const importedClientInfo = data[0];
         setClientInfo({
           name: importedClientInfo.name || "",
-          address: importedClientInfo.address || "",
           barangay: importedClientInfo.barangay || "",
           municipality: importedClientInfo.municipality || "",
           province: importedClientInfo.province || "",
@@ -291,7 +343,7 @@ function AnimalHealthCareServices() {
               <div className="flex flex-col">
                 <label className="block mb-2 font-medium">Birthday</label>
                 <input
-                  type="text"
+                  type="date"
                   name="birthday"
                   placeholder="Birthday"
                   value={clientInfo.birthday}
