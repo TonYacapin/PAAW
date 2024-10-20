@@ -48,6 +48,7 @@ import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingRe
 import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
 import AuditLogList from "../Admin Pages/AuditLogList";
 import AnimalHealthCareServicesList from "../Client Request Forms/AnimalHealthCareServicesList";
+import AnimalProductionServicesList from "../Client Request Forms/AnimalProductionServicesList";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -152,6 +153,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return <EquipmentInventory />;
       case "AnimalHealthCareServicesList":
         return < AnimalHealthCareServicesList />;
+      case "AnimalProductionServicesList":
+        return < AnimalProductionServicesList />;
+
+      
 
 
 
@@ -307,7 +312,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "AnimalProductionServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "AnimalProductionServicesList" : "AnimalProductionServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <VaccinesIcon className="mr-2" /> Animal Production Services

@@ -74,19 +74,14 @@ function AnimalProductionServices() {
         });
 
         setAnimalInfo({
-          nameOfPet: data.nameOfPet || "",
-          species: data.species || "",
-          sex: data.sex || "",
-          age: data.age || "",
-          color: data.color || "",
-          remarks: data.remarks || "",
+        
           loanType: data.loanType || "",
           animalType: data.animalType || "",
         });
 
         setServiceDetails({
           aiAnimalType: data.aiAnimalType || "",
-          quantity: data.quantity || "",
+          
         });
 
         setLivelihoodInfo({
@@ -142,11 +137,82 @@ function AnimalProductionServices() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle submission logic here
-    console.log('Submitting:', { clientInfo, animalInfo, serviceDetails, livelihoodInfo, trainingInfo, iecMaterial, otherInfo });
+  
+    // Prepare the data to be submitted
+    const submissionData = {
+      clientInfo,
+      animalInfo,
+      serviceDetails,
+      livelihoodInfo,
+      trainingInfo,
+      iecMaterial,
+      otherInfo,
+    };
+  
+    try {
+      const response = await axiosInstance.post('/api/animal-production-services', submissionData);
+      console.log('Submission successful:', response.data);
+      
+      // Reset form fields to initial state
+      resetForm();
+      // Optionally show a success message
+    } catch (error) {
+      console.error('Error submitting data:', error.response ? error.response.data : error.message);
+      // Optionally show error message to the user
+    }
   };
+  
+  // Function to reset the form fields
+  const resetForm = () => {
+    setClientInfo({
+      name: '',
+      completeAddress: '',
+      barangay: '',
+      municipality: '',
+      province: '',
+      birthday: '',
+      gender: '',
+      contactNumber: '',
+    });
+  
+    setAnimalInfo({
+      nameOfPet: '',
+      species: '',
+      sex: '',
+      age: '',
+      color: '',
+      remarks: '',
+      loanType: '',
+      animalType: '',
+    });
+  
+    setServiceDetails({
+      aiAnimalType: '',
+      quantity: '',
+    });
+  
+    setLivelihoodInfo({
+      applicationType: '',
+      productionType: '',
+    });
+  
+    setTrainingInfo({
+      specificTopic: '',
+      venue: '',
+      date: '',
+    });
+  
+    setIecMaterial({
+      title: '',
+    });
+  
+    setOtherInfo({
+      others: '',
+    });
+  };
+  
 
   const renderStepContent = (step) => {
     switch (step) {
