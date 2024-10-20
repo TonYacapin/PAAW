@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
+import CardBox from "../../component/CardBox";
 
 function VeterinaryInformationService() {
   // State for storing input values
@@ -14,7 +15,7 @@ function VeterinaryInformationService() {
     gender: "",
     contact: "",
     service: "", // Added for Veterinary Service field
-    others: "",   // Added for Others field
+    others: "", // Added for Others field
   });
 
   const handleSubmit = (e) => {
@@ -47,7 +48,7 @@ function VeterinaryInformationService() {
           gender: data.gender || "",
           contact: data.contact || "",
           service: data.service || "", // Added for Veterinary Service
-          others: data.others || "",     // Added for Others field
+          others: data.others || "", // Added for Others field
         });
       },
     });
@@ -80,7 +81,10 @@ function VeterinaryInformationService() {
 
   return (
     <form onSubmit={handleSubmit} className="p-6">
-      <h3 className="text-2xl font-bold mb-6">Client Information</h3>
+      <h2 className="text-3xl font-bold mb-4">
+        Veterinary Information Services
+      </h2>
+      <CardBox>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-2 font-medium">Name</label>
@@ -183,7 +187,9 @@ function VeterinaryInformationService() {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Veterinary Information Service</label>
+          <label className="block mb-2 font-medium">
+            Veterinary Information Service
+          </label>
           <select
             name="service"
             value={clientInfo.service}
@@ -224,7 +230,9 @@ function VeterinaryInformationService() {
             />
           </div>
         )}
+        
       </div>
+      </CardBox>
 
       <FormSubmit
         handleImportCSV={handleImportCSV}
