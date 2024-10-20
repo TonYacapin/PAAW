@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
+import axiosInstance from "../../component/axiosInstance";
 
 function AnimalHealthCareServices() {
   const [clientInfo, setClientInfo] = useState({
     name: "",
-    address: "",
     barangay: "",
     municipality: "",
     province: "",
@@ -51,7 +51,7 @@ function AnimalHealthCareServices() {
     },
   ]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       clientInfo,
@@ -59,9 +59,62 @@ function AnimalHealthCareServices() {
       vaccinations,
       routineServices,
     };
-    console.log("Form Submitted Data:", formData);
-    // Here you can send the formData to an API or process it as needed
+  
+    try {
+      // Send formData to the API using axiosInstance
+      const response = await axiosInstance.post('/api/animal-health-care-services', formData);
+      console.log("Form submitted successfully:", response.data);
+  
+      // Clear the form fields by resetting the state
+      setClientInfo({
+        name: "",
+        barangay: "",
+        municipality: "",
+        province: "",
+        birthday: "",
+        gender: "",
+        contact: "",
+      });
+      setRabiesVaccinations([
+        {
+          petName: "",
+          species: "",
+          sex: "",
+          age: "",
+          color: "",
+          remarks: "",
+        },
+      ]);
+      setVaccinations([
+        {
+          type: "",
+          walkInSpecies: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        },
+      ]);
+      setRoutineServices([
+        {
+          serviceType: "",
+          species: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        },
+      ]);
+  
+      // Optionally, provide feedback to the user, e.g., show a success message
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error response, e.g., show an error message to the user
+    }
   };
+  
 
   const handleImportCSV = (event) => {
     const file = event.target.files[0];
@@ -69,14 +122,12 @@ function AnimalHealthCareServices() {
       header: true,
       skipEmptyLines: true,
       complete: (result) => {
-        const data = result.data; // Assuming multiple rows to import
+        const data = result.data;
         console.log(data);
 
-        // Populate state with imported data
-        const importedClientInfo = data[0]; // Assuming client info is in the first row
+        const importedClientInfo = data[0];
         setClientInfo({
           name: importedClientInfo.name || "",
-          address: importedClientInfo.address || "",
           barangay: importedClientInfo.barangay || "",
           municipality: importedClientInfo.municipality || "",
           province: importedClientInfo.province || "",
@@ -95,7 +146,14 @@ function AnimalHealthCareServices() {
             color: row.color || "",
             remarks: row.remarks || "",
           }));
-        setRabiesVaccinations(importedRabiesVaccinations);
+        setRabiesVaccinations(importedRabiesVaccinations.length > 0 ? importedRabiesVaccinations : [{
+          petName: "",
+          species: "",
+          sex: "",
+          age: "",
+          color: "",
+          remarks: "",
+        }]);
 
         const importedVaccinations = data
           .filter((row) => row.vaccinationType)
@@ -108,7 +166,15 @@ function AnimalHealthCareServices() {
             aewVaccine: row.vaccinationAEWVaccine || "",
             aewQuantity: row.vaccinationAEWQuantity || "",
           }));
-        setVaccinations(importedVaccinations);
+        setVaccinations(importedVaccinations.length > 0 ? importedVaccinations : [{
+          type: "",
+          walkInSpecies: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        }]);
 
         const importedRoutineServices = data
           .filter((row) => row.routineServiceType)
@@ -121,40 +187,38 @@ function AnimalHealthCareServices() {
             aewVaccine: row.routineAEWVaccine || "",
             aewQuantity: row.routineAEWQuantity || "",
           }));
-        setRoutineServices(importedRoutineServices);
+        setRoutineServices(importedRoutineServices.length > 0 ? importedRoutineServices : [{
+          serviceType: "",
+          species: "",
+          noOfHeads: "",
+          sex: "",
+          age: "",
+          aewVaccine: "",
+          aewQuantity: "",
+        }]);
       },
     });
   };
 
-  // Handle CSV export
   const handleExportCSV = () => {
     const csvData = [
-      ...clientInfo,
-      ...rabiesVaccinations.map((rabiesVaccination) => ({
-        petName: rabiesVaccination.petName,
-        species: rabiesVaccination.species,
-        sex: rabiesVaccination.sex,
-        age: rabiesVaccination.age,
-        color: rabiesVaccination.color,
-        remarks: rabiesVaccination.remarks,
+      {
+        ...clientInfo,
+        ...rabiesVaccinations[0],
+        ...vaccinations[0],
+        ...routineServices[0],
+      },
+      ...rabiesVaccinations.slice(1).map(item => ({
+        ...clientInfo,
+        ...item,
       })),
-      ...vaccinations.map((vaccination) => ({
-        vaccinationType: vaccination.type,
-        vaccinationWalkInSpecies: vaccination.walkInSpecies,
-        vaccinationNoOfHeads: vaccination.noOfHeads,
-        vaccinationSex: vaccination.sex,
-        vaccinationAge: vaccination.age,
-        vaccinationAEWVaccine: vaccination.aewVaccine,
-        vaccinationAEWQuantity: vaccination.aewQuantity,
+      ...vaccinations.slice(1).map(item => ({
+        ...clientInfo,
+        ...item,
       })),
-      ...routineServices.map((routineService) => ({
-        routineServiceType: routineService.serviceType,
-        routineSpecies: routineService.species,
-        routineNoOfHeads: routineService.noOfHeads,
-        routineSex: routineService.sex,
-        routineAge: routineService.age,
-        routineAEWVaccine: routineService.aewVaccine,
-        routineAEWQuantity: routineService.aewQuantity,
+      ...routineServices.slice(1).map(item => ({
+        ...clientInfo,
+        ...item,
       })),
     ];
 
@@ -165,14 +229,28 @@ function AnimalHealthCareServices() {
     link.download = "animal_health_care_data.csv";
     link.click();
   };
-
   // Handler for input changes
-  const handleInputChange = (e, section, setter) => {
+  // Updated handleInputChange function to handle both object and array updates
+  const handleInputChange = (e, section, setter, index = null) => {
     const { name, value } = e.target;
-    setter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (index !== null) {
+      // Handle array state updates
+      setter(prev => {
+        const newArray = [...prev];
+        newArray[index] = {
+          ...newArray[index],
+          [name]: value
+        };
+        return newArray;
+      });
+    } else {
+      // Handle object state updates
+      setter(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   // Pages for the Stepper
@@ -265,7 +343,7 @@ function AnimalHealthCareServices() {
               <div className="flex flex-col">
                 <label className="block mb-2 font-medium">Birthday</label>
                 <input
-                  type="text"
+                  type="date"
                   name="birthday"
                   placeholder="Birthday"
                   value={clientInfo.birthday}

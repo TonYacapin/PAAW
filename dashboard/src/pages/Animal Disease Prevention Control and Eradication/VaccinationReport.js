@@ -491,8 +491,8 @@ function VaccinationReport() {
         <div className="mb-3" />
 
         <FormSubmit
-          handleCSVImport={importCSV}
-          handleCSVExport={exportAsCSV}
+          handleImportCSV={importCSV}
+          handleExportCSV={exportAsCSV}
           handleSubmit={saveEntries}
         />
         {/* Save Entries Button

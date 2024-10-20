@@ -47,6 +47,7 @@ import VeterinaryShipmentList from "../Regulatory and Monitoring Division/Veteri
 import OutgoingReportList from "../Regulatory and Monitoring Division/OutgoingReportList";
 import IncomingReportList from "../Regulatory and Monitoring Division/IncomingReportList";
 import AuditLogList from "../Admin Pages/AuditLogList";
+import AnimalHealthCareServicesList from "../Client Request Forms/AnimalHealthCareServicesList";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -147,10 +148,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return <VeterinaryInformationServices />;
       case "AuditLogList":
         return <AuditLogList />;
-        case "Inventory":
+      case "Inventory":
         return <EquipmentInventory />;
+      case "AnimalHealthCareServicesList":
+        return < AnimalHealthCareServicesList />;
 
-  
+
+
+
 
       default:
         return null;
@@ -262,7 +267,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
           {selectedCharts.includes("TechnicianQuarterly") && (
             <TechnicianQuarterlyCharts />
           )}
-          
+
         </div>
       );
     }
@@ -295,28 +300,28 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {(userRole === "admin" || userRole === "user") && (
                     <>
                       <button
-                        onClick={() => openModalWithContent("AnimalHealthCareServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "AnimalHealthCareServicesList" : "AnimalHealthCareServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <HealingIcon className="mr-2" /> Animal Health Care Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent("AnimalProductionServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "AnimalProductionServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <VaccinesIcon className="mr-2" /> Animal Production Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent("VeterinaryInformationServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "VeterinaryInformationServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <ReportIcon className="mr-2" /> Veterinary Information Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent("RegulatoryCareServices")}
+                        onClick={() => openModalWithContent(userRole === "admin" ? "" : "RegulatoryCareServices")}
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
                         <LocalShippingIcon className="mr-2" /> Regulatory Services

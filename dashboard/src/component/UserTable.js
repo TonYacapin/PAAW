@@ -18,11 +18,7 @@ const UserTable = () => {
         const token = localStorage.getItem('token');
 
         // Make the GET request with the Authorization header
-        const response = await axiosInstance.get(`/api/users`, {
-            headers: {
-                Authorization: `Bearer ${token}`, // Set the Authorization header
-            },
-        });
+        const response = await axiosInstance.get(`/api/users`);
 
         // Set the users state with the response data
         setUsers(response.data);

@@ -1,8 +1,8 @@
 // EditUserModal.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import Modal from '../../component/Modal';
-import axiosInstance from '../../component/axiosInstance';
 
 const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
   const [userData, setUserData] = useState({
@@ -16,8 +16,14 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
   });
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     if (userId && isOpen) {
-      axiosInstance.get(`/api/users/${userId}`)
+
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Set the Authorization header
+        },
+      })
         .then((response) => {
           setUserData({
             ...response.data,
@@ -38,18 +44,29 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
     }));
   };
 
- const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  axiosInstance.put(`/api/users/${userId}`, userData)
-    .then(() => {
-      onUserUpdated();  // Refresh the user list after the update
-      onClose();        // Close the modal after successful update
-    })
-    .catch((error) => {
-      console.error("Error updating user", error);
-    });
-};
+    // Retrieve the token from local storage or your preferred storage method
+    const token = localStorage.getItem('token'); // Adjust based on how you store the token
+
+    axios.put(
+      `${process.env.REACT_APP_API_BASE_URL}/api/users/${userId}`,
+      userData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}` // Set the Authorization header
+        }
+      }
+    )
+      .then(() => {
+        onUserUpdated();  // Refresh the user list after the update
+        onClose();        // Close the modal after successful update
+      })
+      .catch((error) => {
+        console.error("Error updating user", error);
+      });
+  };
 
 
   return (

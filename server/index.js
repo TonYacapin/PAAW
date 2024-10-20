@@ -20,6 +20,7 @@ const auditLogRoutes = require('./routes/auditLogRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const user = require('./routes/userRoutes');
 const auth = require('./routes/loginRoute');
+const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcareservicesRoutes')
 
 // Import the audit log middleware
 const auditLogMiddleware = require('./middleware/auditlogMiddleware');
@@ -40,7 +41,7 @@ db.once('open', () => {
 app.use(bodyParser.json());
 app.use(cors()); 
 
-app.use('/api', user);
+
 app.use('/', auth);
 
 // Use authMiddleware to authenticate users
@@ -48,6 +49,8 @@ app.use(authMiddleware); // Ensure this is before the audit log middleware
 
 // Use audit log middleware
 app.use(auditLogMiddleware);
+
+app.use('/api', user);
 
 // Use routes
 app.use('/api/vetshipform', vetshipformroutes);
@@ -62,6 +65,7 @@ app.use('/', rabiesVaccinationReportRoutes);
 app.use('/', vaccinationReportRoutes);
 app.use('/', RoutineServicesMonitoringReport);
 app.use('/', RabiesHistoryRoutes);
+app.use('/api/animal-health-care-services', animalhealthcareservicesRoutes);
 
 
 app.use('/api', auditLogRoutes);
