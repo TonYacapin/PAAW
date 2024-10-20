@@ -104,13 +104,13 @@ const AuditLogList = () => {
         <div className="space-x-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+            className="px-4 py-2 text-sm text-white bg-darkgreen hover:bg-darkergreen rounded-lg"
           >
             {showFilters ? 'Hide Filters' : 'Show Filters'}
           </button>
           <button
             onClick={() => setShowStats(!showStats)}
-            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
+            className="px-4 py-2 text-sm text-white bg-darkgreen hover:bg-darkergreen rounded-lg"
           >
             {showStats ? 'Hide Stats' : 'Show Stats'}
           </button>
@@ -220,15 +220,15 @@ const AuditLogList = () => {
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-darkgreen text-white">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resource</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outcome</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Resource</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">User ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Outcome</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Timestamp</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -265,17 +265,17 @@ const AuditLogList = () => {
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-700">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>
