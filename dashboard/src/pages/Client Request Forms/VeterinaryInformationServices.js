@@ -2,29 +2,55 @@ import React, { useState } from "react";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
 import CardBox from "../../component/CardBox";
+import axiosInstance from "../../component/axiosInstance";
 
 function VeterinaryInformationService() {
   // State for storing input values
   const [clientInfo, setClientInfo] = useState({
     name: "",
-    address: "",
     barangay: "",
     municipality: "",
     province: "",
     birthday: "",
     gender: "",
     contact: "",
-    service: "", // Added for Veterinary Service field
+    service: "", 
     others: "", // Added for Others field
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       clientInfo,
     };
-    console.log("Form Submitted Data:", formData);
-    // Here you can send the formData to an API or process it as needed
+
+    try {
+      const response = await axiosInstance.post(
+        "/api/veterinary-information-service",
+        formData
+      );
+      console.log("Form Submitted Data:", response.data);
+
+      // Display success message
+   
+      // Clear the form
+      setClientInfo({
+        name: "",
+        barangay: "",
+        municipality: "",
+        province: "",
+        birthday: "",
+        gender: "",
+        contact: "",
+        service: "",
+        others: "",
+      });
+
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    
+    }
   };
 
   // Handle CSV import
