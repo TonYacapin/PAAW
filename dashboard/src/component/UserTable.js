@@ -104,7 +104,7 @@ const UserTable = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <div className=" overflow-auto border rounded-lg border-gray-400 shadow-md">
+      <div className="overflow-auto border rounded-lg border-gray-400 shadow-md">
       <table className="min-w-full table-auto">
         <thead>
           <tr className="bg-[#1b5b40] text-white">
@@ -127,7 +127,7 @@ const UserTable = () => {
               <td className="py-2 px-4 border-b">
                 <button
                   onClick={() => handleEdit(user._id)}
-                  className="bg-pastelyellow hover:bg-darkergreen hover:text-white text-black font-bold py-1 px-2 rounded"
+                  className="bg-darkgreen hover:bg-darkergreen text-white font-bold py-1 px-2 rounded"
                 >
                   Edit
                 </button>
