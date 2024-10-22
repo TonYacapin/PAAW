@@ -45,7 +45,13 @@ const upgradingServicesSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  entries: [entrySchema]
+  entries: [entrySchema],
+
+  formStatus: { // New status field
+    type: String,
+    enum: ['Pending', 'Accepted', 'Deleted'], // You can add more statuses as needed
+    default: 'Pending'
+  },
 }, {
   timestamps: true
 });
