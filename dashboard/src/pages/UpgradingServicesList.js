@@ -178,7 +178,7 @@ function UpgradingServicesList() {
             {/* Edit Status Modal */}
             {selectedService && (
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                    <h3 className="text-xl font-bold mb-4">Edit Status for {selectedService.municipality}</h3>
+                    <h3 className="text-xl font-bold mb-4">Edit Status for {selectedService.municipality} {formatDate(selectedService.dateReported)}</h3>
                     <div className="mb-4">
                         <label htmlFor="status" className="block text-sm font-medium mb-2">Status:</label>
                         <select
