@@ -14,7 +14,7 @@ const ChartComponent = ({ title, data, options, chartType }) => {
       Chart = Pie;
       break;
     default:
-      Chart = Bar; // Fallback to Bar if no type is provided
+      Chart = Bar; 
   }
 
   return (

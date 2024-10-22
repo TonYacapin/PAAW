@@ -51,6 +51,7 @@ import AnimalHealthCareServicesList from "../Client Request Forms/AnimalHealthCa
 import AnimalProductionServicesList from "../Client Request Forms/AnimalProductionServicesList";
 import VeterinaryInformationServiceList from "../Client Request Forms/VeterinaryInformationServiceList";
 import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareServicesList";
+import UpgradingServicesList from "../UpgradingServicesList";
 
 
 // Icon components (Material-UI)
@@ -162,6 +163,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return < VeterinaryInformationServiceList />;
       case "RegulatoryCareServicesList":
         return < RegulatoryCareServicesList />;
+      case "UpgradingServicesList":
+        return < UpgradingServicesList />;
+
+
+
 
 
 
@@ -521,7 +527,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => openModalWithContent("UpgradingServices")}
+                    onClick={() => openModalWithContent("UpgradingServicesList")}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Upgrading Service

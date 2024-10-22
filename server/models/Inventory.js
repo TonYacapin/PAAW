@@ -8,6 +8,6 @@ const InventorySchema = new mongoose.Schema({
   out: Number,
   total: Number,
   category: { type: String, default: 'equipment' },
-}, { timestamps: true });  // This will automatically add createdAt and updatedAt fields
+}, { timestamps: true });
 
 module.exports = mongoose.model('Inventory', InventorySchema);

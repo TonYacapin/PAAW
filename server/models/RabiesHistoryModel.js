@@ -52,7 +52,7 @@ const rabiesHistorySchema = new mongoose.Schema({
   treatmentReceived: { type: String, required: false },
   treatmentReceivedOther: { type: String, required: false },
   dateOfTreatmentReceived: { type: Date, required: false },
-});
+}, { timestamps: true });
 
 // Suggested modifications to align with req.body
 const updatedRabiesHistorySchema = new mongoose.Schema({
@@ -106,5 +106,11 @@ const updatedRabiesHistorySchema = new mongoose.Schema({
   treatmentReceived: { type: String, required: false },
   treatmentReceivedOther: { type: String, required: false },
   dateOfTreatmentReceived: { type: Date, required: false },
-});
+  formStatus: {
+    type: String,
+    enum: ["Pending", "Accepted", "Deleted"],
+    default: "Pending",
+  }, 
+
+}, { timestamps: true });
 module.exports = mongoose.model('RabiesHistory', rabiesHistorySchema);
