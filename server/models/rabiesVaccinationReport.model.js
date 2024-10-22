@@ -78,10 +78,16 @@ const rabiesVaccinationReportSchema = new Schema({
       color: {
         type: String,
         required: true
-      }
+      },
+      
     }
-  }]
-});
+  }],
+  formStatus: {
+    type: String,
+    enum: ["Pending", "Accepted", "Deleted"],
+    default: "Pending",
+  },
+}, {timestamps: true});
 
 // 
 

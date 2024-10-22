@@ -74,6 +74,13 @@ const translateResource = (url) => {
     if (url.includes('/rabies-vaccination-summary')) return 'Vaccination Accomplishment Report';
     if (url.includes('/rabies-report')) return 'Rabbies History Accomplishment Report';
     if (url.includes('/species-activity-count')) return 'Routine Services Monitoring Report';
+    if (url.includes('/api/animal-health-care-services')) return 'Animal Health Care Services';
+    if (url.includes('/api/regulatory-services')) return 'Regulatory Care Services';
+    if (url.includes('/api/veterinary-information-service')) return 'Veterinary Information Service';
+    if (url.includes('/api/animal-production-services')) return 'Animal Production Services';
+    
+    
+    
 
 
 

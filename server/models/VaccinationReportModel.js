@@ -39,10 +39,14 @@ const vaccinationReportSchema = new Schema({
   batchLotNo: String,
   vaccineSource: { type: String, enum: ['MLGU', 'PLGU', 'RFU'] },
   agriculturalExtensionWorker: String,
-  entries: [entrySchema] // Array of entries
-});
+  entries: [entrySchema],
+  formStatus: {
+    type: String,
+    enum: ["Pending", "Accepted", "Deleted"],
+    default: "Pending",
+  }, 
+}, {timestamps: true});
 
-// Create the Vaccination Report Model
 const VaccinationReport = mongoose.model('VaccinationReport', vaccinationReportSchema);
 
 module.exports = VaccinationReport;

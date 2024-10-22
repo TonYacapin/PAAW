@@ -40,7 +40,7 @@ const AnimalHealthChartComponent = () => {
       <h2 className="text-[#1b5b40] text-2xl font-semibold mb-4">Animal Health Line Chart</h2>
       <div className="mb-6 bg-white p-4 rounded-lg shadow-md">
         <Line data={healthLineData} />
-      </div>
+      </div>  
 
       <h2 className="text-[#1b5b40] text-2xl font-semibold mb-4">Animal Health Bar Chart</h2>
       <div className="bg-white p-4 rounded-lg shadow-md">
