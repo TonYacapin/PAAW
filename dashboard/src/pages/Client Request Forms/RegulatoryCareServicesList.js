@@ -136,7 +136,7 @@ function RegulatoryCareServicesList() {
 
         <button
           onClick={() => setFilters({ search: '', municipality: '', status: '' })}
-          className="p-2 bg-gray-100 hover:bg-gray-200 rounded w-full"
+          className="p-2 bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
         >
           Clear Filters
         </button>
@@ -144,7 +144,7 @@ function RegulatoryCareServicesList() {
 
       <button
         onClick={() => openForm()} // Open form for adding a new service
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
       >
         Open Regulatory Care Service Form
       </button>
@@ -155,7 +155,7 @@ function RegulatoryCareServicesList() {
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-[#1b5b40] text-white">
                 <th className="border border-gray-300 p-4">No.</th>
                 <th className="border border-gray-300 p-4">Client Info</th>
                 <th className="border border-gray-300 p-4">Regulatory Service Details</th>

@@ -130,83 +130,83 @@ function VeterinaryInformationServiceList() {
                     ))}
                 </select>
 
-                <button
-                    onClick={() => setFilters({ search: '', municipality: '', status: '' })}
-                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded w-full"
-                >
-                    Clear Filters
-                </button>
-            </div>
+        <button
+          onClick={() => setFilters({ search: '', municipality: '', status: '' })}
+          className="p-2 bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
+        >
+          Clear Filters
+        </button>
+      </div>
 
-            <button
-                onClick={() => openForm()}
-                className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-                Open VeterinaryInformationService Form
-            </button>
+      <button
+        onClick={() => openForm()}
+        className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
+      >
+        Open Veterinary Information Service Form
+      </button>
 
-            {filteredServices.length === 0 ? (
-                <p className="text-center py-4">No services found matching the filters.</p>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr className="bg-gray-50">
-                                <th className="border border-gray-300 p-4">No.</th>
-                                <th className="border border-gray-300 p-4">Client Info</th>
-                                <th className="border border-gray-300 p-4">Location</th>
-                                <th className="border border-gray-300 p-4">Service Details</th>
-                                <th className="border border-gray-300 p-4">Request Date</th>
-                                <th className="border border-gray-300 p-4">Status</th>
-                                <th className="border border-gray-300 p-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredServices.map((service, index) => (
-                                <tr key={service._id} className="hover:bg-gray-50">
-                                    <td className="border border-gray-300 p-4">{index + 1}</td>
-                                    <td className="border border-gray-300 p-4">
-                                        <div className="font-medium">{service.clientInfo.name}</div>
-                                        <div className="text-sm text-gray-600">Contact: {service.clientInfo.contact}</div>
-                                        <div className="text-sm text-gray-600">Gender: {service.clientInfo.gender}</div>
-                                        {service.clientInfo.birthday && (
-                                            <div className="text-sm text-gray-600">Birthday: {formatDate(service.clientInfo.birthday)}</div>
-                                        )}
-                                    </td>
-                                    <td className="border border-gray-300 p-4">
-                                        <div>{service.clientInfo.barangay}</div>
-                                        <div>{service.clientInfo.municipality}</div>
-                                        <div>{service.clientInfo.province}</div>
-                                    </td>
-                                    <td className="border border-gray-300 p-4">
-                                        {service.clientInfo.service && (
-                                            <>
-                                                <strong>Service:</strong> {service.clientInfo.service} <br />
-                                            </>
-                                        )}
-                                        {service.clientInfo.others && (
-                                            <>
-                                                <strong>Others:</strong> {service.clientInfo.others}
-                                            </>
-                                        )}
-                                    </td>
-
-                                    <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
-                                    <td className="border border-gray-300 p-4">{service.status}</td>
-                                    <td className="border border-gray-300 p-4">
-                                        <button
-                                            onClick={() => openStatusModal(service)}
-                                            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                                            >
-                                                Edit Status
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+      {filteredServices.length === 0 ? (
+        <p className="text-center py-4">No services found matching the filters.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-[#1b5b40] text-white">
+                <th className="border border-gray-300 p-4">No.</th>
+                <th className="border border-gray-300 p-4">Client Info</th>
+                <th className="border border-gray-300 p-4">Location</th>
+                <th className="border border-gray-300 p-4">Service Details</th>
+                <th className="border border-gray-300 p-4">Request Date</th>
+                <th className="border border-gray-300 p-4">Status</th>
+                <th className="border border-gray-300 p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredServices.map((service, index) => (
+                <tr key={service._id} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 p-4">{index + 1}</td>
+                  <td className="border border-gray-300 p-4">
+                    <div className="font-medium">{service.clientInfo.name}</div>
+                    <div className="text-sm text-gray-600">Contact: {service.clientInfo.contact}</div>
+                    <div className="text-sm text-gray-600">Gender: {service.clientInfo.gender}</div>
+                    {service.clientInfo.birthday && (
+                      <div className="text-sm text-gray-600">Birthday: {formatDate(service.clientInfo.birthday)}</div>
+                    )}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    <div>{service.clientInfo.barangay}</div>
+                    <div>{service.clientInfo.municipality}</div>
+                    <div>{service.clientInfo.province}</div>
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {service.clientInfo.service && (
+                      <>
+                        <strong>Service:</strong> {service.clientInfo.service} <br />
+                      </>
+                    )}
+                    {service.clientInfo.others && (
+                      <>
+                        <strong>Others:</strong> {service.clientInfo.others}
+                      </>
+                    )}
+                  </td>
+                  <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
+                  <td className="border border-gray-300 p-4">{service.status}</td>
+                  <td className="border border-gray-300 p-4">
+                    <button
+                      onClick={() => openStatusModal(service)}
+                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
+                    >
+                      Edit
+                    </button>
+                
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
             {/* Form Modal */}
             {isFormOpen && (

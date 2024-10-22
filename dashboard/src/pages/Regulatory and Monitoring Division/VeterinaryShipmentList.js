@@ -173,7 +173,7 @@ const VeterinaryShipmentList = () => {
             {/* Shipments Table */}
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
-                    <tr className="bg-gray-100">
+                    <tr className="bg-[#1b5b40] text-white">
                         <th className="border border-gray-300 p-2">Shipment Type</th>
                         <th className="border border-gray-300 p-2">Shipper Name</th>
                         <th className="border border-gray-300 p-2">Date</th>
