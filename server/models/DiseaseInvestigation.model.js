@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 // Define the schema for the Disease Investigation
 const DiseaseInvestigationSchema = new Schema({
-  status: { type: String, enum: ['new', 'on-going'], required: true },
+  status: { type: String, enum: ["new", "on-going"], required: true },
   noOfVisit: { type: Number, required: true },
   dateReported: { type: Schema.Types.Date, required: true },
   dateOfVisit: { type: Schema.Types.Date, required: true },
@@ -30,13 +30,13 @@ const DiseaseInvestigationSchema = new Schema({
       destroyed: { type: String, required: false },
       slaughtered: { type: String, required: false },
       vaccineHistory: { type: String, required: false },
-      remarks: { type: String, required: false }
-    }
+      remarks: { type: String, required: false },
+    },
   ],
   clinicalSigns: [
     {
-      description: { type: String, required: false }
-    }
+      description: { type: String, required: false },
+    },
   ],
   movement: [
     {
@@ -45,9 +45,17 @@ const DiseaseInvestigationSchema = new Schema({
       type: { type: String, required: false },
       barangay: { type: String, required: false },
       municipality: { type: String, required: false },
-      province: { type: String, required: false }
-    }
-  ]
-});
+      province: { type: String, required: false },
+    },
+  ],
+  formStatus: {
+    type: String,
+    enum: ["Pending", "Accepted", "Deleted"],
+    default: "Pending",
+  }, 
+},{timestamps: true});
 
-module.exports = mongoose.model('DiseaseInvestigation', DiseaseInvestigationSchema);
+module.exports = mongoose.model(
+  "DiseaseInvestigation",
+  DiseaseInvestigationSchema
+);
