@@ -8,9 +8,6 @@ import Modal from "../../component/Modal";
 import Select from "react-select";
 import { jwtDecode } from "jwt-decode";
 
-
-
-
 // Chart components
 
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
@@ -53,7 +50,6 @@ import VeterinaryInformationServiceList from "../Client Request Forms/Veterinary
 import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareServicesList";
 import UpgradingServicesList from "../UpgradingServicesList";
 
-
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ReportIcon from "@mui/icons-material/Report";
@@ -70,6 +66,8 @@ import AnimalProductionServices from "../Client Request Forms/AnimalProductionSe
 import RegulatoryCareServices from "../Client Request Forms/RegulatoryCareServices";
 import VeterinaryInformationServices from "../Client Request Forms/VeterinaryInformationServices";
 import EquipmentInventory from "../Admin Pages/EquipmentInventory";
+import DiseaseInvestigationFormLists from "../Livestock and Poultry DRRM/DiseaseInvestigationFormLists";
+import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
 
 export const FilterContext = createContext(null);
 
@@ -156,29 +154,19 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "Inventory":
         return <EquipmentInventory />;
       case "AnimalHealthCareServicesList":
-        return < AnimalHealthCareServicesList />;
+        return <AnimalHealthCareServicesList />;
       case "AnimalProductionServicesList":
-        return < AnimalProductionServicesList />;
+        return <AnimalProductionServicesList />;
       case "VeterinaryInformationServiceList":
-        return < VeterinaryInformationServiceList />;
+        return <VeterinaryInformationServiceList />;
       case "RegulatoryCareServicesList":
-        return < RegulatoryCareServicesList />;
+        return <RegulatoryCareServicesList />;
       case "UpgradingServicesList":
-        return < UpgradingServicesList />;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return <UpgradingServicesList />;
+      case "DiseaseInvestigationFormLists":
+        return <DiseaseInvestigationFormLists />;
+      case "RabiesHistoryFormLists":
+        return <RabiesHistoryFormLists />;
 
       default:
         return null;
@@ -201,7 +189,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       try {
         const decodedToken = jwtDecode(token);
         const role = decodedToken.role;
-        console.log(role) // Adjust this key based on your token's structure
+        console.log(role); // Adjust this key based on your token's structure
         setUserRole(role);
       } catch (error) {
         console.error("Invalid token", error);
@@ -266,7 +254,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
     if (selectedCharts.length > 0) {
       return (
         <div className="space-y-6">
-
           {selectedCharts.includes("animalhealth") && (
             <AnimalHealthChartComponent />
           )}
@@ -290,7 +277,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
           {selectedCharts.includes("TechnicianQuarterly") && (
             <TechnicianQuarterlyCharts />
           )}
-
         </div>
       );
     }
@@ -323,31 +309,59 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {(userRole === "admin" || userRole === "user") && (
                     <>
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "AnimalHealthCareServicesList" : "AnimalHealthCareServices")}
+                        onClick={() =>
+                          openModalWithContent(
+                            userRole === "admin"
+                              ? "AnimalHealthCareServicesList"
+                              : "AnimalHealthCareServices"
+                          )
+                        }
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
-                        <HealingIcon className="mr-2" /> Animal Health Care Services
+                        <HealingIcon className="mr-2" /> Animal Health Care
+                        Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "AnimalProductionServicesList" : "AnimalProductionServices")}
+                        onClick={() =>
+                          openModalWithContent(
+                            userRole === "admin"
+                              ? "AnimalProductionServicesList"
+                              : "AnimalProductionServices"
+                          )
+                        }
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
-                        <VaccinesIcon className="mr-2" /> Animal Production Services
+                        <VaccinesIcon className="mr-2" /> Animal Production
+                        Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "VeterinaryInformationServiceList" : "VeterinaryInformationServices")}
+                        onClick={() =>
+                          openModalWithContent(
+                            userRole === "admin"
+                              ? "VeterinaryInformationServiceList"
+                              : "VeterinaryInformationServices"
+                          )
+                        }
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
-                        <ReportIcon className="mr-2" /> Veterinary Information Services
+                        <ReportIcon className="mr-2" /> Veterinary Information
+                        Services
                       </button>
 
                       <button
-                        onClick={() => openModalWithContent(userRole === "admin" ? "RegulatoryCareServicesList" : "RegulatoryCareServices")}
+                        onClick={() =>
+                          openModalWithContent(
+                            userRole === "admin"
+                              ? "RegulatoryCareServicesList"
+                              : "RegulatoryCareServices"
+                          )
+                        }
                         className={buttonClasses + " lg:block hidden text-left"}
                       >
-                        <LocalShippingIcon className="mr-2" /> Regulatory Services
+                        <LocalShippingIcon className="mr-2" /> Regulatory
+                        Services
                       </button>
                     </>
                   )}
@@ -355,7 +369,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {/* Show only Regulatory Services if userRole is "regulatory" */}
                   {userRole === "regulatory" && (
                     <button
-                      onClick={() => openModalWithContent("RegulatoryCareServices")}
+                      onClick={() =>
+                        openModalWithContent("RegulatoryCareServices")
+                      }
                       className={buttonClasses + " lg:block hidden text-left"}
                     >
                       <LocalShippingIcon className="mr-2" /> Regulatory Services
@@ -365,20 +381,26 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {/* Show only Animal Production Services if userRole is "livestock" */}
                   {userRole === "livestock" && (
                     <button
-                      onClick={() => openModalWithContent("AnimalProductionServices")}
+                      onClick={() =>
+                        openModalWithContent("AnimalProductionServices")
+                      }
                       className={buttonClasses + " lg:block hidden text-left"}
                     >
-                      <VaccinesIcon className="mr-2" /> Animal Production Services
+                      <VaccinesIcon className="mr-2" /> Animal Production
+                      Services
                     </button>
                   )}
 
                   {/* Show only Veterinary Information Services if userRole is "animalhealth" */}
                   {userRole === "animalhealth" && (
                     <button
-                      onClick={() => openModalWithContent("VeterinaryInformationServices")}
+                      onClick={() =>
+                        openModalWithContent("VeterinaryInformationServices")
+                      }
                       className={buttonClasses + " lg:block hidden text-left"}
                     >
-                      <ReportIcon className="mr-2" /> Veterinary Information Services
+                      <ReportIcon className="mr-2" /> Veterinary Information
+                      Services
                     </button>
                   )}
                 </div>
@@ -403,7 +425,8 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 className={buttonClasses}
                 onClick={() => openModalWithContent("AuditLogList")}
               >
-                <Outbox className="mr-2" />AuditLog
+                <Outbox className="mr-2" />
+                AuditLog
               </button>
               <button
                 className={buttonClasses}
@@ -432,7 +455,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 Requisition Forms
               </h4>
               <div className="space-y-2">
-                <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
+                <button
+                  className={buttonClasses}
+                  onClick={() => openModalWithContent("RequisitionSlip")}
+                >
                   <Outbox className="mr-2" /> Requisition Form
                 </button>
               </div>
@@ -467,7 +493,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 <div className="space-y-2">
                   <button
                     onClick={() =>
-                      openModalWithContent("DiseaseInvestigationForm")
+                      openModalWithContent("DiseaseInvestigationFormLists")
                     }
                     className={buttonClasses}
                   >
@@ -478,11 +504,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     Incident Report
                   </button> */}
                   <button
-                    onClick={() => openModalWithContent("RabiesHistoryForm")}
+                    onClick={() =>
+                      openModalWithContent("RabiesHistoryFormLists")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Rabies History
                   </button>
+                  
                   <button
                     onClick={() =>
                       openModalWithContent("RoutineServicesMonitoringReport")
@@ -516,7 +545,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   Requisition Forms
                 </h4>
                 <div className="space-y-2">
-                  <button className={buttonClasses} onClick={() => openModalWithContent("RequisitionSlip")}>
+                  <button
+                    className={buttonClasses}
+                    onClick={() => openModalWithContent("RequisitionSlip")}
+                  >
                     <ManageAccountsIcon className="mr-2" /> Requisition Form
                   </button>
                 </div>
@@ -527,7 +559,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => openModalWithContent("UpgradingServicesList")}
+                    onClick={() =>
+                      openModalWithContent("UpgradingServicesList")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Upgrading Service
@@ -709,7 +743,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     </div>
                     <button
                       className="w-full flex items-center col-span-1 text-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                      onClick={() => { toggleFilter(); toggleShowAll(); }}
+                      onClick={() => {
+                        toggleFilter();
+                        toggleShowAll();
+                      }}
                     >
                       Apply Filters
                     </button>

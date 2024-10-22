@@ -3,15 +3,26 @@ import Papa from "papaparse";
 import axiosInstance from "../../component/axiosInstance";
 import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
+import DiseaseInvestigationFormLists from "./DiseaseInvestigationFormLists";
 
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
 
 const DiseaseInvestigationForm = () => {
-
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Function to open the modal
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const [detailsRows, setDetailsRows] = useState([
     {
@@ -231,14 +242,13 @@ const DiseaseInvestigationForm = () => {
     a.href = url;
 
     // Create a file name with a naming convention
-    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const fileName = `disease_investigation_form_${formData.municipality}_${formData.dateReported}.csv`;
 
     a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
   };
-
 
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];
@@ -341,15 +351,14 @@ const DiseaseInvestigationForm = () => {
         ...formData,
         movementRows: Array.isArray(movementRows) ? movementRows : [],
         detailsRows: Array.isArray(detailsRows) ? detailsRows : [],
-        clinicalSignsRows: Array.isArray(clinicalSignsRows) ? clinicalSignsRows : [],
+        clinicalSignsRows: Array.isArray(clinicalSignsRows)
+          ? clinicalSignsRows
+          : [],
       };
 
       console.log(data);
       // Send data to backend API
-      const response = await axiosInstance.post(
-        `/disease-investigation`,
-        data
-      );
+      const response = await axiosInstance.post(`/disease-investigation`, data);
 
       // Handle successful response
       if (response.status === 201) {
@@ -408,7 +417,8 @@ const DiseaseInvestigationForm = () => {
 
       let errorMessage = "Failed to save entries: An unexpected error occurred";
       if (error.response && error.response.data) {
-        const serverMessage = error.response.data.message || "An error occurred";
+        const serverMessage =
+          error.response.data.message || "An error occurred";
         if (error.response.data.errors) {
           const validationErrors = error.response.data.errors
             .map((err) => err.msg)
@@ -423,9 +433,8 @@ const DiseaseInvestigationForm = () => {
     }
   };
 
-
   var pages = [
-    (<div className="border p-4 rounded-lg mb-6 shadow-md bg-white overflow-y-auto">
+    <div className="border p-4 rounded-lg mb-6 shadow-md bg-white overflow-y-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-2 font-medium">Status:</label>
@@ -500,9 +509,7 @@ const DiseaseInvestigationForm = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">
-            Place Affected:
-          </label>
+          <label className="block mb-2 font-medium">Place Affected:</label>
           <input
             type="text"
             name="placeAffected"
@@ -580,8 +587,8 @@ const DiseaseInvestigationForm = () => {
           )}
         </div>
       </div>
-    </div>),
-    (<div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+    </div>,
+    <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
       {/* Investigation Details */}
       <div>
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
@@ -630,8 +637,8 @@ const DiseaseInvestigationForm = () => {
           Add Details Row
         </button>
       </div>
-    </div>),
-    (<div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+    </div>,
+    <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
       {/* Clinical Signs */}
       <div>
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
@@ -645,9 +652,7 @@ const DiseaseInvestigationForm = () => {
             <input
               type="text"
               value={row.description}
-              onChange={(e) =>
-                handleClinicalSignsChange(index, e.target.value)
-              }
+              onChange={(e) => handleClinicalSignsChange(index, e.target.value)}
               className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
             />
             <div className="my-4">
@@ -666,9 +671,7 @@ const DiseaseInvestigationForm = () => {
 
       {/* Movement */}
       <div>
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-          Movement
-        </h2>
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Movement</h2>
         {movementRows.map((row, index) => (
           <div key={index} className="mb-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -708,8 +711,8 @@ const DiseaseInvestigationForm = () => {
           Add Movement Row
         </button>
       </div>
-    </div>),
-    (<div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
+    </div>,
+    <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
       <div>
         <label className="block mb-2 font-medium">
           Probable Source of Infection:
@@ -743,9 +746,7 @@ const DiseaseInvestigationForm = () => {
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
-          Control Measures:
-        </label>
+        <label className="block mb-2 font-medium">Control Measures:</label>
         <select
           name="controlmeasures"
           value={formData.controlmeasures}
@@ -766,9 +767,7 @@ const DiseaseInvestigationForm = () => {
             Disinfection of infected premises
           </option>
           <option value="Stamping out">Stamping out</option>
-          <option value="Modified stamping out">
-            Modified stamping out
-          </option>
+          <option value="Modified stamping out">Modified stamping out</option>
           <option value="Control of vectors">Control of vectors</option>
         </select>
       </div>
@@ -785,9 +784,7 @@ const DiseaseInvestigationForm = () => {
       </div>
 
       <div>
-        <label className="block mb-2 font-medium">
-          Tentative Diagnosis:
-        </label>
+        <label className="block mb-2 font-medium">Tentative Diagnosis:</label>
         <input
           type="text"
           name="tentativediagnosis"
@@ -808,9 +805,7 @@ const DiseaseInvestigationForm = () => {
         />
       </div>
       <div>
-        <label className="block mb-2 font-medium">
-          Nature of Diagnosis:
-        </label>
+        <label className="block mb-2 font-medium">Nature of Diagnosis:</label>
         <select
           name="natureofdiagnosis"
           value={formData.natureofdiagnosis}
@@ -821,63 +816,36 @@ const DiseaseInvestigationForm = () => {
             Select nature of diagnosis
           </option>
           <option value="Farmer's Report">Farmer's Report</option>
-          <option value="Clinical Signs/lesions">
-            Clinical Signs/lesions
-          </option>
+          <option value="Clinical Signs/lesions">Clinical Signs/lesions</option>
           <option value="History">History</option>
           <option value="Laboratory test">Laboratory test</option>
         </select>
       </div>
-    </div>),
-  ]
+    </div>,
+  ];
 
   function renderStepContent(step) {
     switch (step) {
       case 0:
-        return (
-          pages[0]
-        );
+        return pages[0];
       case 1:
-        return (
-          pages[1]
-        );
+        return pages[1];
       case 2:
-        return (
-          pages[2]
-        );
+        return pages[2];
       case 3:
-        return (
-          pages[3]
-        );
+        return pages[3];
     }
   }
   return (
     <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Form</h1>
-      {/* <input
-        type="file"
-        accept=".csv"
-        onChange={handleCSVUpload}
-        className="mb-6"
-      /> */}
+
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
-      <FormSubmit handleImportCSV={handleCSVUpload} handleExportCSV={exportToCSV} handleSubmit={handleSave} />
-      {/* <div className="flex justify-end space-x-4">
-        <button
-          onClick={handleSave}
-          className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen"
-        >
-          Save Form
-        </button>
-        <button
-          onClick={exportToCSV}
-          className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-        >
-          Export CSV
-        </button>
-      </div> */}
-
-
+      <FormSubmit
+        handleImportCSV={handleCSVUpload}
+        handleExportCSV={exportToCSV}
+        handleSubmit={handleSave}
+      />
 
       {/* Error Modal */}
       <ErrorModal
@@ -892,6 +860,7 @@ const DiseaseInvestigationForm = () => {
         onClose={() => setSuccessModalOpen(false)}
         message={modalMessage}
       />
+
     </div>
   );
 };

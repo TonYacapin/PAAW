@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import ConfirmationModal from './ConfirmationModal';
-
+ 
 const Modal = ({ isOpen, onClose, children }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null); // To track pending action (exit or outside click)
-
+ 
   if (!isOpen && !isConfirmationModalOpen) return null; // Don't render if modal is closed and confirmation modal is also closed
-
+ 
   const handleOutsideClose = (e) => {
     if (e.target === e.currentTarget) {
       setPendingAction('outsideClick');
       setIsConfirmationModalOpen(true); // Trigger confirmation modal on outside click
     }
   };
-
+ 
   const handleExitButtonClick = () => {
     setPendingAction('exitButton');
     setIsConfirmationModalOpen(true); // Trigger confirmation modal on exit button click
   };
-
+ 
   const handleConfirmExit = () => {
     setIsConfirmationModalOpen(false); // Close the confirmation modal
     onClose(); // Close the main modal after confirmation
     setPendingAction(null); // Reset the pending action
   };
-
+ 
   const handleCancelClose = () => {
     setIsConfirmationModalOpen(false); // Just close the confirmation modal without closing the main modal
     setPendingAction(null); // Reset the pending action
   };
-
+ 
   return ReactDOM.createPortal(
     <>
       {/* Main Modal */}
@@ -40,7 +40,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           onClick={handleOutsideClose} // Trigger confirmation modal when clicking outside
         >
           <div
-            className="bg-white p-6 rounded-lg shadow-lg mx-auto relative w-full z-50 overflow-auto max-h-[90vh] 
+            className="bg-white p-6 rounded-lg shadow-lg mx-auto relative w-full z-50 overflow-auto max-h-[90vh]
                        sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-5xl 2xl:max-w-6xl"
           >
             <button
@@ -53,7 +53,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           </div>
         </div>
       )}
-
+ 
       {/* Confirmation Modal */}
       {isConfirmationModalOpen && (
         <ConfirmationModal
@@ -67,5 +67,5 @@ const Modal = ({ isOpen, onClose, children }) => {
     document.body
   );
 };
-
+ 
 export default Modal;

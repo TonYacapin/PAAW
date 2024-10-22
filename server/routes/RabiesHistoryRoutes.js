@@ -175,6 +175,23 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.put('/RH/:id', async (req, res) => {
+  try {
+    const updatedHistory = await RabiesHistory.findByIdAndUpdate(
+      req.params.id,
+      { formStatus: req.body.formStatus },
+      { new: true } // Return the updated document
+    );
+    if (!updatedHistory) {
+      return res.status(404).json({ message: 'History not found' });
+    }
+    res.json(updatedHistory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Delete a RabiesHistory entry by ID
 router.delete('/:id', async (req, res) => {
   try {
