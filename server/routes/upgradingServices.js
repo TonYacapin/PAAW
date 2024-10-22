@@ -17,12 +17,22 @@ router.post('/', async (req, res) => {
 // Get all upgrading service reports
 router.get('/', async (req, res) => {
   try {
-    const reports = await UpgradingServices.find();
+    const { formStatus } = req.query; // Get the formStatus from query parameters
+
+    // Create a filter object for the query
+    const filter = {};
+    if (formStatus) {
+      filter.formStatus = formStatus; // Add formStatus to the filter if provided
+    }
+
+    // Find reports based on the filter
+    const reports = await UpgradingServices.find(filter);
     res.status(200).json(reports);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get a specific upgrading service report by ID
 router.get('/:id', async (req, res) => {
