@@ -19,9 +19,11 @@ const UpgradingServicesChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/api/upgrading-services`
-        );
+        const response = await axiosInstance.get('/api/upgrading-services', {
+          params: { formStatus: 'Accepted' } // Add query parameter for filtering
+        });
+
+        console.log('this is US chart: ' + JSON.stringify(response.data, null, 2));
 
         let services = response.data;
 
