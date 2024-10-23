@@ -141,7 +141,7 @@ router.post(
 );
 // Route to get filtered Rabies History reports
 router.get('/RH', async (req, res) => {
-  const { municipality, startDate, endDate, species, animalAge } = req.query;
+  const { municipality, startDate, endDate, species, animalAge, formStatus } = req.query;
 
   try {
     // Build the query object based on the filters provided
@@ -173,6 +173,9 @@ router.get('/RH', async (req, res) => {
       if (endDate) {
         query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
       }
+    }
+    if (formStatus) {
+      query.formStatus = formStatus;
     }
 
     // Fetch the filtered RabiesHistory entries from the database

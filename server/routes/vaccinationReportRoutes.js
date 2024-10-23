@@ -89,7 +89,7 @@ router.post(
 );
 // Route to get filtered vaccination reports
 router.get('/api/reports', async (req, res) => {
-  const { municipality, startDate, endDate, species } = req.query;
+  const { municipality, startDate, endDate, species, formStatus } = req.query;
 
   try {
     // Build the query object dynamically based on the filters provided
@@ -117,6 +117,12 @@ router.get('/api/reports', async (req, res) => {
         query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
       }
     }
+    
+        // Add form status filter if provided
+        if (formStatus) {
+          query.formStatus = formStatus;
+        }
+    
 
     // Fetch the filtered reports from the database
     const reports = await VaccinationReport.find(query);

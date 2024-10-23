@@ -69,7 +69,7 @@ router.post(
 );
 // Retrieve filtered reports
 router.get('/api/entries', async (req, res) => {
-  const { municipality, startDate, endDate } = req.query; // Get filters from the query parameters
+  const { municipality, startDate, endDate, formStatus } = req.query; // Get filters from the query parameters
 
   try {
     // Build the filter object based on query parameters
@@ -93,6 +93,11 @@ router.get('/api/entries', async (req, res) => {
       }
     }
 
+    // Add form status filter if provided
+    if (formStatus) {
+      filter.formStatus = formStatus;
+    }
+
     // Find reports with the applied filters
     const reports = await RabiesVaccinationReport.find(filter);
     res.json(reports);
@@ -100,6 +105,7 @@ router.get('/api/entries', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Update a specific report
 router.put('/api/entries/:id', async (req, res) => {
