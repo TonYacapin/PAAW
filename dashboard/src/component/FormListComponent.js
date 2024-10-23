@@ -95,18 +95,19 @@ function FormListComponent({ endpoint, title, FormComponent }) {
 
   const filteredForms = forms.filter((form) => {
     const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = form.entries.some(
-      (entry) =>
-        `${entry.clientInfo.firstName} ${entry.clientInfo.lastName}`
-          .toLowerCase()
-          .includes(searchTerm) ||
+    const matchesSearch = form.entries.some((entry) => {
+      const firstName = entry.clientInfo?.firstName || entry.firstName;
+      const lastName = entry.clientInfo?.lastName || entry.lastName;
+      return (
+        `${firstName} ${lastName}`.toLowerCase().includes(searchTerm) ||
         entry.activity.toLowerCase().includes(searchTerm)
-    );
-
+      );
+    });
+  
     const matchesMunicipality =
       !filters.municipality || form.municipality === filters.municipality;
     const matchesStatus = !filters.status || form.formStatus === filters.status;
-
+  
     return matchesSearch && matchesMunicipality && matchesStatus;
   });
 

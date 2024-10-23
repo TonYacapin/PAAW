@@ -16,32 +16,50 @@ const FilterComponent = ({ municipalities, onFilter }) => {
 
   return (
     <div className="filter-container p-4 bg-white shadow-lg rounded-lg flex flex-col sm:flex-row gap-4 items-center">
-      <select
-        value={selectedMunicipality}
-        onChange={(e) => setSelectedMunicipality(e.target.value)}
-        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
-      >
-        <option value="">Select Municipality</option>
-        {municipalities.map((municipality) => (
-          <option key={municipality} value={municipality}>
-            {municipality}
-          </option>
-        ))}
-      </select>
+      <div className="w-full sm:w-auto">
+        <label className="block text-gray-700 mb-1" htmlFor="municipality-select">
+          Municipality
+        </label>
+        <select
+          id="municipality-select"
+          value={selectedMunicipality}
+          onChange={(e) => setSelectedMunicipality(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md text-black"
+        >
+          <option value="">Select Municipality</option>
+          {municipalities.map((municipality) => (
+            <option key={municipality} value={municipality}>
+              {municipality}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <input
-        type="date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
-      />
+      <div className="w-full sm:w-auto">
+        <label className="block text-gray-700 mb-1" htmlFor="start-date">
+          Start Date
+        </label>
+        <input
+          id="start-date"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md text-black"
+        />
+      </div>
 
-      <input
-        type="date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
-      />
+      <div className="w-full sm:w-auto">
+        <label className="block text-gray-700 mb-1" htmlFor="end-date">
+          End Date
+        </label>
+        <input
+          id="end-date"
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md text-black"
+        />
+      </div>
 
       <button
         onClick={handleApplyFilters}

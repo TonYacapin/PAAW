@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const entrySchema = new mongoose.Schema({
   no: Number,
-  name: String,
+  firstName: String,
+  lastName: String,
   dateOfAi: Date,
   dateOfMonitoring: Date,
   barangay: String,

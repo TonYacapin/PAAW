@@ -108,7 +108,7 @@ router.post(
 
 // Get all Disease Investigations with filters
 router.get('/disease-investigation', async (req, res) => {
-  const { municipality, startDate, endDate } = req.query;
+  const { municipality, startDate, endDate, formStatus } = req.query;
 
   try {
     // Create the query object dynamically based on the filters
@@ -128,6 +128,11 @@ router.get('/disease-investigation', async (req, res) => {
       if (endDate) {
         query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
       }
+    }
+
+     // Add form status filter if provided
+     if (formStatus) {
+      query.formStatus = formStatus;
     }
 
     // Fetch the filtered investigations
