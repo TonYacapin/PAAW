@@ -17,7 +17,9 @@ const OffspringMonitoringReport = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axiosInstance.get(`/api/offspring-monitoring`);
+                const response = await axiosInstance.get('/api/offspring-monitoring', {
+                    params: { formStatus: 'Accepted' } // Add query parameter for filtering
+                });
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filtered data
             } catch (error) {
@@ -67,30 +69,30 @@ const OffspringMonitoringReport = () => {
                     <div className="flex flex-col md:flex-row gap-4 mb-8">
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Municipality:</span>
-                            <input 
-                                type="text" 
-                                name="municipality" 
+                            <input
+                                type="text"
+                                name="municipality"
                                 value={filter.municipality}
                                 onChange={handleFilterChange}
                                 className="p-2 border border-black-300 rounded-md shadow-sm"
-                                placeholder="Filter by municipality" 
+                                placeholder="Filter by municipality"
                             />
                         </label>
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Name:</span>
-                            <input 
-                                type="text" 
-                                name="name" 
+                            <input
+                                type="text"
+                                name="name"
                                 value={filter.name}
                                 onChange={handleFilterChange}
                                 className="p-2 border border-black-300 rounded-md shadow-sm"
-                                placeholder="Filter by name" 
+                                placeholder="Filter by name"
                             />
                         </label>
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Month:</span>
-                            <select 
-                                name="month" 
+                            <select
+                                name="month"
                                 value={filter.month}
                                 onChange={handleFilterChange}
                                 className="p-2 border border-black-300 rounded-md shadow-sm"
@@ -103,13 +105,13 @@ const OffspringMonitoringReport = () => {
                         </label>
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Year:</span>
-                            <input 
-                                type="number" 
-                                name="year" 
+                            <input
+                                type="number"
+                                name="year"
                                 value={filter.year}
                                 onChange={handleFilterChange}
                                 className="p-2 border border-black-300 rounded-md shadow-sm"
-                                placeholder="Filter by year" 
+                                placeholder="Filter by year"
                             />
                         </label>
                     </div>

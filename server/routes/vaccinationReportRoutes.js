@@ -87,17 +87,45 @@ router.post(
   
   }
 );
-// Route to get all vaccination reports
+// Route to get filtered vaccination reports
 router.get('/api/reports', async (req, res) => {
+  const { municipality, startDate, endDate, species } = req.query;
+
   try {
-    const reports = await VaccinationReport.find();
+    // Build the query object dynamically based on the filters provided
+    let query = {};
+
+    // Filter by municipality if provided
+    if (municipality) {
+      query.municipality = municipality;
+    }
+
+    // Filter by species if provided
+    if (species) {
+      query.species = species;
+    }
+
+    // Filter by date range (startDate and/or endDate)
+    if (startDate || endDate) {
+      query.dateReported = {}; // Initialize dateReported field in the query
+
+      if (startDate) {
+        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+      }
+
+      if (endDate) {
+        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+      }
+    }
+
+    // Fetch the filtered reports from the database
+    const reports = await VaccinationReport.find(query);
     res.status(200).json(reports);
   } catch (error) {
     console.error('Error retrieving reports:', error);
     res.status(500).json({ message: 'Failed to retrieve reports' });
   }
 });
-
 router.get('/api/reports/accomplishment', async (req, res) => {
   try {
     const { year } = req.query;

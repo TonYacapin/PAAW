@@ -25,7 +25,7 @@ router.post(
     body('tentativediagnosis').notEmpty().withMessage('Tentative diagnosis is required.'),
     body('finaldiagnosis').notEmpty().withMessage('Final diagnosis is required.'),
     body('natureofdiagnosis').notEmpty().withMessage('Nature of diagnosis is required.'),
-    
+
     // Validate details array
 
     body('details.*.species').optional().notEmpty().withMessage('Species is required if provided.'),
@@ -40,7 +40,7 @@ router.post(
     body('details.*.remarks').optional().notEmpty().withMessage('Remarks are required if provided.'),
 
     // Validate clinicalSigns array
- 
+
     body('clinicalSigns.*.description').optional().notEmpty().withMessage('Description is required if provided.'),
 
     // Validate movement array
@@ -72,7 +72,7 @@ router.post(
       }
 
       // Create new disease investigation
-    const diseaseInvestigation = new DiseaseInvestigation({
+      const diseaseInvestigation = new DiseaseInvestigation({
         status: req.body.status,
         noOfVisit: req.body.noOfVisit,
         dateReported: req.body.dateReported,
@@ -106,10 +106,32 @@ router.post(
 
 
 
-// Get all Disease Investigations
+// Get all Disease Investigations with filters
 router.get('/disease-investigation', async (req, res) => {
+  const { municipality, startDate, endDate } = req.query;
+
   try {
-    const investigations = await DiseaseInvestigation.find();
+    // Create the query object dynamically based on the filters
+    let query = {};
+
+    // Apply municipality filter if provided
+    if (municipality) {
+      query.municipality = municipality;
+    }
+
+    // Apply date range filter if provided
+    if (startDate || endDate) {
+      query.dateReported = {};
+      if (startDate) {
+        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+      }
+      if (endDate) {
+        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+      }
+    }
+
+    // Fetch the filtered investigations
+    const investigations = await DiseaseInvestigation.find(query);
     res.json(investigations);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -64,14 +64,51 @@ router.post(
 
 
 // Get all reports
+// Route to get filtered Routine Services Monitoring Reports
 router.get('/RSM', async (req, res) => {
+  const { municipality, startDate, endDate, species, activity } = req.query;
+
   try {
-    const reports = await RoutineServicesMonitoringReport.find();
+    // Build the query object based on the filters provided
+    let query = {};
+
+    // Filter by municipality if provided
+    if (municipality) {
+      query.municipality = municipality;
+    }
+
+    // Filter by species if provided
+    if (species) {
+      query.species = species;
+    }
+
+    // Filter by activity if provided (e.g., vaccination, treatment)
+    if (activity) {
+      query.activity = activity;
+    }
+
+    // Filter by date range (startDate and/or endDate)
+    if (startDate || endDate) {
+      query.dateReported = {}; // Initialize the dateReported filter
+
+      if (startDate) {
+        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+      }
+
+      if (endDate) {
+        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+      }
+    }
+
+    // Fetch the filtered reports from the database
+    const reports = await RoutineServicesMonitoringReport.find(query);
     res.status(200).json(reports);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error retrieving RSM reports:', error);
+    res.status(500).json({ message: 'Failed to retrieve reports' });
   }
 });
+
 
 // Get a specific report by ID
 router.get('/RSM/:id', async (req, res) => {
