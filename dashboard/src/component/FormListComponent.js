@@ -95,7 +95,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
 
   const filteredForms = forms.filter((form) => {
     const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = form.entries.some((entry) => {
+    const matchesSearch = form.entries?.some((entry) => {
       const firstName = entry.clientInfo?.firstName || entry.firstName;
       const lastName = entry.clientInfo?.lastName || entry.lastName;
       return (
@@ -305,7 +305,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                       ([key, value], idx) =>
                         key !== "_id" && (
                           <td key={idx} className="border border-gray-300 p-4">
-                            {typeof value === "string" && isDate(value)
+                            {typeof value === "string" && isDate(value) && value.length >= 24
                               ? formatDate(value)
                               : value}
                           </td>
