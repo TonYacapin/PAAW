@@ -4,6 +4,7 @@ import Papa from "papaparse"; // Import PapaParse for CSV handling
 import FormSubmit from "../component/FormSubmit";
 import ConfirmationModal from "../component/ConfirmationModal";
 import axiosInstance from "../component/axiosInstance";
+import CardBox from "../component/CardBox";
 
 const UpgradingServices = () => {
   const [entries, setEntries] = useState([]);
@@ -18,7 +19,7 @@ const UpgradingServices = () => {
 
   {
     entries.map((entry, index) => (
-      <div key={index} className="mb-4 p-4 border rounded bg-gray-100">
+      <CardBox key={index}>
         <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <p>Date: {entry.date || "N/A"}</p>
@@ -42,7 +43,7 @@ const UpgradingServices = () => {
         >
           Remove
         </button>
-      </div>
+        </CardBox>
     ));
   }
 
