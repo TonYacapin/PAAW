@@ -24,7 +24,7 @@ const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcare
 const animalProductionServicesRoutes = require('./routes/Client/animalproductionservicesRoutes'); 
 const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryinformationserviceRoutes");
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
-
+const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
 
 
 
@@ -75,7 +75,7 @@ app.use('/api/animal-health-care-services', animalhealthcareservicesRoutes);
 app.use('/api/animal-production-services', animalProductionServicesRoutes);
 app.use("/api/veterinary-information-service", veterinaryInformationServiceRoutes);
 app.use('/api/regulatory-services', regulatoryCareServiceRoutes);
-
+app.use('/api/requisitions', requisitionIssuanceRoutes);
 
 
 

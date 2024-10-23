@@ -51,6 +51,7 @@ import AnimalProductionServicesList from "../Client Request Forms/AnimalProducti
 import VeterinaryInformationServiceList from "../Client Request Forms/VeterinaryInformationServiceList";
 import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareServicesList";
 import UpgradingServicesList from "../UpgradingServicesList";
+import RequisitionIssueSlipList from "../RequisitionIssueSlipList";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -192,6 +193,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return <VeterinaryInformationServiceList />;
       case "RegulatoryCareServicesList":
         return <RegulatoryCareServicesList />;
+        case "RequisitionIssueSlipList":
+          return <RequisitionIssueSlipList />;
+  
+
+        
       // case "UpgradingServicesList":
       //   return <UpgradingServicesList />;
       case "RabiesVaccinationReportList":
@@ -305,6 +311,8 @@ function Home({ handleLogout, setIsAuthenticated }) {
     { value: "SlaughterReportChart", label: "Slaughter Report Chart" },
 
     { value: "VeterinaryShipmentChart", label: "Veterinary Shipment Chart" },
+    { value: "RequisitionIssueSlipList", label: "Requisition Issue Slip List" },
+
   ];
 
   const getChartOptions = () => {
@@ -422,7 +430,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
     switch (selectedDivision) {
       case "user":
         return (
-          <>
+          <>'
             <h3 className="text-2xl font-semibold text-darkgreen mb-4">
               Browse Forms from Client Forms
             </h3>
@@ -584,7 +592,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
               <div className="space-y-2">
                 <button
                   className={buttonClasses}
-                  onClick={() => openModalWithContent("RequisitionSlip")}
+                  onClick={() => openModalWithContent("RequisitionIssueSlipList")}
                 >
                   <Outbox className="mr-2" /> Requisition Form
                 </button>

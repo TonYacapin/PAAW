@@ -45,7 +45,7 @@ function EquipmentInventory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (isEditing) {
       try {
         await axiosInstance.put(`/api/inventory/${newInventory._id}`, newInventory);
@@ -60,7 +60,7 @@ function EquipmentInventory() {
         console.error('Error adding inventory:', error);
       }
     }
-    
+
     setIsModalOpen(false); // Close the modal after submitting
     fetchInventories(); // Refresh inventory list
   };
@@ -121,59 +121,83 @@ function EquipmentInventory() {
             <h2 className="text-xl font-bold mb-4">{isEditing ? 'Edit Equipment' : 'Add Equipment'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-                <input
-                  type="text"
-                  name="type"
-                  value={newInventory.type}
-                  onChange={handleChange}
-                  placeholder="Equipment Type"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  required
-                />
-                <input
-                  type="text"
-                  name="supplies"
-                  value={newInventory.supplies}
-                  onChange={handleChange}
-                  placeholder="Supplies"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  required
-                />
-                <input
-                  type="text"
-                  name="unit"
-                  value={newInventory.unit}
-                  onChange={handleChange}
-                  placeholder="Unit (e.g., pieces)"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  required
-                />
-                <input
-                  type="number"
-                  name="quantity"
-                  value={newInventory.quantity}
-                  onChange={handleChange}
-                  placeholder="Quantity"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  required
-                />
-                <input
-                  type="number"
-                  name="out"
-                  value={newInventory.out}
-                  onChange={handleChange}
-                  placeholder="Out"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  required
-                />
-                <input
-                  type="number"
-                  name="total"
-                  value={newInventory.total}
-                  placeholder="Total Inventory"
-                  className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                  readOnly
-                />
+                <div>
+                  <label htmlFor="type" className="block text-sm font-medium text-gray-700">Equipment Type</label>
+                  <input
+                    type="text"
+                    id="type"
+                    name="type"
+                    value={newInventory.type}
+                    onChange={handleChange}
+                    placeholder="Equipment Type"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="supplies" className="block text-sm font-medium text-gray-700">Supplies</label>
+                  <input
+                    type="text"
+                    id="supplies"
+                    name="supplies"
+                    value={newInventory.supplies}
+                    onChange={handleChange}
+                    placeholder="Supplies"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="unit" className="block text-sm font-medium text-gray-700">Unit</label>
+                  <input
+                    type="text"
+                    id="unit"
+                    name="unit"
+                    value={newInventory.unit}
+                    onChange={handleChange}
+                    placeholder="Unit (e.g., pieces)"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    value={newInventory.quantity}
+                    onChange={handleChange}
+                    placeholder="Quantity"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="out" className="block text-sm font-medium text-gray-700">Out</label>
+                  <input
+                    type="number"
+                    id="out"
+                    name="out"
+                    value={newInventory.out}
+                    onChange={handleChange}
+                    placeholder="Out"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="total" className="block text-sm font-medium text-gray-700">Total Inventory</label>
+                  <input
+                    type="number"
+                    id="total"
+                    name="total"
+                    value={newInventory.total}
+                    placeholder="Total Inventory"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    readOnly
+                  />
+                </div>
               </div>
 
               {/* Form buttons */}
