@@ -9,9 +9,6 @@ import Select from "react-select";
 import { jwtDecode } from "jwt-decode";
 import FilterComponent from "../../component/FilterComponent";
 
-
-
-
 // Chart components
 
 import AnimalHealthChartComponent from "../../component/AnimalHealthChartComponent";
@@ -79,25 +76,34 @@ export const FilterContext = createContext(null);
 
 function Home({ handleLogout, setIsAuthenticated }) {
   const [municipalities, setMunicipalities] = useState([
-    'Ambaguio', 'Bagabag', 'Bayombong', 'Diadi', 'Quezon', 'Solano', 'Villaverde',
-    'Alfonso Castañeda', 'Aritao', 'Bambang', 'Dupax del Norte', 'Dupax del Sur',
-    'Kayapa', 'Kasibu', 'Santa Fe'
+    "Ambaguio",
+    "Bagabag",
+    "Bayombong",
+    "Diadi",
+    "Quezon",
+    "Solano",
+    "Villaverde",
+    "Alfonso Castañeda",
+    "Aritao",
+    "Bambang",
+    "Dupax del Norte",
+    "Dupax del Sur",
+    "Kayapa",
+    "Kasibu",
+    "Santa Fe",
   ]);
   const [filterValues, setFilterValues] = useState({
-    municipality: '',
-    startDate: '',
-    endDate: '',
+    municipality: "",
+    startDate: "",
+    endDate: "",
   });
   const [appliedFilters, setAppliedFilters] = useState(filterValues);
   const [chartKey, setChartKey] = useState(0); // Add this state for forcing re-renders
   const handleFilter = (values) => {
-  
     setAppliedFilters(values);
-    setChartKey(prev => prev + 1); // Increment the key to force re-render
-    console.log(appliedFilters)
-
+    setChartKey((prev) => prev + 1); // Increment the key to force re-render
+    console.log(appliedFilters);
   };
-
 
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -112,8 +118,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
     municipality: "",
   });
   const [showAll, setShowAll] = useState(true); // State to toggle between all data and filtered data
-
-
 
   const handleDateChange = (e) => {
     const { name, value } = e.target;
@@ -133,8 +137,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
   const toggleShowAll = () => {
     setShowAll((prevShowAll) => !prevShowAll); // Toggle between all data and filtered data
   };
-
-
 
   const renderModalContent = () => {
     switch (modalContent) {
@@ -184,12 +186,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
         return <EquipmentInventory />;
       case "AnimalHealthCareServicesList":
         return <AnimalHealthCareServicesList />;
-        return <AnimalHealthCareServicesList />;
       case "AnimalProductionServicesList":
         return <AnimalProductionServicesList />;
-        return <AnimalProductionServicesList />;
       case "VeterinaryInformationServiceList":
-        return <VeterinaryInformationServiceList />;
         return <VeterinaryInformationServiceList />;
       case "RegulatoryCareServicesList":
         return <RegulatoryCareServicesList />;
@@ -243,6 +242,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
             formComponent={TechnicianQuarterlyReportForm}
           />
         );
+      case "DiseaseInvestigationFormLists":
+        return <DiseaseInvestigationFormLists />;
+      case "RabiesHistoryFormLists":
+        return <RabiesHistoryFormLists />;
 
       default:
         return null;
@@ -279,9 +282,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
     }
   }, [userRole]);
 
-
-
-
   const handleDivisionChange = (division) => {
     setSelectedDivision(division);
   };
@@ -291,8 +291,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
   };
 
   const allChartOptions = [
-
-
     { value: "rabies", label: "Rabies Chart" },
     { value: "disease", label: "Disease Investigation Chart" },
     { value: "vaccination", label: "Vaccination Report Chart" },
@@ -307,8 +305,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
     { value: "SlaughterReportChart", label: "Slaughter Report Chart" },
 
     { value: "VeterinaryShipmentChart", label: "Veterinary Shipment Chart" },
-
-
   ];
 
   const getChartOptions = () => {
@@ -334,48 +330,82 @@ function Home({ handleLogout, setIsAuthenticated }) {
     if (selectedCharts.length > 0) {
       return (
         <div className="space-y-6">
-          {selectedCharts.includes('SlaughterReportChart') && (
-            <SlaughterReportChart key={`slaughter-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("SlaughterReportChart") && (
+            <SlaughterReportChart
+              key={`slaughter-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('VeterinaryShipmentChart') && (
-            <VeterinaryShipmentChart key={`shipment-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("VeterinaryShipmentChart") && (
+            <VeterinaryShipmentChart
+              key={`shipment-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('animalhealth') && (
-            <AnimalHealthChartComponent key={`health-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("animalhealth") && (
+            <AnimalHealthChartComponent
+              key={`health-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('livestock') && (
-            <LivestockChartComponent key={`livestock-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("livestock") && (
+            <LivestockChartComponent
+              key={`livestock-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('rabies') && (
-            <RabiesReportChart key={`rabies-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("rabies") && (
+            <RabiesReportChart
+              key={`rabies-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('disease') && (
-            <DiseaseInvestigationChart key={`disease-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("disease") && (
+            <DiseaseInvestigationChart
+              key={`disease-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('vaccination') && (
-            <VaccinationReportChart key={`vaccination-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("vaccination") && (
+            <VaccinationReportChart
+              key={`vaccination-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('routine') && (
-            <RoutineServicesMonitoringReportChart key={`routine-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("routine") && (
+            <RoutineServicesMonitoringReportChart
+              key={`routine-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('rabiesHistory') && (
-            <RabiesHistoryCharts key={`history-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("rabiesHistory") && (
+            <RabiesHistoryCharts
+              key={`history-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('offSringMonitoring') && (
-            <OffSpringMonitoringChart key={`offspring-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("offSringMonitoring") && (
+            <OffSpringMonitoringChart
+              key={`offspring-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('UpgradingServices') && (
-            <UpgradingServicesChart key={`upgrading-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("UpgradingServices") && (
+            <UpgradingServicesChart
+              key={`upgrading-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
-          {selectedCharts.includes('TechnicianQuarterly') && (
-            <TechnicianQuarterlyCharts key={`quarterly-${chartKey}`} filterValues={appliedFilters} />
+          {selectedCharts.includes("TechnicianQuarterly") && (
+            <TechnicianQuarterlyCharts
+              key={`quarterly-${chartKey}`}
+              filterValues={appliedFilters}
+            />
           )}
         </div>
       );
     }
 
-
-    
     return (
       <div className="md:h-2/5 bg-white shadow-md rounded-lg p-6 flex flex-wrap items-center justify-center text-center">
         <p className="text-gray-700 font-semibold text-lg">
@@ -385,7 +415,6 @@ function Home({ handleLogout, setIsAuthenticated }) {
     );
   };
 
- 
   function renderForms() {
     const buttonClasses =
       "w-full   flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
@@ -577,7 +606,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     <RabiesVaccinationReport />
                   </Modal> */}
                   <button
-                    onClick={() => openModalWithContent("VaccinationReportList")}
+                    onClick={() =>
+                      openModalWithContent("VaccinationReportList")
+                    }
                     className={buttonClasses}
                   >
                     <ReportIcon className="mr-2" /> Vaccination Report
@@ -609,7 +640,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   >
                     <PetsIcon className="mr-2" /> Rabies History
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent("RoutineServicesMonitoringReport")
@@ -665,14 +696,18 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
                   <button
-                    onClick={() => openModalWithContent("OffSpringMonitoringList")}
+                    onClick={() =>
+                      openModalWithContent("OffSpringMonitoringList")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
 
                   <button
-                    onClick={() => openModalWithContent("TechnicianQuarterlyList")}
+                    onClick={() =>
+                      openModalWithContent("TechnicianQuarterlyList")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Technician's Quarterly Calf
@@ -839,12 +874,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                         className="text-sm sm:text-base z-0"
                       />
                     </div>
-                  
                   </div>
-                 
+
                   <FilterContext.Provider value={{ filters, showAll }}>
                     {/* Conditional Rendering for Charts */}
-                    <FilterComponent municipalities={municipalities} onFilter={handleFilter} />
+                    <FilterComponent
+                      municipalities={municipalities}
+                      onFilter={handleFilter}
+                    />
                     <div className="w-full h-[70vh] overflow-auto">
                       {renderCharts()}
                     </div>
