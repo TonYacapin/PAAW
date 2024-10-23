@@ -60,7 +60,7 @@ const RabiesHistoryForm = () => {
 
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -105,35 +105,32 @@ const RabiesHistoryForm = () => {
 
     try {
       console.log(formData);
-      const response = await axiosInstance.post(
-        `/RH`,
-        formData
-      );
-      console.log('Form submitted successfully:', response.data);
+      const response = await axiosInstance.post(`/RH`, formData);
+      console.log("Form submitted successfully:", response.data);
 
       // Clear form fields
-      setOwnershipType('');
-      setPetManagement('');
-      setCauseOfDeath('');
-      setVaccinationHistory('');
-      setBitchVaccinated('');
-      setContactWithAnimals('');
-      setContactLocation('');
-      setSiteOfBite('');
-      setBiteProvoked('');
-      setLocationOfBite('');
-      setTreatmentReceived('');
-      setAnimalResidence('');
-      setSpecies('');
-      setBreed('');
-      setSex('');
-      setAge('');
-      setDateOfDeath('');
-      setTimeOfDeath('');
-      setTypeOfVaccine('');
-      setDateOfLastVaccination('');
-      setDurationIllnessFrom('');
-      setDurationIllnessTo('');
+      setOwnershipType("");
+      setPetManagement("");
+      setCauseOfDeath("");
+      setVaccinationHistory("");
+      setBitchVaccinated("");
+      setContactWithAnimals("");
+      setContactLocation("");
+      setSiteOfBite("");
+      setBiteProvoked("");
+      setLocationOfBite("");
+      setTreatmentReceived("");
+      setAnimalResidence("");
+      setSpecies("");
+      setBreed("");
+      setSex("");
+      setAge("");
+      setDateOfDeath("");
+      setTimeOfDeath("");
+      setTypeOfVaccine("");
+      setDateOfLastVaccination("");
+      setDurationIllnessFrom("");
+      setDurationIllnessTo("");
       setBehavioralChanges({
         restlessness: false,
         apprehensiveWatchfulLook: false,
@@ -141,31 +138,30 @@ const RabiesHistoryForm = () => {
         bitingInanimateObjects: false,
         hyperactivity: false,
         others: false,
-        specify: '',
+        specify: "",
       });
-      setVictimName('');
-      setVictimAge('');
-      setVictimSex('');
-      setVictimAddress('');
-      setDateOfBite('');
-      setTimeOfBite('');
-      setSiteOfBiteOther('');
-      setNatureOfBite('');
-      setBiteProvokedSpecify('');
-      setLocationOfBiteOther('');
-      setOtherVictims('');
-      setTreatmentReceivedOther('');
-      setDateOfTreatmentReceived('');
+      setVictimName("");
+      setVictimAge("");
+      setVictimSex("");
+      setVictimAddress("");
+      setDateOfBite("");
+      setTimeOfBite("");
+      setSiteOfBiteOther("");
+      setNatureOfBite("");
+      setBiteProvokedSpecify("");
+      setLocationOfBiteOther("");
+      setOtherVictims("");
+      setTreatmentReceivedOther("");
+      setDateOfTreatmentReceived("");
       setStepperActiveStep(0); // Optionally reset the stepper to the first step
-      setModalMessage('Form submitted successfully!');
+      setModalMessage("Form submitted successfully!");
       setIsSuccessModalOpen(true); // Show success modal
-
     } catch (error) {
-
       // Error handling
       let errorMessage = "Failed to save entries: An unexpected error occurred";
       if (error.response && error.response.data) {
-        const serverMessage = error.response.data.message || "An error occurred";
+        const serverMessage =
+          error.response.data.message || "An error occurred";
         if (error.response.data.errors) {
           const validationErrors = error.response.data.errors
             .map((err) => err.msg)
@@ -176,7 +172,7 @@ const RabiesHistoryForm = () => {
         }
       }
 
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       setModalMessage(errorMessage);
       setIsErrorModalOpen(true); // Show error modal
     }
@@ -346,29 +342,16 @@ const RabiesHistoryForm = () => {
           </div>
           <div>
             <label className="block mb-2 font-medium">Sex</label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="sex"
-                  value="male"
-                  checked={sex === "male"}
-                  onChange={(e) => setSex(e.target.value)}
-                  className="mr-2"
-                />{" "}
-                Male
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="sex"
-                  value="female"
-                  checked={sex === "female"}
-                  onChange={(e) => setSex(e.target.value)}
-                  className="mr-2"
-                />{" "}
-                Female
-              </label>
+            <div className="flex flex-col">
+              <select
+                value={sex} // Assuming `sex` is a state variable
+                onChange={(e) => setSex(e.target.value)} // Update the state on change
+                className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
+              >
+                <option value="">Select Sex</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
             </div>
           </div>
           <div>
@@ -775,32 +758,19 @@ const RabiesHistoryForm = () => {
               onChange={(e) => setVictimAge(e.target.value)}
             />
           </div>
-          <div>
-            <label className="block mb-2 font-medium">Sex</label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="victimSex"
-                  value="male"
-                  checked={victimSex === "male"}
-                  onChange={(e) => setVictimSex(e.target.value)}
-                  className="mr-2"
-                />{" "}
-                Male
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="victimSex"
-                  value="female"
-                  checked={victimSex === "female"}
-                  onChange={(e) => setVictimSex(e.target.value)}
-                  className="mr-2"
-                />{" "}
-                Female
-              </label>
-            </div>
+          <div className="flex flex-col">
+            <label className="block mb-2 font-medium capitalize text-gray-700">
+              Sex:
+            </label>
+            <select
+              value={sex} // Assuming `sex` is a state variable
+              onChange={(e) => setSex(e.target.value)} // Update the state on change
+              className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
+            >
+              <option value="">Select Sex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
           </div>
         </div>
         <div>
@@ -1012,7 +982,9 @@ const RabiesHistoryForm = () => {
             </div>
           )}
           <div>
-            <label className="block mb-2 font-medium">Date of Treatment Received</label>
+            <label className="block mb-2 font-medium">
+              Date of Treatment Received
+            </label>
             <input
               type="date"
               name="DateofTreatmentReceived"
@@ -1023,7 +995,6 @@ const RabiesHistoryForm = () => {
           </div>
         </div>
       </div>
-
     </>,
   ];
 
@@ -1045,7 +1016,7 @@ const RabiesHistoryForm = () => {
         return pages[6];
       default:
     }
-  };  
+  };
 
   return (
     <>
@@ -1072,7 +1043,6 @@ const RabiesHistoryForm = () => {
         onClose={() => setIsSuccessModalOpen(false)}
         message={modalMessage}
       />
-      
     </>
   );
 };

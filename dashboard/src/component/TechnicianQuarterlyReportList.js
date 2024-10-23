@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../component/axiosInstance";
 import Modal from "../component/Modal";
+import TechnicianQuarterlyReportForm from "../pages/TechnicianQuarterlyReportForm";
 
-function FormListComponent({ endpoint, title, FormComponent }) {
+function TechnicianQuarterlyReportList() {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +23,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
   useEffect(() => {
     const fetchForms = async () => {
       try {
-        const response = await axiosInstance.get(endpoint);
+        const response = await axiosInstance.get("/api/technician-quarterly");
         setForms(response.data);
 
         const uniqueMunicipalities = [
@@ -40,7 +41,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
     };
 
     fetchForms();
-  }, [endpoint]);
+  }, []);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -52,7 +53,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
 
   const handleEditStatus = async (formId, newStatus) => {
     try {
-      await axiosInstance.put(`${endpoint}/${formId}`, {
+      await axiosInstance.put(`/api/technician-quarterly/${formId}`, {
         formStatus: newStatus,
       });
       setForms(
@@ -95,19 +96,18 @@ function FormListComponent({ endpoint, title, FormComponent }) {
 
   const filteredForms = forms.filter((form) => {
     const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = form.entries?.some((entry) => {
-      const firstName = entry.clientInfo?.firstName || entry.firstName;
-      const lastName = entry.clientInfo?.lastName || entry.lastName;
+    const matchesSearch = form.animalEntries?.some((entry) => {
+      const farmerName = entry.farmerName || "";
       return (
-        `${firstName} ${lastName}`.toLowerCase().includes(searchTerm) ||
-        entry.activity.toLowerCase().includes(searchTerm)
+        farmerName.toLowerCase().includes(searchTerm) ||
+        entry.breed?.toLowerCase().includes(searchTerm)
       );
-    });
-  
+    }) ?? false;
+
     const matchesMunicipality =
       !filters.municipality || form.municipality === filters.municipality;
     const matchesStatus = !filters.status || form.formStatus === filters.status;
-  
+
     return matchesSearch && matchesMunicipality && matchesStatus;
   });
 
@@ -116,13 +116,13 @@ function FormListComponent({ endpoint, title, FormComponent }) {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">{title}</h2>
+      <h2 className="text-2xl font-bold mb-6">Technician Quarterly Report List</h2>
 
       {/* Filters Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <input
           type="text"
-          placeholder="Search by client name or activity..."
+          placeholder="Search by farmer name or breed..."
           value={filters.search}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, search: e.target.value }))
@@ -187,7 +187,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
               <tr className="bg-[#1b5b40] text-white">
                 <th className="border border-gray-300 p-4">No.</th>
                 <th className="border border-gray-300 p-4">Municipality</th>
-                <th className="border border-gray-300 p-4">Date Reported</th>
+                <th className="border border-gray-300 p-4">Date Submitted</th>
                 <th className="border border-gray-300 p-4">Form Status</th>
                 <th className="border border-gray-300 p-4">Actions</th>
               </tr>
@@ -200,7 +200,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                     {form.municipality}
                   </td>
                   <td className="border border-gray-300 p-4">
-                    {formatDate(form.dateReported)}
+                    {formatDate(form.dateSubmitted)}
                   </td>
                   <td className="border border-gray-300 p-4">
                     {form.formStatus}
@@ -216,8 +216,8 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                       Edit Status
                     </button>
                     <button
-                      onClick={() => handleViewEntries(form.entries)}
-                      className="ml-2 px-2 py-1 bg-darkerpastelyellow text-white rounded hover:bg-pastelyellow"
+                      onClick={() => handleViewEntries(form.animalEntries)}
+                      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                       View Entries
                     </button>
@@ -234,7 +234,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <h3 className="text-xl font-bold mb-4">
             Edit Status for {selectedForm.municipality}{" "}
-            {formatDate(selectedForm.dateReported)}
+            {formatDate(selectedForm.dateSubmitted)}
           </h3>
           <div className="mb-4">
             <label htmlFor="status" className="block text-sm font-medium mb-2">
@@ -258,18 +258,18 @@ function FormListComponent({ endpoint, title, FormComponent }) {
               ))}
             </select>
           </div>
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end">
             <button
               onClick={() =>
                 handleEditStatus(selectedForm._id, selectedForm.formStatus)
               }
-              className="px-4 py-2 bg-darkgreen text-white rounded"
+              className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
               Save
             </button>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 bg-red-500 text-white rounded"
+              className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
             >
               Cancel
             </button>
@@ -287,7 +287,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           <div className="overflow-auto max-h-80">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
-                <tr className="bg-darkgreen text-white">
+                <tr className="bg-gray-800 text-white">
                   {Object.keys(flattenObject(selectedEntries[0] || {})).map(
                     (key) =>
                       key !== "_id" && (
@@ -324,11 +324,11 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           isOpen={isFormModalOpen}
           onClose={() => setIsFormModalOpen(false)}
         >
-          <FormComponent />
+          <TechnicianQuarterlyReportForm />
         </Modal>
       )}
     </div>
   );
 }
 
-export default FormListComponent;
+export default TechnicianQuarterlyReportList;

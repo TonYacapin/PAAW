@@ -591,52 +591,66 @@ const DiseaseInvestigationForm = () => {
     <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
       {/* Investigation Details */}
       <div>
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-          Details of Investigation
-        </h2>
-        {detailsRows.map((row, index) => (
-          <div key={index} className="mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                "species",
-                "sex",
-                "age",
-                "population",
-                "cases",
-                "deaths",
-                "destroyed",
-                "slaughtered",
-                "vaccineHistory",
-                "remarks",
-              ].map((field) => (
-                <div key={field} className="flex flex-col">
-                  <label className="block mb-2 font-medium capitalize text-gray-700">
-                    {field}:
-                  </label>
-                  <input
-                    type="text"
-                    value={row[field]}
-                    onChange={(e) =>
-                      handleDetailsChange(index, field, e.target.value)
-                    }
-                    className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="my-4">
-              <hr className="border-t border-gray-300" /> {/* Divider */}
-            </div>
+  <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+    Details of Investigation
+  </h2>
+  {detailsRows.map((row, index) => (
+    <div key={index} className="mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          "species",
+          "age",
+          "population",
+          "cases",
+          "deaths",
+          "destroyed",
+          "slaughtered",
+          "vaccineHistory",
+          "remarks",
+        ].map((field) => (
+          <div key={field} className="flex flex-col">
+            <label className="block mb-2 font-medium capitalize text-gray-700">
+              {field}:
+            </label>
+            <input
+              type="text"
+              value={row[field]}
+              onChange={(e) =>
+                handleDetailsChange(index, field, e.target.value)
+              }
+              className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
+            />
           </div>
         ))}
-        <button
-          type="button"
-          onClick={addDetailsRow}
-          className="mt-6 bg-darkgreen text-white py-2 px-4 rounded-lg hover:bg-darkergreen transition ease-in-out duration-200"
-        >
-          Add Details Row
-        </button>
+        <div className="flex flex-col font-medium capitalize text-gray-700">
+          <label className="block mb-2 font-lg capitalize text-gray-700">
+            sex:
+          </label>
+          <select
+            value={row.sex}
+            onChange={(e) => handleDetailsChange(index, "sex", e.target.value)}
+            className="border w-full p-2 rounded focus:ring-2 focus:ring-darkgreen"
+          >
+            <option value="">Select Sex</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
       </div>
+      <div className="my-4">
+        <hr className="border-t border-gray-300" /> {/* Divider */}
+      </div>
+    </div>
+  ))}
+  <button
+    type="button"
+    onClick={addDetailsRow}
+    className="mt-6 bg-darkgreen text-white py-2 px-4 rounded-lg hover:bg-darkergreen transition ease-in-out duration-200"
+  >
+    Add Details Row
+  </button>
+</div>
+
     </div>,
     <div className="border p-6 rounded-lg mb-8 shadow-md bg-white space-y-8 overflow-y-auto">
       {/* Clinical Signs */}

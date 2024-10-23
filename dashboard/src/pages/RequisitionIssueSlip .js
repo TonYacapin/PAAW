@@ -185,7 +185,7 @@ const RequisitionIssueSlip = () => {
 
   const pages = [
     <CardBox>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-2 gap-4 mb-4 max-h-[55vh] overflow-auto">
         {/* Header Information */}
         <div>
           <label>Division:</label>
@@ -251,9 +251,10 @@ const RequisitionIssueSlip = () => {
           />
         </div>
       </div>
-    </CardBox>,
+    </CardBox>
+    ,
     <CardBox>
-      <div className="p-4 mb-4 flex flex-col gap-4">
+      <div className="p-4 mb-4 flex flex-col gap-4 max-h-[55vh] overflow-auto">
         {/* Requisition Section */}
         <button
           onClick={() => setStocksModalOpen(true)}
@@ -343,9 +344,10 @@ const RequisitionIssueSlip = () => {
           Add Row
         </button>
       </div>
-    </CardBox>,
+    </CardBox>
+    ,
     <CardBox>
-      <div className="p-4 mb-4">
+      <div className="p-4 mb-4 flex flex-col gap-4 max-h-[55vh] overflow-auto">
         {/* Issuance Section */}
         <h2 className="font-bold mb-2">Issuance</h2>
         <table className="w-full table-auto border">
@@ -388,10 +390,11 @@ const RequisitionIssueSlip = () => {
           </tbody>
         </table>
       </div>
-    </CardBox>,
+    </CardBox>
+    ,
     <CardBox>
       {/* Footer Section */}
-      <div className="grid grid-cols-1 gap-4 mb-4">
+      <div className="grid grid-cols-1 p-4 mb-4 flex-col gap-4 max-h-[55vh] overflow-auto">
         <div>
           <label>Purpose:</label>
           <input
