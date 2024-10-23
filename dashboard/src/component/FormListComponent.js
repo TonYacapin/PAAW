@@ -217,7 +217,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                     </button>
                     <button
                       onClick={() => handleViewEntries(form.entries)}
-                      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      className="ml-2 px-2 py-1 bg-darkerpastelyellow text-white rounded hover:bg-pastelyellow"
                     >
                       View Entries
                     </button>
@@ -287,7 +287,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           <div className="overflow-auto max-h-80">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
-                <tr className="bg-gray-800 text-white">
+                <tr className="bg-darkgreen text-white">
                   {Object.keys(flattenObject(selectedEntries[0] || {})).map(
                     (key) =>
                       key !== "_id" && (
