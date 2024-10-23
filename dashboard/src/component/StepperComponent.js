@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Check,
@@ -125,12 +125,16 @@ export default function StepperComponent(props) {
 
   function timedDisable(params) {
     setTimeout(() => {
-      if (modalContentRef.current) {
-        modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
-      }
     }, 0);
     return params;
   }
+
+  useEffect(() => {
+    if (modalContentRef.current) {
+      modalContentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeStep]);
+  
 
   return (
     <Box
@@ -151,7 +155,7 @@ export default function StepperComponent(props) {
           >
             <Button
               variant="contained"
-              disabled={timedDisable(activeStep === 0)}
+              disabled={ activeStep === 0}
               onClick={handleBack}
               sx={{ mr: 1, bgcolor: "#1b5b40", color: "#fffafa" }}
             >
@@ -183,7 +187,7 @@ export default function StepperComponent(props) {
             <Button
               variant="contained"
               onClick={handleNext}
-              disabled={timedDisable(activeStep === props.pages.length - 1)}
+              disabled={activeStep === props.pages.length - 1}
               sx={{ bgcolor: "#1b5b40", color: "#fffafa" }}
             >
               Next <KeyboardArrowRight />
@@ -205,7 +209,7 @@ export default function StepperComponent(props) {
               <Button
                 size="small"
                 onClick={handleNext}
-                disabled={timedDisable(activeStep === props.pages.length - 1)}
+                disabled={activeStep === props.pages.length - 1}
                 sx={{ color: "#fffafa" }}
               >
                 Next
@@ -216,7 +220,7 @@ export default function StepperComponent(props) {
               <Button
                 size="small"
                 onClick={handleBack}
-                disabled={timedDisable(activeStep === 0, 500)}
+                disabled={activeStep === 0}
                 sx={{ color: "#fffafa" }}
               >
                 <KeyboardArrowLeft />
@@ -229,6 +233,7 @@ export default function StepperComponent(props) {
     </Box>
   );
 }
+
 
 StepperComponent.propTypes = {
   pages: PropTypes.array.isRequired,
