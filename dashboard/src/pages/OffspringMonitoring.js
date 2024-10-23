@@ -3,6 +3,7 @@ import axiosInstance from '../component/axiosInstance';
 import Papa from 'papaparse';
 import FormSubmit from '../component/FormSubmit';
 import ConfirmationModal from '../component/ConfirmationModal';
+import BarangayDropDown from '../component/BarangayDropDown';
 
 const OffspringMonitoring = () => {
     const [entries, setEntries] = useState([]);
@@ -257,6 +258,9 @@ const OffspringMonitoring = () => {
                                     />
                                 </div>
                                 <div>
+                                    <BarangayDropDown municipality={municipality} onChange={(e) => handleEntryChange(selectedEntry, 'barangay', e.target.value)}/>
+                                </div>
+                                {/* <div>
                                     <label htmlFor="barangay" className="block mb-1">Barangay</label>
                                     <input
                                         id="barangay"
@@ -265,7 +269,7 @@ const OffspringMonitoring = () => {
                                         onChange={(e) => handleEntryChange(selectedEntry, 'barangay', e.target.value)}
                                         className="border p-2 rounded w-full"
                                     />
-                                </div>
+                                </div> */}
                                 <div>
                                     <label htmlFor="species" className="block mb-1">Species</label>
                                     <input

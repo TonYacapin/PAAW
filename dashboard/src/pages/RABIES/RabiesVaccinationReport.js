@@ -6,6 +6,7 @@ import FormSubmit from "../../component/FormSubmit";
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
 import CardBox from "../../component/CardBox";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function RabiesVaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -117,17 +118,14 @@ function RabiesVaccinationReport() {
 
     try {
       console.log(entries);
-      const response = await axiosInstance.post(
-        `/api/entries`,
-        {
-          municipality,
-          dateReported,
-          vaccineUsed,
-          batchLotNo,
-          vaccineSource,
-          entries,
-        }
-      );
+      const response = await axiosInstance.post(`/api/entries`, {
+        municipality,
+        dateReported,
+        vaccineUsed,
+        batchLotNo,
+        vaccineSource,
+        entries,
+      });
       if (response.status === 201) {
         setEntries([]);
         setMunicipality("");
@@ -468,7 +466,16 @@ function RabiesVaccinationReport() {
                   className="border p-2 rounded w-full"
                 />
               </div>
+
               <div>
+                <BarangayDropDown
+                  municipality={municipality}
+                  onChange={(e) =>
+                    handleEntryChange(selectedEntry, "barangay", e.target.value)
+                  }
+                />
+              </div>
+              {/* <div>
                 <label htmlFor="entryBarangay" className="block mb-1">
                   Barangay
                 </label>
@@ -481,7 +488,7 @@ function RabiesVaccinationReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
             </div>
 
             <h4 className="text-lg font-semibold mb-2">Client Information</h4>
