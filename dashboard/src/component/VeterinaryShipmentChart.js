@@ -10,7 +10,10 @@ import {
   CategoryScale,
   LinearScale,
   ArcElement,
+  LineElement,
+  TimeScale
 } from "chart.js";
+import 'chartjs-adapter-date-fns'; // For handling date in the line chart
 import ChartGroup from "./ChartGroup";
 import { FilterContext } from "../pages/Home/Home";
 
@@ -21,7 +24,9 @@ ChartJS.register(
   BarElement,
   CategoryScale,
   LinearScale,
-  ArcElement
+  ArcElement,
+  LineElement,
+  TimeScale
 );
 
 const VeterinaryShipmentChart = ({ filterValues }) => {
@@ -48,9 +53,11 @@ const VeterinaryShipmentChart = ({ filterValues }) => {
         const originCounts = {};
         const liveAnimalCounts = {};
         const animalByProductsCounts = {};
+        const shipmentsByDate = {}; // For Line Chart
+        const shipmentsByMonth = {}; // For Month Bar Chart
 
         shipmentData.forEach((shipment) => {
-          const { shipmentType, pointOfOrigin, liveAnimals, animalByProducts } = shipment;
+          const { shipmentType, pointOfOrigin, liveAnimals, animalByProducts, date } = shipment;
 
           // Count shipments by type
           if (!shipmentCountsByType[shipmentType]) shipmentCountsByType[shipmentType] = 0;
@@ -71,6 +78,16 @@ const VeterinaryShipmentChart = ({ filterValues }) => {
             if (!animalByProductsCounts[product]) animalByProductsCounts[product] = 0;
             animalByProductsCounts[product] += animalByProducts[product];
           });
+
+          // Count shipments over time (Line Chart)
+          const shipmentDate = new Date(date).toLocaleDateString();
+          if (!shipmentsByDate[shipmentDate]) shipmentsByDate[shipmentDate] = 0;
+          shipmentsByDate[shipmentDate] += 1;
+
+          // Count shipments by month (Bar Chart)
+          const month = new Date(date).toLocaleString('default', { month: 'long', year: 'numeric' });
+          if (!shipmentsByMonth[month]) shipmentsByMonth[month] = 0;
+          shipmentsByMonth[month] += 1;
         });
 
         const chartOptions = {
@@ -118,6 +135,44 @@ const VeterinaryShipmentChart = ({ filterValues }) => {
               backgroundColor: "#e5cd50",
             }],
             options: chartOptions,
+          },
+          totalShipmentsOverTime: {
+            labels: Object.keys(shipmentsByDate),
+            datasets: [{
+              label: "Total Shipments Over Time",
+              data: Object.values(shipmentsByDate),
+              borderColor: "#1b5b40",
+              fill: false,
+              tension: 0.1
+            }],
+            options: {
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    unit: 'day'
+                  }
+                }
+              }
+            }
+          },
+          shipmentsByMonth: {
+            labels: Object.keys(shipmentsByMonth),
+            datasets: [{
+              label: "Shipments by Month",
+              data: Object.values(shipmentsByMonth),
+              backgroundColor: "#e5cd50"
+            }],
+            options: chartOptions
+          },
+          liveAnimalPercentage: {
+            labels: Object.keys(liveAnimalCounts),
+            datasets: [{
+              label: "Percentage of Shipments by Animal Type",
+              data: Object.values(liveAnimalCounts),
+              backgroundColor: ["#ffe459", "#1b5b40", "#e5cd50", "#123c29", "#252525", "#ff6347"],
+            }],
+            options: chartOptions
           },
         });
 
@@ -181,28 +236,31 @@ const VeterinaryShipmentChart = ({ filterValues }) => {
       content: <Bar data={data.animalByProductChart} options={data.animalByProductChart.options} />,
       style: "col-span-2",
     },
+    {
+      label: "Total Shipments Over Time",
+      content: <Line data={data.totalShipmentsOverTime} options={data.totalShipmentsOverTime.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Percentage of Shipments by Animal Type",
+      content: <Doughnut data={data.liveAnimalPercentage} options={data.liveAnimalPercentage.options} />,
+      style: "col-span-2",
+    },
+    {
+      label: "Shipments by Month",
+      content: <Bar data={data.shipmentsByMonth} options={data.shipmentsByMonth.options} />,
+      style: "col-span-2",
+    },
   ];
 
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Veterinary Shipment Report
         </h2>
-        <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
-          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
-            Analysis
-          </h3>
-          <p className="text-gray-800 mt-4 text-lg leading-relaxed">
-            {analysis}
-          </p>
-        </div>
-        <ChartGroup
-          charts={charts}
-          title="Veterinary Shipment Report"
-          selectedChart={selectedChart}
-          setSelectedChart={setSelectedChart}
-        />
+        {analysis && <div className="mb-4">{analysis}</div>}
+        <ChartGroup charts={charts} selectedChart={selectedChart} setSelectedChart={setSelectedChart} />
       </div>
     </div>
   );

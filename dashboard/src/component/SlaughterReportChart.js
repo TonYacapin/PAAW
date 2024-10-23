@@ -29,7 +29,7 @@ const SlaughterReportChart = ({ filterValues }) => {
   const [loading, setLoading] = useState(true);
   const filterOptions = useContext(FilterContext);
   const [selectedChart, setSelectedChart] = useState(null);
-  const [analysis, setAnalysis] = useState(""); // State for storing analysis
+  const [analysis, setAnalysis] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +41,9 @@ const SlaughterReportChart = ({ filterValues }) => {
             endDate: filterValues.endDate || undefined,
           },
         });
+
+        console.log("Fetched Data:", response.data); // Debugging log
+
         const reports = response.data;
 
         // Initialize count objects
@@ -51,12 +54,14 @@ const SlaughterReportChart = ({ filterValues }) => {
         reports.forEach((report) => {
           const { municipality, slaughterAnimals } = report;
 
+          // Count municipality slaughters
           if (!municipalityCounts[municipality]) municipalityCounts[municipality] = 0;
           municipalityCounts[municipality] += 1;
 
           slaughterAnimals.forEach((animal) => {
             const { name, number, weight } = animal;
 
+            // Count animals and weight
             if (!animalCounts[name]) animalCounts[name] = 0;
             animalCounts[name] += number;
 
@@ -65,16 +70,15 @@ const SlaughterReportChart = ({ filterValues }) => {
           });
         });
 
-        // Transform data for charts
+        // Define chart options
         const chartOptions = {
           plugins: {
             legend: {
-              display: selectedChart !== null,
+              display: true,
             },
           },
         };
 
-        // Update chart data in the component state
         setData({
           municipalityChart: {
             labels: Object.keys(municipalityCounts),
@@ -116,19 +120,16 @@ const SlaughterReportChart = ({ filterValues }) => {
           ""
         );
 
-        setAnalysis(
-          <>
-            <p>
-              <strong>Total slaughters:</strong> {totalSlaughters}.
-            </p>
-            <p>
-              <strong>Heaviest Slaughtered Animal:</strong> {heaviestAnimal} ({weightCounts[heaviestAnimal]} kg).
-            </p>
-            <p>
-              <strong>Most Slaughtered Municipality:</strong> {mostSlaughteredMunicipality} ({municipalityCounts[mostSlaughteredMunicipality]} times).
-            </p>
-          </>
-        );
+        // Additional analysis for each chart
+        setAnalysis({
+          totalSlaughters,
+          heaviestAnimal,
+          heaviestAnimalWeight: weightCounts[heaviestAnimal],
+          mostSlaughteredMunicipality,
+          municipalityCounts,
+          animalCounts,
+          weightCounts,
+        });
 
         setLoading(false);
       } catch (error) {
@@ -144,20 +145,27 @@ const SlaughterReportChart = ({ filterValues }) => {
     return <div className="text-center text-lg py-10">Loading chart data...</div>;
   }
 
+  // Check if the data object contains the necessary chart data
   const charts = [
     {
       label: "Slaughters per Municipality",
-      content: <Bar data={data.municipalityChart} options={data.municipalityChart.options} />,
+      content: data.municipalityChart ? (
+        <Bar data={data.municipalityChart} options={data.municipalityChart.options} />
+      ) : <div>No data available for Slaughters per Municipality</div>,
       style: "col-span-2",
     },
     {
       label: "Number of Animals Slaughtered",
-      content: <Pie data={data.animalChart} options={data.animalChart.options} />,
+      content: data.animalChart ? (
+        <Pie data={data.animalChart} options={data.animalChart.options} />
+      ) : <div>No data available for Number of Animals Slaughtered</div>,
       style: "col-span-2",
     },
     {
       label: "Total Weight of Slaughtered Animals",
-      content: <Line data={data.weightChart} options={data.weightChart.options} />,
+      content: data.weightChart ? (
+        <Line data={data.weightChart} options={data.weightChart.options} />
+      ) : <div>No data available for Total Weight of Slaughtered Animals</div>,
       style: "col-span-2",
     },
   ];
@@ -168,13 +176,18 @@ const SlaughterReportChart = ({ filterValues }) => {
         <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
           Slaughter Report
         </h2>
+        
         {/* Analysis Section */}
         <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
           <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
             Analysis
           </h3>
           <p className="text-gray-800 mt-4 text-lg leading-relaxed">
-            {analysis}
+            <strong>Total Slaughters:</strong> {analysis.totalSlaughters} <br />
+            <strong>Heaviest Slaughtered Animal:</strong> {analysis.heaviestAnimal} ({analysis.heaviestAnimalWeight} kg) <br />
+            <strong>Most Slaughtered Municipality:</strong> {analysis.mostSlaughteredMunicipality} ({analysis.municipalityCounts[analysis.mostSlaughteredMunicipality]} times) <br />
+            <strong>Total Municipalities:</strong> {Object.keys(analysis.municipalityCounts).length}. <br />
+            <strong>Most Slaughtered Animal:</strong> {Object.keys(analysis.animalCounts).reduce((a, b) => (analysis.animalCounts[a] > analysis.animalCounts[b] ? a : b), "")} with {Math.max(...Object.values(analysis.animalCounts))} slaughters.
           </p>
         </div>
 
