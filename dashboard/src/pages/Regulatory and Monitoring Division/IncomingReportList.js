@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../component/axiosInstance';
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../../component/axiosInstance";
 
 function IncomingReportList() {
   const [data, setData] = useState([]);
@@ -7,8 +7,8 @@ function IncomingReportList() {
   const [error, setError] = useState(null);
 
   // Date filter state
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +16,7 @@ function IncomingReportList() {
         const response = await axiosInstance.get(`/api/vetshipform`);
         setData(response.data);
       } catch (err) {
-        console.error('Error fetching data:', err.message);
+        console.error("Error fetching data:", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -39,31 +39,36 @@ function IncomingReportList() {
 
   // Process shipment data: sum up all incoming shipments per month
   const getFilteredIncomingShipmentsByMonth = () => {
-    const filteredShipments = startDate && endDate ? filterDataByDate(data, startDate, endDate) : data;
+    const filteredShipments =
+      startDate && endDate ? filterDataByDate(data, startDate, endDate) : data;
 
     // Array to hold data for each month
-    const incomingShipmentsByMonth = Array(12).fill(null).map(() => ({
-      Carabao: 0,
-      Cattle: 0,
-      Swine: 0,
-      Horse: 0,
-      Chicken: 0,
-      Duck: 0,
-      Other: 0,
-    }));
+    const incomingShipmentsByMonth = Array(12)
+      .fill(null)
+      .map(() => ({
+        Carabao: 0,
+        Cattle: 0,
+        Swine: 0,
+        Horse: 0,
+        Chicken: 0,
+        Duck: 0,
+        Other: 0,
+      }));
 
     filteredShipments.forEach((shipment) => {
-      if (shipment.shipmentType === 'Incoming') {
+      if (shipment.shipmentType === "Incoming") {
         const shipmentDate = new Date(shipment.date);
         const monthIndex = shipmentDate.getMonth();
         const liveAnimals = shipment.liveAnimals || {};
 
         // Accumulate counts for each animal type in the appropriate month
-        incomingShipmentsByMonth[monthIndex].Carabao += liveAnimals.Carabao || 0;
+        incomingShipmentsByMonth[monthIndex].Carabao +=
+          liveAnimals.Carabao || 0;
         incomingShipmentsByMonth[monthIndex].Cattle += liveAnimals.Cattle || 0;
         incomingShipmentsByMonth[monthIndex].Swine += liveAnimals.Swine || 0;
         incomingShipmentsByMonth[monthIndex].Horse += liveAnimals.Horse || 0;
-        incomingShipmentsByMonth[monthIndex].Chicken += liveAnimals.Chicken || 0;
+        incomingShipmentsByMonth[monthIndex].Chicken +=
+          liveAnimals.Chicken || 0;
         incomingShipmentsByMonth[monthIndex].Duck += liveAnimals.Duck || 0;
         incomingShipmentsByMonth[monthIndex].Other += liveAnimals.Other || 0;
       }
@@ -74,18 +79,27 @@ function IncomingReportList() {
 
   // Function to calculate the total for each month
   const calculateTotal = (monthlyShipments) => {
-    return Object.values(monthlyShipments).reduce((total, count) => total + count, 0);
+    return Object.values(monthlyShipments).reduce(
+      (total, count) => total + count,
+      0
+    );
   };
 
   // Print function
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     const incomingShipmentsByMonth = getFilteredIncomingShipmentsByMonth();
-    const tableRows = incomingShipmentsByMonth.map((monthlyShipments, index) => {
-      const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
-      return `
+    const tableRows = incomingShipmentsByMonth
+      .map((monthlyShipments, index) => {
+        const total = Object.values(monthlyShipments).reduce(
+          (acc, count) => acc + count,
+          0
+        );
+        return `
         <tr>
-          <td>${new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+          <td>${new Date(0, index).toLocaleString("default", {
+            month: "long",
+          })}</td>
           <td>${monthlyShipments.Carabao}</td>
           <td>${monthlyShipments.Cattle}</td>
           <td>${monthlyShipments.Swine}</td>
@@ -95,7 +109,8 @@ function IncomingReportList() {
           <td>${monthlyShipments.Other}</td>
           <td>${total}</td>
         </tr>`;
-    }).join('');
+      })
+      .join("");
 
     const printContent = `
       <html>
@@ -143,6 +158,9 @@ function IncomingReportList() {
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
+      <h1 className="text-3xl font-bold text-darkgreen text-center mb-8">
+        Incoming Report List
+      </h1>
       <div className="mb-4">
         <label className="mr-2">Start Date:</label>
         <input
@@ -161,11 +179,16 @@ function IncomingReportList() {
         />
       </div>
 
-      <button onClick={handlePrint} className="mb-4 p-2 bg-darkgreen text-white rounded">
+      <button
+        onClick={handlePrint}
+        className="mb-4 p-2 bg-darkgreen text-white rounded"
+      >
         Print Report
       </button>
 
-      {incomingShipmentsByMonth.every(month => Object.values(month).every(count => count === 0)) ? (
+      {incomingShipmentsByMonth.every((month) =>
+        Object.values(month).every((count) => count === 0)
+      ) ? (
         <div>No shipments found for the selected date range.</div>
       ) : (
         <div className="overflow-x-auto">
@@ -180,22 +203,45 @@ function IncomingReportList() {
                 <th className="border border-gray-300 p-2">Chicken</th>
                 <th className="border border-gray-300 p-2">Duck</th>
                 <th className="border border-gray-300 p-2">Other</th>
-                <th className="border border-gray-300 p-2">Total</th>
+                <th className="border border-gray-300 p-2  bg-darkerpastelyellow">
+                  Total
+                </th>
               </tr>
             </thead>
             <tbody>
               {incomingShipmentsByMonth.map((monthlyShipments, index) => {
-                const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+                const total = Object.values(monthlyShipments).reduce(
+                  (acc, count) => acc + count,
+                  0
+                );
                 return (
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-300 p-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Carabao}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Cattle}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Swine}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Horse}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Chicken}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Duck}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Other}</td>
+                    <td className="border border-gray-300 p-2">
+                      {new Date(0, index).toLocaleString("default", {
+                        month: "long",
+                      })}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Carabao}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Cattle}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Swine}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Horse}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Chicken}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Duck}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Other}
+                    </td>
                     <td className="border border-gray-300 p-2">{total}</td>
                   </tr>
                 );

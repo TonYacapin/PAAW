@@ -140,6 +140,7 @@ function OutgoingReportList() {
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
+      <h1 className="text-3xl font-bold text-darkgreen text-center mb-8">Outgoing Report List</h1>
       <div className="mb-4">
         <label className="mr-2">Start Date:</label>
         <input

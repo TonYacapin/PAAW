@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../component/axiosInstance';
+import ConfirmationModal from '../../component/ConfirmationModal';
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -16,6 +17,8 @@ function EquipmentInventory() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false); // Confirmation modal for delete
+  const [inventoryToDelete, setInventoryToDelete] = useState(null); // Store inventory to delete
 
   useEffect(() => {
     fetchInventories();
@@ -45,7 +48,7 @@ function EquipmentInventory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (isEditing) {
       try {
         await axiosInstance.put(`/api/inventory/${newInventory._id}`, newInventory);
@@ -60,7 +63,7 @@ function EquipmentInventory() {
         console.error('Error adding inventory:', error);
       }
     }
-    
+
     setIsModalOpen(false); // Close the modal after submitting
     fetchInventories(); // Refresh inventory list
   };
@@ -91,15 +94,27 @@ function EquipmentInventory() {
     setIsModalOpen(true); // Open modal for editing
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
+  const openConfirmDeleteModal = (id) => {
+    setInventoryToDelete(id); // Store the ID of the inventory to delete
+    setIsConfirmDeleteOpen(true); // Open confirmation modal
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (inventoryToDelete) {
       try {
-        await axiosInstance.delete(`/api/inventory/${id}`);
+        await axiosInstance.delete(`/api/inventory/${inventoryToDelete}`);
         fetchInventories(); // Refresh inventory list after deletion
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
+      setInventoryToDelete(null); // Clear inventory to delete
     }
+    setIsConfirmDeleteOpen(false); // Close confirmation modal
+  };
+
+  const closeConfirmDeleteModal = () => {
+    setInventoryToDelete(null); // Clear inventory to delete
+    setIsConfirmDeleteOpen(false); // Close confirmation modal
   };
 
   return (
@@ -197,6 +212,14 @@ function EquipmentInventory() {
         </div>
       )}
 
+      {/* Confirmation Modal for Delete */}
+      <ConfirmationModal
+        isOpen={isConfirmDeleteOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={closeConfirmDeleteModal}
+        message="Are you sure you want to delete this item?"
+      />
+
       {/* Table to display inventories */}
       <table className="min-w-full border border-gray-300 mt-6">
         <thead>
@@ -219,9 +242,11 @@ function EquipmentInventory() {
               <td className="border border-gray-300 p-2">{inventory.quantity}</td>
               <td className="border border-gray-300 p-2">{inventory.out}</td>
               <td className="border border-gray-300 p-2">{inventory.total}</td>
-              <td className="border border-gray-300 p-2">
-                <button onClick={() => handleEdit(inventory)} className="text-blue-600">Edit</button>
-                <button onClick={() => handleDelete(inventory._id)} className="text-red-600 ml-2">Delete</button>
+              <td className="border border-gray-300 p-2 text-center">
+                <div className='space-x-3'>
+                  <button onClick={() => handleEdit(inventory)} className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen shadow-md text-center">Edit</button>
+                  <button onClick={() => openConfirmDeleteModal(inventory._id)} className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 shadow-md text-center">Delete</button>
+                </div>
               </td>
             </tr>
           ))}
