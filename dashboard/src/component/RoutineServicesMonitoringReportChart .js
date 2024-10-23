@@ -111,8 +111,8 @@ const RoutineServicesMonitoringReportChart = ({ filterValues }) => {
           datasets: [{
             label: 'Number of Heads per Date',
             data: Object.values(headsPerDate),
-            borderColor: 'rgba(54, 162, 235, 1)',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)'
+            borderColor: '#123c29',
+            backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"]
           }]
         };
 
@@ -159,16 +159,49 @@ const RoutineServicesMonitoringReportChart = ({ filterValues }) => {
           }]
         };
 
-        // Analysis Section
-        const totalEntries = reports.length;
-        const totalMunicipalities = Object.keys(municipalityCounts).length;
-        setAnalysis(
-          <>
-            <strong>Total number of reports:</strong> {totalEntries}.{" "}
-            <strong>Number of municipalities involved:</strong> {totalMunicipalities}.
-          </>
-        );
-        
+     // Analysis Section
+const totalEntries = reports.length;
+const totalMunicipalities = Object.keys(municipalityCounts).length;
+
+// Find the municipality with the highest number of entries
+const topMunicipality = Object.entries(municipalityCounts).reduce((a, b) => (a[1] > b[1] ? a : b), ['', 0]);
+
+// Find the species with the most animals
+const topSpecies = Object.entries(speciesCounts).reduce((a, b) => (a[1] > b[1] ? a : b), ['', 0]);
+
+// Find the most common activity
+const topActivity = Object.entries(activityCounts).reduce((a, b) => (a[1] > b[1] ? a : b), ['', 0]);
+
+// Calculate the percentage of registered animals
+const registeredPercentage = ((registeredAnimals / totalAnimals) * 100).toFixed(2);
+
+setAnalysis(
+<>
+  <p>
+    <strong>Total number of reports:</strong> {totalEntries}.
+  </p>
+  <p>
+    <strong>Number of municipalities involved:</strong> {totalMunicipalities}.
+  </p>
+  <p>
+    <strong>Municipality with the highest number of reports:</strong> {topMunicipality[0]} ({topMunicipality[1]} reports).
+  </p>
+  <p>
+    <strong>Most common species:</strong> {topSpecies[0]} ({topSpecies[1]} heads).
+  </p>
+  <p>
+    <strong>Most frequently performed activity:</strong> {topActivity[0]} ({topActivity[1]} occurrences).
+  </p>
+  <p>
+    <strong>Total number of animals recorded:</strong> {totalAnimals}.
+  </p>
+  <p>
+    <strong>Percentage of animals registered:</strong> {registeredPercentage}%.
+  </p>
+</>
+
+);
+
 
         // Set the processed data to the component state
         setData({

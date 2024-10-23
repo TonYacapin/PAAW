@@ -15,10 +15,11 @@ const FilterComponent = ({ municipalities, onFilter }) => {
   };
 
   return (
-    <div className="filter-container">
+    <div className="filter-container p-4 bg-white shadow-lg rounded-lg flex flex-col sm:flex-row gap-4 items-center">
       <select
         value={selectedMunicipality}
         onChange={(e) => setSelectedMunicipality(e.target.value)}
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
       >
         <option value="">Select Municipality</option>
         {municipalities.map((municipality) => (
@@ -32,15 +33,20 @@ const FilterComponent = ({ municipalities, onFilter }) => {
         type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
       />
 
       <input
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
+        className="w-full sm:w-auto p-2 border border-gray-300 rounded-md text-black"
       />
 
-      <button onClick={handleApplyFilters} className="apply-filters-btn">
+      <button
+        onClick={handleApplyFilters}
+        className="apply-filters-btn p-2 bg-darkgreen text-white rounded-md hover:bg-darkergreen transition-colors"
+      >
         Apply Filters
       </button>
     </div>
