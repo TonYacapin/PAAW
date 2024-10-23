@@ -71,6 +71,7 @@ import EquipmentInventory from "../Admin Pages/EquipmentInventory";
 import FormListComponent from "../../component/FormListComponent";
 import DiseaseInvestigationFormLists from "../Livestock and Poultry DRRM/DiseaseInvestigationFormLists";
 import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
+import TechnicianQuarterlyReportList from "../../component/TechnicianQuarterlyReportList";
 
 export const FilterContext = createContext(null);
 
@@ -138,114 +139,129 @@ function Home({ handleLogout, setIsAuthenticated }) {
     setShowAll((prevShowAll) => !prevShowAll); // Toggle between all data and filtered data
   };
 
+  // function name(params) {
+    
+  // }
   const renderModalContent = () => {
-    switch (modalContent) {
-      case "RabiesVaccinationReport":
-        return <RabiesVaccinationReport />;
-      case "VaccinationReport":
-        return <VaccinationReport />;
-      case "RoutineServicesMonitoringReport":
-        return <RoutineServicesMonitoringReport />;
-      case "DiseaseInvestigationForm":
-        return <DiseaseInvestigationForm />;
-      case "RequisitionSlip":
-        return <RequisitionIssueSlip />;
-      case "RabiesHistoryForm":
-        return <RabiesHistoryForm />;
-      case "AccomplishmentReport":
-        return <MonthlyAccomplishmentReport />;
-      case "UserManagement":
-        return <UserManagement />;
-      case "UpgradingServices":
-        return <UpgradingServices />;
-      case "OffSpringMonitoring":
-        return <OffspringMonitoring />;
-      case "CalfDrop":
-        return <TechnicianQuarterlyReportForm />;
-      case "AccomplishmentReportLivestock":
-        return <MonthlyAccomplishmentReportLivestock />;
-      case "SlaughterReportList":
-        return <SlaughterReportList />;
-      case "VeterinaryShipmentList":
-        return <VeterinaryShipmentList />;
-      case "OutgoingReportList":
-        return <OutgoingReportList />;
-      case "IncomingReportList":
-        return <IncomingReportList />;
-      case "AnimalHealthCareServices":
-        return <AnimalHealthCareServices />;
-      case "AnimalProductionServices":
-        return <AnimalProductionServices />;
-      case "RegulatoryCareServices":
-        return <RegulatoryCareServices />;
-      case "VeterinaryInformationServices":
-        return <VeterinaryInformationServices />;
-      case "AuditLogList":
-        return <AuditLogList />;
-      case "Inventory":
-        return <EquipmentInventory />;
-      case "AnimalHealthCareServicesList":
-        return <AnimalHealthCareServicesList />;
-      case "AnimalProductionServicesList":
-        return <AnimalProductionServicesList />;
-      case "VeterinaryInformationServiceList":
-        return <VeterinaryInformationServiceList />;
-      case "RegulatoryCareServicesList":
-        return <RegulatoryCareServicesList />;
-      // case "UpgradingServicesList":
-      //   return <UpgradingServicesList />;
-      case "RabiesVaccinationReportList":
-        return (
-          <FormListComponent
-            endpoint="/api/entries"
-            title="Rabies Vaccination Report List"
-            FormComponent={RabiesVaccinationReport}
-          />
-        );
-      case "VaccinationReportList":
-        return (
-          <FormListComponent
-            endpoint="/api/reports"
-            title="Vaccination Report List"
-            FormComponent={VaccinationReport}
-          />
-        );
-      case "RoutineServicesList":
-        return (
-          <FormListComponent
-            endpoint="/RSM"
-            title="Routine Services List"
-            FormComponent={RoutineServicesMonitoringReport}
-          />
-        );
-      case "UpgradingServicesList":
-        return (
-          <FormListComponent
-            endpoint="/api/upgrading-services"
-            title="Upgrading Services List"
-            FormComponent={UpgradingServices}
-          />
-        );
-      case "OffSpringMonitoringList":
-        return (
-          <FormListComponent
-            endpoint="/api/offspring-monitoring"
-            title="Offspring Monitoring List"
-            FormComponent={OffspringMonitoring}
-          />
-        );
-      case "TechnicianQuarterlyList":
-        return (
-          <FormListComponent
-            endpoint="/api/technician-quarterly"
-            title="Technician Quarterly List"
-            formComponent={TechnicianQuarterlyReportForm}
-          />
-        );
-      case "DiseaseInvestigationFormLists":
-        return <DiseaseInvestigationFormLists />;
-      case "RabiesHistoryFormLists":
-        return <RabiesHistoryFormLists />;
+    // switch (modalContent) {
+    //   case "RabiesVaccinationReport":
+    //     return (
+    //       <>
+    //         {userRole === "admin" ? 
+    //           <RabiesVaccinationReport/>
+    //         : 
+    //           <FormListComponent
+    //             endpoint="/api/entries"
+    //             title="Rabies Vaccination Report List"
+    //             FormComponent={RabiesVaccinationReport}
+    //           />
+    //         }
+    //       </>
+    //     );
+    // Divide
+      switch (modalContent) {
+        case "RabiesVaccinationReport":
+          return <RabiesVaccinationReport />;
+          case "VaccinationReport":
+            return <VaccinationReport />;
+          case "RoutineServicesMonitoringReport":
+            return <RoutineServicesMonitoringReport />;
+          case "DiseaseInvestigationForm":
+            return <DiseaseInvestigationForm />;
+          case "RequisitionSlip":
+            return <RequisitionIssueSlip />;
+          case "RabiesHistoryForm":
+            return <RabiesHistoryForm />;
+          case "AccomplishmentReport":
+            return <MonthlyAccomplishmentReport />;
+          case "UserManagement":
+            return <UserManagement />;
+          case "UpgradingServices":
+            return <UpgradingServices />;
+          case "OffSpringMonitoring":
+            return <OffspringMonitoring />;
+          case "CalfDrop":
+            return <TechnicianQuarterlyReportForm />;
+          case "AccomplishmentReportLivestock":
+            return <MonthlyAccomplishmentReportLivestock />;
+          case "SlaughterReportList":
+            return <SlaughterReportList />;
+          case "VeterinaryShipmentList":
+            return <VeterinaryShipmentList />;
+          case "OutgoingReportList":
+            return <OutgoingReportList />;
+          case "IncomingReportList":
+            return <IncomingReportList />;
+          case "AnimalHealthCareServices":
+            return <AnimalHealthCareServices />;
+          case "AnimalProductionServices":
+            return <AnimalProductionServices />;
+          case "RegulatoryCareServices":
+            return <RegulatoryCareServices />;
+          case "VeterinaryInformationServices":
+            return <VeterinaryInformationServices />;
+          case "AuditLogList":
+            return <AuditLogList />;
+          case "Inventory":
+            return <EquipmentInventory />;
+          case "AnimalHealthCareServicesList":
+            return <AnimalHealthCareServicesList />;
+          case "AnimalProductionServicesList":
+            return <AnimalProductionServicesList />;
+          case "VeterinaryInformationServiceList":
+            return <VeterinaryInformationServiceList />;
+          case "RegulatoryCareServicesList":
+            return <RegulatoryCareServicesList />;
+          // case "UpgradingServicesList":
+          //   return <UpgradingServicesList />;
+          case "RabiesVaccinationReportList":
+            return (
+      <FormListComponent
+        endpoint="/api/entries"
+        title="Rabies Vaccination Report List"
+        FormComponent={RabiesVaccinationReport}
+      />
+            );
+          case "VaccinationReportList":
+            return (
+              <FormListComponent
+                endpoint="/api/reports"
+                title="Vaccination Report List"
+                FormComponent={VaccinationReport}
+              />
+            );
+          case "RoutineServicesList":
+            return (
+              <FormListComponent
+                endpoint="/RSM"
+                title="Routine Services List"
+                FormComponent={RoutineServicesMonitoringReport}
+              />
+            );
+          case "UpgradingServicesList":
+            return (
+              <FormListComponent
+                endpoint="/api/upgrading-services"
+                title="Upgrading Services List"
+                FormComponent={UpgradingServices}
+              />
+            );
+          case "OffSpringMonitoringList":
+            return (
+              <FormListComponent
+                endpoint="/api/offspring-monitoring"
+                title="Offspring Monitoring List"
+                FormComponent={OffspringMonitoring}
+              />
+            );
+          case "TechnicianQuarterlyList":
+            return (
+              <TechnicianQuarterlyReportList/>
+            );
+          case "DiseaseInvestigationFormLists":
+            return <DiseaseInvestigationFormLists />;
+          case "RabiesHistoryFormLists":
+            return <RabiesHistoryFormLists />;
 
       default:
         return null;
