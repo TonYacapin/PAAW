@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 // Route to get filtered upgrading service reports
 router.get('/', async (req, res) => {
   try {
-    const { formStatus, municipality, startDate, endDate, species } = req.query;
+    const { formStatus, municipality, startDate, endDate, species,  } = req.query;
 
     // Create a filter object for the query
     const filter = {};
@@ -50,6 +50,7 @@ router.get('/', async (req, res) => {
         filter.dateSubmitted.$lte = new Date(endDate); // Less than or equal to endDate
       }
     }
+   
 
     // Find reports based on the filter
     const reports = await OffspringMonitoring.find(filter);

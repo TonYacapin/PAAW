@@ -66,7 +66,7 @@ router.post(
 // Get all reports
 // Route to get filtered Routine Services Monitoring Reports
 router.get('/RSM', async (req, res) => {
-  const { municipality, startDate, endDate, species, activity } = req.query;
+  const { municipality, startDate, endDate, species, activity , formStatus} = req.query;
 
   try {
     // Build the query object based on the filters provided
@@ -98,6 +98,10 @@ router.get('/RSM', async (req, res) => {
       if (endDate) {
         query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
       }
+    }
+
+    if (formStatus) {
+      query.formStatus = formStatus;
     }
 
     // Fetch the filtered reports from the database
