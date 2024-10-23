@@ -4,6 +4,7 @@ import StepperComponent from "../../component/StepperComponent";
 import Papa from "papaparse"; // Make sure to import Papa Parse
 import axiosInstance from "../../component/axiosInstance";
 import CardBox from "../../component/CardBox";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function AnimalProductionServices() {
   const [clientInfo, setClientInfo] = useState({
@@ -254,7 +255,7 @@ function AnimalProductionServices() {
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block mb-2 font-medium">Barangay</label>
                   <input
                     type="text"
@@ -265,7 +266,7 @@ function AnimalProductionServices() {
                     required
                     className="border w-full p-2 rounded"
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <label className="block mb-2 font-medium">Municipality</label>
@@ -294,7 +295,7 @@ function AnimalProductionServices() {
                     <option value="Santa Fe">Santa Fe</option>
                   </select>
                 </div>
-
+                  
                 <div>
                   <label className="block mb-2 font-medium">Province</label>
                   <input

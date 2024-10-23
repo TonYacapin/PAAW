@@ -43,7 +43,7 @@ const UpgradingServices = () => {
         >
           Remove
         </button>
-        </CardBox>
+      </CardBox>
     ));
   }
 
@@ -137,14 +137,11 @@ const UpgradingServices = () => {
   const saveEntries = async () => {
     try {
       console.log(entries);
-      const response = await axiosInstance.post(
-        `/api/upgrading-services`,
-        {
-          municipality,
-          dateReported,
-          entries,
-        }
-      );
+      const response = await axiosInstance.post(`/api/upgrading-services`, {
+        municipality,
+        dateReported,
+        entries,
+      });
       if (response.status === 201) {
         alert("Entries saved successfully");
         setEntries([]);
@@ -271,8 +268,6 @@ const UpgradingServices = () => {
       },
     });
   };
-
-
 
   return (
     <>
@@ -434,9 +429,6 @@ const UpgradingServices = () => {
                     }
                     className="border p-2 rounded w-full"
                   >
-
-
-
                     <option value="" disabled>
                       Select Sex
                     </option>
@@ -597,14 +589,12 @@ const UpgradingServices = () => {
                       e.target.value
                     )
                   }
-                  className="border p-2 rounded w-full">
-
+                  className="border p-2 rounded w-full"
+                >
                   <option value=""></option>
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
-
                 </select>
-
               </div>
 
               <div>
@@ -640,15 +630,19 @@ const UpgradingServices = () => {
                 >
                   <option value="">Select Activity</option>
                   <option value="EstrusSynchro">Estrus Synchronization</option>
-                  <option value="ArtificialInsemination">Artificial Insemination</option>
-                  <option value="PregnancyDiagnosis">Pregnancy Diagnosis</option>
-                  <option value="VitaminADE">Vitamin ADE supplementation</option>
+                  <option value="ArtificialInsemination">
+                    Artificial Insemination
+                  </option>
+                  <option value="PregnancyDiagnosis">
+                    Pregnancy Diagnosis
+                  </option>
+                  <option value="VitaminADE">
+                    Vitamin ADE supplementation
+                  </option>
                 </select>
               </div>
 
-              <div className="mb-3"/>
-
-
+              <div className="mb-3" />
 
               <div>
                 <label htmlFor="remarks" className="block mb-1">
@@ -659,17 +653,13 @@ const UpgradingServices = () => {
                   type="text"
                   value={entries[selectedEntry].remarks}
                   onChange={(e) =>
-                    handleEntryChange(
-                      selectedEntry,
-                      "remarks",
-                      e.target.value
-                    )
+                    handleEntryChange(selectedEntry, "remarks", e.target.value)
                   }
                   className="border p-2 rounded w-full"
                 />
               </div>
 
-              <div className="mb-3"/>
+              <div className="mb-3" />
 
               <div className="flex justify-end">
                 <button
@@ -737,17 +727,14 @@ const UpgradingServices = () => {
             ))}
           </div>
           <div className="mb-3" />
-
-
         </div>
-        
+
         <FormSubmit
           handleImportCSV={importCSV}
           handleExportCSV={exportAsCSV}
           handleSubmit={saveEntries}
         />
       </div>
-      
     </>
   );
 };

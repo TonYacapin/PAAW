@@ -3,6 +3,7 @@ import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
 import CardBox from "../../component/CardBox";
 import axiosInstance from "../../component/axiosInstance";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function VeterinaryInformationService() {
   // State for storing input values
@@ -14,7 +15,7 @@ function VeterinaryInformationService() {
     birthday: "",
     gender: "",
     contact: "",
-    service: "", 
+    service: "",
     others: "", // Added for Others field
   });
 
@@ -32,7 +33,7 @@ function VeterinaryInformationService() {
       console.log("Form Submitted Data:", response.data);
 
       // Display success message
-   
+
       // Clear the form
       setClientInfo({
         name: "",
@@ -45,11 +46,8 @@ function VeterinaryInformationService() {
         service: "",
         others: "",
       });
-
-
     } catch (error) {
       console.error("Error submitting form:", error);
-    
     }
   };
 
@@ -111,153 +109,161 @@ function VeterinaryInformationService() {
         Veterinary Information Services
       </h2>
       <CardBox>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2 font-medium">Name</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={clientInfo.name}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Barangay</label>
-          <input
-            type="text"
-            name="barangay"
-            placeholder="Barangay"
-            value={clientInfo.barangay}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Municipality</label>
-          <select
-            name="municipality"
-            value={clientInfo.municipality}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          >
-            <option value="">Select Municipality</option>
-            <option value="Ambaguio">Ambaguio</option>
-            <option value="Bagabag">Bagabag</option>
-            <option value="Bayombong">Bayombong</option>
-            <option value="Diadi">Diadi</option>
-            <option value="Quezon">Quezon</option>
-            <option value="Solano">Solano</option>
-            <option value="Villaverde">Villaverde</option>
-            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
-            <option value="Aritao">Aritao</option>
-            <option value="Bambang">Bambang</option>
-            <option value="Dupax del Norte">Dupax del Norte</option>
-            <option value="Dupax del Sur">Dupax del Sur</option>
-            <option value="Kayapa">Kayapa</option>
-            <option value="Kasibu">Kasibu</option>
-            <option value="Santa Fe">Santa Fe</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Province</label>
-          <input
-            type="text"
-            name="province"
-            placeholder="Province"
-            value={clientInfo.province}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Birthday</label>
-          <input
-            type="date"
-            name="birthday"
-            value={clientInfo.birthday}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Gender</label>
-          <select
-            name="gender"
-            value={clientInfo.gender}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">Contact Number</label>
-          <input
-            type="text"
-            name="contact"
-            placeholder="Contact Number"
-            value={clientInfo.contact}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 font-medium">
-            Veterinary Information Service
-          </label>
-          <select
-            name="service"
-            value={clientInfo.service}
-            onChange={handleInputChange}
-            className="border w-full p-2 rounded"
-          >
-            <option value="">Select Veterinary Information Service</option>
-            <option value="Animal Inventory/Population Inventory">
-              Animal Inventory/Population Inventory
-            </option>
-            <option value="Accomplishment Report">Accomplishment Report</option>
-            <option value="Slaughter and Meat Inspection Report">
-              Slaughter and Meat Inspection Report
-            </option>
-            <option value="Veterinary Quarantine Report">
-              Veterinary Quarantine Report
-            </option>
-            <option value="Animal Upgrading Report">
-              Animal Upgrading Report
-            </option>
-            <option value="Revenue and Collection Report">
-              Revenue and Collection Report
-            </option>
-            <option value="Others">Others</option> {/* Added Others option */}
-          </select>
-        </div>
-
-        {clientInfo.service === "Others" && ( // Conditional rendering for Others field
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2 font-medium">Please Specify</label>
+            <label className="block mb-2 font-medium">Name</label>
             <input
               type="text"
-              name="others"
-              placeholder="Specify Other Service"
-              value={clientInfo.others}
+              name="name"
+              placeholder="Name"
+              value={clientInfo.name}
               onChange={handleInputChange}
               className="border w-full p-2 rounded"
             />
           </div>
-        )}
-        
-      </div>
+
+          {/* <div>
+            <label className="block mb-2 font-medium">Barangay</label>
+            <input
+              type="text"
+              name="barangay"
+              placeholder="Barangay"
+              value={clientInfo.barangay}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            />
+          </div> */}
+
+          <div>
+            <label className="block mb-2 font-medium">Municipality</label>
+            <select
+              name="municipality"
+              value={clientInfo.municipality}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            >
+              <option value="">Select Municipality</option>
+              <option value="Ambaguio">Ambaguio</option>
+              <option value="Bagabag">Bagabag</option>
+              <option value="Bayombong">Bayombong</option>
+              <option value="Diadi">Diadi</option>
+              <option value="Quezon">Quezon</option>
+              <option value="Solano">Solano</option>
+              <option value="Villaverde">Villaverde</option>
+              <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+              <option value="Aritao">Aritao</option>
+              <option value="Bambang">Bambang</option>
+              <option value="Dupax del Norte">Dupax del Norte</option>
+              <option value="Dupax del Sur">Dupax del Sur</option>
+              <option value="Kayapa">Kayapa</option>
+              <option value="Kasibu">Kasibu</option>
+              <option value="Santa Fe">Santa Fe</option>
+            </select>
+          </div>
+
+          <div>
+            <BarangayDropDown
+              municipality={clientInfo.municipality}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Province</label>
+            <input
+              type="text"
+              name="province"
+              placeholder="Province"
+              value={clientInfo.province}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Birthday</label>
+            <input
+              type="date"
+              name="birthday"
+              value={clientInfo.birthday}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Gender</label>
+            <select
+              name="gender"
+              value={clientInfo.gender}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Contact Number</label>
+            <input
+              type="text"
+              name="contact"
+              placeholder="Contact Number"
+              value={clientInfo.contact}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">
+              Veterinary Information Service
+            </label>
+            <select
+              name="service"
+              value={clientInfo.service}
+              onChange={handleInputChange}
+              className="border w-full p-2 rounded"
+            >
+              <option value="">Select Veterinary Information Service</option>
+              <option value="Animal Inventory/Population Inventory">
+                Animal Inventory/Population Inventory
+              </option>
+              <option value="Accomplishment Report">
+                Accomplishment Report
+              </option>
+              <option value="Slaughter and Meat Inspection Report">
+                Slaughter and Meat Inspection Report
+              </option>
+              <option value="Veterinary Quarantine Report">
+                Veterinary Quarantine Report
+              </option>
+              <option value="Animal Upgrading Report">
+                Animal Upgrading Report
+              </option>
+              <option value="Revenue and Collection Report">
+                Revenue and Collection Report
+              </option>
+              <option value="Others">Others</option> {/* Added Others option */}
+            </select>
+          </div>
+
+          {clientInfo.service === "Others" && ( // Conditional rendering for Others field
+            <div>
+              <label className="block mb-2 font-medium">Please Specify</label>
+              <input
+                type="text"
+                name="others"
+                placeholder="Specify Other Service"
+                value={clientInfo.others}
+                onChange={handleInputChange}
+                className="border w-full p-2 rounded"
+              />
+            </div>
+          )}
+        </div>
       </CardBox>
 
       <FormSubmit

@@ -9,6 +9,7 @@ import SuccessModal from "../../component/SuccessModal";
 import { Add, Save } from "@mui/icons-material";
 import FormSubmit from "../../component/FormSubmit";
 import CardBox from "../../component/CardBox";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function VaccinationReport() {
   const [entries, setEntries] = useState([]);
@@ -252,20 +253,17 @@ function VaccinationReport() {
     setIsSuccessModalOpen(false);
 
     try {
-      const response = await axiosInstance.post(
-        `/api/reports`,
-        {
-          vaccine,
-          municipality,
-          province,
-          dateReported,
-          vaccineType,
-          batchLotNo,
-          vaccineSource,
-          agriculturalExtensionWorker,
-          entries,
-        }
-      );
+      const response = await axiosInstance.post(`/api/reports`, {
+        vaccine,
+        municipality,
+        province,
+        dateReported,
+        vaccineType,
+        batchLotNo,
+        vaccineSource,
+        agriculturalExtensionWorker,
+        entries,
+      });
 
       if (response.status === 201) {
         // Clear form fields after successful save
@@ -334,6 +332,7 @@ function VaccinationReport() {
                 <option value="Hog Cholera">Hog Cholera</option>
               </select>
             </div>
+
             <div>
               <label htmlFor="municipality" className="block mb-1">
                 Municipality
@@ -458,33 +457,31 @@ function VaccinationReport() {
 
           <div className="max-h-[40vh] overflow-auto">
             {entries.map((entry, index) => (
-                <CardBox key={index}>
-                  <h3 className="text-xl font-semibold mb-2">
-                    Entry {entry.no}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <p>Date: {entry.date || "N/A"}</p>
-                    <p>Barangay: {entry.barangay || "N/A"}</p>
-                    <p>
-                      Client: {entry.clientInfo.firstName || "N/A"}{" "}
-                      {entry.clientInfo.lastName || ""}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => openModal(index)}
-                    className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openConfirmationModal(index)}
-                    className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
-                  >
-                    Remove
-                  </button>
-                </CardBox>
+              <CardBox key={index}>
+                <h3 className="text-xl font-semibold mb-2">Entry {entry.no}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <p>Date: {entry.date || "N/A"}</p>
+                  <p>Barangay: {entry.barangay || "N/A"}</p>
+                  <p>
+                    Client: {entry.clientInfo.firstName || "N/A"}{" "}
+                    {entry.clientInfo.lastName || ""}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openModal(index)}
+                  className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openConfirmationModal(index)}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                >
+                  Remove
+                </button>
+              </CardBox>
             ))}
           </div>
         </div>
@@ -541,7 +538,20 @@ function VaccinationReport() {
                     className="border p-2 rounded w-full"
                   />
                 </div>
+
                 <div>
+                  <BarangayDropDown
+                    municipality={municipality}
+                    onChange={(e) =>
+                      handleEntryChange(
+                        selectedEntry,
+                        "barangay",
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+                {/* <div>
                   <label htmlFor="entryBarangay" className="block mb-1">
                     Barangay
                   </label>
@@ -558,7 +568,7 @@ function VaccinationReport() {
                     }
                     className="border p-2 rounded w-full"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label htmlFor="entryReason" className="block mb-1">
                     Reason
@@ -700,7 +710,9 @@ function VaccinationReport() {
                     }
                     className="border p-2 rounded w-full"
                   >
-                    <option value="" disabled>Enter Species</option>
+                    <option value="" disabled>
+                      Enter Species
+                    </option>
                     <option value="Carabao">Carabao</option>
                     <option value="Cattle">Cattle</option>
                     <option value="Goat/Sheep">Goat/Sheep</option>

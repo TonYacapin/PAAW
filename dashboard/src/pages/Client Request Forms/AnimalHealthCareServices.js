@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import axiosInstance from "../../component/axiosInstance";
 import { Add } from "@mui/icons-material";
 import CardBox from "../../component/CardBox";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function AnimalHealthCareServices() {
   const [clientInfo, setClientInfo] = useState({
@@ -307,7 +308,7 @@ function AnimalHealthCareServices() {
                   />
                 </div>
 
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <label className="block mb-2 font-medium">Barangay</label>
                   <input
                     type="text"
@@ -319,7 +320,7 @@ function AnimalHealthCareServices() {
                     }
                     className="border w-full p-2 rounded"
                   />
-                </div>
+                </div> */}
 
                 <div className="flex flex-col">
                   <label className="block mb-2 font-medium">Municipality</label>
@@ -348,6 +349,11 @@ function AnimalHealthCareServices() {
                     <option value="Kasibu">Kasibu</option>
                     <option value="Santa Fe">Santa Fe</option>
                   </select>
+                </div>
+
+                <div>
+                  <BarangayDropDown municipality={clientInfo.municipality} onChange={(e) =>
+                      handleInputChange(e, "clientInfo", setClientInfo)} />
                 </div>
 
                 <div className="flex flex-col">
