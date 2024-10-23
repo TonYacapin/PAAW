@@ -258,18 +258,18 @@ function FormListComponent({ endpoint, title, FormComponent }) {
               ))}
             </select>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-2">
             <button
               onClick={() =>
                 handleEditStatus(selectedForm._id, selectedForm.formStatus)
               }
-              className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="px-4 py-2 bg-darkgreen text-white rounded"
             >
               Save
             </button>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="px-4 py-2 bg-red-500 text-white rounded"
             >
               Cancel
             </button>
