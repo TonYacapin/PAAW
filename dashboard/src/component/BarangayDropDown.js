@@ -355,12 +355,13 @@ export default function BarangayDropDown(props) {
     <>
       <label className="block mb-2 font-medium">Barangay</label>
       <select
+        disabled={!props.municipality}
         name="barangay"
         value={props.barangay}
         onChange={props.onChange}
         className="border w-full p-2 rounded"
       >
-        <option value="" disabled>
+        <option value="">
             {props.municipality ? `Select Barangay in ${props.municipality}` : "Select Municipality first"}
         </option>
         {selectedBrgys.map((brgy) => (
