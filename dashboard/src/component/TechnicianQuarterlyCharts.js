@@ -84,8 +84,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
               {
                 label: 'AI Services by Municipality',
                 data: Object.values(municipalityCount),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
               },
             ],
@@ -104,8 +103,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
               {
                 label: 'Reports per Municipality',
                 data: Object.values(reportCount),
-                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
               },
             ],
@@ -128,8 +126,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
             datasets: [
               {
                 data: [sexCount.male, sexCount.female],
-                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
               },
             ],
@@ -150,8 +147,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
               {
                 label: 'Breed Count',
                 data: Object.values(breedCount),
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
               },
             ],
@@ -172,8 +168,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
               {
                 label: 'Calving Events',
                 data: Object.values(calvingCount),
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
                 fill: true,
               },
@@ -187,8 +182,7 @@ const TechnicianQuarterlyCharts = ({ filterValues }) => {
               {
                 label: 'Calves Count',
                 data: [sexCount.male, sexCount.female],
-                backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"],
                 borderWidth: 1,
               },
             ],
