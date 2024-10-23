@@ -12,7 +12,7 @@ import {
   ArcElement,
 } from "chart.js";
 import ChartGroup from "./ChartGroup";
-import { FilterContext } from "../pages/Home/Home";
+
 
 ChartJS.register(
   Tooltip,
@@ -24,10 +24,9 @@ ChartJS.register(
   ArcElement
 );
 
-const RabiesReportChart = () => {
+const RabiesReportChart = ({ filterValues }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const filterOptions = useContext(FilterContext);
   const [selectedChart, setSelectedChart] = useState(null);
   const [analysis, setAnalysis] = useState(""); // State for storing analysis
 
@@ -35,28 +34,18 @@ const RabiesReportChart = () => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/entries`
+          `/api/entries`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        }
         );
         let reports = response.data;
 
-        // Apply filters
-        if (!filterOptions.showAll) {
-          if (filterOptions.filters.dateRange[0] && filterOptions.filters.dateRange[1]) {
-            reports = reports.filter((report) => {
-              const reportDate = new Date(report.dateReported).getTime();
-              return (
-                reportDate >= new Date(filterOptions.filters.dateRange[0]).getTime() &&
-                reportDate <= new Date(filterOptions.filters.dateRange[1]).getTime()
-              );
-            });
-          }
-
-          if (filterOptions.filters.municipality) {
-            reports = reports.filter(
-              (report) => report.municipality === filterOptions.filters.municipality
-            );
-          }
-        }
+      
 
         // Initialize count objects
         const municipalityCounts = {};
@@ -281,7 +270,7 @@ const RabiesReportChart = () => {
     };
 
     fetchData();
-  }, [filterOptions.filters, filterOptions.showAll, selectedChart]);
+  }, []);
 
   if (loading) {
     return <div className="text-center text-lg py-10">Loading chart data...</div>;

@@ -18,7 +18,9 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axiosInstance.get(`/api/upgrading-services`);
+                const response = await axiosInstance.get('/api/upgrading-services', {
+                    params: { formStatus: 'Accepted' } // Add query parameter for filtering
+                  });
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filtered data
             } catch (error) {

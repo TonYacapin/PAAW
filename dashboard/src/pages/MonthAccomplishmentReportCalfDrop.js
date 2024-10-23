@@ -17,7 +17,9 @@ const MonthAccomplishmentReportCalfDrop = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axiosInstance.get(`/api/technician-quarterly`);
+                const response = await axiosInstance.get(`/api/technician-quarterly`,{
+                    params: { formStatus: 'Accepted' } // Add query parameter for filtering
+                  });
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filtered data
             } catch (error) {

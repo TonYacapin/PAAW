@@ -4,7 +4,7 @@ import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import ChartGroup from "./ChartGroup"; // Ensure this component is set up properly
 import { FilterContext } from "../pages/Home/Home"; // Ensure this context is correct
 
-const UpgradingServicesChart = () => {
+const UpgradingServicesChart = ({ filterValues }) => {
   const [data, setData] = useState({
     municipalityChart: {},
     dateReportedChart: {},
@@ -15,15 +15,22 @@ const UpgradingServicesChart = () => {
   const [loading, setLoading] = useState(true);
   const filterOptions = useContext(FilterContext);
   const [selectedChart, setSelectedChart] = useState(null);
+  const [analysis, setAnalysis] = useState(""); // State for storing analysis
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get('/api/upgrading-services', {
-          params: { formStatus: 'Accepted' } // Add query parameter for filtering
-        });
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        }
+);
 
-        console.log('this is US chart: ' + JSON.stringify(response.data, null, 2));
+      
 
         let services = response.data;
 
@@ -80,8 +87,8 @@ const UpgradingServicesChart = () => {
             datasets: [{
               label: "Number of Entries Per Dates Reported",
               data: Object.values(dateCounts),
-              borderColor: "#ff5722",
-              backgroundColor: "rgba(255, 87, 34, 0.2)",
+            
+              backgroundColor: "#ffe459",
               fill: true,
             }],
           },
@@ -111,12 +118,39 @@ const UpgradingServicesChart = () => {
           },
         });
 
+           // Analysis Section
+           const totalActivities = Object.values(activityCounts).reduce((acc, curr) => acc + curr, 0);
+           const mostReportedSpecies = Object.keys(speciesCounts).reduce(
+             (a, b) => (speciesCounts[a] > speciesCounts[b] ? a : b),
+             ""
+           );
+           const busiestMunicipality = Object.keys(municipalityCounts).reduce(
+             (a, b) => (municipalityCounts[a] > municipalityCounts[b] ? a : b),
+             ""
+           );
+   
+           setAnalysis(
+             <>
+               <p>
+                 <strong>Total Activities:</strong> {totalActivities}.
+               </p>
+               <p>
+                 <strong>Most Reported Species:</strong> {mostReportedSpecies} ({speciesCounts[mostReportedSpecies]} times).
+               </p>
+               <p>
+                 <strong>Busiest Municipality:</strong> {busiestMunicipality} ({municipalityCounts[busiestMunicipality]} entries).
+               </p>
+             </>
+           );
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data: ", error);
         setLoading(false);
       }
     };
+
+    
 
     fetchData();
   }, [filterOptions.filters, filterOptions.showAll]);
@@ -130,35 +164,49 @@ const UpgradingServicesChart = () => {
     {
       label: "Municipality Chart",
       content: <Bar data={data.municipalityChart} />,
+      style: "col-span-2",
     },
     {
       label: "Date Reported Chart",
       content: <Line data={data.dateReportedChart} />,
+      style: "col-span-2",
     },
     {
       label: "Activity Chart",
       content: <Bar data={data.activityChart} />,
+      style: "col-span-2",
     },
     {
       label: "Species Chart",
       content: <Pie data={data.speciesChart} />,
+      style: "col-span-2",
     },
     {
       label: "Estrus Chart",
       content: <Doughnut data={data.estrusChart} />,
+      style: "col-span-2",
     },
   ];
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">Upgrading Services Report</h2>
-      <ChartGroup
-        charts={charts}
-        title="Chart Overview"
-        selectedChart={selectedChart}
-        setSelectedChart={setSelectedChart}
-      />
+    <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">Upgrading Services Report</h2>
+
+    {/* Analysis Section */}
+    <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+      <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">Analysis</h3>
+      <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+        {analysis}
+      </p>
     </div>
+
+    <ChartGroup
+      charts={charts}
+      title="Chart Overview"
+      selectedChart={selectedChart}
+      setSelectedChart={setSelectedChart}
+    />
+  </div>
   );
 };
 

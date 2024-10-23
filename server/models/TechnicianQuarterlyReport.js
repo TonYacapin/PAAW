@@ -34,7 +34,12 @@ const technicianQuarterlyReportSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  animalEntries: [animalEntrySchema]
+  animalEntries: [animalEntrySchema],
+  formStatus: { // New status field
+    type: String,
+    enum: ['Pending', 'Accepted', 'Deleted'], // You can add more statuses as needed
+    default: 'Pending'
+  },
 });
 
 const TechnicianQuarterlyReport = mongoose.model('TechnicianQuarterlyReport', technicianQuarterlyReportSchema);

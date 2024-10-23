@@ -30,7 +30,7 @@ ChartJS.register(
   Legend
 );
 
-const OffspringMonitoringChart = () => {
+const OffspringMonitoringChart = ({ filterValues }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const filterOptions = useContext(FilterContext);
@@ -40,7 +40,16 @@ const OffspringMonitoringChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(`/api/offspring-monitoring`);
+        const response = await axiosInstance.get('/api/offspring-monitoring', {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        }
+
+);
         let reports = response.data;
 
         // Apply filters

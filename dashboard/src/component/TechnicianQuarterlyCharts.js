@@ -28,7 +28,7 @@ ChartJS.register(
   PointElement
 );
 
-const TechnicianQuarterlyCharts = () => {
+const TechnicianQuarterlyCharts = ({ filterValues }) => {
   const [technicianActivityData, setTechnicianActivityData] = useState({
     labels: [],
     datasets: [],
@@ -55,11 +55,19 @@ const TechnicianQuarterlyCharts = () => {
   });
 
   const [selectedChart, setSelectedChart] = useState(null);
+  const [analysis, setAnalysis] = useState(""); // State for storing analysis
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(`/api/technician-quarterly`);
+        const response = await axiosInstance.get(`/api/technician-quarterly`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        });
         const data = response.data;
 
         if (data && data.length > 0) {
@@ -186,6 +194,19 @@ const TechnicianQuarterlyCharts = () => {
             ],
           });
         }
+
+         // Analysis Section
+         const totalEntries = data.length;
+       
+
+         setAnalysis(
+           <>
+             <p>
+               <strong>Total number of reports:</strong> {totalEntries}.
+             </p>
+           
+           </>
+         );
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -230,6 +251,14 @@ const TechnicianQuarterlyCharts = () => {
 
   return (
     <div>
+      {/* Analysis Section */}
+      <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+        <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">Analysis</h3>
+        <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+          {analysis}
+        </p>
+      </div>
+
       <ChartGroup
         charts={charts}
         title="Technician Quarterly Performance"

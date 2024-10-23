@@ -139,16 +139,50 @@ router.post(
     }
   }
 );
-// Get all RabiesHistory entries
+// Route to get filtered Rabies History reports
 router.get('/RH', async (req, res) => {
+  const { municipality, startDate, endDate, species, animalAge } = req.query;
+
   try {
-    const rabiesHistories = await RabiesHistory.find();
+    // Build the query object based on the filters provided
+    let query = {};
+
+    // Filter by municipality if provided
+    if (municipality) {
+      query.municipality = municipality;
+    }
+
+    // Filter by species if provided
+    if (species) {
+      query.species = species;
+    }
+
+    // Filter by animal age if provided
+    if (animalAge) {
+      query.animalAge = animalAge;
+    }
+
+    // Filter by date range (startDate and/or endDate)
+    if (startDate || endDate) {
+      query.dateReported = {}; // Initialize the dateReported filter
+
+      if (startDate) {
+        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+      }
+
+      if (endDate) {
+        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+      }
+    }
+
+    // Fetch the filtered RabiesHistory entries from the database
+    const rabiesHistories = await RabiesHistory.find(query);
     res.status(200).json(rabiesHistories);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error retrieving RabiesHistory reports:', error);
+    res.status(500).json({ message: 'Failed to retrieve reports' });
   }
 });
-
 // Get a single RabiesHistory entry by ID
 router.get('/:id', async (req, res) => {
   try {

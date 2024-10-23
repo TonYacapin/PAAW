@@ -17,7 +17,7 @@ import { FilterContext } from '../pages/Home/Home';
 // Register the necessary components
 ChartJS.register(Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale, ArcElement);
 
-function VaccinationReportChart() {
+function VaccinationReportChart({ filterValues }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +28,14 @@ function VaccinationReportChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(`/api/reports`);
+        const response = await axiosInstance.get(`/api/reports`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        });
         setData(response.data);
         setLoading(false);
       } catch (err) {

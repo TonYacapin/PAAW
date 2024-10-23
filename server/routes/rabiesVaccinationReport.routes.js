@@ -19,7 +19,7 @@ router.post(
     body('entries.*.no').isNumeric().withMessage('Entry number must be a number.'),
     body('entries.*.date').isISO8601().withMessage('Valid date is required for each entry.'),
     body('entries.*.barangay').notEmpty().withMessage('Barangay is required.'),
-    
+
     // Validate client information within each entry
     body('entries.*.clientInfo.firstName').notEmpty().withMessage('Client first name is required.'),
     body('entries.*.clientInfo.lastName').notEmpty().withMessage('Client last name is required.'),
@@ -51,7 +51,7 @@ router.post(
         vaccineUsed,
         batchLotNo,
         vaccineSource,
-      
+
       });
 
       if (duplicateCheck) {
@@ -67,10 +67,34 @@ router.post(
     }
   }
 );
-// Retrieve all reports
+// Retrieve filtered reports
 router.get('/api/entries', async (req, res) => {
+  const { municipality, startDate, endDate } = req.query; // Get filters from the query parameters
+
   try {
-    const reports = await RabiesVaccinationReport.find();
+    // Build the filter object based on query parameters
+    let filter = {};
+
+    // Add municipality filter if provided
+    if (municipality) {
+      filter.municipality = municipality;
+    }
+
+    // Add date range filter if startDate and endDate are provided
+    if (startDate || endDate) {
+      filter.date = {};
+
+      if (startDate) {
+        filter.date.$gte = new Date(startDate); // Greater than or equal to startDate
+      }
+
+      if (endDate) {
+        filter.date.$lte = new Date(endDate); // Less than or equal to endDate
+      }
+    }
+
+    // Find reports with the applied filters
+    const reports = await RabiesVaccinationReport.find(filter);
     res.json(reports);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -109,16 +133,16 @@ router.get('/rabies-report/entry-count', async (req, res) => {
     }
 
     const parsedYear = parseInt(year);
-    const parsedMonth = parseInt(month); 
-
-    
-    const startOfThisMonth = new Date(parsedYear, parsedMonth - 1, 1); 
-    const endOfThisMonth = new Date(parsedYear, parsedMonth, 0); 
-    const startOfPreviousMonth = new Date(parsedYear, parsedMonth - 2, 1); 
-    const endOfPreviousMonth = new Date(parsedYear, parsedMonth - 1, 0); 
+    const parsedMonth = parseInt(month);
 
 
-   
+    const startOfThisMonth = new Date(parsedYear, parsedMonth - 1, 1);
+    const endOfThisMonth = new Date(parsedYear, parsedMonth, 0);
+    const startOfPreviousMonth = new Date(parsedYear, parsedMonth - 2, 1);
+    const endOfPreviousMonth = new Date(parsedYear, parsedMonth - 1, 0);
+
+
+
     const entryCount = await RabiesVaccinationReport.aggregate([
       { $unwind: "$entries" },
       {
@@ -150,7 +174,7 @@ router.get('/rabies-report/entry-count', async (req, res) => {
               ]
             }
           },
-          totalCount: { 
+          totalCount: {
             $sum: {
               $cond: [
                 { $lte: ["$entries.date", endOfThisMonth] },

@@ -4,7 +4,7 @@ import axiosInstance from '../component/axiosInstance';
 import { Chart as ChartJS } from "chart.js/auto";
 import ChartGroup from "./ChartGroup";
 
-const RabiesHistoryCharts = () => {
+const RabiesHistoryCharts = ({ filterValues }) => {
   const [data, setData] = useState({
     speciesDistribution: { labels: [], datasets: [{ data: [] }] },
     sexDistribution: { labels: [], datasets: [{ data: [] }] },
@@ -17,16 +17,28 @@ const RabiesHistoryCharts = () => {
     behavioralChangesPerSpecies: { labels: [], datasets: [{ data: [] }] },
   });
 
+  const [analysis, setAnalysis] = useState("");
+
+
   const [loading, setLoading] = useState(true);
   const [selectedChart, setSelectedChart] = useState(null);
+  
 
   useEffect(() => {
     const fetchRabiesHistory = async () => {
       try {
         const response = await axiosInstance.get(
-          `/RH`
+          `/RH`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        }
         );
         const rabiesHistories = response.data;
+
 
         // 1. Pie Chart: Species Distribution
         const speciesCounts = {};
@@ -259,6 +271,24 @@ const RabiesHistoryCharts = () => {
           ],
         };
 
+        // Perform data analysis
+        const totalCases = rabiesHistories.length;
+        const mostCommonSpecies = Object.keys(speciesCounts).reduce(
+          (a, b) => (speciesCounts[a] > speciesCounts[b] ? a : b),
+          ""
+        );
+        const vaccinationRate = vaccinationCounts.Vaccinated / totalCases * 100;
+
+        // Set analysis content
+        setAnalysis(
+          <>
+            <p><strong>Total Rabies Cases:</strong> {totalCases}</p>
+            <p><strong>Most Common Species:</strong> {mostCommonSpecies}</p>
+            <p><strong>Vaccination Rate:</strong> {vaccinationRate.toFixed(2)}%</p>
+          </>
+        );
+
+
         // Set the processed data
         setData({
           speciesDistribution,
@@ -334,12 +364,27 @@ const RabiesHistoryCharts = () => {
   ];
 
   return (
-    <ChartGroup
-      charts={charts}
-      title="Rabies History Charts"
-      selectedChart={selectedChart}
-      setSelectedChart={setSelectedChart}
-    />
+    <div className="container mx-auto px-4 py-6">
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
+          Rabies History Report
+        </h2>
+        <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+            Analysis
+          </h3>
+          <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+            {analysis}
+          </p>
+        </div>
+        <ChartGroup
+          charts={charts}
+          title="Rabies History Charts"
+          selectedChart={selectedChart}
+          setSelectedChart={setSelectedChart}
+        />
+      </div>
+    </div>
   );
 };
 

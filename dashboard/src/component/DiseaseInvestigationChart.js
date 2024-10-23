@@ -5,17 +5,25 @@ import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
 import { FilterContext } from '../pages/Home/Home';
 
-function DiseaseInvestigationChart() {
+function DiseaseInvestigationChart({ filterValues }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedChart, setSelectedChart] = useState(null);
   const { filters, showAll } = useContext(FilterContext);
+  const [analysis, setAnalysis] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(`/disease-investigation`);
+        const response = await axiosInstance.get(`/disease-investigation`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        });
         setData(response.data);
         setLoading(false);
       } catch (err) {
@@ -26,6 +34,66 @@ function DiseaseInvestigationChart() {
 
     fetchData();
   }, []);
+
+  
+  useEffect(() => {
+    if (data.length > 0) {
+      const filteredData = filterData(data);
+      const speciesDetails = filteredData.flatMap(item =>
+        item.details.map(detail => ({
+          species: detail.species,
+          population: parseInt(detail.population) || 0,
+          cases: parseInt(detail.cases) || 0,
+          deaths: parseInt(detail.deaths) || 0,
+          destroyed: parseInt(detail.destroyed) || 0,
+          slaughtered: parseInt(detail.slaughtered) || 0,
+          vaccineHistory: detail.vaccineHistory || 'Unknown'
+        }))
+      );
+
+      // Calculate statistics for analysis
+      const totalCases = speciesDetails.reduce((sum, item) => sum + item.cases, 0);
+      const totalDeaths = speciesDetails.reduce((sum, item) => sum + item.deaths, 0);
+      const mortalityRate = totalCases > 0 ? ((totalDeaths / totalCases) * 100).toFixed(2) : 0;
+      
+      const speciesCounts = speciesDetails.reduce((acc, item) => {
+        acc[item.species] = (acc[item.species] || 0) + item.cases;
+        return acc;
+      }, {});
+      
+      const mostAffectedSpecies = Object.entries(speciesCounts)
+        .sort(([,a], [,b]) => b - a)[0];
+
+      const vaccinated = speciesDetails.filter(item => 
+        item.vaccineHistory.toLowerCase().includes('vaccinated')).length;
+      const vaccinationRate = ((vaccinated / speciesDetails.length) * 100).toFixed(2);
+
+      // Set analysis content
+      setAnalysis(
+        <>
+          <p>
+            <strong>Total Cases:</strong> {totalCases} cases reported across all species.
+          </p>
+          <p>
+            <strong>Mortality Rate:</strong> {mortalityRate}% ({totalDeaths} deaths out of {totalCases} cases).
+          </p>
+          {mostAffectedSpecies && (
+            <p>
+              <strong>Most Affected Species:</strong> {mostAffectedSpecies[0]} with {mostAffectedSpecies[1]} cases.
+            </p>
+          )}
+          <p>
+            <strong>Vaccination Status:</strong> {vaccinationRate}% of affected animals had vaccination history.
+          </p>
+          <p>
+            <strong>Control Measures:</strong> Total of {
+              speciesDetails.reduce((sum, item) => sum + item.destroyed + item.slaughtered, 0)
+            } animals were either destroyed or slaughtered as control measures.
+          </p>
+        </>
+      );
+    }
+  }, [data, filters, showAll]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -91,6 +159,8 @@ function DiseaseInvestigationChart() {
     return acc;
   }, {});
 
+  
+
   const charts = [
     {
       label: 'Cases vs Deaths',
@@ -101,7 +171,13 @@ function DiseaseInvestigationChart() {
             datasets: [{
               label: 'Number',
               data: [casesVsDeaths.cases, casesVsDeaths.deaths],
-              backgroundColor: ['#FF6384', '#36A2EB']
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -125,7 +201,13 @@ function DiseaseInvestigationChart() {
             datasets: [{
               label: 'Number',
               data: [populationVsCases.population, populationVsCases.cases],
-              backgroundColor: ['#FFCE56', '#FF6384']
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -148,7 +230,13 @@ function DiseaseInvestigationChart() {
             labels: Object.keys(vaccineHistoryCounts),
             datasets: [{
               data: Object.values(vaccineHistoryCounts),
-              backgroundColor: ['#FFCE56', '#FF6384', '#36A2EB']
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -172,7 +260,13 @@ function DiseaseInvestigationChart() {
             datasets: [{
               label: 'Number Slaughtered',
               data: Object.values(slaughteredPerSpecies),
-              backgroundColor: '#FFCE56'
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -199,7 +293,13 @@ function DiseaseInvestigationChart() {
             datasets: [{
               label: 'Number Destroyed',
               data: Object.values(destroyedPerSpecies),
-              backgroundColor: '#36A2EB'
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -226,7 +326,13 @@ function DiseaseInvestigationChart() {
             datasets: [{
               label: 'Number',
               data: [confirmedCases],
-              backgroundColor: '#36A2EB'
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -252,7 +358,13 @@ function DiseaseInvestigationChart() {
             labels: Object.keys(natureOfDiagnosisCounts),
             datasets: [{
               data: Object.values(natureOfDiagnosisCounts),
-              backgroundColor: ['#FFCE56', '#FF6384', '#36A2EB']
+              backgroundColor: [
+                "#ffe459",  // pastelyellow
+                "#e5cd50",  // darkerpastelyellow
+                "#1b5b40",  // darkgreen
+                "#123c29",  // darkergreen
+                "#252525",  // black
+              ],
             }]
           }}
           options={{
@@ -270,12 +382,30 @@ function DiseaseInvestigationChart() {
   ];
 
   return (
-    <ChartGroup
-      charts={charts}
-      title="Disease Investigation Analytics Dashboard"
-      selectedChart={selectedChart}
-      setSelectedChart={setSelectedChart}
-    />
+    <div className="container mx-auto px-4 py-6">
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
+        Disease Investigation Report
+      </h2>
+      
+      {/* Analysis Section */}
+      <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+        <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+          Analysis
+        </h3>
+        <div className="text-gray-800 mt-4 text-lg leading-relaxed">
+          {analysis}
+        </div>
+      </div>
+
+      <ChartGroup
+        charts={charts}
+        title="Disease Investigation Analytics Dashboard"
+        selectedChart={selectedChart}
+        setSelectedChart={setSelectedChart}
+      />
+    </div>
+  </div>
   );
 }
 

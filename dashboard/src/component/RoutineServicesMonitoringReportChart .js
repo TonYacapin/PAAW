@@ -4,7 +4,7 @@ import axiosInstance from '../component/axiosInstance';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
 
-const RoutineServicesMonitoringReportChart = () => {
+const RoutineServicesMonitoringReportChart = ({ filterValues }) => {
   const [data, setData] = useState({
     barChartMunicipality: { labels: [], datasets: [{ data: [] }] },
     barChartSpecies: { labels: [], datasets: [{ data: [] }] },
@@ -17,11 +17,19 @@ const RoutineServicesMonitoringReportChart = () => {
 
   const [loading, setLoading] = useState(true);
   const [selectedChart, setSelectedChart] = useState(null); // State for selected chart
-
+  const [analysis, setAnalysis] = useState("");
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const response = await axiosInstance.get(`/RSM`);
+        const response = await axiosInstance.get(`/RSM`, {
+          params: {
+            formStatus: 'Accepted',
+            municipality: filterValues.municipality || undefined,
+            startDate: filterValues.startDate || undefined,
+            endDate: filterValues.endDate || undefined,
+          },
+        }
+        );
         const reports = response.data;
 
         // Processing the data for each chart
@@ -151,6 +159,17 @@ const RoutineServicesMonitoringReportChart = () => {
           }]
         };
 
+        // Analysis Section
+        const totalEntries = reports.length;
+        const totalMunicipalities = Object.keys(municipalityCounts).length;
+        setAnalysis(
+          <>
+            <strong>Total number of reports:</strong> {totalEntries}.{" "}
+            <strong>Number of municipalities involved:</strong> {totalMunicipalities}.
+          </>
+        );
+        
+
         // Set the processed data to the component state
         setData({
           barChartMunicipality: processedBarChartMunicipality,
@@ -233,6 +252,16 @@ const RoutineServicesMonitoringReportChart = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4">Routine Services Monitoring Report</h2>
+         {/* Analysis Section */}
+         <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+            Analysis
+          </h3>
+          <p className="text-gray-800 mt-4 text-lg leading-relaxed">
+            {analysis}
+          </p>
+        </div>
         <ChartGroup
           charts={charts}
           title="Routine Services Monitoring Report"
