@@ -111,8 +111,8 @@ const RoutineServicesMonitoringReportChart = ({ filterValues }) => {
           datasets: [{
             label: 'Number of Heads per Date',
             data: Object.values(headsPerDate),
-            borderColor: 'rgba(54, 162, 235, 1)',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)'
+            borderColor: '#123c29',
+            backgroundColor: ["#ffe459", "#e5cd50", "#1b5b40", "#123c29", "#252525"]
           }]
         };
 
