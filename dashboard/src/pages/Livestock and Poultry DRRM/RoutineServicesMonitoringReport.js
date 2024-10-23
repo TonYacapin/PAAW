@@ -7,6 +7,7 @@ import FormSubmit from "../../component/FormSubmit";
 import ErrorModal from "../../component/ErrorModal";
 import SuccessModal from "../../component/SuccessModal";
 import CardBox from "../../component/CardBox";
+import BarangayDropDown from "../../component/BarangayDropDown";
 
 function RoutineServicesMonitoringReport() {
   const [entries, setEntries] = useState([]);
@@ -427,7 +428,13 @@ function RoutineServicesMonitoringReport() {
                   className="border p-2 rounded w-full"
                 />
               </div>
+
+
               <div>
+                <BarangayDropDown municipality={municipality} onChange={(e) =>
+                    handleEntryChange(selectedEntry, "barangay", e.target.value)} />
+              </div>
+              {/* <div>
                 <label htmlFor="barangay" className="block mb-1">
                   Barangay
                 </label>
@@ -440,8 +447,8 @@ function RoutineServicesMonitoringReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
-              </div>
-            </div>
+              </div> */}
+            </div> 
 
             <h4 className="text-lg font-semibold mb-2">Client Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
