@@ -63,7 +63,7 @@ router.get('/users', authMiddleware, async (req, res) => {
         const users = await User.find();
 
         // Log the successful retrieval of users
-        await createAuditLog('Viewed', translateResource(req.originalUrl), req.user._id, req.user.email, 'successful', 'Retrieved user list.');
+        await createAuditLog('Viewed', translateResource(req.originalUrl), req.user.userId, req.user.email, 'successful', 'Retrieved user list.');
 
         res.json(users);
     } catch (error) {
@@ -81,7 +81,7 @@ router.get('/users/:id', authMiddleware, async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         // Log the successful retrieval of user
-        await createAuditLog('Viewed', translateResource(req.originalUrl), user._id, req.user.email, 'succesful' , `Retrieved details for user ID: ${user.email}.`);
+        await createAuditLog('Viewed', translateResource(req.originalUrl),  req.user.userId, req.user.email, 'successful' , `Retrieved details for user ID: ${user.email}.`);
 
         res.json(user);
     } catch (error) {
