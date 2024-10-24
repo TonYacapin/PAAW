@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from './axiosInstance';
+import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
 
 const BackupRestore = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -79,19 +81,20 @@ const BackupRestore = () => {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex gap-4">
+    <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
+      <h2 className="text-xl font-semibold text-black">Backup and Restore</h2>
+      <div className="flex flex-col sm:flex-row gap-4">
         <button
           onClick={handleBackup}
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-darkgreen text-white rounded-md hover:bg-darkergreen transition duration-200 ease-in-out disabled:opacity-50"
         >
-          <span className="material-icons">download</span>
+          <DownloadIcon />
           Backup Database
         </button>
 
-        <label className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer disabled:opacity-50">
-          <span className="material-icons">upload</span>
+        <label className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer transition duration-200 ease-in-out disabled:opacity-50">
+          <UploadIcon />
           Restore Database
           <input
             type="file"
@@ -102,7 +105,7 @@ const BackupRestore = () => {
         </label>
       </div>
 
-      {isLoading && <p>Processing... {progress}%</p>}
+      {isLoading && <p className="text-gray-600">Processing... {progress}%</p>}
       {message && <p className="text-green-600">{message}</p>}
       {error && <p className="text-red-600">{error}</p>}
     </div>
