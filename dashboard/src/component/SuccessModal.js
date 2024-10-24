@@ -13,7 +13,7 @@ function SuccessModal({ isOpen, onClose, message }) {
           <h3 className="text-lg font-semibold text-gray-800">Success</h3>
         </div>
         <p className="text-gray-600 mb-6">{message}</p>
-        {/* <div className="flex justify-end">
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={onClose}
@@ -21,7 +21,7 @@ function SuccessModal({ isOpen, onClose, message }) {
           >
             Close
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   );

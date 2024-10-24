@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import AnimalHealthCareServices from "./AnimalHealthCareServices";
+import SuccessModal from "../../component/SuccessModal"; // Import the SuccessModal
 
 function AnimalHealthCareServicesList() {
   const [services, setServices] = useState([]);
@@ -23,6 +24,8 @@ function AnimalHealthCareServicesList() {
   const [selectedService, setSelectedService] = useState(null); // State to hold selected service for editing
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
   const [isHealthCareModalOpen, setIsHealthCareModalOpen] = useState(false); // State for Health Care Modal
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -123,6 +126,11 @@ function AnimalHealthCareServicesList() {
       );
       setIsModalOpen(false);
       setSelectedService(null);
+      
+      // Show success modal with a message
+      setSuccessMessage("Service status updated successfully!");
+      setIsSuccessModalOpen(true);
+      
     } catch (err) {
       console.error("Error updating service status:", err);
       setError("Failed to update status");
@@ -246,23 +254,18 @@ function AnimalHealthCareServicesList() {
                         {service.clientInfo.name}
                       </div>
                       <div className="text-sm text-gray-600">
-                        Birthday: {formatDate(service.clientInfo.birthday)}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        Contact: {service.clientInfo.contact}
+                        {service.clientInfo.municipality}
                       </div>
                     </td>
                     <td className="border border-gray-300 p-4">
-                      <div>{service.clientInfo.barangay}</div>
-                      <div>{service.clientInfo.municipality}</div>
-                      <div>{service.clientInfo.province}</div>
+                      {service.clientInfo.completeAddress}
                     </td>
                     <td className="border border-gray-300 p-4">
-                      {serviceDetails.map((detail, i) => (
-                        <div key={i}>
-                          <strong>{detail.type}:</strong>{" "}
-                          {detail.pet || detail.species}, {detail.sex},{" "}
-                          {detail.age}
+                      {serviceDetails.map((detail, idx) => (
+                        <div key={idx} className="mb-2">
+                          <strong>{detail.type}:</strong> {detail.species} (
+                          {detail.sex}), Age: {detail.age}, Heads:{" "}
+                          {detail.noOfHeads}
                         </div>
                       ))}
                     </td>
@@ -270,7 +273,9 @@ function AnimalHealthCareServicesList() {
                       {formatDate(service.createdAt)}
                     </td>
                     <td className="border border-gray-300 p-4">
-                      {service.status}
+                      
+                        {service.status}
+          
                     </td>
                     <td className="border border-gray-300 p-4">
                       <button
@@ -278,7 +283,7 @@ function AnimalHealthCareServicesList() {
                           setSelectedService(service);
                           setIsModalOpen(true);
                         }}
-                        className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+                        className="px-4 py-2 bg-darkgreen text-white rounded"
                       >
                         Edit Status
                       </button>
@@ -291,62 +296,64 @@ function AnimalHealthCareServicesList() {
         </div>
       )}
 
-      {/* Edit Status Modal */}
-      {selectedService && (
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <h3 className="text-xl font-bold mb-4">
-            Edit Status for {selectedService.clientInfo.name}
-          </h3>
-          <div className="mb-4">
-            <label htmlFor="status" className="block text-sm font-medium mb-2">
-              Status:
-            </label>
+      {/* Status Edit Modal */}
+      {isModalOpen && selectedService && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Edit Service Status"
+        >
+          <div className="justify-end">
+            <h4 className="font-bold mb-4">
+              Edit status for {selectedService.clientInfo.name}
+            </h4>
+
             <select
-              id="status"
               value={selectedService.status}
               onChange={(e) =>
-                setSelectedService((prev) => ({
-                  ...prev,
+                setSelectedService({
+                  ...selectedService,
                   status: e.target.value,
-                }))
+                })
               }
-              className="p-2 border rounded w-full"
+              className="p-2 border rounded w-full mb-4"
             >
-              {statusOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
                 </option>
               ))}
             </select>
-          </div>
-          <div className="flex justify-end space-x-2">
+
             <button
               onClick={() =>
                 handleEditStatus(selectedService._id, selectedService.status)
               }
-              className="px-4 py-2 bg-darkgreen text-white rounded"
+              className="px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
             >
               Save Changes
             </button>
 
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 bg-red-500 text-white rounded"
-            >
-              Cancel
-            </button>
+            
           </div>
         </Modal>
       )}
 
-      {/* Existing Animal Health Care Services Modal */}
+      {/* Success Modal */}
+      {isSuccessModalOpen && (
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          message={successMessage}
+        />
+      )}
+
+      {/* Health Care Modal */}
       {isHealthCareModalOpen && (
-        <Modal
+        <AnimalHealthCareServices
           isOpen={isHealthCareModalOpen}
           onClose={() => setIsHealthCareModalOpen(false)}
-        >
-          <AnimalHealthCareServices />
-        </Modal>
+        />
       )}
     </div>
   );
