@@ -49,7 +49,7 @@ const SignupForm = () => {
 
     try {
       const response = await axiosInstance.post(`/api/users`, formData);
-      setMessage(`User created successfully: ${response.data.firstname}`);
+      setMessage(`User created successfully`);
       setMessageType('success');
       setFormData({
         firstname: '',
