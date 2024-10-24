@@ -20,16 +20,13 @@ const auditLogRoutes = require('./routes/auditLogRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const user = require('./routes/userRoutes');
 const auth = require('./routes/loginRoute');
-const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcareservicesRoutes')
+const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcareservicesRoutes');
 const animalProductionServicesRoutes = require('./routes/Client/animalproductionservicesRoutes'); 
 const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryinformationserviceRoutes");
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
 const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
 
 const backupRestoreRoutes = require('./routes/backupRestore.routes');
-
-
-
 
 // Import the audit log middleware
 const auditLogMiddleware = require('./middleware/auditlogMiddleware');
@@ -47,9 +44,8 @@ db.once('open', () => {
 });
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
 app.use(cors()); 
-
 
 app.use('/', auth);
 app.use('/api', user);
@@ -59,7 +55,6 @@ app.use(authMiddleware); // Ensure this is before the audit log middleware
 
 // Use audit log middleware
 app.use(auditLogMiddleware);
-
 
 // Use routes
 app.use('/api/backup-restore', backupRestoreRoutes);
@@ -80,12 +75,12 @@ app.use('/api/animal-production-services', animalProductionServicesRoutes);
 app.use("/api/veterinary-information-service", veterinaryInformationServiceRoutes);
 app.use('/api/regulatory-services', regulatoryCareServiceRoutes);
 app.use('/api/requisitions', requisitionIssuanceRoutes);
-
-
-
 app.use('/api', auditLogRoutes);
 app.use('/api/inventory', inventoryRoutes);
 
-app.listen(PORT, () => {
+// Start server and set timeout
+const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+server.timeout = 0; // Disable timeout

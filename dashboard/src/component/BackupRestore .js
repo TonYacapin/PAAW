@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosInstance'; // Adjust the import path as needed
+import axiosInstance from './axiosInstance';
 
 const BackupRestore = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   const handleBackup = async () => {
     try {
@@ -13,30 +14,38 @@ const BackupRestore = () => {
       setMessage(null);
 
       const response = await axiosInstance.post('/api/backup-restore/backup', {}, {
-        responseType: 'blob', // Important to set the response type for downloading files
+        responseType: 'blob',
+        onDownloadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setProgress(percentCompleted);
+        }
       });
 
-      // Get the filename from the Content-Disposition header
-      const contentDisposition = response.headers['content-disposition'];
-      const fileName = contentDisposition
-        ? contentDisposition.split('filename=')[1].replace(/['"]/g, '')
-        : 'backup.json';
+      if (response.status === 200) {
+        const contentDisposition = response.headers['content-disposition'];
+        const fileName = contentDisposition
+          ? contentDisposition.split('filename=')[1]?.split(';')[0].replace(/['"]/g, '')
+          : 'backup.json.gz';
 
-      // Convert response to blob and download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+        const blob = new Blob([response.data], { type: 'application/gzip' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
 
-      setMessage('Backup created successfully');
+        setMessage('Backup created successfully');
+      } else {
+        throw new Error('Failed to create backup');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
+      setProgress(0);
     }
   };
 
@@ -45,6 +54,7 @@ const BackupRestore = () => {
       setIsLoading(true);
       setError(null);
       setMessage(null);
+      setProgress(0);
 
       const file = event.target.files[0];
       if (!file) return;
@@ -52,17 +62,19 @@ const BackupRestore = () => {
       const formData = new FormData();
       formData.append('backup', file);
 
-      const response = await axiosInstance.post('/backup-restore/restore', formData);
-
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Restore failed');
-      }
+      await axiosInstance.post('/api/backup-restore/restore', formData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setProgress(percentCompleted);
+        }
+      });
 
       setMessage('Database restored successfully');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to restore backup');
     } finally {
       setIsLoading(false);
+      setProgress(0);
     }
   };
 
@@ -83,7 +95,6 @@ const BackupRestore = () => {
           Restore Database
           <input
             type="file"
-            accept=".json"
             onChange={handleRestore}
             disabled={isLoading}
             className="hidden"
@@ -91,26 +102,9 @@ const BackupRestore = () => {
         </label>
       </div>
 
-      {isLoading && (
-        <div className="p-4 border border-yellow-400 bg-yellow-100 text-yellow-800 rounded-md">
-          <strong>Processing...</strong>
-          <p>Please wait while we process your request.</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="p-4 border border-red-400 bg-red-100 text-red-800 rounded-md">
-          <strong>Error</strong>
-          <p>{error}</p>
-        </div>
-      )}
-
-      {message && (
-        <div className="p-4 border border-green-400 bg-green-100 text-green-800 rounded-md">
-          <strong>Success</strong>
-          <p>{message}</p>
-        </div>
-      )}
+      {isLoading && <p>Processing... {progress}%</p>}
+      {message && <p className="text-green-600">{message}</p>}
+      {error && <p className="text-red-600">{error}</p>}
     </div>
   );
 };
