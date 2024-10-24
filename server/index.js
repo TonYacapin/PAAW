@@ -49,6 +49,7 @@ app.use(cors());
 
 
 app.use('/', auth);
+app.use('/api', user);
 
 // Use authMiddleware to authenticate users
 app.use(authMiddleware); // Ensure this is before the audit log middleware
@@ -56,7 +57,7 @@ app.use(authMiddleware); // Ensure this is before the audit log middleware
 // Use audit log middleware
 app.use(auditLogMiddleware);
 
-app.use('/api', user);
+// app.use('/api', user);
 
 // Use routes
 app.use('/api/vetshipform', vetshipformroutes);
