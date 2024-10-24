@@ -9,18 +9,18 @@ function EquipmentInventory() {
     type: '',
     supplies: '',
     unit: '',
-    quantity: 0, // Default quantity to 0
+    quantity: 0,
     out: 0,
-    total: 0, // Ensure total starts as a number
+    total: 0,
     category: 'equipment',
   });
-  const [originalTotal, setOriginalTotal] = useState(0); // Store original total
+  const [originalTotal, setOriginalTotal] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [inventoryToDelete, setInventoryToDelete] = useState(null);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // Success modal open/close state
-  const [successMessage, setSuccessMessage] = useState(''); // Success message
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchInventories();
@@ -38,9 +38,8 @@ function EquipmentInventory() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Special handling for the total input
     if (name === 'total') {
-      const newValue = Math.max(value, originalTotal); // Prevent decrease below original
+      const newValue = Math.max(value, originalTotal);
       setNewInventory((prevInventory) => ({
         ...prevInventory,
         [name]: newValue,
@@ -70,8 +69,8 @@ function EquipmentInventory() {
       } else {
         await axiosInstance.post(`/api/inventory`, updatedInventory);
       }
-      fetchInventories(); // Refresh inventory list
-      closeModal(); // Close the modal after submitting
+      fetchInventories();
+      closeModal();
     } catch (error) {
       console.error(isEditing ? 'Error updating inventory:' : 'Error adding inventory:', error);
     }
@@ -87,14 +86,14 @@ function EquipmentInventory() {
       total: inventory?.total || 0,
       category: 'equipment',
     });
-    setOriginalTotal(inventory?.total || 0); // Set original total for editing
+    setOriginalTotal(inventory?.total || 0);
     setIsEditing(!!inventory);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setOriginalTotal(0); // Reset original total on close
+    setOriginalTotal(0);
   };
 
   const openConfirmDeleteModal = (id) => {
@@ -109,9 +108,9 @@ function EquipmentInventory() {
         setSuccessMessage('Equipment deleted successfully!');
         setIsSuccessModalOpen(true);
         setTimeout(() => {
-          setIsSuccessModalOpen(false); // Close success modal after 2 seconds
+          setIsSuccessModalOpen(false);
         }, 2000);
-        fetchInventories(); // Refresh inventory list after deletion
+        fetchInventories();
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
@@ -123,6 +122,10 @@ function EquipmentInventory() {
   const closeConfirmDeleteModal = () => {
     setInventoryToDelete(null);
     setIsConfirmDeleteOpen(false);
+  };
+
+  const handleEdit = (inventory) => {
+    openModal(inventory); // Open the modal and set the inventory to be edited
   };
 
   return (
@@ -249,51 +252,50 @@ function EquipmentInventory() {
         isOpen={isConfirmDeleteOpen}
         onClose={closeConfirmDeleteModal}
         onConfirm={handleDeleteConfirm}
-        message="Are you sure you want to delete this equipment?"
+        message="Are you sure you want to delete this item?"
       />
 
-      {/* Inventory Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-4 py-2">Type</th>
-              <th className="border px-4 py-2">Supplies</th>
-              <th className="border px-4 py-2">Unit</th>
-              <th className="border px-4 py-2">Quantity</th>
-              <th className="border px-4 py-2">Out</th>
-              <th className="border px-4 py-2">Total</th>
-              <th className="border px-4 py-2">Actions</th>
+      <table className="min-w-full bg-white border border-gray-300">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b">No.</th>
+            <th className="py-2 px-4 border-b">Type</th>
+            <th className="py-2 px-4 border-b">Supplies</th>
+            <th className="py-2 px-4 border-b">Unit</th>
+            <th className="py-2 px-4 border-b">Quantity</th>
+            <th className="py-2 px-4 border-b">Out</th>
+            <th className="py-2 px-4 border-b">Total</th>
+            <th className="py-2 px-4 border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inventories.map((inventory, index) => (
+            <tr key={inventory._id}>
+              <td className="py-2 px-4 border-b">{index + 1}</td>
+              <td className="py-2 px-4 border-b">{inventory.type}</td>
+              <td className="py-2 px-4 border-b">{inventory.supplies}</td>
+              <td className="py-2 px-4 border-b">{inventory.unit}</td>
+              <td className="py-2 px-4 border-b">{inventory.quantity}</td>
+              <td className="py-2 px-4 border-b">{inventory.out}</td>
+              <td className="py-2 px-4 border-b">{inventory.total}</td>
+              <td className="py-2 px-4 border-b">
+                <button
+                  onClick={() => handleEdit(inventory)} // Call handleEdit when clicked
+                  className="text-blue-500 hover:underline mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirmation modal
+                  className="text-red-500 hover:underline"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {inventories.map((inventory) => (
-              <tr key={inventory._id}>
-                <td className="border px-4 py-2">{inventory.type}</td>
-                <td className="border px-4 py-2">{inventory.supplies}</td>
-                <td className="border px-4 py-2">{inventory.unit}</td>
-                <td className="border px-4 py-2">{inventory.quantity}</td>
-                <td className="border px-4 py-2">{inventory.out}</td>
-                <td className="border px-4 py-2">{inventory.total}</td>
-                <td className="border px-4 py-2 space-x-2 text-center">
-                  <button
-                    onClick={() => handleEdit(inventory)}
-                    className="px-4 py-2 bg-darkgreen text-white rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => openConfirmDeleteModal(inventory._id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
