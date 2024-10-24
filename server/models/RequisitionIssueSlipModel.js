@@ -28,6 +28,8 @@ const requisitionIssuanceSchema = new mongoose.Schema({
     default: "Pending",
   }, 
 
+  sentby:{ type: String, required: true },
+
 }, {
   timestamps: true,
 });
