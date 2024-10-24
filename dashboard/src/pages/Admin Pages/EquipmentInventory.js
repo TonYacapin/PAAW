@@ -8,17 +8,16 @@ function EquipmentInventory() {
     type: '',
     supplies: '',
     unit: '',
-    quantity: '',
+    quantity: 0, // Default quantity to 0
     out: 0,
-    total: '',
+    total: 0, // Ensure total starts as a number
     category: 'equipment',
-    createdAt: '',
-    updatedAt: '',
   });
+  const [originalTotal, setOriginalTotal] = useState(0); // Store original total
   const [isEditing, setIsEditing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false); // Confirmation modal for delete
-  const [inventoryToDelete, setInventoryToDelete] = useState(null); // Store inventory to delete
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [inventoryToDelete, setInventoryToDelete] = useState(null);
 
   useEffect(() => {
     fetchInventories();
@@ -35,101 +34,100 @@ function EquipmentInventory() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewInventory({
-      ...newInventory,
-      [name]: value,
-      total: name === 'quantity' || name === 'out'
-        ? name === 'quantity'
-          ? value - newInventory.out
-          : newInventory.quantity - value
-        : newInventory.total,
-    });
+
+    // Special handling for the total input
+    if (name === 'total') {
+      const newValue = Math.max(value, originalTotal); // Prevent decrease below original
+      setNewInventory((prevInventory) => ({
+        ...prevInventory,
+        [name]: newValue,
+        quantity: parseInt(newValue || 0) + parseInt(prevInventory.out || 0),
+      }));
+    } else {
+      setNewInventory((prevInventory) => ({
+        ...prevInventory,
+        [name]: value,
+        quantity: parseInt(prevInventory.total || 0) + parseInt(prevInventory.out || 0),
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isEditing) {
-      try {
-        await axiosInstance.put(`/api/inventory/${newInventory._id}`, newInventory);
-        setIsEditing(false);
-      } catch (error) {
-        console.error('Error updating inventory:', error);
-      }
-    } else {
-      try {
-        await axiosInstance.post(`/api/inventory`, newInventory);
-      } catch (error) {
-        console.error('Error adding inventory:', error);
-      }
-    }
+    const updatedInventory = {
+      ...newInventory,
+      quantity: parseInt(newInventory.total) + parseInt(newInventory.out),
+    };
 
-    setIsModalOpen(false); // Close the modal after submitting
-    fetchInventories(); // Refresh inventory list
+    try {
+      if (isEditing) {
+        await axiosInstance.put(`/api/inventory/${newInventory._id}`, updatedInventory);
+        setIsEditing(false);
+      } else {
+        await axiosInstance.post(`/api/inventory`, updatedInventory);
+      }
+      fetchInventories(); // Refresh inventory list
+      closeModal(); // Close the modal after submitting
+    } catch (error) {
+      console.error(isEditing ? 'Error updating inventory:' : 'Error adding inventory:', error);
+    }
   };
 
-  const openModal = () => {
+  const openModal = (inventory = null) => {
     setNewInventory({
-      type: '',
-      supplies: '',
-      unit: '',
-      quantity: '',
-      out: 0,
-      total: '',
+      type: inventory?.type || '',
+      supplies: inventory?.supplies || '',
+      unit: inventory?.unit || '',
+      quantity: inventory?.quantity || 0,
+      out: inventory?.out || 0,
+      total: inventory?.total || 0,
       category: 'equipment',
-      createdAt: '',
-      updatedAt: '',
     });
-    setIsEditing(false); // Reset editing state
+    setOriginalTotal(inventory?.total || 0); // Set original total for editing
+    setIsEditing(!!inventory);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleEdit = (inventory) => {
-    setNewInventory(inventory);
-    setIsEditing(true);
-    setIsModalOpen(true); // Open modal for editing
+    setOriginalTotal(0); // Reset original total on close
   };
 
   const openConfirmDeleteModal = (id) => {
-    setInventoryToDelete(id); // Store the ID of the inventory to delete
-    setIsConfirmDeleteOpen(true); // Open confirmation modal
+    setInventoryToDelete(id);
+    setIsConfirmDeleteOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (inventoryToDelete) {
       try {
         await axiosInstance.delete(`/api/inventory/${inventoryToDelete}`);
-        fetchInventories(); // Refresh inventory list after deletion
+        fetchInventories(); // Refresh inventory list
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
-      setInventoryToDelete(null); // Clear inventory to delete
+      setInventoryToDelete(null);
     }
-    setIsConfirmDeleteOpen(false); // Close confirmation modal
+    closeConfirmDeleteModal();
   };
 
   const closeConfirmDeleteModal = () => {
-    setInventoryToDelete(null); // Clear inventory to delete
-    setIsConfirmDeleteOpen(false); // Close confirmation modal
+    setInventoryToDelete(null);
+    setIsConfirmDeleteOpen(false);
   };
 
   return (
     <div className="p-4 bg-white text-black lg:max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-darkgreen mb-4">Equipment Inventory</h1>
 
-      {/* Button to trigger modal */}
       <button
-        onClick={openModal}
+        onClick={() => openModal()} // Open modal for adding equipment
         className="px-4 py-2 bg-darkgreen text-white rounded-md mb-4"
       >
         Add Equipment
       </button>
 
-      {/* Modal for the form */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
@@ -176,29 +174,15 @@ function EquipmentInventory() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    value={newInventory.quantity}
-                    onChange={handleChange}
-                    placeholder="Quantity"
-                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    required
-                  />
-                </div>
-                <div>
                   <label htmlFor="out" className="block text-sm font-medium text-gray-700">Out</label>
                   <input
                     type="number"
                     id="out"
                     name="out"
                     value={newInventory.out}
-                    onChange={handleChange}
                     placeholder="Out"
                     className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    required
+                    disabled
                   />
                 </div>
                 <div>
@@ -208,14 +192,26 @@ function EquipmentInventory() {
                     id="total"
                     name="total"
                     value={newInventory.total}
+                    onChange={handleChange}
                     placeholder="Total Inventory"
                     className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    readOnly
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    value={parseInt(newInventory.total) + parseInt(newInventory.out)} // Calculate quantity
+                    placeholder="Quantity"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    disabled
                   />
                 </div>
               </div>
 
-              {/* Form buttons */}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
@@ -236,7 +232,6 @@ function EquipmentInventory() {
         </div>
       )}
 
-      {/* Confirmation Modal for Delete */}
       <ConfirmationModal
         isOpen={isConfirmDeleteOpen}
         onConfirm={handleDeleteConfirm}
@@ -244,7 +239,6 @@ function EquipmentInventory() {
         message="Are you sure you want to delete this item?"
       />
 
-      {/* Table to display inventories */}
       <table className="min-w-full border border-gray-300 mt-6">
         <thead>
           <tr className="bg-darkgreen text-white">
@@ -259,18 +253,26 @@ function EquipmentInventory() {
         </thead>
         <tbody>
           {inventories.map((inventory) => (
-            <tr key={inventory._id}>
+            <tr key={inventory._id} className="border-b hover:bg-gray-50">
               <td className="border border-gray-300 p-2">{inventory.type}</td>
               <td className="border border-gray-300 p-2">{inventory.supplies}</td>
               <td className="border border-gray-300 p-2">{inventory.unit}</td>
               <td className="border border-gray-300 p-2">{inventory.quantity}</td>
               <td className="border border-gray-300 p-2">{inventory.out}</td>
               <td className="border border-gray-300 p-2">{inventory.total}</td>
-              <td className="border border-gray-300 p-2 text-center">
-                <div className='space-x-3'>
-                  <button onClick={() => handleEdit(inventory)} className="bg-darkgreen text-white py-2 px-4 rounded hover:bg-darkergreen shadow-md text-center">Edit</button>
-                  <button onClick={() => openConfirmDeleteModal(inventory._id)} className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 shadow-md text-center">Delete</button>
-                </div>
+              <td className="border border-gray-300 p-2">
+                <button
+                  onClick={() => openModal(inventory)} // Open modal for editing
+                  className="text-blue-500"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirm delete modal
+                  className="text-red-500 ml-2"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

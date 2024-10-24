@@ -62,10 +62,10 @@ function RequisitionDetails({ requisition: initialRequisition }) {
         }
 
         const requestedQuantity = parseInt(rowToUpdate.quantity);
-        const availableQuantity = inventoryItem.quantity;
+        const availableQuantity = inventoryItem.total;
 
         if (requestedQuantity > availableQuantity) {
-            throw new Error(`Insufficient inventory. Available: ${availableQuantity}, Requested: ${requestedQuantity}`);
+            throw new Error(`Insufficient inventory. Available: ${availableQuantity}, Issued: ${requestedQuantity}`);
         }
 
         return true;
