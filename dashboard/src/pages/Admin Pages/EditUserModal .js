@@ -177,6 +177,8 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               Cancel
             </button>
           </div>
+
+          
         </form>
       </div>
     </Modal>

@@ -13,15 +13,15 @@ function SuccessModal({ isOpen, onClose, message }) {
           <h3 className="text-lg font-semibold text-gray-800">Success</h3>
         </div>
         <p className="text-gray-600 mb-6">{message}</p>
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded transition-colors duration-200"
+            className="px-4 py-2 bg-darkgreen text-white rounded"
           >
             Close
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
