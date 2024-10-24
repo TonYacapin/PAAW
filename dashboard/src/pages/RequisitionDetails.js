@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../component/axiosInstance';
 import StepperComponent from '../component/StepperComponent';
 import ErrorModal from '../component/ErrorModal';
+import { jwtDecode } from "jwt-decode";
 
 function RequisitionDetails({ requisition: initialRequisition }) {
     const [editableRows, setEditableRows] = useState({});
@@ -12,6 +13,8 @@ function RequisitionDetails({ requisition: initialRequisition }) {
     const [inventoryData, setInventoryData] = useState([]);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [userRole, setUserRole] = useState("");
+    const [user, setUser] = useState("");
 
     useEffect(() => {
         const fetchInventoryData = async () => {
@@ -28,6 +31,27 @@ function RequisitionDetails({ requisition: initialRequisition }) {
 
         fetchInventoryData();
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          try {
+            const decodedToken = jwtDecode(token);
+            const role = decodedToken.role;
+            const email = decodedToken.email
+            console.log(role); // Adjust this key based on your token's structure
+            console.log(email); // Adjust this key based on your token's structure
+            setUserRole(role);
+            setUser(email);
+          } catch (error) {
+            console.error("Invalid token", error);
+          }
+        }
+      }, []);
+
+
+
+    
 
     const handleEditToggle = (id) => {
         setEditableRows((prev) => {
@@ -170,7 +194,9 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                                     <th className="border border-gray-300 p-2">Quantity</th>
                                     <th className="border border-gray-300 p-2">Description</th>
                                     <th className="border border-gray-300 p-2">Remarks</th>
-                                    <th className="border border-gray-300 p-2">Actions</th>
+                                    {userRole === "admin" && requisitionData.formStatus !== "Distributed" && (
+                                        <th className="border border-gray-300 p-2">Actions</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -185,7 +211,7 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                                                     className="w-full border border-gray-300 p-1 rounded"
                                                 />
                                             ) : (
-                                                row.quantity ?? 'N/A'
+                                                row.quantity ?? '0'
                                             )}
                                         </td>
                                         <td className="border border-gray-300 p-2">
@@ -212,34 +238,36 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                                                 row.remarks || 'N/A'
                                             )}
                                         </td>
-                                        <td className="border border-gray-300 p-2">
-                                            {editableRows[row._id] ? (
-                                                <button
-                                                    onClick={() => saveChanges(row._id)}
-                                                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors"
-                                                >
-                                                    Save
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => handleEditToggle(row._id)}
-                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors"
-                                                >
-                                                    Edit
-                                                </button>
-                                            )}
-                                        </td>
+                                        {userRole === "admin" && requisitionData.formStatus !== "Distributed" && (
+                                            <td className="border border-gray-300 p-2">
+                                                {editableRows[row._id] ? (
+                                                    <button
+                                                        onClick={() => saveChanges(row._id)}
+                                                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors"
+                                                    >
+                                                        Save Issuance
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleEditToggle(row._id)}
+                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors"
+                                                    >
+                                                        Issue
+                                                    </button>
+                                                )}
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                );
+                )
             default:
                 return <div>Unknown step</div>;
         }
     };
-
+    
     return (
         <div className="p-4">
             <h3 className="text-xl font-bold mb-4">Requisition Details</h3>

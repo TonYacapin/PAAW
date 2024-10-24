@@ -3,6 +3,7 @@ import axiosInstance from '../component/axiosInstance';
 import Modal from '../component/Modal';
 import RequisitionDetails from './RequisitionDetails';
 import RequisitionIssueSlip from './RequisitionIssueSlip ';
+import { jwtDecode } from "jwt-decode";
 
 function RequisitionIssueSlipList() {
     const [requisitions, setRequisitions] = useState([]);
@@ -15,14 +16,49 @@ function RequisitionIssueSlipList() {
     const [selectedStatus, setSelectedStatus] = useState('');
     const [statusOptions] = useState(["Distributed"]);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [userRole, setUserRole] = useState("");
+    const [user, setUser] = useState("");
 
     useEffect(() => {
-        fetchRequisitions();
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const role = decodedToken.role;
+                const email = decodedToken.email;
+                console.log(role); // Adjust this key based on your token's structure
+                console.log(email); // Adjust this key based on your token's structure
+                setUserRole(role);
+                setUser(email);
+            } catch (error) {
+                console.error("Invalid token", error);
+            }
+        }
     }, []);
+
+    useEffect(() => {
+        if (userRole && user) {
+            fetchRequisitions();
+        }
+    }, [userRole, user]); // Fetch requisitions whenever userRole or user changes
 
     const fetchRequisitions = async () => {
         try {
-            const response = await axiosInstance.get('/api/requisitions');
+            let endpoint = '/api/requisitions';
+    
+            // Log the user role and user email for debugging
+            console.log("User Role:", userRole);
+            console.log("User Email:", user);
+    
+            // If userRole is not admin, append the email as a query parameter
+            if (userRole && userRole !== "admin") {
+                console.log("Appending user email to endpoint"); // Log this action
+                endpoint += `?userEmail=${encodeURIComponent(user)}`;
+            }
+    
+            console.log("Final Endpoint:", endpoint); // Log the final endpoint
+    
+            const response = await axiosInstance.get(endpoint);
             setRequisitions(response.data);
             setLoading(false);
         } catch (err) {
@@ -40,7 +76,7 @@ function RequisitionIssueSlipList() {
             setIsRefreshing(false);
         }
     };
-
+    
     const updateInventory = async (requisition) => {
         try {
             console.log("Updating inventory for requisition:", requisition);
