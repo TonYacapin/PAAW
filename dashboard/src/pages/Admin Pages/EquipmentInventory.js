@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../component/axiosInstance';
 import ConfirmationModal from '../../component/ConfirmationModal';
+import SuccessModal from '../../component/SuccessModal'; // Success Modal component
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -18,6 +19,8 @@ function EquipmentInventory() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [inventoryToDelete, setInventoryToDelete] = useState(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // Success modal open/close state
+  const [successMessage, setSuccessMessage] = useState(''); // Success message
 
   useEffect(() => {
     fetchInventories();
@@ -103,7 +106,12 @@ function EquipmentInventory() {
     if (inventoryToDelete) {
       try {
         await axiosInstance.delete(`/api/inventory/${inventoryToDelete}`);
-        fetchInventories(); // Refresh inventory list
+        setSuccessMessage('Equipment deleted successfully!');
+        setIsSuccessModalOpen(true);
+        setTimeout(() => {
+          setIsSuccessModalOpen(false); // Close success modal after 2 seconds
+        }, 2000);
+        fetchInventories(); // Refresh inventory list after deletion
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
@@ -133,6 +141,7 @@ function EquipmentInventory() {
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
             <h2 className="text-xl font-bold mb-4">{isEditing ? 'Edit Equipment' : 'Add Equipment'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Form fields */}
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 <div>
                   <label htmlFor="type" className="block text-sm font-medium text-gray-700">Equipment Type</label>
@@ -232,52 +241,59 @@ function EquipmentInventory() {
         </div>
       )}
 
+      {/* Success Modal */}
+      <SuccessModal isOpen={isSuccessModalOpen} message={successMessage} />
+
+      {/* Confirmation Modal for Deletion */}
       <ConfirmationModal
         isOpen={isConfirmDeleteOpen}
+        onClose={closeConfirmDeleteModal}
         onConfirm={handleDeleteConfirm}
-        onCancel={closeConfirmDeleteModal}
-        message="Are you sure you want to delete this item?"
+        message="Are you sure you want to delete this equipment?"
       />
 
-      <table className="min-w-full border border-gray-300 mt-6">
-        <thead>
-          <tr className="bg-darkgreen text-white">
-            <th className="border border-gray-300 p-2">Equipment Type</th>
-            <th className="border border-gray-300 p-2">Supplies</th>
-            <th className="border border-gray-300 p-2">Unit</th>
-            <th className="border border-gray-300 p-2">Quantity</th>
-            <th className="border border-gray-300 p-2">Out</th>
-            <th className="border border-gray-300 p-2">Total</th>
-            <th className="border border-gray-300 p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inventories.map((inventory) => (
-            <tr key={inventory._id} className="border-b hover:bg-gray-50">
-              <td className="border border-gray-300 p-2">{inventory.type}</td>
-              <td className="border border-gray-300 p-2">{inventory.supplies}</td>
-              <td className="border border-gray-300 p-2">{inventory.unit}</td>
-              <td className="border border-gray-300 p-2">{inventory.quantity}</td>
-              <td className="border border-gray-300 p-2">{inventory.out}</td>
-              <td className="border border-gray-300 p-2">{inventory.total}</td>
-              <td className="border border-gray-300 p-2">
-                <button
-                  onClick={() => openModal(inventory)} // Open modal for editing
-                  className="text-blue-500"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirm delete modal
-                  className="text-red-500 ml-2"
-                >
-                  Delete
-                </button>
-              </td>
+      {/* Inventory Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border px-4 py-2">Type</th>
+              <th className="border px-4 py-2">Supplies</th>
+              <th className="border px-4 py-2">Unit</th>
+              <th className="border px-4 py-2">Quantity</th>
+              <th className="border px-4 py-2">Out</th>
+              <th className="border px-4 py-2">Total</th>
+              <th className="border px-4 py-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {inventories.map((inventory) => (
+              <tr key={inventory._id}>
+                <td className="border px-4 py-2">{inventory.type}</td>
+                <td className="border px-4 py-2">{inventory.supplies}</td>
+                <td className="border px-4 py-2">{inventory.unit}</td>
+                <td className="border px-4 py-2">{inventory.quantity}</td>
+                <td className="border px-4 py-2">{inventory.out}</td>
+                <td className="border px-4 py-2">{inventory.total}</td>
+                <td className="border px-4 py-2 space-x-2 text-center">
+                  <button
+                    onClick={() => handleEdit(inventory)}
+                    className="px-4 py-2 bg-darkgreen text-white rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => openConfirmDeleteModal(inventory._id)}
+                    className="px-4 py-2 bg-red-500 text-white rounded"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

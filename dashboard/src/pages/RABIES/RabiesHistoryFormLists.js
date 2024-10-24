@@ -139,7 +139,7 @@ function RabiesHistoryFormLists() {
                 <option value="Deleted">Deleted</option>
               </select>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-2">
               <button
                 onClick={handleEditStatus}
                 className="px-4 py-2 bg-darkgreen text-white rounded"
@@ -148,7 +148,7 @@ function RabiesHistoryFormLists() {
               </button>
               <button
                 onClick={handleCancelEditStatus}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+                className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Cancel
               </button>
