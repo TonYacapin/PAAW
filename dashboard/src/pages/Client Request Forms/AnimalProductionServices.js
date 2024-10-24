@@ -10,7 +10,6 @@ function AnimalProductionServices() {
   const [clientInfo, setClientInfo] = useState({
     name: "",
     completeAddress: "",
-    barangay: "",
     municipality: "",
     province: "",
     birthday: "",
@@ -19,19 +18,12 @@ function AnimalProductionServices() {
   });
 
   const [animalInfo, setAnimalInfo] = useState({
-    nameOfPet: "",
-    species: "",
-    sex: "",
-    age: "",
-    color: "",
-    remarks: "",
     loanType: "",
     animalType: "",
   });
 
   const [serviceDetails, setServiceDetails] = useState({
     aiAnimalType: "",
-    quantity: "",
   });
 
   const [livelihoodInfo, setLivelihoodInfo] = useState({
@@ -67,7 +59,6 @@ function AnimalProductionServices() {
         setClientInfo({
           name: data.name || "",
           completeAddress: data.completeAddress || "",
-          barangay: data.barangay || "",
           municipality: data.municipality || "",
           province: data.province || "",
           birthday: data.birthday || "",
@@ -175,7 +166,6 @@ function AnimalProductionServices() {
     setClientInfo({
       name: "",
       completeAddress: "",
-      barangay: "",
       municipality: "",
       province: "",
       birthday: "",
@@ -184,19 +174,13 @@ function AnimalProductionServices() {
     });
 
     setAnimalInfo({
-      nameOfPet: "",
-      species: "",
-      sex: "",
-      age: "",
-      color: "",
-      remarks: "",
       loanType: "",
       animalType: "",
     });
 
     setServiceDetails({
       aiAnimalType: "",
-      quantity: "",
+   
     });
 
     setLivelihoodInfo({
