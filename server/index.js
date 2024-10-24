@@ -26,6 +26,9 @@ const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryin
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
 const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
 
+const backupRestoreRoutes = require('./routes/backupRestore.routes');
+
+
 
 
 // Import the audit log middleware
@@ -59,6 +62,7 @@ app.use(auditLogMiddleware);
 
 
 // Use routes
+app.use('/api/backup-restore', backupRestoreRoutes);
 app.use('/api/vetshipform', vetshipformroutes);
 app.use('/api/slaughterform', slaughterformRoutes);
 app.use('/api/technician-quarterly', technicianQuarterlyReportRoutes);
