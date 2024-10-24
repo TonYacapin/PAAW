@@ -57,7 +57,6 @@ app.use(authMiddleware); // Ensure this is before the audit log middleware
 // Use audit log middleware
 app.use(auditLogMiddleware);
 
-// app.use('/api', user);
 
 // Use routes
 app.use('/api/vetshipform', vetshipformroutes);
