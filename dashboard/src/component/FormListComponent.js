@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../component/axiosInstance";
 import Modal from "../component/Modal";
+import SuccessModal from "./SuccessModal";
+
 
 function FormListComponent({ endpoint, title, FormComponent }) {
   const [forms, setForms] = useState([]);
@@ -18,6 +20,9 @@ function FormListComponent({ endpoint, title, FormComponent }) {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [viewEntriesModalOpen, setViewEntriesModalOpen] = useState(false);
   const [selectedEntries, setSelectedEntries] = useState([]);
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,6 +71,10 @@ function FormListComponent({ endpoint, title, FormComponent }) {
       );
       setIsModalOpen(false);
       setSelectedForm(null);
+
+      // Show success modal with a message
+      setSuccessMessage(`${title.replace("List", "Form")} status updated successfully!`);
+      setIsSuccessModalOpen(true);
     } catch (err) {
       console.error("Error updating form status:", err);
       setError("Failed to update status");
@@ -116,7 +125,9 @@ function FormListComponent({ endpoint, title, FormComponent }) {
   });
 
   // Sort forms from newest to oldest by dateReported
-  const sortedForms = filteredForms.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+  const sortedForms = filteredForms.sort(
+    (a, b) => new Date(b.dateReported) - new Date(a.dateReported)
+  );
 
   // Pagination logic
   const totalPages = Math.ceil(sortedForms.length / formsPerPage);
@@ -259,7 +270,9 @@ function FormListComponent({ endpoint, title, FormComponent }) {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -344,7 +357,9 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                       ([key, value], idx) =>
                         key !== "_id" && (
                           <td key={idx} className="border border-gray-300 p-4">
-                            {typeof value === "string" && isDate(value) && value.length >= 24
+                            {typeof value === "string" &&
+                            isDate(value) &&
+                            value.length >= 24
                               ? formatDate(value)
                               : value}
                           </td>
@@ -356,6 +371,15 @@ function FormListComponent({ endpoint, title, FormComponent }) {
             </table>
           </div>
         </Modal>
+      )}
+
+      {/* Success Modal */}
+      {isSuccessModalOpen && (
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          message={successMessage}
+        />
       )}
 
       {isFormModalOpen && (
