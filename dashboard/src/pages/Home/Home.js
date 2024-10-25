@@ -762,7 +762,7 @@ const renderCharts = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <h5 className="text-lg font-medium text-gray-700 mb-2">Monthly Reports</h5>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">Annual Reports</h5>
                     <div className="space-y-2">
                       <button
                         onClick={() => openModalWithContent("IncomingReportList")}
