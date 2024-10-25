@@ -96,28 +96,32 @@ function RabiesVaccinationAccomplishmentReport() {
   const handlePrint = () => {
     const printContent = document.getElementById("printable-content");
     const printWindow = window.open("", "_blank");
-
+  
     printWindow.document.write(`
       <html>
         <head>
-          <title>Rabies Vaccination Accomplishment Report</title>
+      
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-            th { background-color: #1b5b40; color: white; }
+            @media print {
+              /* Add your print styles here if necessary */
+            }
           </style>
         </head>
         <body>
-          <h1>Rabies Vaccination Accomplishment Report</h1>
           ${printContent.innerHTML}
         </body>
       </html>
     `);
-
-    printWindow.document.close();
-    printWindow.print();
+  
+    printWindow.document.close(); // Close the document for writing
+  
+    // Wait for the content to load before calling print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close(); // Close the window after printing
+    };
   };
+ 
 
   return (
     <div className="p-6 bg-[#FFFAFA]">

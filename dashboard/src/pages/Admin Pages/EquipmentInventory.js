@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../component/axiosInstance';
 import ConfirmationModal from '../../component/ConfirmationModal';
 import SuccessModal from '../../component/SuccessModal'; // Success Modal component
+import InventoryReport from './InventoryReport';
+import Modal from '../../component/Modal';
+import CardBox from '../../component/CardBox';
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -21,11 +24,18 @@ function EquipmentInventory() {
   const [inventoryToDelete, setInventoryToDelete] = useState(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [isInventoryReportModalOpen, setIsInventoryReportModalOpen] = useState(false); // New state for InventoryReport modal
 
   useEffect(() => {
     fetchInventories();
   }, []);
+  const openInventoryReportModal = () => {
+    setIsInventoryReportModalOpen(true);
+  };
 
+  const closeInventoryReportModal = () => {
+    setIsInventoryReportModalOpen(false);
+  };
   const fetchInventories = async () => {
     try {
       const response = await axiosInstance.get(`/api/inventory`);
@@ -132,12 +142,30 @@ function EquipmentInventory() {
     <div className="p-4 bg-white text-black lg:max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-darkgreen mb-4">Equipment Inventory</h1>
 
-      <button
-        onClick={() => openModal()} // Open modal for adding equipment
-        className="px-4 py-2 bg-darkgreen text-white rounded-md mb-4"
-      >
-        Add Equipment
-      </button>
+
+
+
+      {/* Inventory Report Modal */}
+      <Modal isOpen={isInventoryReportModalOpen} onClose={closeInventoryReportModal}>
+        <InventoryReport />
+      </Modal>
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={() => openModal()} // Open modal for adding equipment
+          className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+        >
+          Add Equipment
+        </button>
+
+        <button
+          onClick={openInventoryReportModal} // Open InventoryReport modal
+          className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+        >
+          Generate Inventory Report
+        </button>
+      </div>
+
+
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -255,7 +283,7 @@ function EquipmentInventory() {
         message="Are you sure you want to delete this item?"
       />
 
-      <table className="min-w-full bg-white border border-gray-300">
+      <table className="min-w-full bg-white border border-gray-300 mt-3">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">No.</th>

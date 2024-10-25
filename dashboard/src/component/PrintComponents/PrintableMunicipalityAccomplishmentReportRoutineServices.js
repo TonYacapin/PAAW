@@ -1,12 +1,20 @@
 import React from 'react';
+import placeholder1 from '../../pages/assets/NVLOGO.png'; // Left Logo
+import placeholder2 from '../../pages/assets/ReportLogo2.png'; // Right Logo
 
-const PrintableMunicipalityAccomplishmentReportRoutineServices = ({ 
-  reportData, 
-  selectedYear, 
-  selectedMonth, 
-  selectedSpecies, 
-  semiAnnualTargets 
+const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
+  reportData,
+  selectedYear,
+  selectedMonth,
+  selectedSpecies,
+  semiAnnualTargets
 }) => {
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
   const getTableTitle = () => {
     switch (selectedSpecies) {
       case "Swine":
@@ -37,68 +45,109 @@ const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
   const totals = calculateTotals();
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-lg print-container">
+    <div className="p-2 bg-white rounded-lg shadow-lg print-container">
       <style>
         {`
-          @media print {
-            @page {
-              size: landscape; /* Set page size to landscape */
-              margin: 5mm; /* Reduced margin for more space */
-            }
-            body {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            th {
-              background-color: #e5e7eb !important; /* Light gray for header */
-              color: black !important; /* Black text for header */
-            }
-            table {
-              border: 1px solid #000 !important;
-              width: 100%;
-              max-width: 100%;
-              table-layout: fixed; /* Fixed layout for equal column width */
-              page-break-inside: auto;
-            }
-            td, th {
-              border: 1px solid #000 !important;
-              padding: 4px; /* Reduced padding */
-              text-align: left;
-              font-size: 10px; /* Smaller font size */
-            }
-            .signature-section {
-              margin-top: 20px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .signature-line {
-              border-top: 1px solid #000;
-              width: 45%;
-              text-align: center;
-              margin-top: 10px; /* Reduced margin */
-            }
+        @media print {
+          @page {
+            size: legal landscape; /* Set page size to landscape */
+            margin: 5mm; /* Further reduced margin for more space */
           }
-        `}
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 5mm; /* Further reduce padding */
+            background-color: #fff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 5mm; /* Reduce margin */
+          }
+         
+          .header img {
+            width: 40px; /* Reduced image size */
+            height: auto;
+            margin: 0 5px;
+          }
+          .header .title {
+            font-size: 10px; /* Reduced font size */
+            font-weight: bold;
+            margin: 3px 0;
+          }
+          .header .subtitle {
+            font-size: 8px; /* Increased font size for better readability */
+            font-weight: bold;
+            margin: 3px 0;
+          }
+          .header .text {
+            font-size: 8px; /* Consistent font size for regular text */
+            margin: 2px 0;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%; /* Use full width */
+            margin: 10px auto; /* Reduce margin */
+            page-break-inside: avoid; /* Prevent page breaks inside table */
+            overflow-x: auto; /* Allow horizontal scrolling */
+          }
+          th, td {
+            border: 1px solid black;
+            padding: 2px; /* Reduced padding */
+            text-align: left;
+            font-size: 9px; /* Consistent font size for table */
+          }
+          th {
+            background-color: #f2f2f2 !important;
+            font-weight: bold;
+          }
+          .footer {
+            margin-top: 15px; /* Reduce margin */
+            width: 100%;
+          }
+          .signature {
+            margin-top: 15px; /* Reduce margin */
+            border-top: 1px solid black;
+            width: 150px; /* Reduced signature width */
+            margin: 0 auto;
+            text-align: center;
+          }
+        }
+      `}
       </style>
 
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Municipality Routine Services Accomplishment Report
-      </h1>
-      <div className="mb-4 text-center">
-        <p><strong>Year:</strong> {selectedYear}</p>
-        <p><strong>Month:</strong> {new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' })}</p>
-        <p><strong>Species:</strong> {selectedSpecies}</p>
+      <div className="header">
+        <div className="logo-container">
+          <img src={placeholder1} alt="Left Logo" className="logo" />
+          <img src={placeholder2} alt="Right Logo" className="logo" />
+        </div>
+        <div className="text-center mt-2">
+          <p className="text">Republic of the Philippines</p>
+          <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
+          <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+          <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+        </div>
+        <div className="text-center mb-1">
+          <h1 className="title">Municipality Routine Services Accomplishment Report</h1>
+          <div className="mb-4 text-center">
+            <p className="text"><strong>Year:</strong> {selectedYear}</p>
+            <p className="text"><strong>Month:</strong> {monthNames[selectedMonth - 1]}</p>
+          </div>
+        </div>
+
       </div>
-      <h2 className="text-xl font-semibold mb-2 text-center">{getTableTitle()}</h2>
+
+
       <table className="w-full border-collapse border border-gray-300">
         <thead className="bg-gray-200">
           <tr>
-            <th className="border border-gray-300 px-2 py-1">Municipality</th>
-            <th className="border border-gray-300 px-2 py-1">Semi Annual Target</th>
-            <th className="border border-gray-300 px-2 py-1">Previous Month</th>
-            <th className="border border-gray-300 px-2 py-1">Present Month</th>
-            <th className="border border-gray-300 px-2 py-1">Total</th>
-            <th className="border border-gray-300 px-2 py-1">%</th>
+            <th className="border border-gray-300 px-1 py-1">Municipality</th>
+            <th className="border border-gray-300 px-1 py-1">Semi Annual Target</th>
+            <th className="border border-gray-300 px-1 py-1">Previous Month</th>
+            <th className="border border-gray-300 px-1 py-1">Present Month</th>
+            <th className="border border-gray-300 px-1 py-1">Total</th>
+            <th className="border border-gray-300 px-1 py-1">%</th>
           </tr>
         </thead>
         <tbody>
@@ -108,31 +157,27 @@ const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
 
             return (
               <tr key={index} className="odd:bg-white even:bg-gray-50">
-                <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
-                <td className="border border-gray-300 px-2 py-1">{semiAnnualTarget}</td>
-                <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
-                <td className="border border-gray-300 px-2 py-1">{item.presentMonth}</td>
-                <td className="border border-gray-300 px-2 py-1">{item.total}</td>
-                <td className="border border-gray-300 px-2 py-1">{percentage}</td>
+                <td className="border border-gray-300 px-1 py-1">{item.municipality}</td>
+                <td className="border border-gray-300 px-1 py-1">{semiAnnualTarget}</td>
+                <td className="border border-gray-300 px-1 py-1">{item.previousMonth}</td>
+                <td className="border border-gray-300 px-1 py-1">{item.presentMonth}</td>
+                <td className="border border-gray-300 px-1 py-1">{item.total}</td>
+                <td className="border border-gray-300 px-1 py-1">{percentage}</td>
               </tr>
             );
           })}
         </tbody>
         <tfoot className="font-bold">
           <tr>
-            <td className="border border-gray-300 px-2 py-1">Grand Total</td>
-            <td className="border border-gray-300 px-2 py-1"></td>
-            <td className="border border-gray-300 px-2 py-1">{totals.previousMonth}</td>
-            <td className="border border-gray-300 px-2 py-1">{totals.presentMonth}</td>
-            <td className="border border-gray-300 px-2 py-1">{totals.total}</td>
-            <td className="border border-gray-300 px-2 py-1"></td>
+            <td className="border border-gray-300 px-1 py-1">Grand Total</td>
+            <td className="border border-gray-300 px-1 py-1"></td>
+            <td className="border border-gray-300 px-1 py-1">{totals.previousMonth}</td>
+            <td className="border border-gray-300 px-1 py-1">{totals.presentMonth}</td>
+            <td className="border border-gray-300 px-1 py-1">{totals.total}</td>
+            <td className="border border-gray-300 px-1 py-1"></td>
           </tr>
         </tfoot>
       </table>
-
-      <div className="mt-4 text-right">
-        <p><strong>Submitted by:</strong> ________________________</p>
-      </div>
     </div>
   );
 };
