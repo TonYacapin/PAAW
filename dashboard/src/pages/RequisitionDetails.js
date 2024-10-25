@@ -239,18 +239,18 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                                             )}
                                         </td>
                                         {userRole === "admin" && requisitionData.formStatus !== "Distributed" && (
-                                            <td className="border border-gray-300 p-2">
+                                            <td className="border border-gray-300 p-2 text-center">
                                                 {editableRows[row._id] ? (
                                                     <button
                                                         onClick={() => saveChanges(row._id)}
-                                                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors"
+                                                        className="px-4 py-2 bg-darkgreen text-white rounded"
                                                     >
                                                         Save Issuance
                                                     </button>
                                                 ) : (
                                                     <button
                                                         onClick={() => handleEditToggle(row._id)}
-                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors"
+                                                        className="px-4 py-2 bg-darkgreen text-white rounded"
                                                     >
                                                         Issue
                                                     </button>
