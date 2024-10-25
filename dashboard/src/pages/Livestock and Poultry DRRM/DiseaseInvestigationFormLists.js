@@ -412,9 +412,9 @@ const DiseaseInvestigationTable = () => {
               >
                 Save
               </button>
-              <button
-                onClick={handleCloseEditStatusModal}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+              <button 
+                onClick={handleCloseEditStatusModal} 
+                className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Cancel
               </button>

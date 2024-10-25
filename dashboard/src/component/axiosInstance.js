@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
+  timeout: 80000, // Set to a larger value to accommodate large downloads
 });
 
 // Set default headers using interceptors

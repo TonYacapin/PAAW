@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../component/axiosInstance';
 import Modal from '../../component/Modal';
 import AnimalProductionServices from './AnimalProductionServices'; // Adjust the import as necessary
+import SuccessModal from '../../component/SuccessModal'; // Import your SuccessModal component
 
 function AnimalProductionServicesList() {
     const [services, setServices] = useState([]);
@@ -18,6 +19,8 @@ function AnimalProductionServicesList() {
     const [selectedService, setSelectedService] = useState(null);
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [isProductionModalOpen, setIsProductionModalOpen] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // Add state for success modal
+    const [newStatus, setNewStatus] = useState(''); // State to hold new status
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -45,7 +48,7 @@ function AnimalProductionServicesList() {
         return new Date(dateString).toLocaleDateString();
     };
 
-    const handleEditStatus = async (serviceId, newStatus) => {
+    const handleEditStatus = async (serviceId) => {
         try {
             await axiosInstance.put(`/api/animal-production-services/${serviceId}`, { status: newStatus });
             setServices(services.map(service =>
@@ -53,6 +56,8 @@ function AnimalProductionServicesList() {
             ));
             setIsStatusModalOpen(false);
             setSelectedService(null);
+            setNewStatus(''); // Reset the new status
+            setIsSuccessModalOpen(true); // Open success modal after successful status update
         } catch (err) {
             console.error("Error updating service status:", err);
             setError("Failed to update status");
@@ -118,6 +123,8 @@ function AnimalProductionServicesList() {
                     <option value="">All Statuses</option>
                     {statusOptions.map(status => (
                         <option key={status} value={status}>{status}</option>
+
+                        
                     ))}
                 </select>
 
@@ -214,13 +221,14 @@ function AnimalProductionServicesList() {
 
                                     <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
                                     <td className="border border-gray-300 p-4">{service.status}</td>
-                                    <td className="border border-gray-300 p-4">
+                                    <td className="border border-gray-300 p-4 space-x-2">
                                         <button
                                             onClick={() => {
                                                 setSelectedService(service);
+                                                setNewStatus(service.status); // Set the current status as default in dropdown
                                                 setIsStatusModalOpen(true);
                                             }}
-                                            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                            className="px-4 py-2 bg-darkgreen text-white rounded"
                                         >
                                             Edit Status
                                         </button>
@@ -232,53 +240,47 @@ function AnimalProductionServicesList() {
                 </div>
             )}
 
-            {/* Status Edit Modal */}
-            {/* Status Edit Modal */}
-            {isStatusModalOpen && (
-                <Modal isOpen={isStatusModalOpen} onClose={() => setIsStatusModalOpen(false)}>
-                    <div className="p-6">
-                        <h3 className="text-xl font-bold mb-4">Edit Service Status</h3>
-                        <p className="mb-4">Update status for <strong>{selectedService?.clientInfo?.name}</strong></p>
+            {/* Status Modal */}
+            <Modal isOpen={isStatusModalOpen} onClose={() => setIsStatusModalOpen(false)}>
+                <h2 className="text-lg font-bold mb-4">Update Service Status</h2>
+                <div className=''>
+                    <p>Current Status: {selectedService?.status}</p>
+                    <label htmlFor="statusSelect" className="block mb-2">Select New Status:</label>
+                    <select
+                        id="statusSelect"
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value)}
+                        className="border border-gray-300 p-2 rounded mb-4 w-full "
+                    >
+                        {statusOptions.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                        ))}
+                    </select>
+                    <div className='flex justify-end space-x-2'>
+                    <button
+                        onClick={() => handleEditStatus(selectedService._id)}
+                        className="px-4 py-2 bg-darkgreen text-white rounded"
+                    >
+                        Update Status
+                    </button>
+                    <button
+                        onClick={() => setIsStatusModalOpen(false)}
+                        className="px-4 py-2 bg-red-500 text-white rounded"
+                    >
+                        Cancel
+                    </button>
 
-                        <div className="mb-4">
-                            <strong>Current Status:</strong> <span>{selectedService?.status}</span>
-                        </div>
-
-                        <label className="block mb-2">
-                            <strong>Select New Status:</strong>
-                        </label>
-                        <select
-                            value={selectedService?.status}
-                            onChange={(e) => setSelectedService(prev => ({ ...prev, status: e.target.value }))}
-                            className="p-2 border rounded w-full mb-4"
-                        >
-                            {statusOptions.map(status => (
-                                <option key={status} value={status}>{status}</option>
-                            ))}
-                        </select>
-
-                        <button
-                            onClick={() => handleEditStatus(selectedService?._id, selectedService?.status)}
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Update Status
-                        </button>
-
-                        <button
-                            onClick={() => setIsStatusModalOpen(false)}
-                            className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        >
-                            Cancel
-                        </button>
                     </div>
-                </Modal>
-            )}
+                    
+                </div>
+            </Modal>
 
-            {/* Production Services Modal */}
+            {/* Success Modal */}
+            <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message="Status updated successfully!" />
+
+            {/* Animal Production Services Form Modal */}
             {isProductionModalOpen && (
-                <Modal isOpen={isProductionModalOpen} onClose={() => setIsProductionModalOpen(false)}>
-                    <AnimalProductionServices onClose={() => setIsProductionModalOpen(false)} />
-                </Modal>
+                <AnimalProductionServices onClose={() => setIsProductionModalOpen(false)} />
             )}
         </div>
     );

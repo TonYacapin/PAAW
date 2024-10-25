@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import axiosInstance from '../../component/axiosInstance';
 import CardBox from '../../component/CardBox';
+import SuccessModal from '../../component/SuccessModal';
 
 const AuditLogList = () => {
   const [auditLogs, setAuditLogs] = useState([]);
@@ -283,8 +284,13 @@ const AuditLogList = () => {
             Next
           </button>
         </div>
+
+        
       )}
+
+
     </div>
+ 
   );
 };
 

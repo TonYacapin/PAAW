@@ -13,16 +13,26 @@ router.post('/', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-// Get all inventory items
+// Get all inventory items with optional quantity filtering
 router.get('/', async (req, res) => {
   try {
-    const inventories = await Inventory.find();
+    const { quantity } = req.query; // Destructure quantity from query
+
+    // Initialize filter object
+    const filter = {};
+
+    // Apply quantity filter if provided
+    if (quantity) {
+      filter.quantity = { $gte: Number(quantity) }; // Filter by quantity (greater than or equal to)
+    }
+
+    const inventories = await Inventory.find(filter); // Apply the filter
     res.status(200).json(inventories);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Update an inventory item by ID
 router.put('/:id', async (req, res) => {

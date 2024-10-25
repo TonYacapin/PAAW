@@ -17,7 +17,7 @@ function SuccessModal({ isOpen, onClose, message }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded transition-colors duration-200"
+            className="px-4 py-2 bg-darkgreen text-white rounded"
           >
             Close
           </button>

@@ -13,11 +13,6 @@ const clientInfoSchema = new Schema({
     required: true,
     trim: true,
   },
-  barangay: {
-    type: String,
-    required: true,
-    trim: true,
-  },
   municipality: {
     type: String,
     required: true,
