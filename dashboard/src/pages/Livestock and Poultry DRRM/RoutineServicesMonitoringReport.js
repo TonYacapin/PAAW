@@ -18,7 +18,7 @@ function RoutineServicesMonitoringReport() {
   // Main fields state
   const [province, setProvince] = useState("Nueva Vizcaya");
   const [municipality, setMunicipality] = useState("");
-  const [reportingPeriod, setReportingPeriod] = useState("");
+  const [dateReported, setDateReported] = useState("");
   const [livestockTechnician, setLivestockTechnician] = useState("");
 
 
@@ -63,7 +63,7 @@ function RoutineServicesMonitoringReport() {
     data.push({
       Province: province,
       Municipality: municipality,
-      ReportingPeriod: reportingPeriod,
+      DateReported: dateReported,
       LivestockTechnician: livestockTechnician,
       No: "", // Leave blank for entries below
       Date: "",
@@ -87,7 +87,7 @@ function RoutineServicesMonitoringReport() {
       data.push({
         Province: "",
         Municipality: "",
-        ReportingPeriod: "",
+        DateReported: "",
         LivestockTechnician: "",
         No: index + 1,
         Date: entry.date,
@@ -146,7 +146,7 @@ function RoutineServicesMonitoringReport() {
         const mainFields = importedData[0];
         setProvince(mainFields.Province || "Nueva Vizcaya");
         setMunicipality(mainFields.Municipality || "");
-        setReportingPeriod(mainFields.ReportingPeriod || "");
+        setDateReported(mainFields.DateReported || "");
         setLivestockTechnician(mainFields.LivestockTechnician || "");
 
         // Get the remaining rows for the entries
@@ -241,7 +241,7 @@ function RoutineServicesMonitoringReport() {
         {
           province,
           municipality,
-          reportingPeriod,
+          dateReported,
           livestockTechnician,
           entries,
         }
@@ -255,7 +255,7 @@ function RoutineServicesMonitoringReport() {
         setEntries([]);
         setProvince("");
         setMunicipality("");
-        setReportingPeriod("");
+        setDateReported("");
         setLivestockTechnician("");
       }
     } catch (error) {
@@ -333,14 +333,14 @@ function RoutineServicesMonitoringReport() {
           </select>
         </div>
         <div>
-          <label htmlFor="reportingPeriod" className="block mb-1">
+          <label htmlFor="dateReported" className="block mb-1">
             Reporting Period
           </label>
           <input
-            id="reportingPeriod"
+            id="dateReported"
             type="date"
-            value={reportingPeriod}
-            onChange={(e) => setReportingPeriod(e.target.value)}
+            value={dateReported}
+            onChange={(e) => setDateReported(e.target.value)}
             className="border p-2 rounded w-full"
           />
         </div>

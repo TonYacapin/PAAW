@@ -345,53 +345,7 @@ const RequisitionIssueSlip = () => {
         </button>
       </div>
     </CardBox>
-    ,
-    <CardBox>
-      <div className="p-4 mb-4 flex flex-col gap-4 max-h-[55vh] overflow-auto">
-        {/* Issuance Section */}
-        <h2 className="font-bold mb-2">Issuance</h2>
-        <table className="w-full table-auto border">
-          <thead>
-            <tr>
-              <th>Quantity</th>
-              <th>Description</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {issuanceRows.map((row, index) => (
-              <tr key={index}>
-                <td>
-                  <input
-                    type="number"
-                    className="border w-full p-1"
-                    value={row.quantity}
-                    readOnly
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className="border w-full p-1"
-                    value={row.description}
-                    readOnly
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    className="border w-full p-1"
-                    value={row.remarks}
-                    readOnly
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </CardBox>
-    ,
+   ,
     <CardBox>
       {/* Footer Section */}
       <div className="grid grid-cols-1 p-4 mb-4 flex-col gap-4 max-h-[55vh] overflow-auto">

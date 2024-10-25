@@ -10,7 +10,7 @@ router.post(
     // Validate the main report fields
     body('province').notEmpty().withMessage('Province is required.'),
     body('municipality').notEmpty().withMessage('Municipality is required.'),
-    body('reportingPeriod').notEmpty().withMessage('Reporting period is required.'),
+    body('dateReported').notEmpty().withMessage('Reporting period is required.'),
     body('livestockTechnician').notEmpty().withMessage('Livestock technician is required.'),
 
     // Validate the entries array
@@ -28,7 +28,6 @@ router.post(
     body('entries.*.animalInfo.animalRegistered').notEmpty().withMessage('Animal registration status is required.'),
     body('entries.*.animalInfo.noOfHeads').isNumeric().withMessage('Number of heads must be a number.'),
     body('entries.*.activity').notEmpty().withMessage('Activity is required.'),
-    body('entries.*.remark').notEmpty().withMessage('Remark is required.')
   ],
   async (req, res) => {
     // Check for validation errors

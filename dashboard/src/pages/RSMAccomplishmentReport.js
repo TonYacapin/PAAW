@@ -176,14 +176,34 @@ function RSMAccomplishmentReport() {
  
   const printRef = useRef();
  
+  
   const handlePrint = () => {
     const printContent = document.getElementById("printable-content");
-    const windowPrint = window.open("", "", "left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0");
-    windowPrint.document.write(printContent.innerHTML);
-    windowPrint.document.close();
-    windowPrint.focus();
-    windowPrint.print();
-    windowPrint.close();
+    const printWindow = window.open("", "_blank");
+  
+    printWindow.document.write(`
+      <html>
+        <head>
+      
+          <style>
+            @media print {
+              /* Add your print styles here if necessary */
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+  
+    printWindow.document.close(); // Close the document for writing
+  
+    // Wait for the content to load before calling print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close(); // Close the window after printing
+    };
   };
  
  

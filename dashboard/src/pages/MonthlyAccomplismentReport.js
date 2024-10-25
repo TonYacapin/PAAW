@@ -9,6 +9,7 @@ import MunicipalityTargetList from "./Admin Pages/MunicipalityTargetList";
 import MunicipalityAccomplishmentReportVaccination from "./MunicipalityAccomplishmentReportVaccination";
 import MunicipalityAccomplishmentReportRabies from "./MunicipalityAccomplishmentReportRabies";
 import MunicipalityAccomplishmentReportRoutineServices from "./MunicipalityAccomplishmentReportRoutineServices";
+import CardBox from "../component/CardBox";
 
 function MonthlyAccomplishmentReport() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -64,7 +65,7 @@ function MonthlyAccomplishmentReport() {
       <div className="hidden lg:block">
         <div className="p-6 space-y-8 bg- min-h-0">
           {/* Button to open the modal */}
-          <div className="p-6 bg-[#fffafa] shadow-md rounded-lg">
+
             <div className="flex flex-row mb-4 justify-between">
               <h2 className="text-3xl font-extrabold mb-6 text-darkgreen">
                 Monthly Accomplishment Report
@@ -78,12 +79,13 @@ function MonthlyAccomplishmentReport() {
               
             </div>
             {/* Render the StepperComponent */}
+            <CardBox>
             <StepperComponent
               pages={pages}
               renderStepContent={renderStepContent}
               onStepChange={setCurrentStep}
             />
-          </div>
+            </CardBox>
           {/* Modal for TargetForm */}
           <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
             {currentStep >= 3 ? <MunicipalityTargetList /> : <TargetList />}

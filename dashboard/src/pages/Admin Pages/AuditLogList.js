@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import axiosInstance from '../../component/axiosInstance';
+import CardBox from '../../component/CardBox';
 import SuccessModal from '../../component/SuccessModal';
 
 const AuditLogList = () => {
@@ -146,7 +147,8 @@ const AuditLogList = () => {
 
       {/* Filters */}
       {showFilters && (
-        <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+        <CardBox>
+        {/* <div className="mb-6 bg-gray-50 p-4 rounded-lg"> */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <input
               type="text"
@@ -203,12 +205,13 @@ const AuditLogList = () => {
           <div className="mt-4 flex justify-end">
             <button
               onClick={clearFilters}
-              className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
+              className="px-4 py-2 text-sm bg-darkgreen hover:bg-darkergreen text-white rounded-lg"
             >
               Clear Filters
             </button>
           </div>
-        </div>
+        {/* </div> */}
+        </CardBox>
       )}
 
       {/* Results summary */}

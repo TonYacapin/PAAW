@@ -14,8 +14,14 @@ function RabiesHistoryFormLists() {
   const [newStatus, setNewStatus] = useState("Pending");
 
   // State variables for filters
-  const [nameFilter, setNameFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+  });
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const formsPerPage = 10;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -81,46 +87,74 @@ function RabiesHistoryFormLists() {
 
   // Filtering logic
   const filteredHistories = rabiesHistories.filter((history) => {
-    const matchesName =
-      history.victimProfile.name.toLowerCase().includes(nameFilter.toLowerCase());
+    const searchTerm = filters.search.toLowerCase();
+    const matchesSearch =
+      history.victimProfile.name.toLowerCase().includes(searchTerm) ||
+      history.animalProfile.species.toLowerCase().includes(searchTerm);
     const matchesStatus =
-      statusFilter === "" || history.formStatus === statusFilter;
+      !filters.status || history.formStatus === filters.status;
 
-    return matchesName && matchesStatus;
+    return matchesSearch && matchesStatus;
   });
 
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4 text-darkgreen">
-        Rabies History
-      </h2>
+  // Sort forms from newest to oldest by dateReported
+  const sortedHistories = filteredHistories.sort(
+    (a, b) => new Date(b.dateReported) - new Date(a.dateReported)
+  );
 
-      <div className="mb-4">
+  // Pagination logic
+  const totalPages = Math.ceil(sortedHistories.length / formsPerPage);
+  const paginatedHistories = sortedHistories.slice(
+    (currentPage - 1) * formsPerPage,
+    currentPage * formsPerPage
+  );
+
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6 text-black">Rabies History List</h2>
+
+      {/* Filters Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <input
           type="text"
-          placeholder="Filter by Name of Victim"
-          value={nameFilter}
-          onChange={(e) => setNameFilter(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2 mr-2"
+          placeholder="Search by name or species..."
+          value={filters.search}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, search: e.target.value }))
+          }
+          className="p-2 border rounded w-full"
         />
         <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2"
+          value={filters.status}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, status: e.target.value }))
+          }
+          className="p-2 border rounded w-full"
         >
           <option value="">All Statuses</option>
           <option value="Pending">Pending</option>
           <option value="Accepted">Accepted</option>
           <option value="Deleted">Deleted</option>
         </select>
+        <button
+          onClick={() =>
+            setFilters({ search: "", status: "" })
+          }
+          className="p-2 shadow-md bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
+        >
+          Clear Filters
+        </button>
       </div>
 
-      <button
-        onClick={openModal}
-        className="bg-darkgreen text-white px-4 py-2 rounded-md hover:bg-darkergreen transition duration-300 mb-4 flex items-center"
-      >
-        <PetsIcon className="mr-2" /> Rabies History
-      </button>
+      {/* Button to open Form modal */}
+      <div className="mb-4">
+        <button
+          onClick={openModal}
+          className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen flex items-center"
+        >
+          Open Rabies History Form
+        </button>
+      </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <RabiesHistoryForm closeModal={closeModal} />
@@ -160,55 +194,100 @@ function RabiesHistoryFormLists() {
         )}
       </Modal>
 
+      
+
+      
+      {/* Table with filtered forms */}
+      {filteredHistories.length === 0 ? (
+        <p className="text-center py-4">No forms found matching the filters.</p>
+      ) : (
+        <div className="overflow-auto border rounded-lg">
+          <table className="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-[#1b5b40] text-white">
+                <th className="border border-gray-300 p-4">Name of Victim</th>
+                <th className="border border-gray-300 p-4">Age</th>
+                <th className="border border-gray-300 p-4">Species</th>
+                <th className="border border-gray-300 p-4">Date of Death</th>
+                <th className="border border-gray-300 p-4">Cause of Death</th>
+                <th className="border border-gray-300 p-4">Vaccination History</th>
+                <th className="border border-gray-300 p-4">Form Status</th>
+                <th className="border border-gray-300 p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedHistories.map((history, index) => (
+                <tr key={history._id} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 p-4">
+                    {history.victimProfile.name}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.victimProfile.age}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.animalProfile.species}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.dateOfDeath
+                      ? new Date(history.dateOfDeath).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.causeOfDeath}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.vaccinationHistory}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {history.formStatus || "Pending"}
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    <button
+                      onClick={() => openEditStatusModal(history)}
+                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+                    >
+                      Edit Status
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+
+      )}
       {/* Success Modal */}
       <SuccessModal
         isOpen={successModalOpen}
         onClose={() => setSuccessModalOpen(false)}
         message="Status updated successfully!"
       />
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-lg rounded-lg">
-          <thead className="bg-pastelyellow">
-            <tr className="text-left text-sm font-semibold text-black">
-              <th className="py-3 px-6">Name of Victim</th>
-              <th className="py-3 px-6">Age</th>
-              <th className="py-3 px-6">Species</th>
-              <th className="py-3 px-6">Date of Death</th>
-              <th className="py-3 px-6">Cause of Death</th>
-              <th className="py-3 px-6">Vaccination History</th>
-              <th className="py-3 px-6">Form Status</th>
-              <th className="py-3 px-6">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredHistories.map((history) => (
-              <tr key={history._id} className="border-t border-gray-200">
-                <td className="py-2 px-6">{history.victimProfile.name}</td>
-                <td className="py-2 px-6">{history.victimProfile.age}</td>
-                <td className="py-2 px-6">{history.animalProfile.species}</td>
-                <td className="py-2 px-6">
-                  {history.dateOfDeath
-                    ? new Date(history.dateOfDeath).toLocaleDateString()
-                    : "N/A"}
-                </td>
-                <td className="py-2 px-6">{history.causeOfDeath}</td>
-                <td className="py-2 px-6">{history.vaccinationHistory}</td>
-                <td className="py-2 px-6">{history.formStatus || "Pending"}</td>
-                <td className="py-2 px-6">
-                  <button
-                    onClick={() => openEditStatusModal(history)}
-                    className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
-                  >
-                    Edit Status
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
+
+
   );
 }
 

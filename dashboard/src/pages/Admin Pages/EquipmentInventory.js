@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../component/axiosInstance';
 import ConfirmationModal from '../../component/ConfirmationModal';
 import SuccessModal from '../../component/SuccessModal'; // Success Modal component
+import InventoryReport from './InventoryReport';
+import Modal from '../../component/Modal';
+import CardBox from '../../component/CardBox';
 
 function EquipmentInventory() {
   const [inventories, setInventories] = useState([]);
@@ -9,24 +12,30 @@ function EquipmentInventory() {
     type: '',
     supplies: '',
     unit: '',
-    quantity: '',
+    quantity: 0,
     out: 0,
-    total: '',
+    total: 0,
     category: 'equipment',
-    createdAt: '',
-    updatedAt: '',
   });
+  const [originalTotal, setOriginalTotal] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false); // Confirmation modal for delete
-  const [inventoryToDelete, setInventoryToDelete] = useState(null); // Store inventory to delete
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // Success modal open/close state
-  const [successMessage, setSuccessMessage] = useState(''); // Success message
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [inventoryToDelete, setInventoryToDelete] = useState(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isInventoryReportModalOpen, setIsInventoryReportModalOpen] = useState(false); // New state for InventoryReport modal
 
   useEffect(() => {
     fetchInventories();
   }, []);
+  const openInventoryReportModal = () => {
+    setIsInventoryReportModalOpen(true);
+  };
 
+  const closeInventoryReportModal = () => {
+    setIsInventoryReportModalOpen(false);
+  };
   const fetchInventories = async () => {
     try {
       const response = await axiosInstance.get(`/api/inventory`);
@@ -38,71 +47,68 @@ function EquipmentInventory() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewInventory({
-      ...newInventory,
-      [name]: value,
-      total:
-        name === 'quantity' || name === 'out'
-          ? name === 'quantity'
-            ? value - newInventory.out
-            : newInventory.quantity - value
-          : newInventory.total,
-    });
+
+    if (name === 'total') {
+      const newValue = Math.max(value, originalTotal);
+      setNewInventory((prevInventory) => ({
+        ...prevInventory,
+        [name]: newValue,
+        quantity: parseInt(newValue || 0) + parseInt(prevInventory.out || 0),
+      }));
+    } else {
+      setNewInventory((prevInventory) => ({
+        ...prevInventory,
+        [name]: value,
+        quantity: parseInt(prevInventory.total || 0) + parseInt(prevInventory.out || 0),
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const updatedInventory = {
+      ...newInventory,
+      quantity: parseInt(newInventory.total) + parseInt(newInventory.out),
+    };
+
     try {
       if (isEditing) {
-        await axiosInstance.put(`/api/inventory/${newInventory._id}`, newInventory);
-        setSuccessMessage('Equipment updated successfully!');
+        await axiosInstance.put(`/api/inventory/${newInventory._id}`, updatedInventory);
+        setIsEditing(false);
       } else {
-        await axiosInstance.post(`/api/inventory`, newInventory);
-        setSuccessMessage('Equipment added successfully!');
+        await axiosInstance.post(`/api/inventory`, updatedInventory);
       }
-
-      setIsSuccessModalOpen(true); // Show success modal
-      setTimeout(() => {
-        setIsSuccessModalOpen(false); // Close success modal after 2 seconds
-      }, 2000);
-
-      setIsModalOpen(false); // Close the form modal after submit
-      fetchInventories(); // Refresh inventory list
+      fetchInventories();
+      closeModal();
     } catch (error) {
-      console.error('Error saving inventory:', error);
+      console.error(isEditing ? 'Error updating inventory:' : 'Error adding inventory:', error);
     }
   };
 
-  const openModal = () => {
+  const openModal = (inventory = null) => {
     setNewInventory({
-      type: '',
-      supplies: '',
-      unit: '',
-      quantity: '',
-      out: 0,
-      total: '',
+      type: inventory?.type || '',
+      supplies: inventory?.supplies || '',
+      unit: inventory?.unit || '',
+      quantity: inventory?.quantity || 0,
+      out: inventory?.out || 0,
+      total: inventory?.total || 0,
       category: 'equipment',
-      createdAt: '',
-      updatedAt: '',
     });
-    setIsEditing(false); // Reset editing state
+    setOriginalTotal(inventory?.total || 0);
+    setIsEditing(!!inventory);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleEdit = (inventory) => {
-    setNewInventory(inventory);
-    setIsEditing(true);
-    setIsModalOpen(true); // Open modal for editing
+    setOriginalTotal(0);
   };
 
   const openConfirmDeleteModal = (id) => {
-    setInventoryToDelete(id); // Store the ID of the inventory to delete
-    setIsConfirmDeleteOpen(true); // Open confirmation modal
+    setInventoryToDelete(id);
+    setIsConfirmDeleteOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -112,35 +118,55 @@ function EquipmentInventory() {
         setSuccessMessage('Equipment deleted successfully!');
         setIsSuccessModalOpen(true);
         setTimeout(() => {
-          setIsSuccessModalOpen(false); // Close success modal after 2 seconds
+          setIsSuccessModalOpen(false);
         }, 2000);
-        fetchInventories(); // Refresh inventory list after deletion
+        fetchInventories();
       } catch (error) {
         console.error('Error deleting inventory:', error);
       }
-      setInventoryToDelete(null); // Clear inventory to delete
+      setInventoryToDelete(null);
     }
-    setIsConfirmDeleteOpen(false); // Close confirmation modal
+    closeConfirmDeleteModal();
   };
 
   const closeConfirmDeleteModal = () => {
-    setInventoryToDelete(null); // Clear inventory to delete
-    setIsConfirmDeleteOpen(false); // Close confirmation modal
+    setInventoryToDelete(null);
+    setIsConfirmDeleteOpen(false);
+  };
+
+  const handleEdit = (inventory) => {
+    openModal(inventory); // Open the modal and set the inventory to be edited
   };
 
   return (
     <div className="p-4 bg-white text-black lg:max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-darkgreen mb-4">Equipment Inventory</h1>
 
-      {/* Button to trigger modal */}
-      <button
-        onClick={openModal}
-        className="px-4 py-2 bg-darkgreen text-white rounded-md mb-4"
-      >
-        Add Equipment
-      </button>
 
-      {/* Modal for the form */}
+
+
+      {/* Inventory Report Modal */}
+      <Modal isOpen={isInventoryReportModalOpen} onClose={closeInventoryReportModal}>
+        <InventoryReport />
+      </Modal>
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={() => openModal()} // Open modal for adding equipment
+          className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+        >
+          Add Equipment
+        </button>
+
+        <button
+          onClick={openInventoryReportModal} // Open InventoryReport modal
+          className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+        >
+          Generate Inventory Report
+        </button>
+      </div>
+
+
+
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
@@ -188,29 +214,15 @@ function EquipmentInventory() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    value={newInventory.quantity}
-                    onChange={handleChange}
-                    placeholder="Quantity"
-                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    required
-                  />
-                </div>
-                <div>
                   <label htmlFor="out" className="block text-sm font-medium text-gray-700">Out</label>
                   <input
                     type="number"
                     id="out"
                     name="out"
                     value={newInventory.out}
-                    onChange={handleChange}
                     placeholder="Out"
                     className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    required
+                    disabled
                   />
                 </div>
                 <div>
@@ -220,14 +232,26 @@ function EquipmentInventory() {
                     id="total"
                     name="total"
                     value={newInventory.total}
+                    onChange={handleChange}
                     placeholder="Total Inventory"
                     className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
-                    readOnly
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    value={parseInt(newInventory.total) + parseInt(newInventory.out)} // Calculate quantity
+                    placeholder="Quantity"
+                    className="border border-gray-300 p-2 rounded-md focus:outline-darkgreen"
+                    disabled
                   />
                 </div>
               </div>
 
-              {/* Form buttons */}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
@@ -256,51 +280,50 @@ function EquipmentInventory() {
         isOpen={isConfirmDeleteOpen}
         onClose={closeConfirmDeleteModal}
         onConfirm={handleDeleteConfirm}
-        message="Are you sure you want to delete this equipment?"
+        message="Are you sure you want to delete this item?"
       />
 
-      {/* Inventory Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-4 py-2">Type</th>
-              <th className="border px-4 py-2">Supplies</th>
-              <th className="border px-4 py-2">Unit</th>
-              <th className="border px-4 py-2">Quantity</th>
-              <th className="border px-4 py-2">Out</th>
-              <th className="border px-4 py-2">Total</th>
-              <th className="border px-4 py-2">Actions</th>
+      <table className="min-w-full bg-white border border-gray-300 mt-3">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b">No.</th>
+            <th className="py-2 px-4 border-b">Type</th>
+            <th className="py-2 px-4 border-b">Supplies</th>
+            <th className="py-2 px-4 border-b">Unit</th>
+            <th className="py-2 px-4 border-b">Quantity</th>
+            <th className="py-2 px-4 border-b">Out</th>
+            <th className="py-2 px-4 border-b">Total</th>
+            <th className="py-2 px-4 border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inventories.map((inventory, index) => (
+            <tr key={inventory._id}>
+              <td className="py-2 px-4 border-b">{index + 1}</td>
+              <td className="py-2 px-4 border-b">{inventory.type}</td>
+              <td className="py-2 px-4 border-b">{inventory.supplies}</td>
+              <td className="py-2 px-4 border-b">{inventory.unit}</td>
+              <td className="py-2 px-4 border-b">{inventory.quantity}</td>
+              <td className="py-2 px-4 border-b">{inventory.out}</td>
+              <td className="py-2 px-4 border-b">{inventory.total}</td>
+              <td className="py-2 px-4 border-b">
+                <button
+                  onClick={() => handleEdit(inventory)} // Call handleEdit when clicked
+                  className="text-blue-500 hover:underline mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirmation modal
+                  className="text-red-500 hover:underline"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {inventories.map((inventory) => (
-              <tr key={inventory._id}>
-                <td className="border px-4 py-2">{inventory.type}</td>
-                <td className="border px-4 py-2">{inventory.supplies}</td>
-                <td className="border px-4 py-2">{inventory.unit}</td>
-                <td className="border px-4 py-2">{inventory.quantity}</td>
-                <td className="border px-4 py-2">{inventory.out}</td>
-                <td className="border px-4 py-2">{inventory.total}</td>
-                <td className="border px-4 py-2 space-x-2 text-center">
-                  <button
-                    onClick={() => handleEdit(inventory)}
-                    className="px-4 py-2 bg-darkgreen text-white rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => openConfirmDeleteModal(inventory._id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

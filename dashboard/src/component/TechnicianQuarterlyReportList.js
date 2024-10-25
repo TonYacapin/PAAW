@@ -20,6 +20,10 @@ function TechnicianQuarterlyReportList() {
   const [viewEntriesModalOpen, setViewEntriesModalOpen] = useState(false);
   const [selectedEntries, setSelectedEntries] = useState([]);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const formsPerPage = 10;
+
   useEffect(() => {
     const fetchForms = async () => {
       try {
@@ -111,6 +115,13 @@ function TechnicianQuarterlyReportList() {
     return matchesSearch && matchesMunicipality && matchesStatus;
   });
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredForms.length / formsPerPage);
+  const paginatedForms = filteredForms.slice(
+    (currentPage - 1) * formsPerPage,
+    currentPage * formsPerPage
+  );
+
   if (loading) return <div className="flex justify-center p-8">Loading...</div>;
   if (error) return <div className="text-red-500 p-8">{error}</div>;
 
@@ -193,9 +204,11 @@ function TechnicianQuarterlyReportList() {
               </tr>
             </thead>
             <tbody>
-              {filteredForms.map((form, index) => (
+              {paginatedForms.map((form, index) => (
                 <tr key={form._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-4">{index + 1}</td>
+                  <td className="border border-gray-300 p-4">
+                    {(currentPage - 1) * formsPerPage + index + 1}
+                  </td>
                   <td className="border border-gray-300 p-4">
                     {form.municipality}
                   </td>
@@ -211,13 +224,13 @@ function TechnicianQuarterlyReportList() {
                         setSelectedForm(form);
                         setIsModalOpen(true);
                       }}
-                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen shadow-sm"
                     >
                       Edit Status
                     </button>
                     <button
                       onClick={() => handleViewEntries(form.animalEntries)}
-                      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      className="ml-2 px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow shadow-sm"
                     >
                       View Entries
                     </button>
@@ -226,6 +239,29 @@ function TechnicianQuarterlyReportList() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
 
@@ -263,13 +299,13 @@ function TechnicianQuarterlyReportList() {
               onClick={() =>
                 handleEditStatus(selectedForm._id, selectedForm.formStatus)
               }
-              className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="mt-4 ml-2 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
             >
               Save
             </button>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="mt-4 ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
             >
               Cancel
             </button>
@@ -284,10 +320,10 @@ function TechnicianQuarterlyReportList() {
           onClose={() => setViewEntriesModalOpen(false)}
         >
           <h3 className="text-xl font-bold mb-4">Entries Details</h3>
-          <div className="overflow-auto max-h-80">
+          <div className="overflow-auto max-h-80 rounded-lg">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
-                <tr className="bg-gray-800 text-white">
+                <tr className="bg-darkgreen text-white">
                   {Object.keys(flattenObject(selectedEntries[0] || {})).map(
                     (key) =>
                       key !== "_id" && (

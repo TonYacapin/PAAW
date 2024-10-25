@@ -23,14 +23,14 @@ const entrySchema = new mongoose.Schema({
   clientInfo: clientInfoSchema,
   animalInfo: animalInfoSchema,
   activity: { type: String, required: true },
-  remark: { type: String, required: true },
+  remark: { type: String, default: "" },
 });
 
 const routineServicesMonitoringReportSchema = new mongoose.Schema(
   {
     province: { type: String, required: true },
     municipality: { type: String, required: true },
-    reportingPeriod: { type: String, required: true },
+    dateReported: { type: String, required: true },
     livestockTechnician: { type: String, required: true },
     entries: [entrySchema],
     formStatus: {

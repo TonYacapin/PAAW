@@ -5,9 +5,11 @@ import Modal from "../component/Modal";
 import MonthlyAccomplishmentReportUpgradingServices from "./MonthlyAccomplishmentReportUpgradingServices";
 import MonthlyAccomplishmentReportOffspringMonitoring from "./MonthlyAccomplishmentReportOffspringMonitoring";
 import MonthAccomplishmentReportCalfDrop from "./MonthAccomplishmentReportCalfDrop";
+import CardBox from "../component/CardBox";
 function MonthlyAccomplishmentReport() {
     const [isModalOpen, setModalOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
+    
 
     const pages = [
         {
@@ -46,8 +48,7 @@ function MonthlyAccomplishmentReport() {
     return (
         <>
             {/* This will display the content for screens larger than medium (md) */}
-            <div className="hidden lg:block">
-                <div className="p-6 space-y-8 bg-gray-50 min-h-0">
+            <div className="hidden lg:block overflow-hidden">
                     {/* Button to open the modal */}
                     <div className="p-6 bg-white shadow-md rounded-lg">
                         <div className="flex flex-row mb-4 justify-between">
@@ -57,15 +58,14 @@ function MonthlyAccomplishmentReport() {
                           
                         </div>
                         {/* Render the StepperComponent */}
+                        <CardBox>
                         <StepperComponent
                             pages={pages}
                             renderStepContent={renderStepContent}
                             onStepChange={setCurrentStep}
                         />
+                        </CardBox>
                     </div>
-                
-                  
-                </div>
             </div>
             {/* This will display the message for screens smaller than medium (md) */}
             <div className="block lg:hidden">

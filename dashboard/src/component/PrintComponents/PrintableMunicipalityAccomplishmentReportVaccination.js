@@ -1,4 +1,6 @@
 import React from 'react';
+import placeholder1 from '../../pages/assets/NVLOGO.png'; // Left Logo
+import placeholder2 from '../../pages/assets/ReportLogo2.png'; // Right Logo
 
 const PrintableMunicipalityAccomplishmentReportVaccination = ({ 
   reportData, 
@@ -8,6 +10,11 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
   semiAnnualTargets,
   submittedBy
 }) => {
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
+
   // Function to calculate the grand total for Previous Month, Present Month, and Total
   const calculateGrandTotal = (type) => {
     return reportData.reduce((acc, item) => acc + (item[type] || 0), 0);
@@ -33,61 +40,98 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-lg print-container">
-      <style>
-        {`
-          @media print {
-            @page {
-              size: landscape; /* Set page size to landscape */
-              margin: 5mm; /* Reduced margin for more space */
-            }
-            body {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            .no-print {
-              display: none;
-            }
-            th {
-              background-color: #e5e7eb !important; /* Light gray for header */
-              color: black !important; /* Black text for header */
-            }
-            table {
-              border: 1px solid #000 !important;
-              width: 100%;
-              max-width: 100%;
-              table-layout: fixed; /* Fixed layout for equal column width */
-              page-break-inside: auto;
-            }
-            td, th {
-              border: 1px solid #000 !important;
-              padding: 4px; /* Reduced padding */
-              text-align: left;
-              font-size: 10px; /* Smaller font size */
-            }
-            .signature-section {
-              margin-top: 20px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .signature-line {
-              border-top: 1px solid #000;
-              width: 45%;
-              text-align: center;
-              margin-top: 10px; /* Reduced margin */
-            }
+    <style>
+      {`
+        @media print {
+          @page {
+            size: legal landscape; /* Set page size to landscape */
+            margin: 5mm; /* Further reduced margin for more space */
           }
-        `}
-      </style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 5mm; /* Further reduce padding */
+            background-color: #fff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 5mm; /* Reduce margin */
+          }
+          .header img {
+            width: 40px; /* Reduced image size */
+            height: auto;
+            margin: 0 5px;
+          }
+          .header .title {
+            font-size: 12px; /* Main title font size */
+            font-weight: bold;
+            margin: 3px 0;
+          }
+          .header .subtitle {
+            font-size: 10px; /* Subtitle font size */
+            font-weight: normal; /* Normal weight for subtitles */
+            margin: 2px 0;
+          }
+          .header .text {
+            font-size: 8px; /* Uniform body text font size */
+            margin: 2px 0;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%; /* Use full width */
+            margin: 10px auto; /* Reduce margin */
+            page-break-inside: avoid; /* Prevent page breaks inside table */
+            overflow-x: auto; /* Allow horizontal scrolling */
+          }
+          th, td {
+            border: 1px solid black;
+            padding: 2px; /* Reduced padding */
+            text-align: left;
+            font-size: 8px; /* Uniform table text font size */
+          }
+          th {
+            background-color: #f2f2f2 !important;
+            font-weight: bold;
+          }
+          .footer {
+            margin-top: 15px; /* Reduce margin */
+            width: 100%;
+          }
+          .signature {
+            margin-top: 15px; /* Reduce margin */
+            border-top: 1px solid black;
+            width: 150px; /* Reduced signature width */
+            margin: 0 auto;
+            text-align: center;
+          }
+        }
+      `}
+    </style>
 
-      <div className="text-center mb-4">
-        <h1 className="text-xl font-bold mb-2">Municipality Vaccination Accomplishment Report</h1>
-        <div className="mb-2">
-          <p><strong>Year:</strong> {selectedYear}</p>
-          <p><strong>Month:</strong> {new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' })}</p>
-          <p><strong>Species:</strong> {selectedSpecies}</p>
-        </div>
-        <h2 className="text-lg font-semibold mb-2">{getTableTitle()}</h2>
+    <div className="header">
+      <div className="logo-container">
+        <img src={placeholder1} alt="Left Logo" />
+        <img src={placeholder2} alt="Right Logo" />
       </div>
+      <div className="text-center mt-2">
+        <p className="text">Republic of the Philippines</p>
+        <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
+        <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+        <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+      </div>
+      <div className="text-center mb-4">
+        <h1 className="title">Municipality Rabies Vaccination Accomplishment Report</h1>
+        <div className="mb-4 text-center">
+          <p className="text"><strong>Year:</strong> {selectedYear}</p>
+          <p className="text"><strong>Month:</strong> {monthNames[selectedMonth - 1]}</p>
+        </div>
+      </div>
+    </div>
+
+
+      
 
       <table className="w-full border-collapse border border-gray-300 mb-6">
         <thead>
@@ -129,9 +173,7 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
         </tfoot>
       </table>
 
-      <div className="mt-4">
-        <p><strong>Submitted by:</strong> {submittedBy || '______________________'}</p>
-      </div>
+    
     </div>
   );
 };

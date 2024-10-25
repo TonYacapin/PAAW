@@ -2,6 +2,7 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 // Layout components
 import Navbar from "../../component/Navbar";
 import Modal from "../../component/Modal";
@@ -52,6 +53,7 @@ import VeterinaryInformationServiceList from "../Client Request Forms/Veterinary
 import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareServicesList";
 import UpgradingServicesList from "../UpgradingServicesList";
 import RequisitionIssueSlipList from "../RequisitionIssueSlipList";
+import BackupRestore from "../../component/BackupRestore ";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -107,6 +109,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
     console.log(appliedFilters);
   };
 
+
+  const [backupDir, setBackupDir] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
   const [selectedCharts, setSelectedCharts] = useState([]);
@@ -121,6 +126,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
   });
   const [showAll, setShowAll] = useState(true); // State to toggle between all data and filtered data
 
+  function toggleFilterShow() {
+    setShowFilter(!showFilter);
+  }
   const handleDateChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({
@@ -141,16 +149,16 @@ function Home({ handleLogout, setIsAuthenticated }) {
   };
 
   // function name(params) {
-    
+
   // }
   const renderModalContent = () => {
     // switch (modalContent) {
     //   case "RabiesVaccinationReport":
     //     return (
     //       <>
-    //         {userRole === "admin" ? 
+    //         {userRole === "admin" ?
     //           <RabiesVaccinationReport/>
-    //         : 
+    //         :
     //           <FormListComponent
     //             endpoint="/api/entries"
     //             title="Rabies Vaccination Report List"
@@ -160,109 +168,113 @@ function Home({ handleLogout, setIsAuthenticated }) {
     //       </>
     //     );
     // Divide
-      switch (modalContent) {
-        case "RabiesVaccinationReport":
-          return <RabiesVaccinationReport />;
-          case "VaccinationReport":
-            return <VaccinationReport />;
-          case "RoutineServicesMonitoringReport":
-            return <RoutineServicesMonitoringReport />;
-          case "DiseaseInvestigationForm":
-            return <DiseaseInvestigationForm />;
-          case "RequisitionSlip":
-            return <RequisitionIssueSlip />;
-          case "RabiesHistoryForm":
-            return <RabiesHistoryForm />;
-          case "AccomplishmentReport":
-            return <MonthlyAccomplishmentReport />;
-          case "UserManagement":
-            return <UserManagement />;
-          case "UpgradingServices":
-            return <UpgradingServices />;
-          case "OffSpringMonitoring":
-            return <OffspringMonitoring />;
-          case "CalfDrop":
-            return <TechnicianQuarterlyReportForm />;
-          case "AccomplishmentReportLivestock":
-            return <MonthlyAccomplishmentReportLivestock />;
-          case "SlaughterReportList":
-            return <SlaughterReportList />;
-          case "VeterinaryShipmentList":
-            return <VeterinaryShipmentList />;
-          case "OutgoingReportList":
-            return <OutgoingReportList />;
-          case "IncomingReportList":
-            return <IncomingReportList />;
-          case "AnimalHealthCareServices":
-            return <AnimalHealthCareServices />;
-          case "AnimalProductionServices":
-            return <AnimalProductionServices />;
-          case "RegulatoryCareServices":
-            return <RegulatoryCareServices />;
-          case "VeterinaryInformationServices":
-            return <VeterinaryInformationServices />;
-          case "AuditLogList":
-            return <AuditLogList />;
-          case "Inventory":
-            return <EquipmentInventory />;
-          case "AnimalHealthCareServicesList":
-            return <AnimalHealthCareServicesList />;
-          case "AnimalProductionServicesList":
-            return <AnimalProductionServicesList />;
-          case "VeterinaryInformationServiceList":
-            return <VeterinaryInformationServiceList />;
-          case "RegulatoryCareServicesList":
-            return <RegulatoryCareServicesList />;
-          // case "UpgradingServicesList":
-          //   return <UpgradingServicesList />;
-          case "RabiesVaccinationReportList":
-            return (
-      <FormListComponent
-        endpoint="/api/entries"
-        title="Rabies Vaccination Report List"
-        FormComponent={RabiesVaccinationReport}
-      />
-            );
-          case "VaccinationReportList":
-            return (
-              <FormListComponent
-                endpoint="/api/reports"
-                title="Vaccination Report List"
-                FormComponent={VaccinationReport}
-              />
-            );
-          case "RoutineServicesList":
-            return (
-              <FormListComponent
-                endpoint="/RSM"
-                title="Routine Services List"
-                FormComponent={RoutineServicesMonitoringReport}
-              />
-            );
-          case "UpgradingServicesList":
-            return (
-              <FormListComponent
-                endpoint="/api/upgrading-services"
-                title="Upgrading Services List"
-                FormComponent={UpgradingServices}
-              />
-            );
-          case "OffSpringMonitoringList":
-            return (
-              <FormListComponent
-                endpoint="/api/offspring-monitoring"
-                title="Offspring Monitoring List"
-                FormComponent={OffspringMonitoring}
-              />
-            );
-          case "TechnicianQuarterlyList":
-            return (
-              <TechnicianQuarterlyReportList/>
-            );
-          case "DiseaseInvestigationFormLists":
-            return <DiseaseInvestigationFormLists />;
-          case "RabiesHistoryFormLists":
-            return <RabiesHistoryFormLists />;
+    switch (modalContent) {
+      case "BackupRestore":
+        return <BackupRestore />;
+      case "RabiesVaccinationReport":
+        return <RabiesVaccinationReport />;
+      case "VaccinationReport":
+        return <VaccinationReport />;
+      case "RoutineServicesMonitoringReport":
+        return <RoutineServicesMonitoringReport />;
+      case "DiseaseInvestigationForm":
+        return <DiseaseInvestigationForm />;
+      case "RequisitionSlip":
+        return <RequisitionIssueSlip />;
+      case "RabiesHistoryForm":
+        return <RabiesHistoryForm />;
+      case "AccomplishmentReport":
+        return <MonthlyAccomplishmentReport />;
+      case "UserManagement":
+        return <UserManagement />;
+      case "UpgradingServices":
+        return <UpgradingServices />;
+      case "OffSpringMonitoring":
+        return <OffspringMonitoring />;
+      case "CalfDrop":
+        return <TechnicianQuarterlyReportForm />;
+      case "AccomplishmentReportLivestock":
+        return <MonthlyAccomplishmentReportLivestock />;
+      case "SlaughterReportList":
+        return <SlaughterReportList />;
+      case "VeterinaryShipmentList":
+        return <VeterinaryShipmentList />;
+      case "OutgoingReportList":
+        return <OutgoingReportList />;
+      case "IncomingReportList":
+        return <IncomingReportList />;
+      case "AnimalHealthCareServices":
+        return <AnimalHealthCareServices />;
+      case "AnimalProductionServices":
+        return <AnimalProductionServices />;
+      case "RegulatoryCareServices":
+        return <RegulatoryCareServices />;
+      case "VeterinaryInformationServices":
+        return <VeterinaryInformationServices />;
+      case "AuditLogList":
+        return <AuditLogList />;
+      case "Inventory":
+        return <EquipmentInventory />;
+      case "AnimalHealthCareServicesList":
+        return <AnimalHealthCareServicesList />;
+      case "AnimalProductionServicesList":
+        return <AnimalProductionServicesList />;
+      case "VeterinaryInformationServiceList":
+        return <VeterinaryInformationServiceList />;
+      case "RegulatoryCareServicesList":
+        return <RegulatoryCareServicesList />;
+      case "RequisitionIssueSlipList":
+        return <RequisitionIssueSlipList />;
+      // case "UpgradingServicesList":
+      //   return <UpgradingServicesList />;
+      case "RabiesVaccinationReportList":
+        return (
+          <FormListComponent
+            endpoint="/api/entries"
+            title="Rabies Vaccination Report List"
+            FormComponent={RabiesVaccinationReport}
+          />
+        );
+      case "VaccinationReportList":
+        return (
+          <FormListComponent
+            endpoint="/api/reports"
+            title="Vaccination Report List"
+            FormComponent={VaccinationReport}
+          />
+        );
+        case "RoutineServicesReportList":
+          return (
+            <FormListComponent
+              endpoint="/RSM"
+              title="Routine Services List"
+              FormComponent={RoutineServicesMonitoringReport}
+            />
+          );
+      case "UpgradingServicesList":
+        return (
+          <FormListComponent
+            endpoint="/api/upgrading-services"
+            title="Upgrading Services List"
+            FormComponent={UpgradingServices}
+          />
+        );
+      case "OffSpringMonitoringList":
+        return (
+          <FormListComponent
+            endpoint="/api/offspring-monitoring"
+            title="Offspring Monitoring List"
+            FormComponent={OffspringMonitoring}
+          />
+        );
+      case "TechnicianQuarterlyList":
+        return (
+          <TechnicianQuarterlyReportList />
+        );
+      case "DiseaseInvestigationFormLists":
+        return <DiseaseInvestigationFormLists />;
+      case "RabiesHistoryFormLists":
+        return <RabiesHistoryFormLists />;
 
       default:
         return null;
@@ -306,124 +318,111 @@ function Home({ handleLogout, setIsAuthenticated }) {
   const handleChartSelect = (selectedOptions) => {
     setSelectedCharts(selectedOptions.map((option) => option.value));
   };
+const allChartOptions = [
+  { value: "rabies", label: "Rabies Vaccination Chart" },
+  { value: "disease", label: "Disease Investigation Overview" },
+  { value: "vaccination", label: "General Vaccination Report" },
+  { value: "routine", label: "Routine Services Monitoring Report" },
+  { value: "rabiesHistory", label: "Rabies History Overview" },
+  { value: "offSpringMonitoring", label: "Offspring Monitoring Report" },
+  { value: "upgradingServices", label: "Upgrading Services Overview" },
+  { value: "technicianQuarterly", label: "Technician Quarterly Calf Drop Analysis" },
+  { value: "slaughterReport", label: "Slaughter Report Overview" },
+  { value: "veterinaryShipment", label: "Veterinary Shipment Overview" },
+];
 
-  const allChartOptions = [
-    { value: "rabies", label: "Rabies Chart" },
-    { value: "disease", label: "Disease Investigation Chart" },
-    { value: "vaccination", label: "Vaccination Report Chart" },
-    { value: "routine", label: "Routine Services Monitoring Report Chart" },
-    { value: "rabiesHistory", label: "Rabies History Charts" },
-    { value: "offSringMonitoring", label: "OffSring Monitoring Charts" },
-    { value: "UpgradingServices", label: "Upgrading Services Charts" },
-    {
-      value: "TechnicianQuarterly",
-      label: "Technician Quarterly Calf Drop Charts",
-    },
-    { value: "SlaughterReportChart", label: "Slaughter Report Chart" },
-
-    { value: "VeterinaryShipmentChart", label: "Veterinary Shipment Chart" },
-    { value: "RequisitionIssueSlipList", label: "Requisition Issue Slip List" },
-
-  ];
-
-  const getChartOptions = () => {
-    switch (userRole) {
-      case "admin":
-        return allChartOptions;
-      case "animalhealth":
-        return allChartOptions.filter(
-          (option) => option.value === "animalhealth"
-        );
-      case "livestock":
-        return allChartOptions.filter((option) => option.value === "livestock");
-      case "regulatory":
-        return allChartOptions.filter(
-          (option) => option.value === "regulatory"
-        );
-      default:
-        return [];
-    }
-  };
-
-  const renderCharts = () => {
-    if (selectedCharts.length > 0) {
-      return (
-        <div className="space-y-6">
-          {selectedCharts.includes("SlaughterReportChart") && (
-            <SlaughterReportChart
-              key={`slaughter-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("VeterinaryShipmentChart") && (
-            <VeterinaryShipmentChart
-              key={`shipment-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("animalhealth") && (
-            <AnimalHealthChartComponent
-              key={`health-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("livestock") && (
-            <LivestockChartComponent
-              key={`livestock-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("rabies") && (
-            <RabiesReportChart
-              key={`rabies-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("disease") && (
-            <DiseaseInvestigationChart
-              key={`disease-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("vaccination") && (
-            <VaccinationReportChart
-              key={`vaccination-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("routine") && (
-            <RoutineServicesMonitoringReportChart
-              key={`routine-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("rabiesHistory") && (
-            <RabiesHistoryCharts
-              key={`history-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("offSringMonitoring") && (
-            <OffSpringMonitoringChart
-              key={`offspring-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("UpgradingServices") && (
-            <UpgradingServicesChart
-              key={`upgrading-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-          {selectedCharts.includes("TechnicianQuarterly") && (
-            <TechnicianQuarterlyCharts
-              key={`quarterly-${chartKey}`}
-              filterValues={appliedFilters}
-            />
-          )}
-        </div>
+// Function to get chart options based on user role
+const getChartOptions = () => {
+  switch (userRole) {
+    case "admin":
+      return allChartOptions;
+    case "animalhealth":
+      return allChartOptions.filter(option => 
+          ["rabies", "vaccination", "disease", "rabiesHistory", "routine"].includes(option.value)
       );
-    }
+    case "livestock":
+      return allChartOptions.filter(option => 
+          ["upgradingServices", "offSpringMonitoring", "technicianQuarterly"].includes(option.value)
+      );
+    case "regulatory":
+      return allChartOptions.filter(option => 
+          ["slaughterReport", "veterinaryShipment"].includes(option.value)
+      );
+    default:
+      return [];
+  }
+};
+
+// Rendering the charts based on selected options
+const renderCharts = () => {
+  if (selectedCharts.length > 0) {
+    return (
+      <div className="space-y-6">
+        {selectedCharts.includes("slaughterReport") && (
+          <SlaughterReportChart
+            key={`slaughter-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("veterinaryShipment") && (
+          <VeterinaryShipmentChart
+            key={`shipment-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("rabies") && (
+          <RabiesReportChart
+            key={`rabies-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("disease") && (
+          <DiseaseInvestigationChart
+            key={`disease-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("vaccination") && (
+          <VaccinationReportChart
+            key={`vaccination-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("routine") && (
+          <RoutineServicesMonitoringReportChart
+            key={`routine-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("rabiesHistory") && (
+          <RabiesHistoryCharts
+            key={`history-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("offSpringMonitoring") && (
+          <OffSpringMonitoringChart
+            key={`offspring-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("upgradingServices") && (
+          <UpgradingServicesChart
+            key={`upgrading-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+        {selectedCharts.includes("technicianQuarterly") && (
+          <TechnicianQuarterlyCharts
+            key={`quarterly-${chartKey}`}
+            filterValues={appliedFilters}
+          />
+        )}
+      </div>
+    );
+  }
+
+
 
     return (
       <div className="md:h-2/5 bg-white shadow-md rounded-lg p-6 flex flex-wrap items-center justify-center text-center">
@@ -441,8 +440,8 @@ function Home({ handleLogout, setIsAuthenticated }) {
     switch (selectedDivision) {
       case "user":
         return (
-          <>'
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+          <>
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Client Forms
             </h3>
             <div className="space-y-6">
@@ -557,10 +556,20 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "admin":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Admin Actions
             </h3>
+
+
+
+
             <div className="space-y-2">
+              <button
+                className={buttonClasses}
+                onClick={() => openModalWithContent("BackupRestore")}
+              >
+                <ManageAccountsIcon className="mr-2" /> Backup and Restore
+              </button>
               <button
                 className={buttonClasses}
                 onClick={() => openModalWithContent("UserManagement")}
@@ -576,7 +585,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("RequisitionSlip")}
+                onClick={() => openModalWithContent("RequisitionIssueSlipList")}
               >
                 <Outbox className="mr-2" /> Manage Requisition Forms
               </button>
@@ -593,21 +602,25 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "animalhealth":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Animal Health
             </h3>
             <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-700 mb-2">
-                Requisition Forms
-              </h4>
-              <div className="space-y-2">
-                <button
-                  className={buttonClasses}
-                  onClick={() => openModalWithContent("RequisitionIssueSlipList")}
-                >
-                  <Outbox className="mr-2" /> Requisition Form
-                </button>
-              </div>
+              {userRole !== "admin" && (
+                <div>
+                  <h4 className="text-lg font-medium text-gray-700 mb-2">
+                    Requisition Forms
+                  </h4>
+                  <div className="space-y-2">
+                    <button
+                      className={buttonClasses}
+                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}
+                    >
+                      <Outbox className="mr-2" /> Requisition Form
+                    </button>
+                  </div>
+                </div>
+              )}
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   Vaccination Forms
@@ -621,13 +634,8 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   >
                     <ReportIcon className="mr-2" /> Rabies Vaccination
                   </button>
-                  {/* <Modal isOpen={isModalOpen} onClose={closeModal}>
-                    <RabiesVaccinationReport />
-                  </Modal> */}
                   <button
-                    onClick={() =>
-                      openModalWithContent("VaccinationReportList")
-                    }
+                    onClick={() => openModalWithContent("VaccinationReportList")}
                     className={buttonClasses}
                   >
                     <ReportIcon className="mr-2" /> Vaccination Report
@@ -647,162 +655,153 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   >
                     <ReportIcon className="mr-2" /> Disease Investigation Form
                   </button>
-                  {/* <button className={buttonClasses}>
-                    <ReportIcon className="mr-2" /> Disease Surveillance and
-                    Incident Report
-                  </button> */}
                   <button
-                    onClick={() =>
-                      openModalWithContent("RabiesHistoryFormLists")
-                    }
+                    onClick={() => openModalWithContent("RabiesHistoryFormLists")}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Rabies History
                   </button>
-
                   <button
                     onClick={() =>
-                      openModalWithContent("RoutineServicesMonitoringReport")
+                      openModalWithContent("RoutineServicesReportList")
                     }
                     className={buttonClasses}
                   >
-                    <AssignmentIcon className="mr-2" /> Routine Service
-                    Monitoring Reports
+                    <AssignmentIcon className="mr-2" /> Routine Service Monitoring Reports
                   </button>
                   <button
                     onClick={() => openModalWithContent("AccomplishmentReport")}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
-                    Report
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
                   </button>
                 </div>
               </div>
             </div>
           </>
         );
+
       case "livestock":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Livestock
             </h3>
             <div className="space-y-6">
-              <div>
-                <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  Requisition Forms
-                </h4>
-                <div className="space-y-2">
-                  <button
-                    className={buttonClasses}
-                    onClick={() => openModalWithContent("RequisitionSlip")}
-                  >
-                    <ManageAccountsIcon className="mr-2" /> Requisition Form
-                  </button>
+              {userRole !== "admin" && (
+                <div>
+                  <h4 className="text-lg font-medium text-gray-700 mb-2">
+                    Requisition Forms
+                  </h4>
+                  <div className="space-y-2">
+                    <button
+                      className={buttonClasses}
+                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}
+                    >
+                      <ManageAccountsIcon className="mr-2" /> Requisition Form
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   Livestock Management
                 </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() =>
-                      openModalWithContent("UpgradingServicesList")
-                    }
+                    onClick={() => openModalWithContent("UpgradingServicesList")}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
                   <button
-                    onClick={() =>
-                      openModalWithContent("OffSpringMonitoringList")
-                    }
+                    onClick={() => openModalWithContent("OffSpringMonitoringList")}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
-
                   <button
-                    onClick={() =>
-                      openModalWithContent("TechnicianQuarterlyList")
-                    }
+                    onClick={() => openModalWithContent("TechnicianQuarterlyList")}
                     className={buttonClasses}
                   >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
-                    Drop Report
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
                   </button>
-
                   <button
-                    onClick={() =>
-                      openModalWithContent("AccomplishmentReportLivestock")
-                    }
+                    onClick={() => openModalWithContent("AccomplishmentReportLivestock")}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Monthly
-                    Accomplishment Reports
+                    <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
                   </button>
                 </div>
               </div>
             </div>
           </>
         );
+
       case "regulatory":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Regulatory
             </h3>
             <div className="space-y-6">
-              <div>
-                <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  Requisition Forms
-                </h4>
-                <div className="space-y-2">
-                  <button className={buttonClasses}>
-                    <ManageAccountsIcon className="mr-2" /> Requisition Form
-                  </button>
+              {userRole !== "admin" && (
+                <div>
+                  <h4 className="text-lg font-medium text-gray-700 mb-2">
+                    Requisition Forms
+                  </h4>
+                  <div className="space-y-2">
+                    <button className={buttonClasses}
+                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}>
+                      <ManageAccountsIcon className="mr-2" /> Requisition Form
+                    </button>
+                  </div>
                 </div>
-              </div>
-
+              )}
               <div>
-                <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  FORMS
-                </h4>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => openModalWithContent("IncomingReportList")}
-                    className={buttonClasses}
-                  >
-                    <ReportIcon className="mr-2" /> Incoming Report
-                  </button>
-                  <button
-                    onClick={() => openModalWithContent("OutgoingReportList")}
-                    className={buttonClasses}
-                  >
-                    <ReportIcon className="mr-2" /> Outgoing Report
-                  </button>
-                  <button
-                    onClick={() => openModalWithContent("SlaughterReportList")}
-                    className={buttonClasses}
-                  >
-                    <AssessmentIcon className="mr-2" /> Slaughter Report
-                    (consolidated)
-                  </button>
-                  <button
-                    onClick={() =>
-                      openModalWithContent("VeterinaryShipmentList")
-                    }
-                    className={buttonClasses}
-                  >
-                    <LocalShippingIcon className="mr-2" /> Veterinary Shipment
-                    Report
-                  </button>
+
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">Annual Reports</h5>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => openModalWithContent("IncomingReportList")}
+                        className={buttonClasses}
+                      >
+                        <ReportIcon className="mr-2" /> Incoming Report
+                      </button>
+                      <button
+                        onClick={() => openModalWithContent("OutgoingReportList")}
+                        className={buttonClasses}
+                      >
+                        <ReportIcon className="mr-2" /> Outgoing Report
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">List Reports</h5>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => openModalWithContent("SlaughterReportList")}
+                        className={buttonClasses}
+                      >
+                        <AssessmentIcon className="mr-2" /> Slaughter Report (consolidated)
+                      </button>
+                      <button
+                        onClick={() => openModalWithContent("VeterinaryShipmentList")}
+                        className={buttonClasses}
+                      >
+                        <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </>
         );
+
+
       default:
         return null;
     }
@@ -875,7 +874,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 {" "}
                 {/* Left Side - Charts */}
                 <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-left">
+                  <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
                     Select Charts to Display
                   </h3>
 
@@ -893,14 +892,25 @@ function Home({ handleLogout, setIsAuthenticated }) {
                         className="text-sm sm:text-base z-0"
                       />
                     </div>
+                    <div className="flex items-center col-span-1 justify-center">
+                      <button
+                        onClick={() => toggleFilterShow()}
+                        className="bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                      >
+                        {showAll ? "Show Filters" : "Hide Filters"}
+                      </button>
+                    </div>
                   </div>
 
                   <FilterContext.Provider value={{ filters, showAll }}>
                     {/* Conditional Rendering for Charts */}
-                    <FilterComponent
-                      municipalities={municipalities}
-                      onFilter={handleFilter}
-                    />
+                    {showFilter && (
+                      <FilterComponent
+                        municipalities={municipalities}
+                        onFilter={handleFilter}
+                      />
+                    )}
+
                     <div className="w-full h-[70vh] overflow-auto">
                       {renderCharts()}
                     </div>
