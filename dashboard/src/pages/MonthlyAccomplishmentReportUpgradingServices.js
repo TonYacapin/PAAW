@@ -70,7 +70,7 @@ const MonthlyAccomplishmentReportUpgradingServices = () => {
             ) : (
                 <>
                     {/* Filter Section */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-8">
+                    <div className="grid grid-cols-3 gap-4 mb-8">
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Municipality:</span>
                             <input 

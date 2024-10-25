@@ -158,7 +158,7 @@ function IncomingReportList() {
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h1 className="text-3xl font-bold text-darkgreen text-center mb-8">
+      <h1 className="text-2xl font-bold text-black mb-8">
         Incoming Report List
       </h1>
       <div className="mb-4">

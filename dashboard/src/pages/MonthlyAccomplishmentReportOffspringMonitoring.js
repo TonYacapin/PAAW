@@ -58,7 +58,7 @@ const OffspringMonitoringReport = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-6 text-black">Offspring Monitoring Report</h1>
+            <h1 className="text-2xl font-bold mb-4">Offspring Monitoring Report</h1>
 
             {/* Loading Indicator */}
             {loading ? (
@@ -66,7 +66,7 @@ const OffspringMonitoringReport = () => {
             ) : (
                 <>
                     {/* Filter Section */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-8">
+                    <div className="grid grid-cols-3 gap-4 mb-8">
                         <label className="flex flex-col">
                             <span className="text-sm font-semibold mb-1">Municipality:</span>
                             <input
@@ -74,7 +74,7 @@ const OffspringMonitoringReport = () => {
                                 name="municipality"
                                 value={filter.municipality}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-black-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by municipality"
                             />
                         </label>
@@ -85,7 +85,7 @@ const OffspringMonitoringReport = () => {
                                 name="name"
                                 value={filter.name}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-black-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by name"
                             />
                         </label>
@@ -95,7 +95,7 @@ const OffspringMonitoringReport = () => {
                                 name="month"
                                 value={filter.month}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-black-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                             >
                                 <option value="">All Months</option>
                                 {Array.from({ length: 12 }, (_, i) => (
@@ -110,7 +110,7 @@ const OffspringMonitoringReport = () => {
                                 name="year"
                                 value={filter.year}
                                 onChange={handleFilterChange}
-                                className="p-2 border border-black-300 rounded-md shadow-sm"
+                                className="p-2 border border-black rounded-md shadow-sm"
                                 placeholder="Filter by year"
                             />
                         </label>
@@ -118,8 +118,8 @@ const OffspringMonitoringReport = () => {
 
                     {/* Data Summary */}
                     <div className="bg-white p-4 mb-6 shadow-md rounded-md">
-                        <p className="font-semibold text-black-700">Total Entries: {filteredData.reduce((acc, item) => acc + item.entries.length, 0)}</p>
-                        <p className="font-semibold text-black-700">Total Municipalities: {filteredData.length}</p>
+                        <p className="font-semibold text-black">Total Entries: {filteredData.reduce((acc, item) => acc + item.entries.length, 0)}</p>
+                        <p className="font-semibold text-black">Total Municipalities: {filteredData.length}</p>
                     </div>
 
                     {/* Table Data */}
@@ -138,7 +138,7 @@ const OffspringMonitoringReport = () => {
                                     <th className="py-3 px-6 text-left">Sex</th>
                                 </tr>
                             </thead>
-                            <tbody className="text-black-600 text-sm">
+                            <tbody className="text-black text-sm">
                                 {filteredData.map((item, index) => (
                                     item.entries && Array.isArray(item.entries) && item.entries.map((entry, entryIndex) => (
                                         <tr key={`${item._id}-${entryIndex}`} className="border-b border-black-200 hover:bg-black-100">

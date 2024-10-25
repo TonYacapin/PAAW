@@ -106,6 +106,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
     console.log(appliedFilters);
   };
 
+  const [showFilter, setShowFilter] = useState(false);
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
   const [selectedCharts, setSelectedCharts] = useState([]);
@@ -120,6 +121,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
   });
   const [showAll, setShowAll] = useState(true); // State to toggle between all data and filtered data
 
+  function toggleFilterShow() {
+    setShowFilter(!showFilter);
+  }
   const handleDateChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({
@@ -140,16 +144,16 @@ function Home({ handleLogout, setIsAuthenticated }) {
   };
 
   // function name(params) {
-    
+
   // }
   const renderModalContent = () => {
     // switch (modalContent) {
     //   case "RabiesVaccinationReport":
     //     return (
     //       <>
-    //         {userRole === "admin" ? 
+    //         {userRole === "admin" ?
     //           <RabiesVaccinationReport/>
-    //         : 
+    //         :
     //           <FormListComponent
     //             endpoint="/api/entries"
     //             title="Rabies Vaccination Report List"
@@ -159,109 +163,107 @@ function Home({ handleLogout, setIsAuthenticated }) {
     //       </>
     //     );
     // Divide
-      switch (modalContent) {
-        case "RabiesVaccinationReport":
-          return <RabiesVaccinationReport />;
-          case "VaccinationReport":
-            return <VaccinationReport />;
-          case "RoutineServicesMonitoringReport":
-            return <RoutineServicesMonitoringReport />;
-          case "DiseaseInvestigationForm":
-            return <DiseaseInvestigationForm />;
-          case "RequisitionSlip":
-            return <RequisitionIssueSlip />;
-          case "RabiesHistoryForm":
-            return <RabiesHistoryForm />;
-          case "AccomplishmentReport":
-            return <MonthlyAccomplishmentReport />;
-          case "UserManagement":
-            return <UserManagement />;
-          case "UpgradingServices":
-            return <UpgradingServices />;
-          case "OffSpringMonitoring":
-            return <OffspringMonitoring />;
-          case "CalfDrop":
-            return <TechnicianQuarterlyReportForm />;
-          case "AccomplishmentReportLivestock":
-            return <MonthlyAccomplishmentReportLivestock />;
-          case "SlaughterReportList":
-            return <SlaughterReportList />;
-          case "VeterinaryShipmentList":
-            return <VeterinaryShipmentList />;
-          case "OutgoingReportList":
-            return <OutgoingReportList />;
-          case "IncomingReportList":
-            return <IncomingReportList />;
-          case "AnimalHealthCareServices":
-            return <AnimalHealthCareServices />;
-          case "AnimalProductionServices":
-            return <AnimalProductionServices />;
-          case "RegulatoryCareServices":
-            return <RegulatoryCareServices />;
-          case "VeterinaryInformationServices":
-            return <VeterinaryInformationServices />;
-          case "AuditLogList":
-            return <AuditLogList />;
-          case "Inventory":
-            return <EquipmentInventory />;
-          case "AnimalHealthCareServicesList":
-            return <AnimalHealthCareServicesList />;
-          case "AnimalProductionServicesList":
-            return <AnimalProductionServicesList />;
-          case "VeterinaryInformationServiceList":
-            return <VeterinaryInformationServiceList />;
-          case "RegulatoryCareServicesList":
-            return <RegulatoryCareServicesList />;
-          // case "UpgradingServicesList":
-          //   return <UpgradingServicesList />;
-          case "RabiesVaccinationReportList":
-            return (
-      <FormListComponent
-        endpoint="/api/entries"
-        title="Rabies Vaccination Report List"
-        FormComponent={RabiesVaccinationReport}
-      />
-            );
-          case "VaccinationReportList":
-            return (
-              <FormListComponent
-                endpoint="/api/reports"
-                title="Vaccination Report List"
-                FormComponent={VaccinationReport}
-              />
-            );
-          case "RoutineServicesList":
-            return (
-              <FormListComponent
-                endpoint="/RSM"
-                title="Routine Services List"
-                FormComponent={RoutineServicesMonitoringReport}
-              />
-            );
-          case "UpgradingServicesList":
-            return (
-              <FormListComponent
-                endpoint="/api/upgrading-services"
-                title="Upgrading Services List"
-                FormComponent={UpgradingServices}
-              />
-            );
-          case "OffSpringMonitoringList":
-            return (
-              <FormListComponent
-                endpoint="/api/offspring-monitoring"
-                title="Offspring Monitoring List"
-                FormComponent={OffspringMonitoring}
-              />
-            );
-          case "TechnicianQuarterlyList":
-            return (
-              <TechnicianQuarterlyReportList/>
-            );
-          case "DiseaseInvestigationFormLists":
-            return <DiseaseInvestigationFormLists />;
-          case "RabiesHistoryFormLists":
-            return <RabiesHistoryFormLists />;
+    switch (modalContent) {
+      case "RabiesVaccinationReport":
+        return <RabiesVaccinationReport />;
+      case "VaccinationReport":
+        return <VaccinationReport />;
+      case "RoutineServicesMonitoringReport":
+        return <RoutineServicesMonitoringReport />;
+      case "DiseaseInvestigationForm":
+        return <DiseaseInvestigationForm />;
+      case "RequisitionSlip":
+        return <RequisitionIssueSlip />;
+      case "RabiesHistoryForm":
+        return <RabiesHistoryForm />;
+      case "AccomplishmentReport":
+        return <MonthlyAccomplishmentReport />;
+      case "UserManagement":
+        return <UserManagement />;
+      case "UpgradingServices":
+        return <UpgradingServices />;
+      case "OffSpringMonitoring":
+        return <OffspringMonitoring />;
+      case "CalfDrop":
+        return <TechnicianQuarterlyReportForm />;
+      case "AccomplishmentReportLivestock":
+        return <MonthlyAccomplishmentReportLivestock />;
+      case "SlaughterReportList":
+        return <SlaughterReportList />;
+      case "VeterinaryShipmentList":
+        return <VeterinaryShipmentList />;
+      case "OutgoingReportList":
+        return <OutgoingReportList />;
+      case "IncomingReportList":
+        return <IncomingReportList />;
+      case "AnimalHealthCareServices":
+        return <AnimalHealthCareServices />;
+      case "AnimalProductionServices":
+        return <AnimalProductionServices />;
+      case "RegulatoryCareServices":
+        return <RegulatoryCareServices />;
+      case "VeterinaryInformationServices":
+        return <VeterinaryInformationServices />;
+      case "AuditLogList":
+        return <AuditLogList />;
+      case "Inventory":
+        return <EquipmentInventory />;
+      case "AnimalHealthCareServicesList":
+        return <AnimalHealthCareServicesList />;
+      case "AnimalProductionServicesList":
+        return <AnimalProductionServicesList />;
+      case "VeterinaryInformationServiceList":
+        return <VeterinaryInformationServiceList />;
+      case "RegulatoryCareServicesList":
+        return <RegulatoryCareServicesList />;
+      // case "UpgradingServicesList":
+      //   return <UpgradingServicesList />;
+      case "RabiesVaccinationReportList":
+        return (
+          <FormListComponent
+            endpoint="/api/entries"
+            title="Rabies Vaccination Report List"
+            FormComponent={RabiesVaccinationReport}
+          />
+        );
+      case "VaccinationReportList":
+        return (
+          <FormListComponent
+            endpoint="/api/reports"
+            title="Vaccination Report List"
+            FormComponent={VaccinationReport}
+          />
+        );
+      case "RoutineServicesReportList":
+        return (
+          <FormListComponent
+            endpoint="/RSM"
+            title="Routine Services List"
+            FormComponent={RoutineServicesMonitoringReport}
+          />
+        );
+      case "UpgradingServicesList":
+        return (
+          <FormListComponent
+            endpoint="/api/upgrading-services"
+            title="Upgrading Services List"
+            FormComponent={UpgradingServices}
+          />
+        );
+      case "OffSpringMonitoringList":
+        return (
+          <FormListComponent
+            endpoint="/api/offspring-monitoring"
+            title="Offspring Monitoring List"
+            FormComponent={OffspringMonitoring}
+          />
+        );
+      case "TechnicianQuarterlyList":
+        return <TechnicianQuarterlyReportList />;
+      case "DiseaseInvestigationFormLists":
+        return <DiseaseInvestigationFormLists />;
+      case "RabiesHistoryFormLists":
+        return <RabiesHistoryFormLists />;
 
       default:
         return null;
@@ -439,7 +441,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "user":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Client Forms
             </h3>
             <div className="space-y-6">
@@ -554,7 +556,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "admin":
         return (
           <>
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Admin Actions
             </h3>
             <div className="space-y-2">
@@ -590,7 +592,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "animalhealth":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Animal Health
             </h3>
             <div className="space-y-6">
@@ -659,7 +661,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
 
                   <button
                     onClick={() =>
-                      openModalWithContent("RoutineServicesMonitoringReport")
+                      openModalWithContent("RoutineServicesReportList")
                     }
                     className={buttonClasses}
                   >
@@ -681,7 +683,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "livestock":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Livestock
             </h3>
             <div className="space-y-6">
@@ -747,7 +749,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "regulatory":
         return (
           <>
-            <h3 className="text-2xl font-semibold text-darkgreen mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
               Browse Forms from Regulatory
             </h3>
             <div className="space-y-6">
@@ -764,7 +766,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
 
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
-                  FORMS
+                  Forms
                 </h4>
                 <div className="space-y-2">
                   <button
@@ -872,7 +874,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 {" "}
                 {/* Left Side - Charts */}
                 <div className="flex-1 space-y-6 lg:space-y-8 p-4 lg:p-8">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-4 text-left">
+                  <h3 className="text-lg sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
                     Select Charts to Display
                   </h3>
 
@@ -890,14 +892,25 @@ function Home({ handleLogout, setIsAuthenticated }) {
                         className="text-sm sm:text-base z-0"
                       />
                     </div>
+                    <div className="flex items-center col-span-1 justify-center">
+                      <button
+                        onClick={() => toggleFilterShow()}
+                        className="bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                      >
+                        {showAll ? "Show Filters" : "Hide Filters"}
+                      </button>
+                    </div>
                   </div>
 
                   <FilterContext.Provider value={{ filters, showAll }}>
                     {/* Conditional Rendering for Charts */}
-                    <FilterComponent
-                      municipalities={municipalities}
-                      onFilter={handleFilter}
-                    />
+                    {showFilter && (
+                      <FilterComponent
+                        municipalities={municipalities}
+                        onFilter={handleFilter}
+                      />
+                    )}
+
                     <div className="w-full h-[70vh] overflow-auto">
                       {renderCharts()}
                     </div>

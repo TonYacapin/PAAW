@@ -19,6 +19,10 @@ function FormListComponent({ endpoint, title, FormComponent }) {
   const [viewEntriesModalOpen, setViewEntriesModalOpen] = useState(false);
   const [selectedEntries, setSelectedEntries] = useState([]);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const formsPerPage = 10;
+
   useEffect(() => {
     const fetchForms = async () => {
       try {
@@ -103,13 +107,23 @@ function FormListComponent({ endpoint, title, FormComponent }) {
         entry.activity.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     const matchesMunicipality =
       !filters.municipality || form.municipality === filters.municipality;
     const matchesStatus = !filters.status || form.formStatus === filters.status;
-  
+
     return matchesSearch && matchesMunicipality && matchesStatus;
   });
+
+  // Sort forms from newest to oldest by dateReported
+  const sortedForms = filteredForms.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedForms.length / formsPerPage);
+  const paginatedForms = sortedForms.slice(
+    (currentPage - 1) * formsPerPage,
+    currentPage * formsPerPage
+  );
 
   if (loading) return <div className="flex justify-center p-8">Loading...</div>;
   if (error) return <div className="text-red-500 p-8">{error}</div>;
@@ -161,7 +175,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           onClick={() =>
             setFilters({ search: "", municipality: "", status: "" })
           }
-          className="p-2 bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
+          className="p-2 shadow-md bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
         >
           Clear Filters
         </button>
@@ -173,7 +187,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           onClick={() => setIsFormModalOpen(true)}
           className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
         >
-          Open Form
+          Open {title.replace("List", "Form")}
         </button>
       </div>
 
@@ -193,9 +207,11 @@ function FormListComponent({ endpoint, title, FormComponent }) {
               </tr>
             </thead>
             <tbody>
-              {filteredForms.map((form, index) => (
+              {paginatedForms.map((form, index) => (
                 <tr key={form._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-4">{index + 1}</td>
+                  <td className="border border-gray-300 p-4">
+                    {form.no || (currentPage - 1) * formsPerPage + index + 1}
+                  </td>
                   <td className="border border-gray-300 p-4">
                     {form.municipality}
                   </td>
@@ -205,7 +221,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                   <td className="border border-gray-300 p-4">
                     {form.formStatus}
                   </td>
-                  <td className="border border-gray-300 p-4">
+                  <td className="border border-gray-300 p-4 flex items-center justify-center">
                     <button
                       onClick={() => {
                         setSelectedForm(form);
@@ -217,7 +233,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                     </button>
                     <button
                       onClick={() => handleViewEntries(form.entries)}
-                      className="ml-2 px-2 py-1 bg-darkerpastelyellow text-white rounded hover:bg-pastelyellow"
+                      className="ml-2 px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow"
                     >
                       View Entries
                     </button>
@@ -226,6 +242,29 @@ function FormListComponent({ endpoint, title, FormComponent }) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
 
@@ -284,7 +323,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
           onClose={() => setViewEntriesModalOpen(false)}
         >
           <h3 className="text-xl font-bold mb-4">Entries Details</h3>
-          <div className="overflow-auto max-h-80">
+          <div className="overflow-auto max-h-80 rounded-lg">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
                 <tr className="bg-darkgreen text-white">
