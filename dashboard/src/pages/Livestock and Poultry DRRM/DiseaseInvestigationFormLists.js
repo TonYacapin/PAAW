@@ -156,7 +156,7 @@ const DiseaseInvestigationTable = () => {
         Open Disease Investigation Form
       </button>
 
-      <div className="overflow-x-auto">
+      {/* <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-lg rounded-lg">
           <thead className='bg-pastelyellow text-sm'>
             <tr>
@@ -167,7 +167,7 @@ const DiseaseInvestigationTable = () => {
               <th className="py-3 px-6">Final Diagnosis</th>
               <th className="py-3 px-6">Nature of Diagnosis</th>
               <th className="py-3 px-6">Form Status</th>
-              <th className="py-3 px-6">Actions</th>
+              <th className="py-3 px-6">Actions</th> */}
       <div className="overflow-auto border rounded-lg">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
@@ -226,6 +226,7 @@ const DiseaseInvestigationTable = () => {
           </tbody>
         </table>
       </div>
+      
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-2 mt-4">
