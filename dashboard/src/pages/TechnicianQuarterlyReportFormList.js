@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../component/axiosInstance';
 import Modal from '../component/Modal';
 import TechnicianQuarterlyReportForm from './TechnicianQuarterlyReportForm';
+import SuccessModal from '../component/SuccessModal';
 
 function TechnicianQuarterlyReportFormList() {
     const [reports, setReports] = useState([]);
