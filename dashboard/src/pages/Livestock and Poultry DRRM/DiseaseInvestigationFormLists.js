@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import DiseaseInvestigationForm from "./DiseaseInvestigationForm";
+import SuccessModal from '../../component/SuccessModal'; // Import SuccessModal component
 
 const DiseaseInvestigationTable = () => {
   const [investigations, setInvestigations] = useState([]);
@@ -10,6 +11,8 @@ const DiseaseInvestigationTable = () => {
   const [editStatusModalOpen, setEditStatusModalOpen] = useState(false);
   const [selectedInvestigation, setSelectedInvestigation] = useState(null);
   const [newStatus, setNewStatus] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // Success modal state
+  const [successMessage, setSuccessMessage] = useState(''); // Message for success modal
 
   // State variables for filters
   const [filters, setFilters] = useState({
@@ -81,6 +84,8 @@ const DiseaseInvestigationTable = () => {
         )
       );
       handleCloseEditStatusModal();
+      setSuccessMessage('Status updated successfully!'); // Set success message
+      setShowSuccessModal(true); // Show success modal
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -151,6 +156,18 @@ const DiseaseInvestigationTable = () => {
         Open Disease Investigation Form
       </button>
 
+      {/* <div className="overflow-x-auto">
+        <table className="min-w-full bg-white shadow-lg rounded-lg">
+          <thead className='bg-pastelyellow text-sm'>
+            <tr>
+              <th className="py-3 px-6">Farmer Name</th>
+              <th className="py-3 px-6">Farm Type</th>
+              <th className="py-3 px-6">Control Measures</th>
+              <th className="py-3 px-6">Tentative Diagnosis</th>
+              <th className="py-3 px-6">Final Diagnosis</th>
+              <th className="py-3 px-6">Nature of Diagnosis</th>
+              <th className="py-3 px-6">Form Status</th>
+              <th className="py-3 px-6">Actions</th> */}
       <div className="overflow-auto border rounded-lg">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
@@ -209,6 +226,7 @@ const DiseaseInvestigationTable = () => {
           </tbody>
         </table>
       </div>
+      
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-2 mt-4">
@@ -242,6 +260,20 @@ const DiseaseInvestigationTable = () => {
               Investigation Details
             </h2>
             <div className="space-y-2">
+              <p><strong>Status:</strong> <span className="text-gray-700">{selectedInvestigation.status}</span></p>
+              <p><strong>No. of Visits:</strong> <span className="text-gray-700">{selectedInvestigation.noOfVisit}</span></p>
+              <p><strong>Date Reported:</strong> <span className="text-gray-700">{new Date(selectedInvestigation.dateReported).toLocaleDateString()}</span></p>
+              <p><strong>Date of Visit:</strong> <span className="text-gray-700">{new Date(selectedInvestigation.dateOfVisit).toLocaleDateString()}</span></p>
+              <p><strong>Investigator:</strong> <span className="text-gray-700">{selectedInvestigation.investigator}</span></p>
+              <p><strong>Place Affected:</strong> <span className="text-gray-700">{selectedInvestigation.placeAffected}</span></p>
+              <p><strong>Farmer Name:</strong> <span className="text-gray-700">{selectedInvestigation.farmerName}</span></p>
+              <p><strong>Farm Type:</strong> <span className="text-gray-700">{selectedInvestigation.farmType.join(', ')}</span></p>
+              <p><strong>Probable Source of Infection:</strong> <span className="text-gray-700">{selectedInvestigation.probablesourceofinfection}</span></p>
+              <p><strong>Control Measures:</strong> <span className="text-gray-700">{selectedInvestigation.controlmeasures}</span></p>
+              <p><strong>Remarks:</strong> <span className="text-gray-700">{selectedInvestigation.remarks}</span></p>
+              <p><strong>Tentative Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.tentativediagnosis}</span></p>
+              <p><strong>Final Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.finaldiagnosis}</span></p>
+              <p><strong>Nature of Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.natureofdiagnosis}</span></p>
               <p>
                 <strong>Status:</strong>{" "}
                 <span className="text-gray-700">
@@ -383,12 +415,12 @@ const DiseaseInvestigationTable = () => {
         )}
       </Modal>
 
-      {/* Modal for adding new investigation */}
+      {/* Modal for adding/editing disease investigations */}
       <Modal isOpen={formModalOpen} onClose={handleCloseFormModal}>
-        <DiseaseInvestigationForm onClose={handleCloseFormModal} />
+        <DiseaseInvestigationForm />
       </Modal>
 
-      {/* Modal for editing form status */}
+      {/* Modal for editing the status */}
       <Modal isOpen={editStatusModalOpen} onClose={handleCloseEditStatusModal}>
         {selectedInvestigation && (
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
@@ -422,6 +454,13 @@ const DiseaseInvestigationTable = () => {
           </div>
         )}
       </Modal>
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message={successMessage}
+      />
     </div>
   );
 };

@@ -200,7 +200,7 @@ function TechnicianQuarterlyReportList() {
                 <th className="border border-gray-300 p-4">Municipality</th>
                 <th className="border border-gray-300 p-4">Date Submitted</th>
                 <th className="border border-gray-300 p-4">Form Status</th>
-                <th className="border border-gray-300 p-4">Actions</th>
+                <th className="border border-gray-300 p-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -218,7 +218,7 @@ function TechnicianQuarterlyReportList() {
                   <td className="border border-gray-300 p-4">
                     {form.formStatus}
                   </td>
-                  <td className="border border-gray-300 p-4">
+                  <td className="border border-gray-300 p-4 text-center">
                     <button
                       onClick={() => {
                         setSelectedForm(form);
@@ -294,18 +294,18 @@ function TechnicianQuarterlyReportList() {
               ))}
             </select>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-2">
             <button
               onClick={() =>
                 handleEditStatus(selectedForm._id, selectedForm.formStatus)
               }
-              className="mt-4 ml-2 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
+              className="px-4 py-2 bg-darkgreen text-white rounded"
             >
               Save
             </button>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
+              className="px-4 py-2 bg-red-500 text-white rounded"
             >
               Cancel
             </button>

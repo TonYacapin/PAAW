@@ -168,17 +168,17 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
               </label>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end space-x-2">
               <button
                 type="submit"
-                className="bg-[#1b5b40] hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                className="px-4 py-2 bg-darkgreen text-white rounded"
               >
                 Save
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-2 bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
+                className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Cancel
               </button>

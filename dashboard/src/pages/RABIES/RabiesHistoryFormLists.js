@@ -3,10 +3,12 @@ import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import RabiesHistoryForm from "./RabiesHistoryForm";
 import PetsIcon from "@mui/icons-material/Pets";
+import SuccessModal from "../../component/SuccessModal"; // Import SuccessModal
 
 function RabiesHistoryFormLists() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editStatusModalOpen, setEditStatusModalOpen] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false); // Success modal state
   const [rabiesHistories, setRabiesHistories] = useState([]);
   const [selectedInvestigation, setSelectedInvestigation] = useState(null);
   const [newStatus, setNewStatus] = useState("Pending");
@@ -67,6 +69,7 @@ function RabiesHistoryFormLists() {
               : history
           )
         );
+        setSuccessModalOpen(true); // Open success modal on successful update
       } else {
         console.error("No updated data returned from the server.");
       }
@@ -191,6 +194,9 @@ function RabiesHistoryFormLists() {
         )}
       </Modal>
 
+      
+
+      
       {/* Table with filtered forms */}
       {filteredHistories.length === 0 ? (
         <p className="text-center py-4">No forms found matching the filters.</p>
@@ -271,8 +277,17 @@ function RabiesHistoryFormLists() {
             Next
           </button>
         </div>
+
       )}
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={successModalOpen}
+        onClose={() => setSuccessModalOpen(false)}
+        message="Status updated successfully!"
+      />
     </div>
+
+
   );
 }
 
