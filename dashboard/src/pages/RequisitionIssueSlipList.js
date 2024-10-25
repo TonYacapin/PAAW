@@ -218,10 +218,10 @@ function RequisitionIssueSlipList() {
                                     <td className="border border-gray-300 p-4">{requisition._id}</td>
                                     <td className="border border-gray-300 p-4">{requisition.sentby}</td>
                                     <td className="border border-gray-300 p-4">{requisition.formStatus}</td>
-                                    <td className="border border-gray-300 p-4 space-x-2">
+                                    <td className="border border-gray-300 p-4 space-x-2 text-center">
                                         <button
                                             onClick={() => handleViewDetails(requisition)}
-                                            className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-[#154632]"
+                                            className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-[#154632] text-center"
                                         >
                                             View Details
                                         </button>
