@@ -4,6 +4,9 @@ import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
 import axiosInstance from "../../component/axiosInstance";
 import CardBox from "../../component/CardBox";
+import ErrorModal from "../../component/ErrorModal";
+import SuccessModal from "../../component/SuccessModal";
+import { set } from "date-fns";
 
 const VeterinaryShipmentForm = () => {
   const [shipmentType, setShipmentType] = useState("");
@@ -11,8 +14,12 @@ const VeterinaryShipmentForm = () => {
   const [date, setDate] = useState("");
   const [pointOfOrigin, setPointOfOrigin] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  
 
   const [liveAnimals, setLiveAnimals] = useState({
     Carabao: 0,
@@ -125,6 +132,7 @@ const VeterinaryShipmentForm = () => {
       if (response.status === 201) {
         // Assuming 201 is the success status code
         setSuccess("Veterinary shipment report successfully submitted!");
+        setIsSuccessModalOpen(true);
         // Optionally, reset the form state after submission
         resetForm();
       } else {
@@ -134,6 +142,7 @@ const VeterinaryShipmentForm = () => {
       console.log(response.data);
     } catch (err) {
       setError("Error submitting the report. Please try again.");
+      setIsErrorModalOpen(true);
       console.error(err);
     }
   };
@@ -312,12 +321,13 @@ const VeterinaryShipmentForm = () => {
   };
 
   return (
+    <>
     <form
       onSubmit={handleSubmit}
       className="bg-white p-8 rounded-lg shadow-lg space-y-6"
     >
-      {success && <div className="text-green-600">{setSuccess}</div>}
-      {error && <div className="text-red-600">{setError}</div>}
+      {/* {success && <div className="text-green-600">{setSuccess}</div>}
+      {error && <div className="text-red-600">{setError}</div>} */}
 
       <h2 className="text-2xl font-bold text-black text-center">
         Veterinary Shipment Form
@@ -332,6 +342,9 @@ const VeterinaryShipmentForm = () => {
         onSubmit={handleSubmit}
       />
     </form>
+    <ErrorModal onClose={()=> setIsErrorModalOpen(false)} isOpen={isErrorModalOpen} message={error} />
+      <SuccessModal onClose={()=> setIsSuccessModalOpen(false)} isOpen={isSuccessModalOpen} message={success} />
+      </>
   );
 };
 
