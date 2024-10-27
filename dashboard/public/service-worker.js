@@ -8,80 +8,88 @@ const CACHES = {
   api: 'api-cache-v1'
 };
 // Assets that should be cached immediately on install
+// const STATIC_ASSETS = [
+//     '/',
+//     '/home',
+    
+//     '/index.html',
+//     '/static/js/main.bundle.js',
+//     '/static/css/main.css',
+//     '/assets/NVLOGO.png',
+//     '/assets/PAAW.png',
+//     // Add paths for your chart components
+//     '/static/js/components/AnimalHealthChartComponent.js',
+//     '/static/js/components/LivestockChartComponent.js',
+//     '/static/js/components/RegulatoryChartComponent.js',
+//     '/static/js/components/OffSpringMonitoringChart.js',
+//     '/static/js/components/UpgradingServicesChart.js',
+//     '/static/js/components/TechnicianQuarterlyCharts.js',
+//     '/static/js/components/RabiesReportChart.js',
+//     '/static/js/components/DiseaseInvestigationChart.js',
+//     '/static/js/components/VaccinationReportChart.js',
+//     '/static/js/components/RoutineServicesMonitoringReportChart.js',
+//     '/static/js/components/RabiesHistoryCharts.js',
+//     '/static/js/components/VeterinaryShipmentChart.js',
+//     '/static/js/components/SlaughterReportChart.js',
+//     // Add paths for your form components
+//     '/static/js/components/forms/RabiesVaccinationReport.js',
+//     '/static/js/components/forms/VaccinationReport.js',
+//     '/static/js/components/forms/RoutineServicesMonitoringReport.js',
+//     '/static/js/components/forms/DiseaseInvestigationForm.js',
+//     '/static/js/components/forms/RabiesHistoryForm.js',
+//     '/static/js/components/forms/AccomplishmentReport.js',
+//     '/static/js/components/forms/RSMAccomplishmentReport.js',
+//     '/static/js/components/forms/TechnicianQuarterlyReportForm.js',
+//     '/static/js/components/forms/MonthlyAccomplishmentReportUpgradingServices.js',
+//     '/static/js/components/forms/MonthlyAccomplishmentReportLivestock.js',
+//     '/static/js/components/forms/MonthlyAccomplishmentReport.js',
+//     '/static/js/components/forms/RequisitionIssueSlip.js',
+//     '/static/js/components/forms/UserManagement.js',
+//     '/static/js/components/forms/UpgradingServices.js',
+//     '/static/js/components/forms/OffspringMonitoring.js',
+//     '/static/js/components/forms/AnimalHealthCareServices.js',
+//     '/static/js/components/forms/AnimalProductionServices.js',
+//     '/static/js/components/forms/VeterinaryInformationServices.js',
+//     '/static/js/components/forms/RegulatoryCareServices.js',
+//     '/static/js/components/forms/EquipmentInventory.js',
+//     '/static/js/components/forms/DiseaseInvestigationFormLists.js',
+//     '/static/js/components/forms/RabiesHistoryFormLists.js',
+//     '/static/js/components/forms/TechnicianQuarterlyReportList.js',
+//     // Add offline fallback page
+//     '/offline.html'
+//   ];
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/static/js/main.bundle.js',
-    '/static/css/main.css',
-    '/assets/NVLOGO.png',
-    '/assets/PAAW.png',
-    // Add paths for your chart components
-    '/static/js/components/AnimalHealthChartComponent.js',
-    '/static/js/components/LivestockChartComponent.js',
-    '/static/js/components/RegulatoryChartComponent.js',
-    '/static/js/components/OffSpringMonitoringChart.js',
-    '/static/js/components/UpgradingServicesChart.js',
-    '/static/js/components/TechnicianQuarterlyCharts.js',
-    '/static/js/components/RabiesReportChart.js',
-    '/static/js/components/DiseaseInvestigationChart.js',
-    '/static/js/components/VaccinationReportChart.js',
-    '/static/js/components/RoutineServicesMonitoringReportChart.js',
-    '/static/js/components/RabiesHistoryCharts.js',
-    '/static/js/components/VeterinaryShipmentChart.js',
-    '/static/js/components/SlaughterReportChart.js',
-    // Add paths for your form components
-    '/static/js/components/forms/RabiesVaccinationReport.js',
-    '/static/js/components/forms/VaccinationReport.js',
-    '/static/js/components/forms/RoutineServicesMonitoringReport.js',
-    '/static/js/components/forms/DiseaseInvestigationForm.js',
-    '/static/js/components/forms/RabiesHistoryForm.js',
-    '/static/js/components/forms/AccomplishmentReport.js',
-    '/static/js/components/forms/RSMAccomplishmentReport.js',
-    '/static/js/components/forms/TechnicianQuarterlyReportForm.js',
-    '/static/js/components/forms/MonthlyAccomplishmentReportUpgradingServices.js',
-    '/static/js/components/forms/MonthlyAccomplishmentReportLivestock.js',
-    '/static/js/components/forms/MonthlyAccomplishmentReport.js',
-    '/static/js/components/forms/RequisitionIssueSlip.js',
-    '/static/js/components/forms/UserManagement.js',
-    '/static/js/components/forms/UpgradingServices.js',
-    '/static/js/components/forms/OffspringMonitoring.js',
-    '/static/js/components/forms/AnimalHealthCareServices.js',
-    '/static/js/components/forms/AnimalProductionServices.js',
-    '/static/js/components/forms/VeterinaryInformationServices.js',
-    '/static/js/components/forms/RegulatoryCareServices.js',
-    '/static/js/components/forms/EquipmentInventory.js',
-    '/static/js/components/forms/DiseaseInvestigationFormLists.js',
-    '/static/js/components/forms/RabiesHistoryFormLists.js',
-    '/static/js/components/forms/TechnicianQuarterlyReportList.js',
-    // Add offline fallback page
-    '/offline.html'
-  ];
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/offline.html'
+];
   
 // API endpoints to cache
 const API_ROUTES = [
-    '/api/entries',
-    '/api/reports',
-    '/api/rabies-vaccination-report',
-    '/api/disease-investigation',
-    '/api/vaccination-report',
-    '/api/routine-services-monitoring-report',
-    '/api/rabies-history',
-    '/api/upgrading-services',
-    '/api/offspring-monitoring',
-    '/api/technician-quarterly',
-    '/api/slaughterform',
-    '/api/vetshipform',
-    '/api/audit-log',
-    '/api/inventory',
-    '/api/animal-health-care-services',
-    '/api/animal-production-services',
-    '/api/veterinary-information-service',
-    '/api/regulatory-services',
-    '/api/requisitions',
-    '/api/backup-restore',
-    '/api/municipality-targets',
-    '/api/targets',
-    '/api/user',  // Assuming there's a user route for user-related operations
+    // '/api/entries',
+    // '/api/reports',
+    // '/api/rabies-vaccination-report',
+    // '/api/disease-investigation',
+    // '/api/vaccination-report',
+    // '/api/routine-services-monitoring-report',
+    // '/api/rabies-history',
+    // '/api/upgrading-services',
+    // '/api/offspring-monitoring',
+    // '/api/technician-quarterly',
+    // '/api/slaughterform',
+    // '/api/vetshipform',
+    // '/api/audit-log',
+    // '/api/inventory',
+    // '/api/animal-health-care-services',
+    // '/api/animal-production-services',
+    // '/api/veterinary-information-service',
+    // '/api/regulatory-services',
+    // '/api/requisitions',
+    // '/api/backup-restore',
+    // '/api/municipality-targets',
+    // '/api/targets',
+    // '/api/user',  // Assuming there's a user route for user-related operations
   ];
 
 // Install event - cache static assets
@@ -113,7 +121,6 @@ function getResponseStrategy(request) {
   // Dynamic content
   return 'network-first';
 }
-
 // Fetch event - handle requests
 self.addEventListener('fetch', (event) => {
   const strategy = getResponseStrategy(event.request);
@@ -136,7 +143,9 @@ self.addEventListener('fetch', (event) => {
               .then(cache => cache.put(event.request, responseClone));
             return response;
           })
-          .catch(() => caches.match(event.request))
+          .catch(() => caches.match(event.request)
+            .then(response => response || returnOfflineFallback())
+          )
           .catch(() => returnOfflineFallback())
       );
       break;

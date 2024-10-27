@@ -115,7 +115,7 @@ const VeterinaryShipmentList = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
-      <h2 className="text-2xl font-bold text-darkgreen text-center">
+      <h2 className="text-2xl font-bold text-black mb-8">
         Veterinary Shipment List
       </h2>
 

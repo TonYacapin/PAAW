@@ -4,6 +4,7 @@ import axiosInstance from '../component/axiosInstance';
 import placeholder1 from './assets/NVLOGO.png'; // Adjust path if needed
 import placeholder2 from './assets/PAAW.png'; // Adjust path if needed
 import ErrorModal from '../component/ErrorModal'; // Import ErrorModal
+import CryptoJS from 'crypto-js'; // Import CryptoJS
 
 const LoginPage = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
@@ -30,18 +31,13 @@ const LoginPage = ({ setIsAuthenticated }) => {
   }, []);
 
   // Function to hash password (simplified version - in production use a proper crypto library)
-  const hashPassword = async (password) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+  // Function to hash password using crypto-js
+  const hashPassword = (password) => {
+    return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
   };
 
-  // Function to store credentials securely
   const storeCredentials = async (email, password, token, userRole) => {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = hashPassword(password); // Updated
     const credentials = {
       email,
       hashedPassword,
@@ -52,13 +48,12 @@ const LoginPage = ({ setIsAuthenticated }) => {
     localStorage.setItem(`credentials_${email}`, JSON.stringify(credentials));
   };
 
-  // Function to verify stored credentials
-  const verifyStoredCredentials = async (email, password) => {
+  const verifyStoredCredentials = (email, password) => {
     const storedData = localStorage.getItem(`credentials_${email}`);
     if (!storedData) return null;
 
     const credentials = JSON.parse(storedData);
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = hashPassword(password); // Updated
 
     if (credentials.hashedPassword === hashedPassword) {
       return credentials;
@@ -122,7 +117,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       {/* Add offline indicator */}
       {isOffline && (
         <div className="fixed top-0 left-0 right-0 bg-red-200 text-red-800 text-center py-2">
-        Offline login is available for previously logged-in users.
+          Offline login is available for previously logged-in users.
         </div>
       )}
 
@@ -177,19 +172,19 @@ const LoginPage = ({ setIsAuthenticated }) => {
           </div>
           <div className="flex gap-4">
             <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
-              disabled={isPageDisabled} // Disable button on 5 attempts
-            >
-              Login
-            </button>
-            <button
               type="button"
               onClick={handleSignup}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
               disabled={isPageDisabled} // Disable button on 5 attempts
             >
               Sign up
+            </button>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
+              disabled={isPageDisabled} // Disable button on 5 attempts
+            >
+              Login
             </button>
           </div>
         </form>
