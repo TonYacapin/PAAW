@@ -53,6 +53,9 @@ import RegulatoryCareServicesList from "../Client Request Forms/RegulatoryCareSe
 import UpgradingServicesList from "../UpgradingServicesList";
 import RequisitionIssueSlipList from "../RequisitionIssueSlipList";
 import BackupRestore from "../../component/BackupRestore ";
+import SlaughterReportForm from "../Regulatory and Monitoring Division/SlaughterReportForm";
+import VeterinaryShipmentForm from "../Regulatory and Monitoring Division/VeterinaryShipmentForm";
+import OfflinePage from "../../component/OfflinePage";
 
 // Icon components (Material-UI)
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -78,7 +81,7 @@ import AboutUs from "../AboutUs";
 
 export const FilterContext = createContext(null);
 
-function Home({ handleLogout, setIsAuthenticated }) {
+function Home({ handleLogout, setIsAuthenticated, isOffline }) {
   const [municipalities, setMunicipalities] = useState([
     "Ambaguio",
     "Bagabag",
@@ -168,6 +171,15 @@ function Home({ handleLogout, setIsAuthenticated }) {
     //     );
     // Divide
     switch (modalContent) {
+
+
+     
+      case "OfflinePage":
+        return <OfflinePage />;
+      case "VeterinaryShipmentForm":
+        return <VeterinaryShipmentForm />;
+      case "SlaughterReportForm":
+        return <SlaughterReportForm />;
       case "BackupRestore":
         return <BackupRestore />;
       case "RabiesVaccinationReport":
@@ -323,10 +335,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
     { value: "rabiesHistory", label: "Rabies History Overview" },
     { value: "offSpringMonitoring", label: "Offspring Monitoring Report" },
     { value: "upgradingServices", label: "Upgrading Services Overview" },
-    {
-      value: "technicianQuarterly",
-      label: "Technician Quarterly Calf Drop Analysis",
-    },
+    { value: "technicianQuarterly", label: "Technician Quarterly Calf Drop Analysis" },
     { value: "slaughterReport", label: "Slaughter Report Overview" },
     { value: "veterinaryShipment", label: "Veterinary Shipment Overview" },
   ];
@@ -337,25 +346,15 @@ function Home({ handleLogout, setIsAuthenticated }) {
       case "admin":
         return allChartOptions;
       case "animalhealth":
-        return allChartOptions.filter((option) =>
-          [
-            "rabies",
-            "vaccination",
-            "disease",
-            "rabiesHistory",
-            "routine",
-          ].includes(option.value)
+        return allChartOptions.filter(option =>
+          ["rabies", "vaccination", "disease", "rabiesHistory", "routine"].includes(option.value)
         );
       case "livestock":
-        return allChartOptions.filter((option) =>
-          [
-            "upgradingServices",
-            "offSpringMonitoring",
-            "technicianQuarterly",
-          ].includes(option.value)
+        return allChartOptions.filter(option =>
+          ["upgradingServices", "offSpringMonitoring", "technicianQuarterly"].includes(option.value)
         );
       case "regulatory":
-        return allChartOptions.filter((option) =>
+        return allChartOptions.filter(option =>
           ["slaughterReport", "veterinaryShipment"].includes(option.value)
         );
       default:
@@ -365,6 +364,16 @@ function Home({ handleLogout, setIsAuthenticated }) {
 
   // Rendering the charts based on selected options
   const renderCharts = () => {
+    if (isOffline) {
+      return (
+        <div className="md:h-2/5 bg-white shadow-md rounded-lg p-6 flex flex-wrap items-center justify-center text-center">
+          <p className="text-red-500 font-semibold text-lg">
+            You are offline. Charts cannot be displayed.
+          </p>
+        </div>
+      );
+    }
+
     if (selectedCharts.length > 0) {
       return (
         <div className="space-y-6">
@@ -441,6 +450,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
     );
   };
 
+
   function renderForms() {
     const buttonClasses =
       "w-full   flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors";
@@ -464,12 +474,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       <button
                         onClick={() =>
                           openModalWithContent(
-                            userRole === "admin"
-                              ? "AnimalHealthCareServicesList"
-                              : "AnimalHealthCareServices"
+                            isOffline
+                              ? "AnimalHealthCareServices"
+                              : userRole === "admin"
+                                ? "AnimalHealthCareServicesList"
+                                : "AnimalHealthCareServices"
                           )
                         }
-                        className={buttonClasses + " lg:block hidden text-left"}
+                        className={buttonClasses + " text-left"}
                       >
                         <HealingIcon className="mr-2" /> Animal Health Care
                         Services
@@ -478,12 +490,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       <button
                         onClick={() =>
                           openModalWithContent(
-                            userRole === "admin"
-                              ? "AnimalProductionServicesList"
-                              : "AnimalProductionServices"
+                            isOffline
+                              ? "AnimalProductionServices"
+                              : userRole === "admin"
+                                ? "AnimalProductionServicesList"
+                                : "AnimalProductionServices"
                           )
                         }
-                        className={buttonClasses + " lg:block hidden text-left"}
+                        className={buttonClasses + " text-left"}
                       >
                         <VaccinesIcon className="mr-2" /> Animal Production
                         Services
@@ -492,12 +506,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       <button
                         onClick={() =>
                           openModalWithContent(
-                            userRole === "admin"
-                              ? "VeterinaryInformationServiceList"
-                              : "VeterinaryInformationServices"
+                            isOffline
+                              ? "VeterinaryInformationServices"
+                              : userRole === "admin"
+                                ? "VeterinaryInformationServiceList"
+                                : "VeterinaryInformationServices"
                           )
                         }
-                        className={buttonClasses + " lg:block hidden text-left"}
+                        className={buttonClasses + " text-left"}
                       >
                         <ReportIcon className="mr-2" /> Veterinary Information
                         Services
@@ -506,12 +522,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
                       <button
                         onClick={() =>
                           openModalWithContent(
-                            userRole === "admin"
-                              ? "RegulatoryCareServicesList"
-                              : "RegulatoryCareServices"
+                            isOffline
+                              ? "OfflinePage"
+                              : userRole === "admin"
+                                ? "RegulatoryCareServicesList"
+                                : "RegulatoryCareServices"
                           )
                         }
-                        className={buttonClasses + " lg:block hidden text-left"}
+                        className={buttonClasses + " text-left"}
                       >
                         <LocalShippingIcon className="mr-2" /> Regulatory
                         Services
@@ -523,9 +541,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {userRole === "regulatory" && (
                     <button
                       onClick={() =>
-                        openModalWithContent("RegulatoryCareServices")
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "RegulatoryCareServicesList"
+                        )
                       }
-                      className={buttonClasses + " lg:block hidden text-left"}
+                      className={buttonClasses + " text-left"}
                     >
                       <LocalShippingIcon className="mr-2" /> Regulatory Services
                     </button>
@@ -535,9 +555,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {userRole === "livestock" && (
                     <button
                       onClick={() =>
-                        openModalWithContent("AnimalProductionServices")
+                        openModalWithContent(
+                          isOffline ? "AnimalProductionServices" : "AnimalProductionServicesList"
+                        )
                       }
-                      className={buttonClasses + " lg:block hidden text-left"}
+                      className={buttonClasses + " text-left"}
                     >
                       <VaccinesIcon className="mr-2" /> Animal Production
                       Services
@@ -548,7 +570,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   {userRole === "animalhealth" && (
                     <button
                       onClick={() =>
-                        openModalWithContent("VeterinaryInformationServices")
+                        openModalWithContent(
+                          isOffline ? "VeterinaryInformationServices" : "VeterinaryInformationServiceList"
+                        )
                       }
                       className={buttonClasses + " lg:block hidden text-left"}
                     >
@@ -571,32 +595,49 @@ function Home({ handleLogout, setIsAuthenticated }) {
             <div className="space-y-2">
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("BackupRestore")}
+                onClick={() => 
+                openModalWithContent(
+                  isOffline ? "OfflinePage" : "BackupRestore"
+                )}
               >
                 <ManageAccountsIcon className="mr-2" /> Backup and Restore
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("UserManagement")}
+                onClick={() => 
+              
+                openModalWithContent(
+                  isOffline ? "OfflinePage" : "UserManagement"
+                )}
               >
                 <ManageAccountsIcon className="mr-2" /> Manage Users
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("AuditLogList")}
+                onClick={() => 
+              
+                openModalWithContent(
+                  isOffline ? "OfflinePage" : "AuditLogList"
+                )}
               >
                 <Outbox className="mr-2" />
                 AuditLog
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("RequisitionIssueSlipList")}
+                onClick={() => openModalWithContent(
+                  isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
+                )}
               >
                 <Outbox className="mr-2" /> Manage Requisition Forms
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => openModalWithContent("Inventory")}
+                onClick={() => 
+              
+                openModalWithContent(
+                  isOffline ? "OfflinePage" : "Inventory"
+                )}
               >
                 <Inventory className="mr-2" /> Inventory Equipment
               </button>
@@ -620,7 +661,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     <button
                       className={buttonClasses}
                       onClick={() =>
-                        openModalWithContent("RequisitionIssueSlipList")
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
+                        )
                       }
                     >
                       <Outbox className="mr-2" /> Requisition Form
@@ -635,7 +678,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 <div className="space-y-2">
                   <button
                     onClick={() =>
-                      openModalWithContent("RabiesVaccinationReportList")
+                      openModalWithContent(
+                        isOffline ? "RabiesVaccinationReport" : "RabiesVaccinationReportList"
+                      )
                     }
                     className={buttonClasses}
                   >
@@ -643,7 +688,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   </button>
                   <button
                     onClick={() =>
-                      openModalWithContent("VaccinationReportList")
+
+                      openModalWithContent(
+                        isOffline ? "VaccinationReport" : "VaccinationReportList"
+                      )
                     }
                     className={buttonClasses}
                   >
@@ -658,7 +706,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 <div className="space-y-2">
                   <button
                     onClick={() =>
-                      openModalWithContent("DiseaseInvestigationFormLists")
+
+
+                      openModalWithContent(
+                        isOffline ? "DiseaseInvestigationForm" : "DiseaseInvestigationFormLists"
+                      )
                     }
                     className={buttonClasses}
                   >
@@ -666,7 +718,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   </button>
                   <button
                     onClick={() =>
-                      openModalWithContent("RabiesHistoryFormLists")
+                      openModalWithContent(
+                        isOffline ? "RabiesHistoryForm" : "RabiesHistoryFormLists"
+                      )
                     }
                     className={buttonClasses}
                   >
@@ -674,7 +728,11 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   </button>
                   <button
                     onClick={() =>
-                      openModalWithContent("RoutineServicesReportList")
+
+                      openModalWithContent(
+                        isOffline ? "RoutineServicesMonitoringReport" : "RoutineServicesReportList"
+                      )
+
                     }
                     className={buttonClasses}
                   >
@@ -682,7 +740,13 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     Monitoring Reports
                   </button>
                   <button
-                    onClick={() => openModalWithContent("AccomplishmentReport")}
+                    onClick={() => 
+
+                    openModalWithContent(
+                      isOffline ? "OfflinePage" : "AccomplishmentReport"
+                    )
+                  
+                  }
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
                     <AssignmentIcon className="mr-2" /> Generate Accomplishment
@@ -709,9 +773,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   <div className="space-y-2">
                     <button
                       className={buttonClasses}
-                      onClick={() =>
-                        openModalWithContent("RequisitionIssueSlipList")
-                      }
+                      onClick={() => openModalWithContent(
+                        isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
+                      )}
                     >
                       <ManageAccountsIcon className="mr-2" /> Requisition Form
                     </button>
@@ -725,7 +789,9 @@ function Home({ handleLogout, setIsAuthenticated }) {
                 <div className="space-y-2">
                   <button
                     onClick={() =>
-                      openModalWithContent("UpgradingServicesList")
+                      openModalWithContent(
+                        isOffline ? "UpgradingServices" : "UpgradingServicesList"
+                      )
                     }
                     className={buttonClasses}
                   >
@@ -733,25 +799,30 @@ function Home({ handleLogout, setIsAuthenticated }) {
                   </button>
                   <button
                     onClick={() =>
-                      openModalWithContent("OffSpringMonitoringList")
-                    }
+                      openModalWithContent(
+                        isOffline ? "OffSpringMonitoring" : "OffSpringMonitoringList"
+                      )}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
                   <button
                     onClick={() =>
-                      openModalWithContent("TechnicianQuarterlyList")
-                    }
+
+                      openModalWithContent(
+                        isOffline ? "CalfDrop" : "TechnicianQuarterlyList"
+                      )}
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Technician's Quarterly Calf
                     Drop Report
                   </button>
                   <button
-                    onClick={() =>
-                      openModalWithContent("AccomplishmentReportLivestock")
-                    }
+                    onClick={() => 
+                  
+                    openModalWithContent(
+                      isOffline ? "OfflinePage" : "AccomplishmentReportLivestock"
+                    )}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
                     <AssignmentIcon className="mr-2" /> Generate Monthly
@@ -776,12 +847,10 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     Requisition Forms
                   </h4>
                   <div className="space-y-2">
-                    <button
-                      className={buttonClasses}
-                      onClick={() =>
-                        openModalWithContent("RequisitionIssueSlipList")
-                      }
-                    >
+                    <button className={buttonClasses}
+                      onClick={() => openModalWithContent(
+                        isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
+                      )}>
                       <ManageAccountsIcon className="mr-2" /> Requisition Form
                     </button>
                   </div>
@@ -796,16 +865,21 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     <div className="space-y-2">
                       <button
                         onClick={() =>
-                          openModalWithContent("IncomingReportList")
-                        }
+
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "IncomingReportList"
+                        )
+                      
+                      }
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Incoming Report
                       </button>
                       <button
                         onClick={() =>
-                          openModalWithContent("OutgoingReportList")
-                        }
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "OutgoingReportList"
+                        )}
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Outgoing Report
@@ -819,16 +893,19 @@ function Home({ handleLogout, setIsAuthenticated }) {
                     <div className="space-y-2">
                       <button
                         onClick={() =>
-                          openModalWithContent("SlaughterReportList")
-                        }
+                          openModalWithContent(
+                            isOffline ? "SlaughterReportForm" : "SlaughterReportList"
+                          )}
                         className={buttonClasses}
                       >
                         <AssessmentIcon className="mr-2" /> Slaughter Report
                         (consolidated)
                       </button>
                       <button
-                        onClick={() =>
-                          openModalWithContent("VeterinaryShipmentList")
+                        onClick={() => openModalWithContent(
+                          isOffline ? "VeterinaryShipmentForm" : "VeterinaryShipmentList"
+                        )
+
                         }
                         className={buttonClasses}
                       >
@@ -931,15 +1008,20 @@ function Home({ handleLogout, setIsAuthenticated }) {
                         styles={customSelectStyles}
                         placeholder="Select charts..."
                         className="text-sm sm:text-base z-0"
+                        isDisabled={isOffline} // Disable if offline
                       />
+
                     </div>
                     <div className="flex items-center col-span-1 justify-center">
-                      <button
-                        onClick={() => toggleFilterShow()}
-                        className="bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                      >
-                        {showAll ? "Show Filters" : "Hide Filters"}
-                      </button>
+                      {!isOffline && (
+                        <button
+                          onClick={() => toggleFilterShow()}
+                          className="bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                        >
+                          {showAll ? "Show Filters" : "Hide Filters"}
+                        </button>
+                      )}
+
                     </div>
                   </div>
 

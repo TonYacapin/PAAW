@@ -11,34 +11,134 @@ import WifiOffIcon from '@mui/icons-material/WifiOff';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(false);
   const [showIndicator, setShowIndicator] = useState(false);
 
-  // Handle online/offline status
+  // Service Worker Registration
   useEffect(() => {
-    const handleOnline = () => {
-      setIsOffline(false);
-      // Briefly show the indicator when connection status changes
-      setShowIndicator(true);
-      setTimeout(() => setShowIndicator(false), 3000);
+    const registerServiceWorker = async () => {
+      if ('serviceWorker' in navigator) {
+        try {
+          console.log('Service Worker registration starting...');
+          const registration = await navigator.serviceWorker.register('/service-worker.js');
+          
+          console.log('Service Worker registration successful:', {
+            scope: registration.scope,
+            active: !!registration.active,
+            installing: !!registration.installing,
+            waiting: !!registration.waiting
+          });
+
+          registration.addEventListener('statechange', (event) => {
+            console.log('Service Worker state changed:', event.target.state);
+          });
+
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker controller changed');
+          });
+
+          if (navigator.serviceWorker.controller) {
+            console.log('Existing Service Worker found:', navigator.serviceWorker.controller.state);
+          }
+
+        } catch (error) {
+          console.error('Service Worker registration failed:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+          });
+        }
+      } else {
+        console.log('Service Workers are not supported in this browser');
+      }
     };
 
+    registerServiceWorker();
+  }, []);
+
+  // Network Status Management
+  useEffect(() => {
+    let networkCheckTimeout;
+    let periodicCheckInterval;
+
+    const checkConnectionStatus = () => {
+      // Get initial status from navigator
+      const isOnline = navigator.onLine;
+      
+      if (!isOnline) {
+        setIsOffline(true);
+        setShowIndicator(true);
+        return;
+      }
+
+      // Create a timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      const testImage = new Image();
+      
+      // Set up timeout to handle very slow connections
+      networkCheckTimeout = setTimeout(() => {
+        testImage.src = ''; // Cancel image request
+        setIsOffline(true);
+        setShowIndicator(true);
+      }, 5000);
+
+      testImage.onload = () => {
+        clearTimeout(networkCheckTimeout);
+        setIsOffline(false);
+        setShowIndicator(true);
+        setTimeout(() => setShowIndicator(false), 3000);
+      };
+
+      testImage.onerror = () => {
+        clearTimeout(networkCheckTimeout);
+        setIsOffline(true);
+        setShowIndicator(true);
+      };
+
+      // Use a small image from a reliable CDN
+      testImage.src = `https://www.google.com/favicon.ico?t=${timestamp}`;
+    };
+
+    // Handle online event
+    const handleOnline = () => {
+      checkConnectionStatus();
+    };
+
+    // Handle offline event
     const handleOffline = () => {
       setIsOffline(true);
       setShowIndicator(true);
-      // setTimeout(() => setShowIndicator(false), 3000);
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    // Handle tab visibility changes
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkConnectionStatus();
+      }
+    };
 
+    // Initial check
+    checkConnectionStatus();
+
+    // Set up event listeners
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Periodic check every 30 seconds
+    periodicCheckInterval = setInterval(checkConnectionStatus, 30000);
+
+    // Cleanup
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearInterval(periodicCheckInterval);
+      clearTimeout(networkCheckTimeout);
     };
   }, []);
 
-  // Rest of your authentication check code remains the same
+  // Authentication Check
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem('token');
@@ -46,6 +146,7 @@ const App = () => {
         try {
           const decodedToken = jwtDecode(token);
           const currentTime = Date.now() / 1000;
+          
           if (decodedToken.exp > currentTime) {
             if (isOffline) {
               const userEmail = decodedToken.email;
@@ -74,6 +175,7 @@ const App = () => {
     checkAuth();
   }, [isOffline]);
 
+  // Logout Handler
   const handleLogout = () => {
     localStorage.removeItem('token');
     if (!isOffline) {
@@ -87,30 +189,32 @@ const App = () => {
     setIsAuthenticated(false);
   };
 
-  // Subtle connection status indicator
+  // Connection Status Indicator Component
   const ConnectionIndicator = () => (
-    <div 
-      className={`fixed bottom-8 right-8 transition-all ${
+    <div
+      className={`fixed bottom-8 right-8 transition-all duration-300 ease-in-out ${
         showIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
       }`}
-      style={{ zIndex: 1000 }} // Make sure it's on top of other elements
+      style={{ zIndex: 1000 }}
     >
-      <div className={`flex items-center gap-2 px-4 py-3 rounded-full shadow-lg ${
-        isOffline ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
-      }`}>
+      <div 
+        className={`flex items-center gap-2 px-4 py-3 rounded-full shadow-lg transition-colors duration-300 ${
+          isOffline ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
+        }`}
+      >
         {isOffline ? (
           <WifiOffIcon style={{ fontSize: 24 }} />
         ) : (
           <WifiIcon style={{ fontSize: 24 }} />
         )}
-        <span className="text-md font-semibold">
-          {isOffline ? 'You are Offline, Some function may not work' : 'You are back online'}
+        <span className="text-md font-semibold whitespace-nowrap">
+          {isOffline ? 'You are Offline, Some functions may not work' : 'You are back online'}
         </span>
       </div>
     </div>
   );
-  
 
+  // Loading Spinner
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -119,26 +223,28 @@ const App = () => {
     );
   }
 
+  // Main App Router
   return (
     <Router>
       <div className="App">
         <ConnectionIndicator />
         <Routes>
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               isAuthenticated ? (
                 <Navigate to="/home" replace />
               ) : (
-                <LoginPage 
-                  setIsAuthenticated={setIsAuthenticated} 
+                <LoginPage
+                  setIsAuthenticated={setIsAuthenticated}
                   isOffline={isOffline}
                 />
               )
-            } 
+            }
           />
-          <Route 
-            path="/signup" 
+          
+          <Route
+            path="/signup"
             element={
               isAuthenticated ? (
                 <Navigate to="/home" replace />
@@ -149,30 +255,30 @@ const App = () => {
                   <SignupForm />
                 )
               )
-            } 
+            }
           />
-          
-          <Route 
-            path="/home" 
+
+          <Route
+            path="/home"
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <Home 
-                  handleLogout={handleLogout} 
+                <Home
+                  handleLogout={handleLogout}
                   setIsAuthenticated={setIsAuthenticated}
                   isOffline={isOffline}
                 />
               </ProtectedRoute>
-            } 
+            }
           />
 
-          <Route 
-            path="/" 
-            element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} 
+          <Route
+            path="/"
+            element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
           />
-          
-          <Route 
-            path="*" 
-            element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} 
+
+          <Route
+            path="*"
+            element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
           />
         </Routes>
       </div>
