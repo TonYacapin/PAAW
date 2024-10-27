@@ -74,7 +74,7 @@ function MonthlyAccomplishmentReport() {
                 className="px-4 py-2 bg-darkgreen hover:bg-darkergreen text-white rounded"
                 onClick={handleOpenModal}
               >
-                Open Target Form
+                {currentStep >= 3 ? "Open Target Form Per Municipality" : "Open Provicial Target Form" }
               </button>
               
             </div>

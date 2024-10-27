@@ -828,7 +828,7 @@ function VaccinationReport() {
         {isConfirmationModalOpen && (
           <ConfirmationModal
             isOpen={isConfirmationModalOpen}
-            onClose={() => setIsConfirmationModalOpen(false)}
+            onCancel={() => setIsConfirmationModalOpen(false)}
             onConfirm={handleConfirmRemove}
             message="Are you sure you want to remove this entry?"
           />

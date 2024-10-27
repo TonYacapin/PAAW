@@ -90,7 +90,7 @@ function SlaughterReportList() {
 
   return (
     <div className="p-6 min-h-screen">
-      <h1 className="text-3xl font-bold text-darkgreen text-center mb-8">
+      <h1 className="text-2xl font-bold text-black mb-8">
         Slaughter Report List
       </h1>
       {/* Collapsible Filter Section */}

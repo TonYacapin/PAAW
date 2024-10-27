@@ -79,6 +79,8 @@ function EquipmentInventory() {
       } else {
         await axiosInstance.post(`/api/inventory`, updatedInventory);
       }
+      setIsSuccessModalOpen(true);
+      setSuccessMessage(isEditing ? 'Equipment updated successfully!' : 'Equipment added successfully!'); // Set success message
       fetchInventories();
       closeModal();
     } catch (error) {
@@ -139,11 +141,8 @@ function EquipmentInventory() {
   };
 
   return (
-    <div className="p-4 bg-white text-black lg:max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-darkgreen mb-4">Equipment Inventory</h1>
-
-
-
+    <div className="flex flex-col gap-4 p-4 bg-white text-black lg:max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold text-black mb-6">Equipment Inventory</h1>
 
       {/* Inventory Report Modal */}
       <Modal isOpen={isInventoryReportModalOpen} onClose={closeInventoryReportModal}>
@@ -165,7 +164,8 @@ function EquipmentInventory() {
         </button>
       </div>
 
-
+      {/* Success Modal */}
+      <SuccessModal onClose={()=> setIsSuccessModalOpen(false)} isOpen={isSuccessModalOpen} message={successMessage} />
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -272,8 +272,7 @@ function EquipmentInventory() {
         </div>
       )}
 
-      {/* Success Modal */}
-      <SuccessModal isOpen={isSuccessModalOpen} message={successMessage} />
+
 
       {/* Confirmation Modal for Deletion */}
       <ConfirmationModal
@@ -283,9 +282,10 @@ function EquipmentInventory() {
         message="Are you sure you want to delete this item?"
       />
 
-      <table className="min-w-full bg-white border border-gray-300 mt-3">
+      <div className="overflow-auto border rounded-lg border-gray-400 shadow-md">
+        <table className="min-w-full overflow-auto border rounded-lg  shadow-md">
         <thead>
-          <tr>
+          <tr className="bg-[#1b5b40] text-white">
             <th className="py-2 px-4 border-b">No.</th>
             <th className="py-2 px-4 border-b">Type</th>
             <th className="py-2 px-4 border-b">Supplies</th>
@@ -306,24 +306,28 @@ function EquipmentInventory() {
               <td className="py-2 px-4 border-b">{inventory.quantity}</td>
               <td className="py-2 px-4 border-b">{inventory.out}</td>
               <td className="py-2 px-4 border-b">{inventory.total}</td>
-              <td className="py-2 px-4 border-b">
+              <td className="py-2 px-4 border-b flex justify-center">
+                <div className='flex flex-row gap-2'>
                 <button
                   onClick={() => handleEdit(inventory)} // Call handleEdit when clicked
-                  className="text-blue-500 hover:underline mr-2"
+                  className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirmation modal
-                  className="text-red-500 hover:underline"
+                  className="flex items-center bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-800 transition-colors"
+
                 >
                   Delete
                 </button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

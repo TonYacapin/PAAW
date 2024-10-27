@@ -1,6 +1,6 @@
 // MunicipalityAccomplishmentReportRoutineServices.js
 import React, { useEffect, useState } from "react";
-import axiosInstance from '../component/axiosInstance';
+import axiosInstance from "../component/axiosInstance";
 import PrintableMunicipalityAccomplishmentReportRoutineServices from "../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRoutineServices";
 
 const MunicipalityAccomplishmentReportRoutineServices = () => {
@@ -67,8 +67,6 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
       aggregateCounts(previousMonth, "previousMonth");
       aggregateCounts(total, "total");
 
-
-
       setReportData(Object.values(aggregatedData));
     } catch (error) {
       setError("Failed to fetch data. Please try again later.");
@@ -80,38 +78,40 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
   const fetchSemiAnnualTargets = async () => {
     try {
       const response = await axiosInstance.get(`/api/mtargets`, {
-        params: { targetYear: selectedYear, type: getTypeBySpecies(selectedSpecies) }
+        params: {
+          targetYear: selectedYear,
+          type: getTypeBySpecies(selectedSpecies),
+        },
       });
       const targets = response.data;
       const targetsMap = {};
 
       // Map the semi-annual target data by municipality
-      targets.forEach(target => {
+      targets.forEach((target) => {
         targetsMap[target.municipality] = target.semiAnnualTarget;
       });
 
       setSemiAnnualTargets(targetsMap);
     } catch (error) {
-      console.error('Error fetching semi-annual targets:', error);
+      console.error("Error fetching semi-annual targets:", error);
     }
   };
 
   // Get species type for filtering targets (e.g., "HEMOSEP-CARABAO" for Carabao)
   const getTypeBySpecies = (species) => {
     switch (species) {
-      case 'Swine':
-        return 'SWINE';
-      case 'Poultry':
-        return 'POULTRY';
-      case 'Dog':
-        return 'DOG';
-      case 'Others':
-        return 'OTHERS';
+      case "Swine":
+        return "SWINE";
+      case "Poultry":
+        return "POULTRY";
+      case "Dog":
+        return "DOG";
+      case "Others":
+        return "OTHERS";
       default:
-        return '';
+        return "";
     }
   };
-
 
   useEffect(() => {
     fetchSemiAnnualTargets();
@@ -148,30 +148,30 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
   const totals = calculateTotals();
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Rabies Vaccination Report</title>');
-    printWindow.document.write('<style>');
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      "<html><head><title>Rabies Vaccination Report</title>"
+    );
+    printWindow.document.write("<style>");
     printWindow.document.write(`
         body { font-family: Arial, sans-serif; }
         table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid black; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
     `);
-    printWindow.document.write('</style></head><body>');
-    printWindow.document.write(document.getElementById('printable-content').innerHTML);
-    printWindow.document.write('</body></html>');
+    printWindow.document.write("</style></head><body>");
+    printWindow.document.write(
+      document.getElementById("printable-content").innerHTML
+    );
+    printWindow.document.write("</body></html>");
     printWindow.document.close();
     printWindow.print();
   };
-
-
 
   return (
     <>
       <div className="">
         <h1 className="text-xl font-semibold text-gray-700">
-          
-
           <div id="printable-content" style={{ display: "none" }}>
             <PrintableMunicipalityAccomplishmentReportRoutineServices
               reportData={reportData}
@@ -180,19 +180,17 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
               selectedSpecies={selectedSpecies}
               semiAnnualTargets={semiAnnualTargets}
             />
-            </div>
-       
-
-            Municipality Routine Services Accomplishment Report
+          </div>
+          Municipality Routine Services Accomplishment Report
         </h1>
 
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-          <form className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
               <div>
                 <label
                   htmlFor="year"
-                  className="text-xl font-semibold text-[#1b5b40] mb-2"
+                  className="text-md font-semibold text-gray-700 mb-2"
                 >
                   Year
                 </label>
@@ -202,21 +200,22 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   value={selectedYear}
                   min="2000" // Assuming a reasonable minimum year
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 />
               </div>
               <div>
                 <label
                   htmlFor="month"
-                  className="text-xl font-semibold text-[#1b5b40] mb-2"
+                  className="text-md font-semibold text-gray-700 mb-2 "
                 >
                   Month
                 </label>
+
                 <select
                   id="month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 >
                   {[...Array(12)].map((_, i) => (
                     <option key={i + 1} value={i + 1}>
@@ -230,7 +229,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
               <div>
                 <label
                   htmlFor="species"
-                  className="text-xl font-semibold text-[#1b5b40] mb-2"
+                  className="text-md font-semibold text-gray-700 mb-2"
                 >
                   Species
                 </label>
@@ -238,7 +237,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   id="species"
                   value={selectedSpecies}
                   onChange={(e) => setSelectedSpecies(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
                 >
                   <option value="Swine">Swine</option>
                   <option value="Poultry">Poultry</option>
@@ -247,7 +246,6 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                 </select>
               </div>
             </div>
-          </form>
 
           {loading ? (
             <div className="flex justify-center items-center h-32">
@@ -259,7 +257,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
           ) : (
             <div className="overflow-x-auto">
               <h2 className="text-lg font-semibold mb-4">{getTableTitle()}</h2>
-              <div className="overflow-x-auto max-h-64">
+              <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
                 <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
                   <thead className="sticky top-0 bg-[#1b5b40] text-white">
                     <tr>
@@ -286,23 +284,42 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {reportData.length > 0 ? (
                       reportData.map((item, index) => {
-                        const semiAnnualTarget = semiAnnualTargets[item.municipality] || 0;
-                        const percentage = semiAnnualTarget > 0 ? ((item.total / semiAnnualTarget) * 100).toFixed(2) : 'N/A';
+                        const semiAnnualTarget =
+                          semiAnnualTargets[item.municipality] || 0;
+                        const percentage =
+                          semiAnnualTarget > 0
+                            ? ((item.total / semiAnnualTarget) * 100).toFixed(2)
+                            : "N/A";
 
                         return (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
-                            <td className="py-2 px-4 border-b">{semiAnnualTarget}</td>
-                            <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
-                            <td className="border border-gray-300 px-2 py-1">{item.presentMonth}</td>
-                            <td className="border border-gray-300 px-2 py-1">{item.total}</td>
-                            <td className="border border-gray-300 px-2 py-1">{percentage}</td> {/* Percentage */}
+                            <td className="border border-gray-300 px-2 py-1">
+                              {item.municipality}
+                            </td>
+                            <td className="py-2 px-4 border-b">
+                              {semiAnnualTarget}
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1">
+                              {item.previousMonth}
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1">
+                              {item.presentMonth}
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1">
+                              {item.total}
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1">
+                              {percentage}
+                            </td>{" "}
+                            {/* Percentage */}
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
-                        <td colSpan="6" className="text-center py-4">No data available</td>
+                        <td colSpan="6" className="text-center py-4">
+                          No data available
+                        </td>
                       </tr>
                     )}
                   </tbody>
@@ -332,13 +349,12 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
           )}
         </div>
         <button
-            onClick={handlePrint}
-            className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
-          >
-            Print Report
-          </button>
+          onClick={handlePrint}
+          className="bg-[#1b5b40] text-white font-semibold py-2 px-4 rounded hover:bg-[#123c29] transition mt-5"
+        >
+          Print Report
+        </button>
       </div>
-
     </>
   );
 };

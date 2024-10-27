@@ -2,7 +2,6 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 // Layout components
 import Navbar from "../../component/Navbar";
 import Modal from "../../component/Modal";
@@ -78,6 +77,7 @@ import FormListComponent from "../../component/FormListComponent";
 import DiseaseInvestigationFormLists from "../Livestock and Poultry DRRM/DiseaseInvestigationFormLists";
 import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
 import TechnicianQuarterlyReportList from "../../component/TechnicianQuarterlyReportList";
+import AboutUs from "../AboutUs";
 
 export const FilterContext = createContext(null);
 
@@ -112,8 +112,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
     console.log(appliedFilters);
   };
 
-
-  const [backupDir, setBackupDir] = useState('');
+  const [backupDir, setBackupDir] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -280,9 +279,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
           />
         );
       case "TechnicianQuarterlyList":
-        return (
-          <TechnicianQuarterlyReportList />
-        );
+        return <TechnicianQuarterlyReportList />;
       case "DiseaseInvestigationFormLists":
         return <DiseaseInvestigationFormLists />;
       case "RabiesHistoryFormLists":
@@ -595,9 +592,6 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               Admin Actions
             </h3>
 
-
-
-
             <div className="space-y-2">
               <button
                 className={buttonClasses}
@@ -742,7 +736,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     }
                     className={buttonClasses}
                   >
-                    <AssignmentIcon className="mr-2" /> Routine Service Monitoring Reports
+                    <AssignmentIcon className="mr-2" /> Routine Service
+                    Monitoring Reports
                   </button>
                   <button
                     onClick={() => 
@@ -754,7 +749,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   }
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
+                    Report
                   </button>
                 </div>
               </div>
@@ -818,7 +814,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       )}
                     className={buttonClasses}
                   >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
+                    Drop Report
                   </button>
                   <button
                     onClick={() => 
@@ -828,7 +825,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     )}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
+                    <AssignmentIcon className="mr-2" /> Generate Monthly
+                    Accomplishment Reports
                   </button>
                 </div>
               </div>
@@ -859,10 +857,11 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 </div>
               )}
               <div>
-
                 <div className="space-y-4">
                   <div>
-                    <h5 className="text-lg font-medium text-gray-700 mb-2">Annual Reports</h5>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">
+                      Annual Reports
+                    </h5>
                     <div className="space-y-2">
                       <button
                         onClick={() =>
@@ -888,7 +887,9 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     </div>
                   </div>
                   <div>
-                    <h5 className="text-lg font-medium text-gray-700 mb-2">List Reports</h5>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">
+                      List Reports
+                    </h5>
                     <div className="space-y-2">
                       <button
                         onClick={() =>
@@ -897,7 +898,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                           )}
                         className={buttonClasses}
                       >
-                        <AssessmentIcon className="mr-2" /> Slaughter Report (consolidated)
+                        <AssessmentIcon className="mr-2" /> Slaughter Report
+                        (consolidated)
                       </button>
                       <button
                         onClick={() => openModalWithContent(
@@ -907,7 +909,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                         }
                         className={buttonClasses}
                       >
-                        <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
+                        <LocalShippingIcon className="mr-2" /> Veterinary
+                        Shipment Report
                       </button>
                     </div>
                   </div>
@@ -916,7 +919,6 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </>
         );
-
 
       default:
         return null;
@@ -1039,6 +1041,8 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 </div>
               </>
             )}
+
+            {userRole === "user" && <AboutUs />}
 
             {/* Right Side - Forms */}
             <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 lg:mt-8 lg:mb-5 lg:h-screen">

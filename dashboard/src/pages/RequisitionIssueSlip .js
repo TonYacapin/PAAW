@@ -3,13 +3,12 @@ import axiosInstance from "../component/axiosInstance";
 import CardBox from "../component/CardBox";
 import StepperComponent from "../component/StepperComponent";
 import FormSubmit from "../component/FormSubmit";
-import { Add } from "@mui/icons-material";
+import { Add} from "@mui/icons-material";
 import Modal from "../component/Modal";
 import { jwtDecode } from "jwt-decode";
-
+import SuccessModal from "../component/SuccessModal";
 
 const RequisitionIssueSlip = () => {
-
   const [sentby, setsentby] = useState("");
 
   useEffect(() => {
@@ -26,7 +25,6 @@ const RequisitionIssueSlip = () => {
     }
   }, []);
 
-
   const [requisitionRows, setRequisitionRows] = useState([
     { stockNo: 1, unit: "", quantity: "", description: "" }, // Start with stockNo = 1
   ]);
@@ -40,8 +38,6 @@ const RequisitionIssueSlip = () => {
 
   const [isStocksModalOpen, setStocksModalOpen] = useState(false); // State for stocks modal
 
-
-
   // State for additional text fields
   const [division, setDivision] = useState("");
   const [office, setOffice] = useState("");
@@ -53,9 +49,10 @@ const RequisitionIssueSlip = () => {
   const [purpose, setPurpose] = useState("");
   const [designation, setDesignation] = useState("");
 
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+
   const handleSubmit = async () => {
-
-
     // Create the payload based on the state values
     const requisitionIssuanceData = {
       division,
@@ -69,16 +66,23 @@ const RequisitionIssueSlip = () => {
       designation,
       requisitionRows,
       issuanceRows,
-      sentby
+      sentby,
     };
 
-    console.log(requisitionIssuanceData)
+    console.log(requisitionIssuanceData);
 
     try {
       // Send POST request to your backend
-      const response = await axiosInstance.post("/api/requisitions", requisitionIssuanceData);
+      const response = await axiosInstance.post(
+        "/api/requisitions",
+        requisitionIssuanceData
+      );
       console.log("Requisition Issuance created successfully:", response.data);
       // Handle successful submission (e.g., reset the form, show a success message)
+      // Show success modal with a message
+      setSuccessMessage(`Changes saved successfully!`);
+
+      setIsSuccessModalOpen(true);
       resetForm();
     } catch (error) {
       console.error("Error creating requisition issuance:", error);
@@ -97,10 +101,11 @@ const RequisitionIssueSlip = () => {
     setDate("");
     setPurpose("");
     setDesignation("");
-    setRequisitionRows([{ stockNo: "", unit: "", quantity: "", description: "" }]);
+    setRequisitionRows([
+      { stockNo: "", unit: "", quantity: "", description: "" },
+    ]);
     setIssuanceRows([{ quantity: "", description: "", remarks: "" }]);
   };
-
 
   useEffect(() => {
     const fetchInventoryData = async () => {
@@ -112,10 +117,10 @@ const RequisitionIssueSlip = () => {
 
         // Extract supplies and units for dropdown options only if quantity is greater than 0
         const supplies = response.data
-          .filter(item => item.quantity > 0) // Filter items with quantity greater than 0
-          .map(item => ({
+          .filter((item) => item.quantity > 0) // Filter items with quantity greater than 0
+          .map((item) => ({
             supply: item.supplies,
-            unit: item.unit
+            unit: item.unit,
           }));
 
         setSupplyOptions(supplies);
@@ -127,21 +132,19 @@ const RequisitionIssueSlip = () => {
     fetchInventoryData();
   }, []); // Fetch data only once when the component mounts
 
-
   const handleRequisitionChange = (index, field, value) => {
     const newRows = [...requisitionRows];
     newRows[index][field] = value;
 
     // If the description is changed, update the unit as well
     if (field === "description") {
-      const selectedSupply = supplyOptions.find(supply => supply.supply === value);
+      const selectedSupply = supplyOptions.find(
+        (supply) => supply.supply === value
+      );
       newRows[index].unit = selectedSupply ? selectedSupply.unit : ""; // Set unit based on selected description
     }
 
-
     setRequisitionRows(newRows);
-
-
 
     if (field === "description") {
       const newIssuanceRows = [...issuanceRows];
@@ -157,8 +160,8 @@ const RequisitionIssueSlip = () => {
         stockNo: prevRows.length + 1, // Calculate stockNo based on current length
         unit: "",
         quantity: "",
-        description: ""
-      }
+        description: "",
+      },
     ]);
     setIssuanceRows([
       ...issuanceRows,
@@ -181,7 +184,6 @@ const RequisitionIssueSlip = () => {
     newIssuanceRows.splice(index, 1);
     setIssuanceRows(newIssuanceRows);
   };
-
 
   const pages = [
     <CardBox>
@@ -251,17 +253,9 @@ const RequisitionIssueSlip = () => {
           />
         </div>
       </div>
-    </CardBox>
-    ,
+    </CardBox>,
     <CardBox>
       <div className="p-4 mb-4 flex flex-col gap-4 max-h-[55vh] overflow-auto">
-        {/* Requisition Section */}
-        <button
-          onClick={() => setStocksModalOpen(true)}
-          className="mt-2 bg-darkgreen text-white px-4 py-2"
-        >
-          View Available Stocks
-        </button>
         <h2 className="font-bold mb-2">Requisition</h2>
         <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -312,7 +306,11 @@ const RequisitionIssueSlip = () => {
                       className="border w-full p-1"
                       value={row.description}
                       onChange={(e) =>
-                        handleRequisitionChange(index, "description", e.target.value)
+                        handleRequisitionChange(
+                          index,
+                          "description",
+                          e.target.value
+                        )
                       }
                     >
                       <option value="">Select a supply</option>
@@ -336,16 +334,25 @@ const RequisitionIssueSlip = () => {
             </tbody>
           </table>
         </div>
+        <div className="flex flex-row gap-2">
+                  {/* Requisition Section */}
+        <button
+          onClick={() => setStocksModalOpen(true)}
+          className="mt-2 bg-darkgreen hover:bg-darkergreen rounded-md text-white px-4 py-2"
+        >
+          View Available Stocks
+        </button>
         <button
           onClick={addRequisitionRow}
-          className="mt-2 bg-darkgreen text-white px-4 py-2"
+          className="mt-2 bg-darkgreen hover:bg-darkergreen rounded-md text-white px-4 py-2"
         >
           <Add />
           Add Row
         </button>
+        </div>
+
       </div>
-    </CardBox>
-   ,
+    </CardBox>,
     <CardBox>
       {/* Footer Section */}
       <div className="grid grid-cols-1 p-4 mb-4 flex-col gap-4 max-h-[55vh] overflow-auto">
@@ -357,7 +364,6 @@ const RequisitionIssueSlip = () => {
             value={purpose} // Bind to state variable
             onChange={(e) => setPurpose(e.target.value)} // Update state on change
           />
-
         </div>
         <div>
           <label>Designation:</label>
@@ -368,9 +374,6 @@ const RequisitionIssueSlip = () => {
             onChange={(e) => setDesignation(e.target.value)} // Update state on change
           />
         </div>
-
-
-
       </div>
     </CardBox>,
   ];
@@ -386,12 +389,15 @@ const RequisitionIssueSlip = () => {
       <h1 className="text-xl font-bold mb-4">Requisition and Issue Slip</h1>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
       <FormSubmit
-        handleImportCSV={() => { }}
-        handleExportCSV={() => { }}
+        handleImportCSV={() => {}}
+        handleExportCSV={() => {}}
         handleSubmit={handleSubmit}
       />
 
-      <Modal isOpen={isStocksModalOpen} onClose={() => setStocksModalOpen(false)}>
+      <Modal
+        isOpen={isStocksModalOpen}
+        onClose={() => setStocksModalOpen(false)}
+      >
         <h2 className="font-bold mb-4">Available Stocks</h2>
         <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -414,7 +420,6 @@ const RequisitionIssueSlip = () => {
                   <td>{item.out}</td>
                   <td>{item.total}</td>
                   <td>{item.category}</td>
-
                 </tr>
               ))}
             </tbody>
@@ -422,6 +427,14 @@ const RequisitionIssueSlip = () => {
         </div>
       </Modal>
 
+      {/* Success Modal */}
+      {isSuccessModalOpen && (
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          message={successMessage}
+        />
+      )}
     </div>
   );
 };

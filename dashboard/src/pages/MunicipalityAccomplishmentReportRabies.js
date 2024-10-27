@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../component/axiosInstance';
 import PrintableMunicipalityAccomplishmentReportRabies from '../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRabies';
 
-
 const MunicipalityAccomplishmentReportRabies = () => {
     const [reportData, setReportData] = useState([]);
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [semiAnnualTargets, setSemiAnnualTargets] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const municipalitiesList = [
         "Ambaguio", "Bagabag", "Bayombong", "Diadi", "Quezon", "Solano",
@@ -21,6 +21,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
     ];
 
     const fetchData = async () => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get(`/rabies-vaccination-summary?year=${year}&month=${month}`);
             const { currentMonth, previousMonth, total } = response.data;
@@ -51,6 +52,8 @@ const MunicipalityAccomplishmentReportRabies = () => {
             setReportData(Object.values(aggregatedData));
         } catch (error) {
             console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -90,7 +93,6 @@ const MunicipalityAccomplishmentReportRabies = () => {
 
     const grandTotals = calculateGrandTotals();
 
-
     const handlePrint = () => {
         const printWindow = window.open('', '_blank');
         printWindow.document.write('<html><head><title>Rabies Vaccination Report</title>');
@@ -108,12 +110,9 @@ const MunicipalityAccomplishmentReportRabies = () => {
         printWindow.print();
     };
 
-
     return (
         <>
             <div className="">
-                
-
                 <div id="printable-content" style={{ display: "none" }}>
                     <PrintableMunicipalityAccomplishmentReportRabies
                         reportData={reportData}
@@ -125,78 +124,92 @@ const MunicipalityAccomplishmentReportRabies = () => {
                 <h1 className="text-xl font-semibold text-gray-700">
                     Municipality Rabies Vaccination Accomplishment Report
                 </h1>
-                <div className="mb-6 bg-gray-100 p-6 rounded-md shadow-sm">
-                    <div className="mb-2 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-                        <label className="text-xl font-semibold text-[#1b5b40] mb-2">Year:</label>
-                        <input
-                            type="number"
-                            value={year}
-                            onChange={(e) => setYear(e.target.value)}
-                            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                        />
-
-                        <label className="text-xl font-semibold text-[#1b5b40] mb-2">Month:</label>
-                        <select
-                            value={month}
-                            onChange={(e) => setMonth(e.target.value)}
-                            className="border border-[#1b5b40] rounded-md p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                        >
-                            {monthNames.map((name, index) => (
-                                <option key={index + 1} value={index + 1}>{name}</option>
-                            ))}
-                        </select>
+                <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
+                        <div className="flex flex-col">
+                            <label htmlFor="year" className="text-md font-semibold text-gray-700 mb-2">Year</label>
+                            <input
+                                type="number"
+                                id="year"
+                                value={year}
+                                onChange={(e) => setYear(e.target.value)}
+                                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="month" className="text-md font-semibold text-gray-700 mb-2 ">Month</label>
+                            <select
+                                id="month"
+                                value={month}
+                                onChange={(e) => setMonth(e.target.value)}
+                                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+                            >
+                                {monthNames.map((name, index) => (
+                                    <option key={index + 1} value={index + 1}>{name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
-                    <h2 className="text-lg font-semibold mb-4">Rabies</h2>
+                    {/* Display loading spinner or table */}
+                    {loading ? (
+                        <div className="flex justify-center items-center h-32">
+                            <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+                            <span className="ml-2 text-gray-700">Loading...</span>
+                        </div>
+                    ) : (
+                        <div className="">
+                            <h2 className="text-lg font-semibold mb-4">Rabies</h2>
+                            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+                                <table className="min-w-full border-[#1b5b40] rounded-lg shadow-lg">
+                                    <thead className='bg-[#1b5b40] text-white sticky top-0'>
+                                        <tr className="bg-[#1b5b40] text-white">
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Municipality</th>
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Semi Annual Target</th>
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Previous Month</th>
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Current Month</th>
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">Total</th>
+                                            <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wider">%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {reportData.length > 0 ? (
+                                            reportData.map((item, index) => {
+                                                const semiAnnualTarget = semiAnnualTargets[item.municipality] || 0;
+                                                const percentage = semiAnnualTarget > 0 ? ((item.total / semiAnnualTarget) * 100).toFixed(2) : 'N/A';
 
-                    <div className="overflow-x-auto max-h-64">
-                        <table className="min-w-full bg-white border border-[#1b5b40] rounded-lg shadow-lg">
-                            <thead className="sticky top-0 bg-[#1b5b40] text-white">
-                                <tr>
-                                    <th className="border border-gray-300 px-2 py-1">Municipality</th>
-                                    <th className="border border-gray-300 px-2 py-1">Semi Annual Target</th>
-                                    <th className="border border-gray-300 px-2 py-1">Previous Month</th>
-                                    <th className="border border-gray-300 px-2 py-1">Current Month</th>
-                                    <th className="border border-gray-300 px-2 py-1">Total</th>
-                                    <th className="border border-gray-300 px-2 py-1">%</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {reportData.length > 0 ? (
-                                    reportData.map((item, index) => {
-                                        const semiAnnualTarget = semiAnnualTargets[item.municipality] || 0;
-                                        const percentage = semiAnnualTarget > 0 ? ((item.total / semiAnnualTarget) * 100).toFixed(2) : 'N/A';
-
-                                        return (
-                                            <tr key={index} className="hover:bg-gray-50">
-                                                <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
-                                                <td className="py-2 px-4 border-b">{semiAnnualTarget}</td>
-                                                <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
-                                                <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
-                                                <td className="border border-gray-300 px-2 py-1">{item.total}</td>
-                                                <td className="border border-gray-300 px-2 py-1">{percentage}</td> {/* Percentage */}
+                                                return (
+                                                    <tr key={index} className="hover:bg-gray-50">
+                                                        <td className="border border-gray-300 px-2 py-1">{item.municipality}</td>
+                                                        <td className="py-2 px-4 border-b">{semiAnnualTarget}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.previousMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.currentMonth}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{item.total}</td>
+                                                        <td className="border border-gray-300 px-2 py-1">{percentage}</td> {/* Percentage */}
+                                                    </tr>
+                                                );
+                                            })
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center py-4">No data available</td>
                                             </tr>
-                                        );
-                                    })
-                                ) : (
-                                    <tr>
-                                        <td colSpan="6" className="text-center py-4">No data available</td>
-                                    </tr>
-                                )}
-                            </tbody>
+                                        )}
+                                    </tbody>
 
-                            <tfoot className="sticky bottom-0 bg-[#ffe356] font-bold text-[#1b5b40]">
-                                <tr className="font-semibold">
-                                    <td className="border border-gray-300 px-2 py-1">Grand Total</td>
-                                    <td className="border border-gray-300 px-2 py-1"></td>
-                                    <td className="border border-gray-300 px-2 py-1">{grandTotals.previousMonth}</td>
-                                    <td className="border border-gray-300 px-2 py-1">{grandTotals.currentMonth}</td>
-                                    <td className="border border-gray-300 px-2 py-1">{grandTotals.total}</td>
-                                    <td className="border border-gray-300 px-2 py-1"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                                    <tfoot className="bg-[#ffe356] font-semibold text-[#1b5b40] sticky bottom-0">
+                                        <tr className='font-semibold'>
+                                            <td className="border border-gray-300 px-2 py-1">Grand Total</td>
+                                            <td className="border border-gray-300 px-2 py-1"></td>
+                                            <td className="border border-gray-300 px-2 py-1">{grandTotals.previousMonth}</td>
+                                            <td className="border border-gray-300 px-2 py-1">{grandTotals.currentMonth}</td>
+                                            <td className="border border-gray-300 px-2 py-1">{grandTotals.total}</td>
+                                            <td className="border border-gray-300 px-2 py-1"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <button
@@ -206,9 +219,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
                     Print Report
                 </button>
             </div>
-
         </>
-
     );
 };
 

@@ -82,7 +82,7 @@ const BackupRestore = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
-      <h2 className="text-xl font-semibold text-black">Backup and Restore</h2>
+      <h2 className="text-2xl font-bold text-black mb-6">Backup and Restore</h2>
       <div className="flex flex-col sm:flex-row gap-4">
         <button
           onClick={handleBackup}
