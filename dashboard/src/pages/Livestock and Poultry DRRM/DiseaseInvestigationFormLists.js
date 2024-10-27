@@ -83,10 +83,10 @@ const DiseaseInvestigationTable = () => {
     }
   };
 
-  const renderStepContent = (step) => {
+  const renderStepContent = (pages) => {
     if (!selectedInvestigation) return null;
 
-    switch (step) {
+    switch (pages) {
       case 0:
         return (
           <div className="max-h-[70vh]">
