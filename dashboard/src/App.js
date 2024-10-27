@@ -19,34 +19,10 @@ const App = () => {
     const registerServiceWorker = async () => {
       if ('serviceWorker' in navigator) {
         try {
-          console.log('Service Worker registration starting...');
           const registration = await navigator.serviceWorker.register('/service-worker.js');
-          
-          console.log('Service Worker registration successful:', {
-            scope: registration.scope,
-            active: !!registration.active,
-            installing: !!registration.installing,
-            waiting: !!registration.waiting
-          });
-
-          registration.addEventListener('statechange', (event) => {
-            console.log('Service Worker state changed:', event.target.state);
-          });
-
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('Service Worker controller changed');
-          });
-
-          if (navigator.serviceWorker.controller) {
-            console.log('Existing Service Worker found:', navigator.serviceWorker.controller.state);
-          }
-
+          console.log('Service Worker registration successful:', registration);
         } catch (error) {
-          console.error('Service Worker registration failed:', {
-            message: error.message,
-            stack: error.stack,
-            name: error.name
-          });
+          console.error('Service Worker registration failed:', error);
         }
       } else {
         console.log('Service Workers are not supported in this browser');
@@ -62,22 +38,19 @@ const App = () => {
     let periodicCheckInterval;
 
     const checkConnectionStatus = () => {
-      // Get initial status from navigator
       const isOnline = navigator.onLine;
-      
+
       if (!isOnline) {
         setIsOffline(true);
         setShowIndicator(true);
         return;
       }
 
-      // Create a timestamp to prevent caching
       const timestamp = new Date().getTime();
       const testImage = new Image();
-      
-      // Set up timeout to handle very slow connections
+
       networkCheckTimeout = setTimeout(() => {
-        testImage.src = ''; // Cancel image request
+        testImage.src = '';
         setIsOffline(true);
         setShowIndicator(true);
       }, 5000);
@@ -95,40 +68,32 @@ const App = () => {
         setShowIndicator(true);
       };
 
-      // Use a small image from a reliable CDN
       testImage.src = `https://www.google.com/favicon.ico?t=${timestamp}`;
     };
 
-    // Handle online event
     const handleOnline = () => {
       checkConnectionStatus();
     };
 
-    // Handle offline event
     const handleOffline = () => {
       setIsOffline(true);
       setShowIndicator(true);
     };
 
-    // Handle tab visibility changes
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         checkConnectionStatus();
       }
     };
 
-    // Initial check
     checkConnectionStatus();
 
-    // Set up event listeners
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Periodic check every 30 seconds
     periodicCheckInterval = setInterval(checkConnectionStatus, 30000);
 
-    // Cleanup
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
@@ -146,7 +111,7 @@ const App = () => {
         try {
           const decodedToken = jwtDecode(token);
           const currentTime = Date.now() / 1000;
-          
+
           if (decodedToken.exp > currentTime) {
             if (isOffline) {
               const userEmail = decodedToken.email;
@@ -192,27 +157,71 @@ const App = () => {
   // Connection Status Indicator Component
   const ConnectionIndicator = () => (
     <div
-      className={`fixed bottom-8 right-8 transition-all duration-300 ease-in-out ${
-        showIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-      }`}
+      className={`fixed bottom-4 right-4 sm:bottom-8 sm:right-8 transition-all duration-300 ease-in-out ${showIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+        }`}
       style={{ zIndex: 1000 }}
     >
-      <div 
-        className={`flex items-center gap-2 px-4 py-3 rounded-full shadow-lg transition-colors duration-300 ${
-          isOffline ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
-        }`}
+      <div
+        className={`flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 rounded-full shadow-lg transition-colors duration-300 ${isOffline ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
+          }`}
       >
         {isOffline ? (
-          <WifiOffIcon style={{ fontSize: 24 }} />
+          <WifiOffIcon style={{ fontSize: 20 }} /> // Smaller font size for mobile
         ) : (
-          <WifiIcon style={{ fontSize: 24 }} />
+          <WifiIcon style={{ fontSize: 20 }} />
         )}
-        <span className="text-md font-semibold whitespace-nowrap">
-          {isOffline ? 'You are Offline, Some functions may not work' : 'You are back online'}
+        <span className="text-sm sm:text-md font-semibold whitespace-nowrap">
+          {isOffline ? 'You are Offline, Some functions may not work' : 'Connected'}
         </span>
       </div>
     </div>
   );
+
+
+  // PWA Install and Offline Handling
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      const promptElement = document.getElementById('pwa-install-prompt');
+      const installButton = document.getElementById('install-button');
+
+      if (promptElement && installButton) {
+        promptElement.style.display = 'block';
+
+        installButton.addEventListener('click', async () => {
+          e.prompt();
+          const { outcome } = await e.userChoice;
+          if (outcome === 'accepted') {
+            promptElement.style.display = 'none';
+          }
+        });
+      }
+    };
+
+    const handleOnline = () => {
+      const offlineMessage = document.getElementById('offline-message');
+      if (offlineMessage) {
+        offlineMessage.classList.remove('visible');
+      }
+    };
+
+    const handleOffline = () => {
+      const offlineMessage = document.getElementById('offline-message');
+      if (offlineMessage) {
+        offlineMessage.classList.add('visible');
+      }
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Loading Spinner
   if (isLoading) {
@@ -223,11 +232,11 @@ const App = () => {
     );
   }
 
-  // Main App Router
   return (
     <Router>
       <div className="App">
         <ConnectionIndicator />
+
         <Routes>
           <Route
             path="/login"
@@ -242,7 +251,6 @@ const App = () => {
               )
             }
           />
-          
           <Route
             path="/signup"
             element={
@@ -257,7 +265,6 @@ const App = () => {
               )
             }
           />
-
           <Route
             path="/home"
             element={
@@ -270,12 +277,10 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/"
             element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
           />
-
           <Route
             path="*"
             element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
