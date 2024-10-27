@@ -329,7 +329,7 @@ const VeterinaryShipmentForm = () => {
       {/* {success && <div className="text-green-600">{setSuccess}</div>}
       {error && <div className="text-red-600">{setError}</div>} */}
 
-      <h2 className="text-2xl font-bold text-black text-center">
+      <h2 className="text-2xl font-bold text-black text-left">
         Veterinary Shipment Form
       </h2>
       <StepperComponent

@@ -3,19 +3,59 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    
+    <!-- Primary Meta Tags -->
+    <title>PAAW - Portable Assistant for Animal Welfare</title>
+    <meta name="title" content="PAAW - Portable Assistant for Animal Welfare">
+    <meta name="description" content="A comprehensive system for animal welfare management and monitoring" />
+    
+    <!-- Theme Color -->
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="PAAW" />
+    
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PAAW" />
+    
+    <!-- MS Meta Tags -->
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/logo192.png" />
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="256x256" href="%PUBLIC_URL%/logo256.png" />
+    <link rel="apple-touch-icon" sizes="384x384" href="%PUBLIC_URL%/logo384.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/logo512.png" />
+    
+    <!-- Splash Screen Images for iOS -->
+    <link
+      rel="apple-touch-startup-image"
+      media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+      href="%PUBLIC_URL%/splash/iPhone_14_Pro_Max_landscape.png"
     />
-    <link rel="shortcut icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <link
+      rel="apple-touch-startup-image"
+      media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
+      href="%PUBLIC_URL%/splash/iPhone_14_Pro_landscape.png"
+    />
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Prevent phone number detection -->
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Disable automatic translation prompt -->
+    <meta name="google" content="notranslate" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -30,15 +70,16 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    
+    <!-- Optional: Add an offline message element -->
+    <div id="offline-message" style="display: none;">
+      You are currently offline. Some features may be limited.
+    </div>
+    
+    <!-- Optional: Add PWA install prompt -->
+    <div id="pwa-install-prompt" style="display: none;">
+      <p>Install PAAW for a better experience</p>
+      <button id="install-button">Install</button>
+    </div>
   </body>
 </html>
