@@ -44,7 +44,10 @@ const OffspringMonitoringReport = () => {
     useEffect(() => {
         const filtered = data.filter((item) => {
             const matchesMunicipality = item.municipality.toLowerCase().includes(filter.municipality.toLowerCase());
-            const matchesName = item.entries.some(entry => entry.name.toLowerCase().includes(filter.name.toLowerCase()));
+            const matchesName = item.entries.some(entry => 
+                `${entry.firstName} ${entry.lastName}`.toLowerCase().includes(filter.name.toLowerCase())
+            );
+            // const matchesName = item.entries.some(entry => entry.name.toLowerCase().includes(filter.name.toLowerCase()));
 
             // Check if month and year match
             const matchesMonth = filter.month ? new Date(item.dateReported).getMonth() + 1 === parseInt(filter.month) : true;
