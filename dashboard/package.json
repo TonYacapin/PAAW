@@ -18,6 +18,8 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-chart-matrix": "^2.0.1",
     "classnames": "^2.5.1",
+    "crypto-browserify": "^3.12.1",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.0.0",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
