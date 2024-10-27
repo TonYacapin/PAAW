@@ -241,21 +241,24 @@ function RabiesHistoryFormLists() {
               >
                 <option value="Pending">Pending</option>
                 <option value="Accepted">Accepted</option>
+                <option value="Completed">Completed</option>
                 <option value="Deleted">Deleted</option>
               </select>
             </div>
-            <div className="flex justify-between">
-              <button
-                onClick={handleCancelEditStatus}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
+            <div className="flex justify-end space-x-2">
+             
               <button
                 onClick={handleEditStatus}
                 className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
               >
                 Save
+              </button>
+
+              <button
+                onClick={handleCancelEditStatus}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -278,10 +281,12 @@ function RabiesHistoryFormLists() {
         <table className="min-w-full border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border">Name</th>
+              <th className="px-4 py-2 border">Name of Victim</th>
+              <th className="px-4 py-2 border">Time of Bite</th>
               <th className="px-4 py-2 border">Species</th>
               <th className="px-4 py-2 border">Status</th>
-              <th className="px-4 py-2 border">Actions</th>
+              <th className="px-4 py-2 border text-center">Actions</th>
+
             </tr>
           </thead>
           <tbody>
@@ -291,7 +296,10 @@ function RabiesHistoryFormLists() {
                   history.victimProfile.name
                     .toLowerCase()
                     .includes(filters.search.toLowerCase()) ||
-                  history.animalProfile.species
+                    history.victimProfile.name
+                    .toLowerCase()
+                    .includes(filters.search.toLowerCase()) ||
+                  history.victimProfile.timeOfBite
                     .toLowerCase()
                     .includes(filters.search.toLowerCase());
                 const matchesStatus =
@@ -308,21 +316,25 @@ function RabiesHistoryFormLists() {
                     {history.victimProfile.name}
                   </td>
                   <td className="border px-4 py-2">
+                    {history.victimProfile.timeOfBite}
+                  </td>
+                  <td className="border px-4 py-2">
                     {history.animalProfile.species}
                   </td>
                   <td className="border px-4 py-2">{history.formStatus}</td>
-                  <td className="border px-4 py-2">
-                    <button
-                      onClick={() => openDetailsModal(history)}
-                      className="text-blue-500 hover:underline"
-                    >
-                      View Details
-                    </button>
+                  <td className="border px-4 py-2 text-center space-x-2">
+                    
                     <button
                       onClick={() => openEditStatusModal(history)}
-                      className="text-green-500 hover:underline ml-4"
+                      className="px-4 py-2 bg-darkgreen text-white rounded"
                     >
                       Edit Status
+                    </button>
+                    <button
+                      onClick={() => openDetailsModal(history)}
+                      className="px-4 py-2 bg-pastelyellow text-black rounded"
+                    >
+                      View Details
                     </button>
                   </td>
                 </tr>

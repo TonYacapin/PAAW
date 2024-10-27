@@ -44,6 +44,24 @@ const DiseaseInvestigationTable = () => {
     setActiveStep(0); // Reset active step when opening modal
   };
 
+   // Add these state variables for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const formsPerPage = 10;
+
+  useEffect(() => {
+    const fetchInvestigations = async () => {
+      try {
+        const response = await axiosInstance.get("/disease-investigation");
+        setInvestigations(response.data);
+      } catch (error) {
+        console.error("Error fetching investigations:", error);
+      }
+    };
+
+    fetchInvestigations();
+  }, []);
+
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedInvestigation(null);
