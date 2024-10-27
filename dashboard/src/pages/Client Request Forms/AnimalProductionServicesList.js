@@ -87,13 +87,16 @@ function AnimalProductionServicesList() {
     return (
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Animal Production Services List</h2>
-
             <button
-                onClick={() => setIsProductionModalOpen(true)}
+                onClick={() => {
+                    console.log("Opening Animal Production Services Form");
+                    setIsProductionModalOpen(true);
+                }}
                 className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
             >
                 Open Animal Production Services Form
             </button>
+
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <input
@@ -124,7 +127,7 @@ function AnimalProductionServicesList() {
                     {statusOptions.map(status => (
                         <option key={status} value={status}>{status}</option>
 
-                        
+
                     ))}
                 </select>
 
@@ -257,31 +260,33 @@ function AnimalProductionServicesList() {
                         ))}
                     </select>
                     <div className='flex justify-end space-x-2'>
-                    <button
-                        onClick={() => handleEditStatus(selectedService._id)}
-                        className="px-4 py-2 bg-darkgreen text-white rounded"
-                    >
-                        Update Status
-                    </button>
-                    <button
-                        onClick={() => setIsStatusModalOpen(false)}
-                        className="px-4 py-2 bg-red-500 text-white rounded"
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            onClick={() => handleEditStatus(selectedService._id)}
+                            className="px-4 py-2 bg-darkgreen text-white rounded"
+                        >
+                            Update Status
+                        </button>
+                        <button
+                            onClick={() => setIsStatusModalOpen(false)}
+                            className="px-4 py-2 bg-red-500 text-white rounded"
+                        >
+                            Cancel
+                        </button>
 
                     </div>
-                    
+
                 </div>
             </Modal>
 
             {/* Success Modal */}
             <SuccessModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message="Status updated successfully!" />
 
-            {/* Animal Production Services Form Modal */}
             {isProductionModalOpen && (
-                <AnimalProductionServices onClose={() => setIsProductionModalOpen(false)} />
+                <Modal isOpen={isProductionModalOpen} onClose={() => setIsProductionModalOpen(false)}>
+                    <AnimalProductionServices onClose={() => setIsProductionModalOpen(false)} />
+                </Modal>
             )}
+
         </div>
     );
 }
