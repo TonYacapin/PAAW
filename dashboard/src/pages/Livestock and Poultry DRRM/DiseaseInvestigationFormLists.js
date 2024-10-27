@@ -1,50 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
+import SuccessModal from "../../component/SuccessModal";
+import StepperComponent from "../../component/StepperComponent";
 import DiseaseInvestigationForm from "./DiseaseInvestigationForm";
-import SuccessModal from "../../component/SuccessModal"; // Import SuccessModal component
 
 const DiseaseInvestigationTable = () => {
-  const [investigations, setInvestigations] = useState([]);
+  const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [editStatusModalOpen, setEditStatusModalOpen] = useState(false);
   const [selectedInvestigation, setSelectedInvestigation] = useState(null);
-  const [newStatus, setNewStatus] = useState("");
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // Success modal state
-  const [successMessage, setSuccessMessage] = useState(""); // Message for success modal
+  const [newStatus, setNewStatus] = useState("Pending");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [activeStep, setActiveStep] = useState(0);
+  const [investigations, setInvestigations] = useState([]);
 
-  // State variables for filters
-  const [filters, setFilters] = useState({
-    search: "",
-    status: "",
-  });
-
-  const handleViewDetails = (investigation) => {
-    setSelectedInvestigation(investigation);
-    setIsModalOpen(true);
-  };
-
-  // Add these state variables for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const formsPerPage = 10;
+  const pages =
+    [
+      "Basic Information",
+      "Investigation Details",
+      "Diagnosis & Measures",
+      "Additional Details",
+    ] || [];
 
   useEffect(() => {
-    const fetchInvestigations = async () => {
-      try {
-        const response = await axiosInstance.get("/disease-investigation");
-        setInvestigations(response.data);
-      } catch (error) {
-        console.error("Error fetching investigations:", error);
-      }
-    };
-
-    fetchInvestigations();
+    fetchData();
   }, []);
 
-  const handleRowClick = (investigation) => {
+  const fetchData = () => {
+    axiosInstance
+      .get("/disease-investigation")
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  const handleOpenModal = (investigation) => {
     setSelectedInvestigation(investigation);
     setIsModalOpen(true);
+    setActiveStep(0); // Reset active step when opening modal
   };
 
   const handleCloseModal = () => {
@@ -52,25 +49,23 @@ const DiseaseInvestigationTable = () => {
     setSelectedInvestigation(null);
   };
 
-  const handleOpenFormModal = () => {
-    setFormModalOpen(true);
-  };
-
-  const handleCloseFormModal = () => {
-    setFormModalOpen(false);
-  };
-
   const handleOpenEditStatusModal = (investigation) => {
     setSelectedInvestigation(investigation);
-    setNewStatus(investigation.formStatus); // Set initial value to current status
     setEditStatusModalOpen(true);
+    setNewStatus(investigation.status); // Set the current status for editing
+  };
+
+  const handleCancelEditStatus = () => {
+    setEditStatusModalOpen(false); // Close the modal
+    setNewStatus(selectedInvestigation?.status); // Reset newStatus to current status if needed
   };
 
   const handleCloseEditStatusModal = () => {
     setEditStatusModalOpen(false);
-    setSelectedInvestigation(null);
+    setSelectedInvestigation(null); // Clear selected investigation when closing
   };
 
+  // Edit status function
   const handleEditStatus = async () => {
     if (!selectedInvestigation) return;
 
@@ -79,154 +74,299 @@ const DiseaseInvestigationTable = () => {
         `/disease-investigation/${selectedInvestigation._id}`,
         { status: newStatus }
       );
-      setInvestigations((prev) =>
-        prev.map((investigation) =>
-          investigation._id === selectedInvestigation._id
-            ? { ...investigation, formStatus: newStatus }
-            : investigation
-        )
-      );
+      fetchData(); // Fetch updated data
       handleCloseEditStatusModal();
-      setSuccessMessage("Status updated successfully!"); // Set success message
-      setShowSuccessModal(true); // Show success modal
+      setSuccessMessage("Status updated successfully!");
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
-  const filteredInvestigations = investigations.filter((item) => {
-    const searchTerm = filters.search.toLowerCase();
-    const matchesSearch = item.farmerName.toLowerCase().includes(searchTerm);
-    const matchesFormStatus =
-      !filters.status ||
-      item.formStatus.toLowerCase().includes(filters.status.toLowerCase());
-    return matchesSearch && matchesFormStatus;
-  });
+  const renderStepContent = (step) => {
+    if (!selectedInvestigation) return null;
 
-  // Sort forms from newest to oldest by dateReported
-  const sortedInvestigations = filteredInvestigations.sort(
-    (a, b) => new Date(b.dateReported) - new Date(a.dateReported)
-  );
-
-  // Pagination logic
-  const totalPages = Math.ceil(sortedInvestigations.length / formsPerPage);
-  const paginatedInvestigations = sortedInvestigations.slice(
-    (currentPage - 1) * formsPerPage,
-    currentPage * formsPerPage
-  );
+    switch (step) {
+      case 0:
+        return (
+          <div className="max-h-[70vh]">
+            <h2 className="text-xl font-bold mb-4">Basic Information</h2>
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <tbody>
+                <tr>
+                  <td className="border p-4 font-semibold">Status</td>
+                  <td className="border p-4">{selectedInvestigation.status}</td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">No. of Visits</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.noOfVisit}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Date Reported</td>
+                  <td className="border p-4">
+                    {new Date(
+                      selectedInvestigation.dateReported
+                    ).toLocaleDateString()}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Date of Visit</td>
+                  <td className="border p-4">
+                    {new Date(
+                      selectedInvestigation.dateOfVisit
+                    ).toLocaleDateString()}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Farmer Name</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.farmerName}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Farm Type</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.farmType.join(", ")}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Remarks</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.remarks}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      case 1:
+        return (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Investigation Details</h2>
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <tbody>
+                <tr>
+                  <td className="border p-4 font-semibold">Investigator</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.investigator}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Place Affected</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.placeAffected}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Latitude</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.latitude}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Longitude</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.longitude}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      case 2:
+        return (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Diagnosis & Measures</h2>
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <tbody>
+                <tr>
+                  <td className="border p-4 font-semibold">
+                    Probable Source of Infection
+                  </td>
+                  <td className="border p-4">
+                    {selectedInvestigation.propablesourceofinfection}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Control Measures</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.controlmeasures}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">
+                    Tentative Diagnosis
+                  </td>
+                  <td className="border p-4">
+                    {selectedInvestigation.tentativediagnosis}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">Final Diagnosis</td>
+                  <td className="border p-4">
+                    {selectedInvestigation.finaldiagnosis}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border p-4 font-semibold">
+                    Nature of Diagnosis
+                  </td>
+                  <td className="border p-4">
+                    {selectedInvestigation.natureofdiagnosis}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      case 3:
+        return (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Additional Details</h2>
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <tbody>
+                {selectedInvestigation.details.map((detail, idx) => (
+                  <React.Fragment key={idx}>
+                    <tr>
+                      <td className="border p-4 font-semibold">Species</td>
+                      <td className="border p-4">{detail.species}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Sex</td>
+                      <td className="border p-4">{detail.sex}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Age</td>
+                      <td className="border p-4">{detail.age}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Population</td>
+                      <td className="border p-4">{detail.population}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Cases</td>
+                      <td className="border p-4">{detail.cases}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Deaths</td>
+                      <td className="border p-4">{detail.deaths}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Destroyed</td>
+                      <td className="border p-4">{detail.destroyed}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Slaughtered</td>
+                      <td className="border p-4">{detail.slaughtered}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">
+                        Vaccine History
+                      </td>
+                      <td className="border p-4">{detail.vaccineHistory}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Remarks</td>
+                      <td className="border p-4">{detail.remarks}</td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+                {selectedInvestigation.clinicalSigns.map((sign, idx) => (
+                  <tr key={`clinicalSign-${idx}`}>
+                    <td className="border p-4 font-semibold">Clinical Sign</td>
+                    <td className="border p-4">{sign.description}</td>
+                  </tr>
+                ))}
+                {selectedInvestigation.movement.map((move, idx) => (
+                  <React.Fragment key={`movement-${idx}`}>
+                    <tr>
+                      <td className="border p-4 font-semibold">
+                        Movement Date
+                      </td>
+                      <td className="border p-4">
+                        {new Date(move.date).toLocaleDateString()}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Mode</td>
+                      <td className="border p-4">{move.mode}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Type</td>
+                      <td className="border p-4">{move.type}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Barangay</td>
+                      <td className="border p-4">{move.barangay}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Municipality</td>
+                      <td className="border p-4">{move.municipality}</td>
+                    </tr>
+                    <tr>
+                      <td className="border p-4 font-semibold">Province</td>
+                      <td className="border p-4">{move.province}</td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="p-6">
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Reports</h1>
 
-      {/* Filters Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Filter by Farmer Name"
-          value={filters.search}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, search: e.target.value }))
-          }
-          className="p-2 border rounded w-full"
-        />
-        <select
-          value={filters.status}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, status: e.target.value }))
-          }
-          className="p-2 border rounded w-full"
-        >
-          <option value="">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="Accepted">Accepted</option>
-          <option value="Deleted">Deleted</option>
-        </select>
-        <button
-          onClick={() => setFilters({ search: "", status: "" })}
-          className="p-2 shadow-md bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
-        >
-          Clear Filters
-        </button>
-      </div>
-
       <button
-        onClick={handleOpenFormModal}
-        className="mb-4 px-4 py-2 bg-darkgreen text-white rounded"
+        onClick={() => setFormModalOpen(true)}
+        className="px-4 py-2 bg-darkgreen text-white rounded"
       >
-        Open Disease Investigation Form
+        Investigation Report Form
       </button>
 
-      {/* <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-lg rounded-lg">
-          <thead className='bg-pastelyellow text-sm'>
-            <tr>
-              <th className="py-3 px-6">Farmer Name</th>
-              <th className="py-3 px-6">Farm Type</th>
-              <th className="py-3 px-6">Control Measures</th>
-              <th className="py-3 px-6">Tentative Diagnosis</th>
-              <th className="py-3 px-6">Final Diagnosis</th>
-              <th className="py-3 px-6">Nature of Diagnosis</th>
-              <th className="py-3 px-6">Form Status</th>
-              <th className="py-3 px-6">Actions</th> */}
-      <div className="overflow-auto border rounded-lg">
-        <table className="min-w-full border-collapse border border-gray-300">
+      <div className="overflow-x-auto mt-4">
+        <table className="min-w-full border border-gray-300 rounded-lg">
           <thead>
-            <tr className="bg-[#1b5b40] text-white">
-              <th className="border border-gray-300 p-4">Farmer Name</th>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 p-4">Investigator</th>
               <th className="border border-gray-300 p-4">Farm Type</th>
-              <th className="border border-gray-300 p-4">Control Measures</th>
-              <th className="border border-gray-300 p-4">
-                Tentative Diagnosis
-              </th>
-              <th className="border border-gray-300 p-4">Final Diagnosis</th>
-              <th className="border border-gray-300 p-4">
-                Nature of Diagnosis
-              </th>
-              <th className="border border-gray-300 p-4">Form Status</th>
-              <th className="border border-gray-300 p-4">Actions</th>
+              <th className="border border-gray-300 p-4">Date Reported</th>
+              <th className="border border-gray-300 p-4">Status</th>
+              <th className="border border-gray-300 p-4">Action</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedInvestigations.map((item, index) => (
-              <tr key={item._id} className="hover:bg-gray-50">
+            {data.map((investigation) => (
+              <tr key={investigation.id} className="hover:bg-gray-100">
                 <td className="border border-gray-300 p-4">
-                  {item.farmerName}
+                  {investigation.investigator}
                 </td>
                 <td className="border border-gray-300 p-4">
-                  {item.farmType.join(", ")}
+                  {investigation.farmType}
                 </td>
                 <td className="border border-gray-300 p-4">
-                  {item.controlmeasures}
+                  {new Date(investigation.dateReported).toLocaleDateString()}
                 </td>
                 <td className="border border-gray-300 p-4">
-                  {item.tentativediagnosis}
+                  {investigation.status}
                 </td>
-                <td className="border border-gray-300 p-4">
-                  {item.finaldiagnosis}
-                </td>
-                <td className="border border-gray-300 p-4">
-                  {item.natureofdiagnosis}
-                </td>
-                <td className="border border-gray-300 p-4">
-                  {item.formStatus}
-                </td>
-                <td className="border border-gray-300 p-4 text-center flex space-x-2">
+                <td className="border border-gray-300 p-4 text-center space-x-2">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering row click
-                      handleOpenEditStatusModal(item);
-                    }}
-                    className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+                    onClick={() => handleOpenEditStatusModal(investigation)}
+                    className="px-4 py-2 bg-darkgreen text-white rounded"
                   >
                     Edit Status
                   </button>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering row click
-                      handleViewDetails(item);
-                    }}
-                    className="px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow"
+                    onClick={() => handleOpenModal(investigation)}
+                    className="px-4 py-2 bg-pastelyellow text-black rounded"
                   >
                     View Details
                   </button>
@@ -237,454 +377,60 @@ const DiseaseInvestigationTable = () => {
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-gray-700">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-        </div>
-      )}
-
-      {/* Modal for displaying detailed information */}
+      {/* Modal for Viewing Investigation Details */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        {selectedInvestigation && (
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-darkgreen">
-              Investigation Details
-            </h2>
-            <div className="space-y-2">
-              <p>
-                <strong>Status:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.status}
-                </span>
-              </p>
-              <p>
-                <strong>No. of Visits:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.noOfVisit}
-                </span>
-              </p>
-              <p>
-                <strong>Date Reported:</strong>{" "}
-                <span className="text-gray-700">
-                  {new Date(
-                    selectedInvestigation.dateReported
-                  ).toLocaleDateString()}
-                </span>
-              </p>
-              <p>
-                <strong>Date of Visit:</strong>{" "}
-                <span className="text-gray-700">
-                  {new Date(
-                    selectedInvestigation.dateOfVisit
-                  ).toLocaleDateString()}
-                </span>
-              </p>
-              <p>
-                <strong>Investigator:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.investigator}
-                </span>
-              </p>
-              <p>
-                <strong>Place Affected:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.placeAffected}
-                </span>
-              </p>
-              <p>
-                <strong>Farmer Name:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.farmerName}
-                </span>
-              </p>
-              <p>
-                <strong>Farm Type:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.farmType.join(", ")}
-                </span>
-              </p>
-              <p>
-                <strong>Probable Source of Infection:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.probablesourceofinfection}
-                </span>
-              </p>
-              <p>
-                <strong>Control Measures:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.controlmeasures}
-                </span>
-              </p>
-              <p>
-                <strong>Remarks:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.remarks}
-                </span>
-              </p>
-              <p>
-                <strong>Tentative Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.tentativediagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Final Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.finaldiagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Nature of Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.natureofdiagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.status}
-                </span>
-              </p>
-              <p>
-                <strong>No. of Visits:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.noOfVisit}
-                </span>
-              </p>
-              <p>
-                <strong>Date Reported:</strong>{" "}
-                <span className="text-gray-700">
-                  {new Date(
-                    selectedInvestigation.dateReported
-                  ).toLocaleDateString()}
-                </span>
-              </p>
-              <p>
-                <strong>Date of Visit:</strong>{" "}
-                <span className="text-gray-700">
-                  {new Date(
-                    selectedInvestigation.dateOfVisit
-                  ).toLocaleDateString()}
-                </span>
-              </p>
-              <p>
-                <strong>Investigator:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.investigator}
-                </span>
-              </p>
-              <p>
-                <strong>Place Affected:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.placeAffected}
-                </span>
-              </p>
-              <p>
-                <strong>Farmer Name:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.farmerName}
-                </span>
-              </p>
-              <p>
-                <strong>Farm Type:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.farmType.join(", ")}
-                </span>
-              </p>
-              <p>
-                <strong>Probable Source of Infection:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.probablesourceofinfection}
-                </span>
-              </p>
-              <p>
-                <strong>Control Measures:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.controlmeasures}
-                </span>
-              </p>
-              <p>
-                <strong>Remarks:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.remarks}
-                </span>
-              </p>
-              <p>
-                <strong>Tentative Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.tentativediagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Final Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.finaldiagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Nature of Diagnosis:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.natureofdiagnosis}
-                </span>
-              </p>
-              <p>
-                <strong>Form Status:</strong>{" "}
-                <span className="text-gray-700">
-                  {selectedInvestigation.formStatus}
-                </span>
-              </p>
-            </div>
-
-            {/* Map through details array */}
-            <h3 className="font-bold mt-6 text-lg text-darkgreen">Details:</h3>
-            <div className="space-y-2">
-              {selectedInvestigation.details.map((detail, index) => (
-                <div key={index} className="p-2 border border-gray-300 rounded">
-                  <p>
-                    <strong>No:</strong> {detail.no}
-                  </p>
-                  <p>
-                    <strong>Species:</strong> {detail.species}
-                  </p>
-                  <p>
-                    <strong>Sex:</strong> {detail.sex}
-                  </p>
-                  <p>
-                    <strong>Age:</strong> {detail.age}
-                  </p>
-                  <p>
-                    <strong>Pop'n:</strong> {detail.population}
-                  </p>
-                  <p>
-                    <strong>Cases:</strong> {detail.cases}
-                  </p>
-                  <p>
-                    <strong>Deaths:</strong> {detail.deaths}
-                  </p>
-                  <p>
-                    <strong>Destroyed:</strong> {detail.destroyed}
-                  </p>
-                  <p>
-                    <strong>Slaughtered:</strong> {detail.slaughtered}
-                  </p>
-                  <p>
-                    <strong>Vaccine History:</strong> {detail.vaccineHistory}
-                  </p>
-                  <p>
-                    <strong>Remarks:</strong> {detail.remarks}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <h2 className="text-2xl font-bold mb-4">Investigation Details</h2>
+        <StepperComponent pages={pages} renderStepContent={renderStepContent} />
       </Modal>
 
-      {/* Modal for adding/editing disease investigations */}
-      <Modal isOpen={formModalOpen} onClose={handleCloseFormModal}>
-        <DiseaseInvestigationForm />
+      {/* Modal for New Investigation Form */}
+      <Modal isOpen={formModalOpen} onClose={() => setFormModalOpen(false)}>
+        <DiseaseInvestigationForm
+          onClose={() => setFormModalOpen(false)}
+          refreshData={fetchData}
+        />
       </Modal>
 
-      {isModalOpen && selectedInvestigation && (
-        <Modal onClose={handleCloseModal}>
-          <h2 className="text-xl font-bold mb-4">Investigation Details</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <tbody>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Status
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.status}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    No. of Visits
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.noOfVisit}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Date Reported
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {new Date(
-                      selectedInvestigation.dateReported
-                    ).toLocaleDateString()}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Date of Visit
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {new Date(
-                      selectedInvestigation.dateOfVisit
-                    ).toLocaleDateString()}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Investigator
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.investigator}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Place Affected
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.placeAffected}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Latitude
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.latitude}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Longitude
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.longitude}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Farmer Name
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.farmerName}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Farm Type
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.farmType.join(", ")}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Probable Source of Infection
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.propablesourceofinfection}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Control Measures
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.controlmeasures}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Tentative Diagnosis
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.tentativediagnosis}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Final Diagnosis
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.finaldiagnosis}
-                  </td>
-                </tr>
-                <tr className="bg-gray-100">
-                  <td className="border border-gray-300 p-4 font-semibold">
-                    Nature of Diagnosis
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {selectedInvestigation.natureofdiagnosis}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <button
-            onClick={handleCloseModal}
-            className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"
-          >
-            Close
-          </button>
-        </Modal>
-      )}
-
-      {/* Modal for editing the status */}
+      {/* Modal for Editing Status */}
       <Modal isOpen={editStatusModalOpen} onClose={handleCloseEditStatusModal}>
-        {selectedInvestigation && (
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Edit Form Status</h2>
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">New Status</label>
-              <select
-                value={newStatus} // Bind to newStatus state
-                onChange={(e) => setNewStatus(e.target.value)} // Update newStatus state
-                className="w-full px-4 py-2 border border-gray-300 rounded"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Accepted">Accepted</option>
-                <option value="Deleted">Deleted</option>
-              </select>
-            </div>
-            <div className="flex space-x-4">
-              <button
-                onClick={handleEditStatus}
-                className="px-4 py-2 bg-darkgreen text-white rounded"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCloseEditStatusModal}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Cancel
-              </button>
-            </div>
+        <h2 className="text-xl font-bold mb-4">Edit Status</h2>
+        <div>
+          <label htmlFor="status" className="block mb-2">
+            Select New Status:
+          </label>
+          <select
+            id="status"
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Completed">Completed</option>
+            <option value="Deleted">Deleted</option>
+          </select>
+          <div className="flex justify-end mt-4 space-x-2">
+            <button
+              onClick={handleEditStatus}
+              className="px-4 py-2 bg-darkgreen text-white rounded"
+            >
+              Save Changes
+            </button>
+            <button
+              onClick={handleCancelEditStatus} // Call the cancel function here
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Cancel
+            </button>
           </div>
-        )}
+        </div>
       </Modal>
 
       {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
         message={successMessage}
+        onClose={() => setShowSuccessModal(false)}
       />
     </div>
   );
