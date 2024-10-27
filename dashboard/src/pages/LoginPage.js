@@ -177,19 +177,19 @@ const LoginPage = ({ setIsAuthenticated }) => {
           </div>
           <div className="flex gap-4">
             <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
-              disabled={isPageDisabled} // Disable button on 5 attempts
-            >
-              Login
-            </button>
-            <button
               type="button"
               onClick={handleSignup}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
               disabled={isPageDisabled} // Disable button on 5 attempts
             >
               Sign up
+            </button>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1b5b40] hover:bg-[#154f3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1b5b40]"
+              disabled={isPageDisabled} // Disable button on 5 attempts
+            >
+              Login
             </button>
           </div>
         </form>

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 // Layout components
 import Navbar from "../../component/Navbar";
 import Modal from "../../component/Modal";
@@ -75,6 +74,7 @@ import FormListComponent from "../../component/FormListComponent";
 import DiseaseInvestigationFormLists from "../Livestock and Poultry DRRM/DiseaseInvestigationFormLists";
 import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
 import TechnicianQuarterlyReportList from "../../component/TechnicianQuarterlyReportList";
+import AboutUs from "../AboutUs";
 
 export const FilterContext = createContext(null);
 
@@ -109,8 +109,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
     console.log(appliedFilters);
   };
 
-
-  const [backupDir, setBackupDir] = useState('');
+  const [backupDir, setBackupDir] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [userRole, setUserRole] = useState("");
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -243,14 +242,14 @@ function Home({ handleLogout, setIsAuthenticated }) {
             FormComponent={VaccinationReport}
           />
         );
-        case "RoutineServicesReportList":
-          return (
-            <FormListComponent
-              endpoint="/RSM"
-              title="Routine Services List"
-              FormComponent={RoutineServicesMonitoringReport}
-            />
-          );
+      case "RoutineServicesReportList":
+        return (
+          <FormListComponent
+            endpoint="/RSM"
+            title="Routine Services List"
+            FormComponent={RoutineServicesMonitoringReport}
+          />
+        );
       case "UpgradingServicesList":
         return (
           <FormListComponent
@@ -268,9 +267,7 @@ function Home({ handleLogout, setIsAuthenticated }) {
           />
         );
       case "TechnicianQuarterlyList":
-        return (
-          <TechnicianQuarterlyReportList />
-        );
+        return <TechnicianQuarterlyReportList />;
       case "DiseaseInvestigationFormLists":
         return <DiseaseInvestigationFormLists />;
       case "RabiesHistoryFormLists":
@@ -318,111 +315,122 @@ function Home({ handleLogout, setIsAuthenticated }) {
   const handleChartSelect = (selectedOptions) => {
     setSelectedCharts(selectedOptions.map((option) => option.value));
   };
-const allChartOptions = [
-  { value: "rabies", label: "Rabies Vaccination Chart" },
-  { value: "disease", label: "Disease Investigation Overview" },
-  { value: "vaccination", label: "General Vaccination Report" },
-  { value: "routine", label: "Routine Services Monitoring Report" },
-  { value: "rabiesHistory", label: "Rabies History Overview" },
-  { value: "offSpringMonitoring", label: "Offspring Monitoring Report" },
-  { value: "upgradingServices", label: "Upgrading Services Overview" },
-  { value: "technicianQuarterly", label: "Technician Quarterly Calf Drop Analysis" },
-  { value: "slaughterReport", label: "Slaughter Report Overview" },
-  { value: "veterinaryShipment", label: "Veterinary Shipment Overview" },
-];
+  const allChartOptions = [
+    { value: "rabies", label: "Rabies Vaccination Chart" },
+    { value: "disease", label: "Disease Investigation Overview" },
+    { value: "vaccination", label: "General Vaccination Report" },
+    { value: "routine", label: "Routine Services Monitoring Report" },
+    { value: "rabiesHistory", label: "Rabies History Overview" },
+    { value: "offSpringMonitoring", label: "Offspring Monitoring Report" },
+    { value: "upgradingServices", label: "Upgrading Services Overview" },
+    {
+      value: "technicianQuarterly",
+      label: "Technician Quarterly Calf Drop Analysis",
+    },
+    { value: "slaughterReport", label: "Slaughter Report Overview" },
+    { value: "veterinaryShipment", label: "Veterinary Shipment Overview" },
+  ];
 
-// Function to get chart options based on user role
-const getChartOptions = () => {
-  switch (userRole) {
-    case "admin":
-      return allChartOptions;
-    case "animalhealth":
-      return allChartOptions.filter(option => 
-          ["rabies", "vaccination", "disease", "rabiesHistory", "routine"].includes(option.value)
-      );
-    case "livestock":
-      return allChartOptions.filter(option => 
-          ["upgradingServices", "offSpringMonitoring", "technicianQuarterly"].includes(option.value)
-      );
-    case "regulatory":
-      return allChartOptions.filter(option => 
+  // Function to get chart options based on user role
+  const getChartOptions = () => {
+    switch (userRole) {
+      case "admin":
+        return allChartOptions;
+      case "animalhealth":
+        return allChartOptions.filter((option) =>
+          [
+            "rabies",
+            "vaccination",
+            "disease",
+            "rabiesHistory",
+            "routine",
+          ].includes(option.value)
+        );
+      case "livestock":
+        return allChartOptions.filter((option) =>
+          [
+            "upgradingServices",
+            "offSpringMonitoring",
+            "technicianQuarterly",
+          ].includes(option.value)
+        );
+      case "regulatory":
+        return allChartOptions.filter((option) =>
           ["slaughterReport", "veterinaryShipment"].includes(option.value)
+        );
+      default:
+        return [];
+    }
+  };
+
+  // Rendering the charts based on selected options
+  const renderCharts = () => {
+    if (selectedCharts.length > 0) {
+      return (
+        <div className="space-y-6">
+          {selectedCharts.includes("slaughterReport") && (
+            <SlaughterReportChart
+              key={`slaughter-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("veterinaryShipment") && (
+            <VeterinaryShipmentChart
+              key={`shipment-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("rabies") && (
+            <RabiesReportChart
+              key={`rabies-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("disease") && (
+            <DiseaseInvestigationChart
+              key={`disease-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("vaccination") && (
+            <VaccinationReportChart
+              key={`vaccination-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("routine") && (
+            <RoutineServicesMonitoringReportChart
+              key={`routine-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("rabiesHistory") && (
+            <RabiesHistoryCharts
+              key={`history-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("offSpringMonitoring") && (
+            <OffSpringMonitoringChart
+              key={`offspring-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("upgradingServices") && (
+            <UpgradingServicesChart
+              key={`upgrading-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+          {selectedCharts.includes("technicianQuarterly") && (
+            <TechnicianQuarterlyCharts
+              key={`quarterly-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+        </div>
       );
-    default:
-      return [];
-  }
-};
-
-// Rendering the charts based on selected options
-const renderCharts = () => {
-  if (selectedCharts.length > 0) {
-    return (
-      <div className="space-y-6">
-        {selectedCharts.includes("slaughterReport") && (
-          <SlaughterReportChart
-            key={`slaughter-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("veterinaryShipment") && (
-          <VeterinaryShipmentChart
-            key={`shipment-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("rabies") && (
-          <RabiesReportChart
-            key={`rabies-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("disease") && (
-          <DiseaseInvestigationChart
-            key={`disease-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("vaccination") && (
-          <VaccinationReportChart
-            key={`vaccination-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("routine") && (
-          <RoutineServicesMonitoringReportChart
-            key={`routine-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("rabiesHistory") && (
-          <RabiesHistoryCharts
-            key={`history-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("offSpringMonitoring") && (
-          <OffSpringMonitoringChart
-            key={`offspring-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("upgradingServices") && (
-          <UpgradingServicesChart
-            key={`upgrading-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-        {selectedCharts.includes("technicianQuarterly") && (
-          <TechnicianQuarterlyCharts
-            key={`quarterly-${chartKey}`}
-            filterValues={appliedFilters}
-          />
-        )}
-      </div>
-    );
-  }
-
-
+    }
 
     return (
       <div className="md:h-2/5 bg-white shadow-md rounded-lg p-6 flex flex-wrap items-center justify-center text-center">
@@ -560,9 +568,6 @@ const renderCharts = () => {
               Admin Actions
             </h3>
 
-
-
-
             <div className="space-y-2">
               <button
                 className={buttonClasses}
@@ -614,7 +619,9 @@ const renderCharts = () => {
                   <div className="space-y-2">
                     <button
                       className={buttonClasses}
-                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}
+                      onClick={() =>
+                        openModalWithContent("RequisitionIssueSlipList")
+                      }
                     >
                       <Outbox className="mr-2" /> Requisition Form
                     </button>
@@ -635,7 +642,9 @@ const renderCharts = () => {
                     <ReportIcon className="mr-2" /> Rabies Vaccination
                   </button>
                   <button
-                    onClick={() => openModalWithContent("VaccinationReportList")}
+                    onClick={() =>
+                      openModalWithContent("VaccinationReportList")
+                    }
                     className={buttonClasses}
                   >
                     <ReportIcon className="mr-2" /> Vaccination Report
@@ -656,7 +665,9 @@ const renderCharts = () => {
                     <ReportIcon className="mr-2" /> Disease Investigation Form
                   </button>
                   <button
-                    onClick={() => openModalWithContent("RabiesHistoryFormLists")}
+                    onClick={() =>
+                      openModalWithContent("RabiesHistoryFormLists")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Rabies History
@@ -667,13 +678,15 @@ const renderCharts = () => {
                     }
                     className={buttonClasses}
                   >
-                    <AssignmentIcon className="mr-2" /> Routine Service Monitoring Reports
+                    <AssignmentIcon className="mr-2" /> Routine Service
+                    Monitoring Reports
                   </button>
                   <button
                     onClick={() => openModalWithContent("AccomplishmentReport")}
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
+                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
+                    Report
                   </button>
                 </div>
               </div>
@@ -696,7 +709,9 @@ const renderCharts = () => {
                   <div className="space-y-2">
                     <button
                       className={buttonClasses}
-                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}
+                      onClick={() =>
+                        openModalWithContent("RequisitionIssueSlipList")
+                      }
                     >
                       <ManageAccountsIcon className="mr-2" /> Requisition Form
                     </button>
@@ -709,28 +724,38 @@ const renderCharts = () => {
                 </h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => openModalWithContent("UpgradingServicesList")}
+                    onClick={() =>
+                      openModalWithContent("UpgradingServicesList")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Upgrading Service
                   </button>
                   <button
-                    onClick={() => openModalWithContent("OffSpringMonitoringList")}
+                    onClick={() =>
+                      openModalWithContent("OffSpringMonitoringList")
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
                   <button
-                    onClick={() => openModalWithContent("TechnicianQuarterlyList")}
+                    onClick={() =>
+                      openModalWithContent("TechnicianQuarterlyList")
+                    }
                     className={buttonClasses}
                   >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
+                    Drop Report
                   </button>
                   <button
-                    onClick={() => openModalWithContent("AccomplishmentReportLivestock")}
+                    onClick={() =>
+                      openModalWithContent("AccomplishmentReportLivestock")
+                    }
                     className={buttonClasses + " lg:block hidden text-left"}
                   >
-                    <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
+                    <AssignmentIcon className="mr-2" /> Generate Monthly
+                    Accomplishment Reports
                   </button>
                 </div>
               </div>
@@ -751,27 +776,36 @@ const renderCharts = () => {
                     Requisition Forms
                   </h4>
                   <div className="space-y-2">
-                    <button className={buttonClasses}
-                      onClick={() => openModalWithContent("RequisitionIssueSlipList")}>
+                    <button
+                      className={buttonClasses}
+                      onClick={() =>
+                        openModalWithContent("RequisitionIssueSlipList")
+                      }
+                    >
                       <ManageAccountsIcon className="mr-2" /> Requisition Form
                     </button>
                   </div>
                 </div>
               )}
               <div>
-
                 <div className="space-y-4">
                   <div>
-                    <h5 className="text-lg font-medium text-gray-700 mb-2">Annual Reports</h5>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">
+                      Annual Reports
+                    </h5>
                     <div className="space-y-2">
                       <button
-                        onClick={() => openModalWithContent("IncomingReportList")}
+                        onClick={() =>
+                          openModalWithContent("IncomingReportList")
+                        }
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Incoming Report
                       </button>
                       <button
-                        onClick={() => openModalWithContent("OutgoingReportList")}
+                        onClick={() =>
+                          openModalWithContent("OutgoingReportList")
+                        }
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Outgoing Report
@@ -779,19 +813,27 @@ const renderCharts = () => {
                     </div>
                   </div>
                   <div>
-                    <h5 className="text-lg font-medium text-gray-700 mb-2">List Reports</h5>
+                    <h5 className="text-lg font-medium text-gray-700 mb-2">
+                      List Reports
+                    </h5>
                     <div className="space-y-2">
                       <button
-                        onClick={() => openModalWithContent("SlaughterReportList")}
+                        onClick={() =>
+                          openModalWithContent("SlaughterReportList")
+                        }
                         className={buttonClasses}
                       >
-                        <AssessmentIcon className="mr-2" /> Slaughter Report (consolidated)
+                        <AssessmentIcon className="mr-2" /> Slaughter Report
+                        (consolidated)
                       </button>
                       <button
-                        onClick={() => openModalWithContent("VeterinaryShipmentList")}
+                        onClick={() =>
+                          openModalWithContent("VeterinaryShipmentList")
+                        }
                         className={buttonClasses}
                       >
-                        <LocalShippingIcon className="mr-2" /> Veterinary Shipment Report
+                        <LocalShippingIcon className="mr-2" /> Veterinary
+                        Shipment Report
                       </button>
                     </div>
                   </div>
@@ -800,7 +842,6 @@ const renderCharts = () => {
             </div>
           </>
         );
-
 
       default:
         return null;
@@ -918,6 +959,8 @@ const renderCharts = () => {
                 </div>
               </>
             )}
+
+            {userRole === "user" && <AboutUs />}
 
             {/* Right Side - Forms */}
             <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 lg:mt-8 lg:mb-5 lg:h-screen">
