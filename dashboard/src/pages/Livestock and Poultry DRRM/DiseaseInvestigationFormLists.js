@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import DiseaseInvestigationForm from "./DiseaseInvestigationForm";
-import SuccessModal from '../../component/SuccessModal'; // Import SuccessModal component
+import SuccessModal from "../../component/SuccessModal"; // Import SuccessModal component
 
 const DiseaseInvestigationTable = () => {
   const [investigations, setInvestigations] = useState([]);
@@ -12,13 +12,18 @@ const DiseaseInvestigationTable = () => {
   const [selectedInvestigation, setSelectedInvestigation] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false); // Success modal state
-  const [successMessage, setSuccessMessage] = useState(''); // Message for success modal
+  const [successMessage, setSuccessMessage] = useState(""); // Message for success modal
 
   // State variables for filters
   const [filters, setFilters] = useState({
     search: "",
     status: "",
   });
+
+  const handleViewDetails = (investigation) => {
+    setSelectedInvestigation(investigation);
+    setIsModalOpen(true);
+  };
 
   // Add these state variables for pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,8 +41,6 @@ const DiseaseInvestigationTable = () => {
 
     fetchInvestigations();
   }, []);
-
-
 
   const handleRowClick = (investigation) => {
     setSelectedInvestigation(investigation);
@@ -84,21 +87,22 @@ const DiseaseInvestigationTable = () => {
         )
       );
       handleCloseEditStatusModal();
-      setSuccessMessage('Status updated successfully!'); // Set success message
+      setSuccessMessage("Status updated successfully!"); // Set success message
       setShowSuccessModal(true); // Show success modal
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
-  const filteredInvestigations = investigations.filter(item => {
+  const filteredInvestigations = investigations.filter((item) => {
     const searchTerm = filters.search.toLowerCase();
     const matchesSearch = item.farmerName.toLowerCase().includes(searchTerm);
-    const matchesFormStatus = !filters.status || item.formStatus.toLowerCase().includes(filters.status.toLowerCase());
+    const matchesFormStatus =
+      !filters.status ||
+      item.formStatus.toLowerCase().includes(filters.status.toLowerCase());
     return matchesSearch && matchesFormStatus;
   });
 
-  
   // Sort forms from newest to oldest by dateReported
   const sortedInvestigations = filteredInvestigations.sort(
     (a, b) => new Date(b.dateReported) - new Date(a.dateReported)
@@ -110,7 +114,6 @@ const DiseaseInvestigationTable = () => {
     (currentPage - 1) * formsPerPage,
     currentPage * formsPerPage
   );
-
 
   return (
     <div className="p-6">
@@ -140,9 +143,7 @@ const DiseaseInvestigationTable = () => {
           <option value="Deleted">Deleted</option>
         </select>
         <button
-          onClick={() =>
-            setFilters({ search: "", status: "" })
-          }
+          onClick={() => setFilters({ search: "", status: "" })}
           className="p-2 shadow-md bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
         >
           Clear Filters
@@ -210,7 +211,7 @@ const DiseaseInvestigationTable = () => {
                 <td className="border border-gray-300 p-4">
                   {item.formStatus}
                 </td>
-                <td className="border border-gray-300 p-4">
+                <td className="border border-gray-300 p-4 text-center flex space-x-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent triggering row click
@@ -220,13 +221,21 @@ const DiseaseInvestigationTable = () => {
                   >
                     Edit Status
                   </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering row click
+                      handleViewDetails(item);
+                    }}
+                    className="px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow"
+                  >
+                    View Details
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-2 mt-4">
@@ -260,20 +269,94 @@ const DiseaseInvestigationTable = () => {
               Investigation Details
             </h2>
             <div className="space-y-2">
-              <p><strong>Status:</strong> <span className="text-gray-700">{selectedInvestigation.status}</span></p>
-              <p><strong>No. of Visits:</strong> <span className="text-gray-700">{selectedInvestigation.noOfVisit}</span></p>
-              <p><strong>Date Reported:</strong> <span className="text-gray-700">{new Date(selectedInvestigation.dateReported).toLocaleDateString()}</span></p>
-              <p><strong>Date of Visit:</strong> <span className="text-gray-700">{new Date(selectedInvestigation.dateOfVisit).toLocaleDateString()}</span></p>
-              <p><strong>Investigator:</strong> <span className="text-gray-700">{selectedInvestigation.investigator}</span></p>
-              <p><strong>Place Affected:</strong> <span className="text-gray-700">{selectedInvestigation.placeAffected}</span></p>
-              <p><strong>Farmer Name:</strong> <span className="text-gray-700">{selectedInvestigation.farmerName}</span></p>
-              <p><strong>Farm Type:</strong> <span className="text-gray-700">{selectedInvestigation.farmType.join(', ')}</span></p>
-              <p><strong>Probable Source of Infection:</strong> <span className="text-gray-700">{selectedInvestigation.probablesourceofinfection}</span></p>
-              <p><strong>Control Measures:</strong> <span className="text-gray-700">{selectedInvestigation.controlmeasures}</span></p>
-              <p><strong>Remarks:</strong> <span className="text-gray-700">{selectedInvestigation.remarks}</span></p>
-              <p><strong>Tentative Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.tentativediagnosis}</span></p>
-              <p><strong>Final Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.finaldiagnosis}</span></p>
-              <p><strong>Nature of Diagnosis:</strong> <span className="text-gray-700">{selectedInvestigation.natureofdiagnosis}</span></p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.status}
+                </span>
+              </p>
+              <p>
+                <strong>No. of Visits:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.noOfVisit}
+                </span>
+              </p>
+              <p>
+                <strong>Date Reported:</strong>{" "}
+                <span className="text-gray-700">
+                  {new Date(
+                    selectedInvestigation.dateReported
+                  ).toLocaleDateString()}
+                </span>
+              </p>
+              <p>
+                <strong>Date of Visit:</strong>{" "}
+                <span className="text-gray-700">
+                  {new Date(
+                    selectedInvestigation.dateOfVisit
+                  ).toLocaleDateString()}
+                </span>
+              </p>
+              <p>
+                <strong>Investigator:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.investigator}
+                </span>
+              </p>
+              <p>
+                <strong>Place Affected:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.placeAffected}
+                </span>
+              </p>
+              <p>
+                <strong>Farmer Name:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.farmerName}
+                </span>
+              </p>
+              <p>
+                <strong>Farm Type:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.farmType.join(", ")}
+                </span>
+              </p>
+              <p>
+                <strong>Probable Source of Infection:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.probablesourceofinfection}
+                </span>
+              </p>
+              <p>
+                <strong>Control Measures:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.controlmeasures}
+                </span>
+              </p>
+              <p>
+                <strong>Remarks:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.remarks}
+                </span>
+              </p>
+              <p>
+                <strong>Tentative Diagnosis:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.tentativediagnosis}
+                </span>
+              </p>
+              <p>
+                <strong>Final Diagnosis:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.finaldiagnosis}
+                </span>
+              </p>
+              <p>
+                <strong>Nature of Diagnosis:</strong>{" "}
+                <span className="text-gray-700">
+                  {selectedInvestigation.natureofdiagnosis}
+                </span>
+              </p>
               <p>
                 <strong>Status:</strong>{" "}
                 <span className="text-gray-700">
@@ -420,6 +503,148 @@ const DiseaseInvestigationTable = () => {
         <DiseaseInvestigationForm />
       </Modal>
 
+      {isModalOpen && selectedInvestigation && (
+        <Modal onClose={handleCloseModal}>
+          <h2 className="text-xl font-bold mb-4">Investigation Details</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <tbody>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Status
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.status}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    No. of Visits
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.noOfVisit}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Date Reported
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {new Date(
+                      selectedInvestigation.dateReported
+                    ).toLocaleDateString()}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Date of Visit
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {new Date(
+                      selectedInvestigation.dateOfVisit
+                    ).toLocaleDateString()}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Investigator
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.investigator}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Place Affected
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.placeAffected}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Latitude
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.latitude}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Longitude
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.longitude}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Farmer Name
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.farmerName}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Farm Type
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.farmType.join(", ")}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Probable Source of Infection
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.propablesourceofinfection}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Control Measures
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.controlmeasures}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Tentative Diagnosis
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.tentativediagnosis}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Final Diagnosis
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.finaldiagnosis}
+                  </td>
+                </tr>
+                <tr className="bg-gray-100">
+                  <td className="border border-gray-300 p-4 font-semibold">
+                    Nature of Diagnosis
+                  </td>
+                  <td className="border border-gray-300 p-4">
+                    {selectedInvestigation.natureofdiagnosis}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button
+            onClick={handleCloseModal}
+            className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"
+          >
+            Close
+          </button>
+        </Modal>
+      )}
+
       {/* Modal for editing the status */}
       <Modal isOpen={editStatusModalOpen} onClose={handleCloseEditStatusModal}>
         {selectedInvestigation && (
@@ -444,8 +669,8 @@ const DiseaseInvestigationTable = () => {
               >
                 Save
               </button>
-              <button 
-                onClick={handleCloseEditStatusModal} 
+              <button
+                onClick={handleCloseEditStatusModal}
                 className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Cancel
