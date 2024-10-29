@@ -61,7 +61,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           onConfirm={handleConfirmExit} // Close the modal after confirming
           onCancel={handleCancelClose} // Close only the confirmation modal and keep the main modal open
           message="Are you sure you want to exit this form?"
-        />
+        /> 
       )}
     </>,
     document.body
