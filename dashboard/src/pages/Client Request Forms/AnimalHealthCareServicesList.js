@@ -126,11 +126,10 @@ function AnimalHealthCareServicesList() {
       );
       setIsModalOpen(false);
       setSelectedService(null);
-      
+
       // Show success modal with a message
       setSuccessMessage("Service status updated successfully!");
       setIsSuccessModalOpen(true);
-      
     } catch (err) {
       console.error("Error updating service status:", err);
       setError("Failed to update status");
@@ -273,9 +272,7 @@ function AnimalHealthCareServicesList() {
                       {formatDate(service.createdAt)}
                     </td>
                     <td className="border border-gray-300 p-4">
-                      
-                        {service.status}
-          
+                      {service.status}
                     </td>
                     <td className="border border-gray-300 p-4">
                       <button
@@ -333,8 +330,6 @@ function AnimalHealthCareServicesList() {
             >
               Save Changes
             </button>
-
-            
           </div>
         </Modal>
       )}
@@ -350,10 +345,12 @@ function AnimalHealthCareServicesList() {
 
       {/* Health Care Modal */}
       {isHealthCareModalOpen && (
-        <AnimalHealthCareServices
+        <Modal
           isOpen={isHealthCareModalOpen}
           onClose={() => setIsHealthCareModalOpen(false)}
-        />
+        >
+          <AnimalHealthCareServices/>
+        </Modal>
       )}
     </div>
   );
