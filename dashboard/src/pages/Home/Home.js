@@ -173,7 +173,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
     switch (modalContent) {
 
 
-     
+
       case "OfflinePage":
         return <OfflinePage />;
       case "VeterinaryShipmentForm":
@@ -469,7 +469,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 </h4>
                 <div className="space-y-2">
                   {/* Show all buttons if userRole is "admin" or "client" */}
-                  {(userRole === "admin" || userRole === "user") && (
+                  {(userRole === "admin" || userRole === "user" || userRole === "extensionworker") && (
                     <>
                       <button
                         onClick={() =>
@@ -595,30 +595,30 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             <div className="space-y-2">
               <button
                 className={buttonClasses}
-                onClick={() => 
-                openModalWithContent(
-                  isOffline ? "OfflinePage" : "BackupRestore"
-                )}
+                onClick={() =>
+                  openModalWithContent(
+                    isOffline ? "OfflinePage" : "BackupRestore"
+                  )}
               >
                 <ManageAccountsIcon className="mr-2" /> Backup and Restore
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => 
-              
-                openModalWithContent(
-                  isOffline ? "OfflinePage" : "UserManagement"
-                )}
+                onClick={() =>
+
+                  openModalWithContent(
+                    isOffline ? "OfflinePage" : "UserManagement"
+                  )}
               >
                 <ManageAccountsIcon className="mr-2" /> Manage Users
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => 
-              
-                openModalWithContent(
-                  isOffline ? "OfflinePage" : "AuditLogList"
-                )}
+                onClick={() =>
+
+                  openModalWithContent(
+                    isOffline ? "OfflinePage" : "AuditLogList"
+                  )}
               >
                 <Outbox className="mr-2" />
                 AuditLog
@@ -633,11 +633,11 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </button>
               <button
                 className={buttonClasses}
-                onClick={() => 
-              
-                openModalWithContent(
-                  isOffline ? "OfflinePage" : "Inventory"
-                )}
+                onClick={() =>
+
+                  openModalWithContent(
+                    isOffline ? "OfflinePage" : "Inventory"
+                  )}
               >
                 <Inventory className="mr-2" /> Inventory Equipment
               </button>
@@ -652,7 +652,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               Browse Forms from Animal Health
             </h3>
             <div className="space-y-6">
-              {userRole !== "admin" && (
+              {userRole !== "admin" && userRole !== "extensionworker" && (
                 <div>
                   <h4 className="text-lg font-medium text-gray-700 mb-2">
                     Requisition Forms
@@ -679,7 +679,11 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   <button
                     onClick={() =>
                       openModalWithContent(
-                        isOffline ? "RabiesVaccinationReport" : "RabiesVaccinationReportList"
+                        isOffline
+                          ? "RabiesVaccinationReport"
+                          : userRole === "extensionworker"
+                            ? "RabiesVaccinationReport"
+                            : "RabiesVaccinationReportList"
                       )
                     }
                     className={buttonClasses}
@@ -688,9 +692,12 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </button>
                   <button
                     onClick={() =>
-
                       openModalWithContent(
-                        isOffline ? "VaccinationReport" : "VaccinationReportList"
+                        isOffline
+                          ? "VaccinationReport"
+                          : userRole === "extensionworker"
+                            ? "VaccinationReport"
+                            : "VaccinationReportList"
                       )
                     }
                     className={buttonClasses}
@@ -706,10 +713,12 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 <div className="space-y-2">
                   <button
                     onClick={() =>
-
-
                       openModalWithContent(
-                        isOffline ? "DiseaseInvestigationForm" : "DiseaseInvestigationFormLists"
+                        isOffline
+                          ? "DiseaseInvestigationForm"
+                          : userRole === "extensionworker"
+                            ? "DiseaseInvestigationForm"
+                            : "DiseaseInvestigationFormLists"
                       )
                     }
                     className={buttonClasses}
@@ -719,7 +728,11 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   <button
                     onClick={() =>
                       openModalWithContent(
-                        isOffline ? "RabiesHistoryForm" : "RabiesHistoryFormLists"
+                        isOffline
+                          ? "RabiesHistoryForm"
+                          : userRole === "extensionworker"
+                            ? "RabiesHistoryForm"
+                            : "RabiesHistoryFormLists"
                       )
                     }
                     className={buttonClasses}
@@ -728,35 +741,38 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </button>
                   <button
                     onClick={() =>
-
                       openModalWithContent(
-                        isOffline ? "RoutineServicesMonitoringReport" : "RoutineServicesReportList"
+                        isOffline
+                          ? "RoutineServicesMonitoringReport"
+                          : userRole === "extensionworker"
+                            ? "RoutineServicesMonitoringReport"
+                            : "RoutineServicesReportList"
                       )
-
                     }
                     className={buttonClasses}
                   >
                     <AssignmentIcon className="mr-2" /> Routine Service
                     Monitoring Reports
                   </button>
-                  <button
-                    onClick={() => 
+                  {userRole !== "extensionworker" && (
+                    <button
+                      onClick={() =>
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "AccomplishmentReport"
+                        )
+                      }
+                      className={buttonClasses + " lg:block hidden text-left"}
+                    >
+                      <AssignmentIcon className="mr-2" /> Generate Accomplishment Report
+                    </button>
+                  )}
 
-                    openModalWithContent(
-                      isOffline ? "OfflinePage" : "AccomplishmentReport"
-                    )
-                  
-                  }
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <AssignmentIcon className="mr-2" /> Generate Accomplishment
-                    Report
-                  </button>
                 </div>
               </div>
             </div>
           </>
         );
+
 
       case "livestock":
         return (
@@ -765,7 +781,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               Browse Forms from Livestock
             </h3>
             <div className="space-y-6">
-              {userRole !== "admin" && (
+              {userRole !== "admin" && userRole !== "extensionworker" && (
                 <div>
                   <h4 className="text-lg font-medium text-gray-700 mb-2">
                     Requisition Forms
@@ -773,15 +789,18 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   <div className="space-y-2">
                     <button
                       className={buttonClasses}
-                      onClick={() => openModalWithContent(
-                        isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
-                      )}
+                      onClick={() =>
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
+                        )
+                      }
                     >
                       <ManageAccountsIcon className="mr-2" /> Requisition Form
                     </button>
                   </div>
                 </div>
               )}
+
               <div>
                 <h4 className="text-lg font-medium text-gray-700 mb-2">
                   Livestock Management
@@ -790,7 +809,11 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   <button
                     onClick={() =>
                       openModalWithContent(
-                        isOffline ? "UpgradingServices" : "UpgradingServicesList"
+                        isOffline
+                          ? "UpgradingServices"
+                          : userRole === "extensionworker"
+                            ? "UpgradingServices"
+                            : "UpgradingServicesList"
                       )
                     }
                     className={buttonClasses}
@@ -800,39 +823,51 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   <button
                     onClick={() =>
                       openModalWithContent(
-                        isOffline ? "OffSpringMonitoring" : "OffSpringMonitoringList"
-                      )}
+                        isOffline
+                          ? "OffSpringMonitoring"
+                          : userRole === "extensionworker"
+                            ? "OffSpringMonitoring"
+                            : "OffSpringMonitoringList"
+                      )
+                    }
                     className={buttonClasses}
                   >
                     <PetsIcon className="mr-2" /> Offspring Monitoring
                   </button>
                   <button
                     onClick={() =>
-
                       openModalWithContent(
-                        isOffline ? "CalfDrop" : "TechnicianQuarterlyList"
-                      )}
+                        isOffline
+                          ? "CalfDrop"
+                          : userRole === "extensionworker"
+                            ? "CalfDrop"
+                            : "TechnicianQuarterlyList"
+                      )
+                    }
                     className={buttonClasses}
                   >
-                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf
-                    Drop Report
+                    <PetsIcon className="mr-2" /> Technician's Quarterly Calf Drop Report
                   </button>
-                  <button
-                    onClick={() => 
-                  
-                    openModalWithContent(
-                      isOffline ? "OfflinePage" : "AccomplishmentReportLivestock"
-                    )}
-                    className={buttonClasses + " lg:block hidden text-left"}
-                  >
-                    <AssignmentIcon className="mr-2" /> Generate Monthly
-                    Accomplishment Reports
-                  </button>
+
+                  {/* Conditional rendering for the Accomplishment Report button */}
+                  {userRole !== "extensionworker" && (
+                    <button
+                      onClick={() =>
+                        openModalWithContent(
+                          isOffline ? "OfflinePage" : "AccomplishmentReportLivestock"
+                        )
+                      }
+                      className={buttonClasses + " lg:block hidden text-left"}
+                    >
+                      <AssignmentIcon className="mr-2" /> Generate Monthly Accomplishment Reports
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           </>
         );
+
 
       case "regulatory":
         return (
@@ -866,20 +901,20 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       <button
                         onClick={() =>
 
-                        openModalWithContent(
-                          isOffline ? "OfflinePage" : "IncomingReportList"
-                        )
-                      
-                      }
+                          openModalWithContent(
+                            isOffline ? "OfflinePage" : "IncomingReportList"
+                          )
+
+                        }
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Incoming Report
                       </button>
                       <button
                         onClick={() =>
-                        openModalWithContent(
-                          isOffline ? "OfflinePage" : "OutgoingReportList"
-                        )}
+                          openModalWithContent(
+                            isOffline ? "OfflinePage" : "OutgoingReportList"
+                          )}
                         className={buttonClasses}
                       >
                         <ReportIcon className="mr-2" /> Outgoing Report
@@ -976,7 +1011,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
 
   return (
     <>
-      <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col bg-white min-h-screen relative overflow-hidden">
+      <div className="container max-w-full flex lg:flex-row md:flex-col sm:flex-col xs:flex-col 2xs:flex-col 3xs:flex-col bg-white lg:min-h-screen relative lg:overflow-hidden overflow-auto">
         {/* Navbar */}
         <Navbar
           onDivisionChange={handleDivisionChange}
@@ -987,7 +1022,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
         <div className="container flex flex-col lg:justify-center max-w-full lg:flex-row p-4 overflow-y-hide max-h-[100vh]">
           {/* Main Content Wrapper */}
           <div className="flex flex-col-reverse lg:flex-row w-full">
-            {useMediaQuery("(min-width:1024px)") && !(userRole === "user") && (
+            {useMediaQuery("(min-width:1024px)") && !(userRole === "user") && !(userRole === "extensionworker") && (
               <>
                 {" "}
                 {/* Left Side - Charts */}
@@ -1042,8 +1077,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </>
             )}
 
-            {userRole === "user" && <AboutUs />}
-
+            {(userRole === "user" || userRole === "extensionworker") && <AboutUs />}
             {/* Right Side - Forms */}
             <div className="w-full lg:w-1/3 space-y-6 lg:space-y-8 lg:ml-8 lg:mt-8 lg:mb-5 lg:h-screen">
               {renderForms()}
