@@ -44,7 +44,7 @@ const DiseaseInvestigationTable = () => {
     setActiveStep(0); // Reset active step when opening modal
   };
 
-   // Add these state variables for pagination
+  // Add these state variables for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const formsPerPage = 10;
 
@@ -60,7 +60,6 @@ const DiseaseInvestigationTable = () => {
 
     fetchInvestigations();
   }, []);
-
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -112,46 +111,46 @@ const DiseaseInvestigationTable = () => {
             <table className="min-w-full border border-gray-300 rounded-lg">
               <tbody>
                 <tr>
-                  <td className="border p-4 font-semibold">Status</td>
-                  <td className="border p-4">{selectedInvestigation.status}</td>
+                  <td className="border p-2 font-semibold">Status</td>
+                  <td className="border p-2">{selectedInvestigation.status}</td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">No. of Visits</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">No. of Visits</td>
+                  <td className="border p-2">
                     {selectedInvestigation.noOfVisit}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Date Reported</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Date Reported</td>
+                  <td className="border p-2">
                     {new Date(
                       selectedInvestigation.dateReported
                     ).toLocaleDateString()}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Date of Visit</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Date of Visit</td>
+                  <td className="border p-2">
                     {new Date(
                       selectedInvestigation.dateOfVisit
                     ).toLocaleDateString()}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Farmer Name</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Farmer Name</td>
+                  <td className="border p-2">
                     {selectedInvestigation.farmerName}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Farm Type</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Farm Type</td>
+                  <td className="border p-2">
                     {selectedInvestigation.farmType.join(", ")}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Remarks</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Remarks</td>
+                  <td className="border p-2">
                     {selectedInvestigation.remarks}
                   </td>
                 </tr>
@@ -166,26 +165,26 @@ const DiseaseInvestigationTable = () => {
             <table className="min-w-full border border-gray-300 rounded-lg">
               <tbody>
                 <tr>
-                  <td className="border p-4 font-semibold">Investigator</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Investigator</td>
+                  <td className="border p-2">
                     {selectedInvestigation.investigator}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Place Affected</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Place Affected</td>
+                  <td className="border p-2">
                     {selectedInvestigation.placeAffected}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Latitude</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Latitude</td>
+                  <td className="border p-2">
                     {selectedInvestigation.latitude}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Longitude</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Longitude</td>
+                  <td className="border p-2">
                     {selectedInvestigation.longitude}
                   </td>
                 </tr>
@@ -200,38 +199,38 @@ const DiseaseInvestigationTable = () => {
             <table className="min-w-full border border-gray-300 rounded-lg">
               <tbody>
                 <tr>
-                  <td className="border p-4 font-semibold">
+                  <td className="border p-2 font-semibold">
                     Probable Source of Infection
                   </td>
-                  <td className="border p-4">
+                  <td className="border p-2">
                     {selectedInvestigation.propablesourceofinfection}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Control Measures</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Control Measures</td>
+                  <td className="border p-2">
                     {selectedInvestigation.controlmeasures}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">
+                  <td className="border p-2 font-semibold">
                     Tentative Diagnosis
                   </td>
-                  <td className="border p-4">
+                  <td className="border p-2">
                     {selectedInvestigation.tentativediagnosis}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">Final Diagnosis</td>
-                  <td className="border p-4">
+                  <td className="border p-2 font-semibold">Final Diagnosis</td>
+                  <td className="border p-2">
                     {selectedInvestigation.finaldiagnosis}
                   </td>
                 </tr>
                 <tr>
-                  <td className="border p-4 font-semibold">
+                  <td className="border p-2 font-semibold">
                     Nature of Diagnosis
                   </td>
-                  <td className="border p-4">
+                  <td className="border p-2">
                     {selectedInvestigation.natureofdiagnosis}
                   </td>
                 </tr>
@@ -241,105 +240,110 @@ const DiseaseInvestigationTable = () => {
         );
       case 3:
         return (
-          <div>
-            <h2 className="text-xl font-bold mb-4">Additional Details</h2>
-            <table className="min-w-full border border-gray-300 rounded-lg">
+          <div className="p-6 bg-white rounded-lg shadow-md ">
+            <h2 className="text-2xl font-bold mb-6 text-black">
+              Details of Investigation
+            </h2>
+
+            {/* Details Table */}
+            <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
+              <thead>
+                <tr className="bg-darkgreen text-white">
+                  <th className="border p-2">Species</th>
+                  <th className="border p-2">Sex</th>
+                  <th className="border p-2">Age</th>
+                  <th className="border p-2">Population</th>
+                  <th className="border p-2">Cases</th>
+                  <th className="border p-2">Deaths</th>
+                  <th className="border p-2">Destroyed</th>
+                  <th className="border p-2">Slaughtered</th>
+                  <th className="border p-2">Vaccine History</th>
+                  <th className="border p-2">Remarks</th>
+                </tr>
+              </thead>
               <tbody>
                 {selectedInvestigation.details.map((detail, idx) => (
-                  <React.Fragment key={idx}>
-                    <tr>
-                      <td className="border p-4 font-semibold">Species</td>
-                      <td className="border p-4">{detail.species}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Sex</td>
-                      <td className="border p-4">{detail.sex}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Age</td>
-                      <td className="border p-4">{detail.age}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Population</td>
-                      <td className="border p-4">{detail.population}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Cases</td>
-                      <td className="border p-4">{detail.cases}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Deaths</td>
-                      <td className="border p-4">{detail.deaths}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Destroyed</td>
-                      <td className="border p-4">{detail.destroyed}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Slaughtered</td>
-                      <td className="border p-4">{detail.slaughtered}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">
-                        Vaccine History
-                      </td>
-                      <td className="border p-4">{detail.vaccineHistory}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Remarks</td>
-                      <td className="border p-4">{detail.remarks}</td>
-                    </tr>
-                  </React.Fragment>
-                ))}
-                {selectedInvestigation.clinicalSigns.map((sign, idx) => (
-                  <tr key={`clinicalSign-${idx}`}>
-                    <td className="border p-4 font-semibold">Clinical Sign</td>
-                    <td className="border p-4">{sign.description}</td>
+                  <tr key={idx} className="hover:bg-gray-100">
+                    <td className="border p-2">{detail.species}</td>
+                    <td className="border p-2">{detail.sex}</td>
+                    <td className="border p-2">{detail.age}</td>
+                    <td className="border p-2">{detail.population}</td>
+                    <td className="border p-2">{detail.cases}</td>
+                    <td className="border p-2">{detail.deaths}</td>
+                    <td className="border p-2">{detail.destroyed}</td>
+                    <td className="border p-2">{detail.slaughtered}</td>
+                    <td className="border p-2">{detail.vaccineHistory}</td>
+                    <td className="border p-2">{detail.remarks}</td>
                   </tr>
-                ))}
-                {selectedInvestigation.movement.map((move, idx) => (
-                  <React.Fragment key={`movement-${idx}`}>
-                    <tr>
-                      <td className="border p-4 font-semibold">
-                        Movement Date
-                      </td>
-                      <td className="border p-4">
-                        {new Date(move.date).toLocaleDateString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Mode</td>
-                      <td className="border p-4">{move.mode}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Type</td>
-                      <td className="border p-4">{move.type}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Barangay</td>
-                      <td className="border p-4">{move.barangay}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Municipality</td>
-                      <td className="border p-4">{move.municipality}</td>
-                    </tr>
-                    <tr>
-                      <td className="border p-4 font-semibold">Province</td>
-                      <td className="border p-4">{move.province}</td>
-                    </tr>
-                  </React.Fragment>
                 ))}
               </tbody>
             </table>
+            </div>
+
+            {/* Clinical Signs */}
+            <h2 className="text-2xl font-bold mb-4 text-black">
+              Clinical Signs
+            </h2>
+            <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
+              <thead>
+                <tr className="bg-darkgreen text-white">
+                  <th className="border p-2">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedInvestigation.clinicalSigns.map((sign, idx) => (
+                  <tr key={`clinicalSign-${idx}`} className="hover:bg-gray-100">
+                    <td className="border p-2">{sign.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            </div>
+            
+
+            {/* Movement Table */}
+            <h2 className="text-2xl font-bold mb-4 text-black">Movement</h2>
+            <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-x-auto">
+              <thead>
+                <tr className="bg-darkgreen text-white">
+                  <th className="border p-2">Movement Date</th>
+                  <th className="border p-2">Mode</th>
+                  <th className="border p-2">Type</th>
+                  <th className="border p-2">Barangay</th>
+                  <th className="border p-2">Municipality</th>
+                  <th className="border p-2">Province</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedInvestigation.movement.map((move, idx) => (
+                  <tr key={`movement-${idx}`} className="hover:bg-gray-100">
+                    <td className="border p-2">
+                      {new Date(move.date).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">{move.mode}</td>
+                    <td className="border p-2">{move.type}</td>
+                    <td className="border p-2">{move.barangay}</td>
+                    <td className="border p-2">{move.municipality}</td>
+                    <td className="border p-2">{move.province}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            </div>
+            
           </div>
         );
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Reports</h1>
 
       <button
@@ -353,29 +357,29 @@ const DiseaseInvestigationTable = () => {
         <table className="min-w-full border border-gray-300 rounded-lg">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border border-gray-300 p-4">Investigator</th>
-              <th className="border border-gray-300 p-4">Farm Type</th>
-              <th className="border border-gray-300 p-4">Date Reported</th>
-              <th className="border border-gray-300 p-4">Status</th>
-              <th className="border border-gray-300 p-4">Action</th>
+              <th className="border border-gray-300 p-2">Investigator</th>
+              <th className="border border-gray-300 p-2">Farm Type</th>
+              <th className="border border-gray-300 p-2">Date Reported</th>
+              <th className="border border-gray-300 p-2">Status</th>
+              <th className="border border-gray-300 p-2">Action</th>
             </tr>
           </thead>
           <tbody>
             {data.map((investigation) => (
               <tr key={investigation.id} className="hover:bg-gray-100">
-                <td className="border border-gray-300 p-4">
+                <td className="border border-gray-300 p-2">
                   {investigation.investigator}
                 </td>
-                <td className="border border-gray-300 p-4">
+                <td className="border border-gray-300 p-2">
                   {investigation.farmType}
                 </td>
-                <td className="border border-gray-300 p-4">
+                <td className="border border-gray-300 p-2">
                   {new Date(investigation.dateReported).toLocaleDateString()}
                 </td>
-                <td className="border border-gray-300 p-4">
+                <td className="border border-gray-300 p-2">
                   {investigation.status}
                 </td>
-                <td className="border border-gray-300 p-4 text-center space-x-2">
+                <td className="border border-gray-300 p-2 text-center space-x-2">
                   <button
                     onClick={() => handleOpenEditStatusModal(investigation)}
                     className="px-4 py-2 bg-darkgreen text-white rounded"

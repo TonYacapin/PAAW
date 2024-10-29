@@ -21,12 +21,10 @@ function RoutineServicesMonitoringReport() {
   const [dateReported, setDateReported] = useState("");
   const [livestockTechnician, setLivestockTechnician] = useState("");
 
-
-
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const addEntry = () => {
     setEntries([
@@ -236,16 +234,13 @@ function RoutineServicesMonitoringReport() {
   };
   const saveEntries = async () => {
     try {
-      const response = await axiosInstance.post(
-        `/RSM`,
-        {
-          province,
-          municipality,
-          dateReported,
-          livestockTechnician,
-          entries,
-        }
-      );
+      const response = await axiosInstance.post(`/RSM`, {
+        province,
+        municipality,
+        dateReported,
+        livestockTechnician,
+        entries,
+      });
 
       if (response.status === 201) {
         setSuccessMessage("Entries saved successfully");
@@ -261,10 +256,10 @@ function RoutineServicesMonitoringReport() {
     } catch (error) {
       console.error("Error saving entries:", error);
 
-
       let errorMessage = "Failed to save entries: An unexpected error occurred";
       if (error.response && error.response.data) {
-        const serverMessage = error.response.data.message || "An error occurred";
+        const serverMessage =
+          error.response.data.message || "An error occurred";
         if (error.response.data.errors) {
           const validationErrors = error.response.data.errors
             .map((err) => err.msg)
@@ -274,7 +269,6 @@ function RoutineServicesMonitoringReport() {
           errorMessage = `Failed to save entries: ${serverMessage}`;
         }
       }
-  
 
       setErrorMessage(errorMessage);
       setIsErrorModalOpen(true);
@@ -282,82 +276,80 @@ function RoutineServicesMonitoringReport() {
   };
   return (
     <div className="container mx-auto p-4">
-
       <h2 className="text-2xl font-bold mb-4">
         Routine Services Monitoring Report
       </h2>
 
-      
       {/* Main fields */}
       <CardBox>
-      <div className="grid grid-cols-1 gap-4 mb-4">
-        <div>
-          <label htmlFor="province" className="block mb-1">
-            Province
-          </label>
-          <input
-            id="province"
-            type="text"
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            className="border p-2 rounded w-full"
-            disabled
-          />
-        </div>
-        <div>
-          <label htmlFor="municipality" className="block mb-1">
-            Municipality
-          </label>
-          <select
-            id="municipality"
-            value={municipality}
-            onChange={(e) => setMunicipality(e.target.value)}
-            className="border p-2 rounded w-full"
-          >
-            <option value="">Select Municipality</option>
-            <option value="Ambaguio">Ambaguio</option>
-            <option value="Bagabag">Bagabag</option>
-            <option value="Bayombong">Bayombong</option>
-            <option value="Diadi">Diadi</option>
-            <option value="Quezon">Quezon</option>
-            <option value="Solano">Solano</option>
-            <option value="Villaverde">Villaverde</option>
-            <option value="Alfonso Castañeda">Alfonso Castañeda</option>
-            <option value="Aritao">Aritao</option>
-            <option value="Bambang">Bambang</option>
-            <option value="Dupax del Norte">Dupax del Norte</option>
-            <option value="Dupax del Sur">Dupax del Sur</option>
-            <option value="Kayapa">Kayapa</option>
-            <option value="Kasibu">Kasibu</option>
-            <option value="Santa Fe">Santa Fe</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="dateReported" className="block mb-1">
-            Reporting Period
-          </label>
-          <input
-            id="dateReported"
-            type="date"
-            value={dateReported}
-            onChange={(e) => setDateReported(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <div className="grid grid-cols-1 gap-4 mb-4">
+          <div>
+            <label htmlFor="province" className="block mb-1">
+              Province
+            </label>
+            <input
+              id="province"
+              type="text"
+              value={province}
+              onChange={(e) => setProvince(e.target.value)}
+              className="border p-2 rounded w-full"
+              disabled
+            />
+          </div>
+          <div>
+            <label htmlFor="municipality" className="block mb-1">
+              Municipality
+            </label>
+            <select
+              id="municipality"
+              value={municipality}
+              onChange={(e) => setMunicipality(e.target.value)}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">Select Municipality</option>
+              <option value="Ambaguio">Ambaguio</option>
+              <option value="Bagabag">Bagabag</option>
+              <option value="Bayombong">Bayombong</option>
+              <option value="Diadi">Diadi</option>
+              <option value="Quezon">Quezon</option>
+              <option value="Solano">Solano</option>
+              <option value="Villaverde">Villaverde</option>
+              <option value="Alfonso Castañeda">Alfonso Castañeda</option>
+              <option value="Aritao">Aritao</option>
+              <option value="Bambang">Bambang</option>
+              <option value="Dupax del Norte">Dupax del Norte</option>
+              <option value="Dupax del Sur">Dupax del Sur</option>
+              <option value="Kayapa">Kayapa</option>
+              <option value="Kasibu">Kasibu</option>
+              <option value="Santa Fe">Santa Fe</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="dateReported" className="block mb-1">
+              Reporting Period
+            </label>
+            <input
+              id="dateReported"
+              type="date"
+              value={dateReported}
+              onChange={(e) => setDateReported(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="livestockTechnician" className="block mb-1">
-            Livestock Technician
-          </label>
-          <input
-            id="livestockTechnician"
-            type="text"
-            value={livestockTechnician}
-            onChange={(e) => setLivestockTechnician(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
+          <div>
+            <label htmlFor="livestockTechnician" className="block mb-1">
+              Livestock Technician
+            </label>
+            <input
+              id="livestockTechnician"
+              type="text"
+              value={livestockTechnician}
+              onChange={(e) => setLivestockTechnician(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
         </div>
-      </div>
       </CardBox>
 
       {/* Entries section */}
@@ -429,10 +421,13 @@ function RoutineServicesMonitoringReport() {
                 />
               </div>
 
-
               <div>
-                <BarangayDropDown municipality={municipality} onChange={(e) =>
-                    handleEntryChange(selectedEntry, "barangay", e.target.value)} />
+                <BarangayDropDown
+                  municipality={municipality}
+                  onChange={(e) =>
+                    handleEntryChange(selectedEntry, "barangay", e.target.value)
+                  }
+                />
               </div>
               {/* <div>
                 <label htmlFor="barangay" className="block mb-1">
@@ -448,7 +443,7 @@ function RoutineServicesMonitoringReport() {
                   className="border p-2 rounded w-full"
                 />
               </div> */}
-            </div> 
+            </div>
 
             <h4 className="text-lg font-semibold mb-2">Client Information</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -492,9 +487,8 @@ function RoutineServicesMonitoringReport() {
                 <label htmlFor="gender" className="block mb-1">
                   Gender
                 </label>
-                <input
+                <select
                   id="gender"
-                  type="text"
                   value={entries[selectedEntry].clientInfo.gender}
                   onChange={(e) =>
                     handleClientInfoChange(
@@ -504,8 +498,13 @@ function RoutineServicesMonitoringReport() {
                     )
                   }
                   className="border p-2 rounded w-full"
-                />
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
               </div>
+
               <div>
                 <label htmlFor="birthday" className="block mb-1">
                   Birthday
@@ -647,9 +646,8 @@ function RoutineServicesMonitoringReport() {
                 <label htmlFor="animalRegistered" className="block mb-1">
                   Animal Registered
                 </label>
-                <input
+                <select
                   id="animalRegistered"
-                  type="text"
                   value={entries[selectedEntry].animalInfo.animalRegistered}
                   onChange={(e) =>
                     handleAnimalInfoChange(
@@ -659,8 +657,13 @@ function RoutineServicesMonitoringReport() {
                     )
                   }
                   className="border p-2 rounded w-full"
-                />
+                >
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
               </div>
+
               <div>
                 <label htmlFor="noOfHeads" className="block mb-1">
                   No. of Heads
@@ -751,22 +754,21 @@ function RoutineServicesMonitoringReport() {
         />
       )}
 
+      {isErrorModalOpen && (
+        <ErrorModal
+          isOpen={isErrorModalOpen}
+          onClose={() => setIsErrorModalOpen(false)}
+          message={errorMessage}
+        />
+      )}
 
-    {isErrorModalOpen && (
-      <ErrorModal
-        isOpen={isErrorModalOpen}
-        onClose={() => setIsErrorModalOpen(false)}
-        message={errorMessage}
-      />
-    )}
-
-    {isSuccessModalOpen && (
-      <SuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-        message={successMessage}
-      />
-    )}
+      {isSuccessModalOpen && (
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          message={successMessage}
+        />
+      )}
     </div>
   );
 }
