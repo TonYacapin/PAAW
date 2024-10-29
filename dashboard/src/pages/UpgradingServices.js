@@ -5,6 +5,8 @@ import FormSubmit from "../component/FormSubmit";
 import ConfirmationModal from "../component/ConfirmationModal";
 import axiosInstance from "../component/axiosInstance";
 import CardBox from "../component/CardBox";
+import BarangayDropDown from "../component/BarangayDropDown";
+
 
 const UpgradingServices = () => {
   const [entries, setEntries] = useState([]);
@@ -355,7 +357,7 @@ const UpgradingServices = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="entryBarangay" className="block mb-1">
+                  {/* <label htmlFor="entryBarangay" className="block mb-1">
                     Barangay
                   </label>
                   <input
@@ -370,7 +372,13 @@ const UpgradingServices = () => {
                       )
                     }
                     className="border p-2 rounded w-full"
-                  />
+                  /> */}
+                  <BarangayDropDown municipality={municipality} onChange={(e) =>
+                      handleEntryChange(
+                        selectedEntry,
+                        "barangay",
+                        e.target.value
+                      )}/>
                 </div>
               </div>
 

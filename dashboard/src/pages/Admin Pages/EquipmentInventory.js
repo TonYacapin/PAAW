@@ -29,6 +29,7 @@ function EquipmentInventory() {
   useEffect(() => {
     fetchInventories();
   }, []);
+
   const openInventoryReportModal = () => {
     setIsInventoryReportModalOpen(true);
   };
@@ -36,6 +37,7 @@ function EquipmentInventory() {
   const closeInventoryReportModal = () => {
     setIsInventoryReportModalOpen(false);
   };
+
   const fetchInventories = async () => {
     try {
       const response = await axiosInstance.get(`/api/inventory`);
@@ -90,6 +92,7 @@ function EquipmentInventory() {
 
   const openModal = (inventory = null) => {
     setNewInventory({
+      _id: inventory?._id || '', // Include _id when editing
       type: inventory?.type || '',
       supplies: inventory?.supplies || '',
       unit: inventory?.unit || '',
@@ -271,8 +274,6 @@ function EquipmentInventory() {
           </div>
         </div>
       )}
-
-
 
       {/* Confirmation Modal for Deletion */}
       <ConfirmationModal

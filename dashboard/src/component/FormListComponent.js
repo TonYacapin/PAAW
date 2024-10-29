@@ -96,7 +96,7 @@ function FormListComponent({ endpoint, title, FormComponent }) {
     for (let key in obj) {
       if (obj.hasOwnProperty(key) && key !== "_id") {
         const newKey = parentKey ? `${parentKey}.${key}` : key;
-        if (typeof obj[key] === "object" && obj[key] !== null) {
+        if (typeof obj[key] === "object" && obj[key] !== null && !Array.isArray(obj[key])) {
           flattenObject(obj[key], newKey, result);
         } else {
           result[newKey] = obj[key];
@@ -193,10 +193,10 @@ function FormListComponent({ endpoint, title, FormComponent }) {
       </div>
 
       {/* Button to open Form modal */}
-      <div className="mb-4">
+      <div className="lg:w-auto w-full mb-4">
         <button
           onClick={() => setIsFormModalOpen(true)}
-          className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+          className="lg:w-auto w-full px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
         >
           Open {title.replace("List", "Form")}
         </button>
@@ -232,22 +232,24 @@ function FormListComponent({ endpoint, title, FormComponent }) {
                   <td className="border border-gray-300 p-4">
                     {form.formStatus}
                   </td>
-                  <td className="border border-gray-300 p-4 flex items-center justify-center">
+                  <td className="border border-gray-300 p-4 items-center justify-center">
+                    <div className="flex items-center justify-center flex-col lg:flex-row w-full gap-2">
                     <button
                       onClick={() => {
                         setSelectedForm(form);
                         setIsModalOpen(true);
                       }}
-                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
+                      className="lg:w-auto w-full px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
                     >
                       Edit Status
                     </button>
                     <button
                       onClick={() => handleViewEntries(form.entries)}
-                      className="ml-2 px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow"
+                      className="lg:w-auto w-full px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow"
                     >
                       View Entries
                     </button>
+                    </div>
                   </td>
                 </tr>
               ))}

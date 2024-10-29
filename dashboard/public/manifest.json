@@ -8,10 +8,11 @@
   "orientation": "any",
   "scope": "/",
   "start_url": "/",
+  "sizes": "any",
   "categories": ["utilities", "productivity"],
   "icons": [
     {
-      "src": "maskable_icon.png",
+      "src": "maskable-icon.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
@@ -39,19 +40,25 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
+    },
+    {
+      "src": "logo144.png",
+      "type": "image/png",
+      "sizes": "144x144",
+      "purpose": "any"
     }
   ],
   "screenshots": [
     {
       "src": "screenshot1_narrow.png",
       "type": "image/png",
-      "sizes": "540x720",
+      "sizes": "520x720",
       "form_factor": "narrow"
     },
     {
       "src": "screenshot2_wide.png",
       "type": "image/png",
-      "sizes": "720x540",
+      "sizes": "720x520",
       "form_factor": "wide"
     }
   ],
