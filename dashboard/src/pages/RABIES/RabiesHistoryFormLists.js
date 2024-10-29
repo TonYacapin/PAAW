@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import RabiesHistoryForm from "./RabiesHistoryForm";
-import PetsIcon from "@mui/icons-material/Pets";
-import SuccessModal from "../../component/SuccessModal"; // Import SuccessModal
+import SuccessModal from "../../component/SuccessModal";
+import StepperComponent from "../../component/StepperComponent";
 
 function RabiesHistoryFormLists() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editStatusModalOpen, setEditStatusModalOpen] = useState(false);
-  const [successModalOpen, setSuccessModalOpen] = useState(false); // Success modal state
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rabiesHistories, setRabiesHistories] = useState([]);
   const [selectedInvestigation, setSelectedInvestigation] = useState(null);
+  const [viewDetailsData, setViewDetailsData] = useState(null);
   const [newStatus, setNewStatus] = useState("Pending");
 
   // State variables for filters
@@ -69,7 +71,7 @@ function RabiesHistoryFormLists() {
               : history
           )
         );
-        setSuccessModalOpen(true); // Open success modal on successful update
+        setSuccessModalOpen(true);
       } else {
         console.error("No updated data returned from the server.");
       }
@@ -85,34 +87,105 @@ function RabiesHistoryFormLists() {
     handleCloseEditStatusModal();
   };
 
-  // Filtering logic
-  const filteredHistories = rabiesHistories.filter((history) => {
-    const searchTerm = filters.search.toLowerCase();
-    const matchesSearch =
-      history.victimProfile.name.toLowerCase().includes(searchTerm) ||
-      history.animalProfile.species.toLowerCase().includes(searchTerm);
-    const matchesStatus =
-      !filters.status || history.formStatus === filters.status;
+  const openDetailsModal = (history) => {
+    setViewDetailsData(history);
+    setDetailsModalOpen(true);
+  };
 
-    return matchesSearch && matchesStatus;
-  });
+  const closeDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setViewDetailsData(null);
+  };
 
-  // Sort forms from newest to oldest by dateReported
-  const sortedHistories = filteredHistories.sort(
-    (a, b) => new Date(b.dateReported) - new Date(a.dateReported)
-  );
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedInvestigation(null);
+  };
 
-  // Pagination logic
-  const totalPages = Math.ceil(sortedHistories.length / formsPerPage);
-  const paginatedHistories = sortedHistories.slice(
-    (currentPage - 1) * formsPerPage,
-    currentPage * formsPerPage
-  );
+  const pages = ["Victim Profile", "Animal Profile", "Vaccination and Contact"];
+
+  const renderStepContent = (step) => {
+    if (!viewDetailsData) {
+      return <div>No details available.</div>;
+    }
+  
+    const renderTable = (data, fields) => (
+      <table className="min-w-full border-collapse border border-gray-300">
+        <tbody>
+          {fields.map(([label, key]) => (
+            <tr key={key}>
+              <td className="border border-gray-300 p-2">{label}</td>
+              <td className="border border-gray-300 p-2">
+                {data[key] !== undefined
+                  ? Array.isArray(data[key])
+                    ? data[key].join(', ')
+                    : data[key].toString()
+                  : "N/A"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  
+    switch (step) {
+      case 0: // Victim Profile
+        return renderTable(viewDetailsData.victimProfile, [
+          ["Name", "name"],
+          ["Age", "age"],
+          ["Sex", "sex"],
+          ["Address", "address"],
+          ["Date of Bite", "dateOfBite"],
+          ["Time of Bite", "timeOfBite"],
+          ["Site of Bite", "siteOfBite"],
+          ["Site of Bite (Specify)", "siteOfBiteSpecify"],
+          ["Nature of Bite", "natureOfBite"],
+          ["Bite Provoked", "biteProvoked"],
+          ["Bite Provoked (Specify)", "biteProvokedSpecify"],
+          ["Location of Bite", "locationOfBite"],
+          ["Location of Bite (Specify)", "locationOfBiteSpecify"],
+          ["Other Victims", "otherVictims"],
+        ]);
+  
+      case 1: // Animal Profile
+        return renderTable(viewDetailsData.animalProfile, [
+          ["Residence", "residence"],
+          ["Species", "species"],
+          ["Breed", "breed"],
+          ["Sex", "sex"],
+          ["Age", "age"],
+          ["Vaccination History", "vaccinationHistory"],
+          ["Type of Vaccine", "typeOfVaccine"],
+          ["Date of Last Vaccination", "dateOfLastVaccination"],
+        ]);
+  
+      case 2: 
+        return renderTable(viewDetailsData, [
+          ["Form Status", "formStatus"],
+          ["Ownership Type", "ownershipType"],
+          ["Cause of Death", "causeOfDeath"],
+          ["Date of Death", "dateOfDeath"],
+          ["Time of Death", "timeOfDeath"],
+          ["Treatment Received", "treatmentReceived"],
+          ["Treatment Received Other", "treatmentReceivedOther"],
+          ["Date of Treatment Received", "dateOfTreatmentReceived"],
+          ["Pet Management", "petManagement"],
+          ["Pet Management (Other)", "petManagementOther"],
+          ["Other Remarks", "otherRemarks"],
+        ]);
+  
+      default:
+        return <div>No content available for this step.</div>;
+    }
+  };
+  
+  
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-black">Rabies History List</h2>
-
+      <h2 className="text-2xl font-bold mb-6 text-black">
+        Rabies History List
+      </h2>
       {/* Filters Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <input
@@ -137,15 +210,12 @@ function RabiesHistoryFormLists() {
           <option value="Deleted">Deleted</option>
         </select>
         <button
-          onClick={() =>
-            setFilters({ search: "", status: "" })
-          }
+          onClick={() => setFilters({ search: "", status: "" })}
           className="p-2 shadow-md bg-[#1b5b40] text-white hover:bg-darkergreen rounded w-full"
         >
           Clear Filters
         </button>
       </div>
-
       {/* Button to open Form modal */}
       <div className="mb-4">
         <button
@@ -155,11 +225,9 @@ function RabiesHistoryFormLists() {
           Open Rabies History Form
         </button>
       </div>
-
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <RabiesHistoryForm closeModal={closeModal} />
       </Modal>
-
       <Modal isOpen={editStatusModalOpen} onClose={handleCloseEditStatusModal}>
         {selectedInvestigation && (
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
@@ -173,16 +241,19 @@ function RabiesHistoryFormLists() {
               >
                 <option value="Pending">Pending</option>
                 <option value="Accepted">Accepted</option>
+                <option value="Completed">Completed</option>
                 <option value="Deleted">Deleted</option>
               </select>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex justify-end space-x-2">
+             
               <button
                 onClick={handleEditStatus}
-                className="px-4 py-2 bg-darkgreen text-white rounded"
+                className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
               >
                 Save
               </button>
+
               <button
                 onClick={handleCancelEditStatus}
                 className="px-4 py-2 bg-red-500 text-white rounded"
@@ -193,101 +264,86 @@ function RabiesHistoryFormLists() {
           </div>
         )}
       </Modal>
-
-      
-
-      
-      {/* Table with filtered forms */}
-      {filteredHistories.length === 0 ? (
-        <p className="text-center py-4">No forms found matching the filters.</p>
-      ) : (
-        <div className="overflow-auto border rounded-lg">
-          <table className="min-w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-[#1b5b40] text-white">
-                <th className="border border-gray-300 p-4">Name of Victim</th>
-                <th className="border border-gray-300 p-4">Age</th>
-                <th className="border border-gray-300 p-4">Species</th>
-                <th className="border border-gray-300 p-4">Date of Death</th>
-                <th className="border border-gray-300 p-4">Cause of Death</th>
-                <th className="border border-gray-300 p-4">Vaccination History</th>
-                <th className="border border-gray-300 p-4">Form Status</th>
-                <th className="border border-gray-300 p-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedHistories.map((history, index) => (
-                <tr key={history._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-4">
-                    {history.victimProfile.name}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.victimProfile.age}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.animalProfile.species}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.dateOfDeath
-                      ? new Date(history.dateOfDeath).toLocaleDateString()
-                      : "N/A"}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.causeOfDeath}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.vaccinationHistory}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    {history.formStatus || "Pending"}
-                  </td>
-                  <td className="border border-gray-300 p-4">
-                    <button
-                      onClick={() => openEditStatusModal(history)}
-                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
-                    >
-                      Edit Status
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-gray-700">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded-lg text-white bg-darkgreen hover:bg-darkergreen disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-        </div>
-
-      )}
       {/* Success Modal */}
+      
+      <Modal isOpen={detailsModalOpen} onClose={closeDetailsModal}>
+        <h2 className="text-2xl font-bold mb-4">Rabies Details</h2>
+        <StepperComponent pages={pages} renderStepContent={renderStepContent} />
+      </Modal>
+     
       <SuccessModal
         isOpen={successModalOpen}
         onClose={() => setSuccessModalOpen(false)}
         message="Status updated successfully!"
       />
+      {/* List of Rabies Histories */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 border">Name of Victim</th>
+              <th className="px-4 py-2 border">Time of Bite</th>
+              <th className="px-4 py-2 border">Species</th>
+              <th className="px-4 py-2 border">Status</th>
+              <th className="px-4 py-2 border text-center">Actions</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {rabiesHistories
+              .filter((history) => {
+                const matchesSearch =
+                  history.victimProfile.name
+                    .toLowerCase()
+                    .includes(filters.search.toLowerCase()) ||
+                    history.victimProfile.name
+                    .toLowerCase()
+                    .includes(filters.search.toLowerCase()) ||
+                  history.victimProfile.timeOfBite
+                    .toLowerCase()
+                    .includes(filters.search.toLowerCase());
+                const matchesStatus =
+                  !filters.status || history.formStatus === filters.status;
+                return matchesSearch && matchesStatus;
+              })
+              .slice(
+                (currentPage - 1) * formsPerPage,
+                currentPage * formsPerPage
+              )
+              .map((history) => (
+                <tr key={history._id}>
+                  <td className="border px-4 py-2">
+                    {history.victimProfile.name}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {history.victimProfile.timeOfBite}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {history.animalProfile.species}
+                  </td>
+                  <td className="border px-4 py-2">{history.formStatus}</td>
+                  <td className="border px-4 py-2 text-center space-x-2">
+                    
+                    <button
+                      onClick={() => openEditStatusModal(history)}
+                      className="px-4 py-2 bg-darkgreen text-white rounded"
+                    >
+                      Edit Status
+                    </button>
+                    <button
+                      onClick={() => openDetailsModal(history)}
+                      className="px-4 py-2 bg-pastelyellow text-black rounded"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Pagination can be added here */}
     </div>
-
-
   );
 }
 

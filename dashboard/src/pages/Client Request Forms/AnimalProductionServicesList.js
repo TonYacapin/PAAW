@@ -101,18 +101,19 @@ function AnimalProductionServicesList() {
   if (loading) return <div className="flex justify-center p-8">Loading...</div>;
   if (error) return <div className="text-red-500 p-8">{error}</div>;
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">
-        Animal Production Services List
-      </h2>
+    return (
+        <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Animal Production Services List</h2>
+            <button
+                onClick={() => {
+                    console.log("Opening Animal Production Services Form");
+                    setIsProductionModalOpen(true);
+                }}
+                className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
+            >
+                Open Animal Production Services Form
+            </button>
 
-      <button
-        onClick={() => setIsProductionModalOpen(true)}
-        className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
-      >
-        Open Animal Production Services Form
-      </button>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <input
