@@ -14,8 +14,8 @@
     {
       "src": "maskable-icon.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "sizes": "192x192",
+      "purpose": "maskable"
     },
     {
       "src": "logo192.png",
@@ -50,13 +50,13 @@
   ],
   "screenshots": [
     {
-      "src": "screenshot1.png",
+      "src": "screenshot1_narrow.png",
       "type": "image/png",
       "sizes": "520x720",
       "form_factor": "narrow"
     },
     {
-      "src": "screenshot2.png",
+      "src": "screenshot2_wide.png",
       "type": "image/png",
       "sizes": "720x520",
       "form_factor": "wide"

@@ -128,6 +128,7 @@ function SlaughterReportForm() {
       onSubmit={handleSubmit}
       className="p-6 bg-white rounded-lg shadow-md space-y-6"
     >
+      <h2 className="text-2xl font-medium text-black">Slaughter Report Form</h2>
       {/* Municipality Dropdown */}
       <div>
         <label

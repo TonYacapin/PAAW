@@ -29,6 +29,26 @@ async function createAuditLog(action, resource, resourceId, user, outcome, descr
     }
 }
 
+// Ensure default admin account exists
+async function ensureAdminAccount() {
+    const adminExists = await User.findOne({ role: 'admin' });
+    if (!adminExists) {
+        const hashedPassword = await bcrypt.hash('defaultAdminPass123', 10); // Use a secure default password
+        const defaultAdmin = new User({
+            email: 'admin@default.com',
+            password: hashedPassword,
+            role: 'admin',
+            isActive: true,
+        });
+
+        await defaultAdmin.save();
+        console.log('Default admin account created with email: admin@default.com');
+    }
+}
+
+// Call ensureAdminAccount on server startup
+ensureAdminAccount();
+
 // Login route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
