@@ -204,7 +204,7 @@ export default function StepperComponent(props) {
             position="static"
             activeStep={activeStep}
             className="rounded-md"
-            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa" }}
+            sx={{ marginBottom: "4rem", bgcolor: "#1b5b40", color: "#fffafa", marginTop: "2rem" }}
             nextButton={
               <Button
                 size="small"

@@ -127,7 +127,7 @@ function TechnicianQuarterlyReportList() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Technician Quarterly Report List</h2>
+      <h2 className="text-2xl font-bold mb-6">Technician Quarterly Calf Drop List</h2>
 
       {/* Filters Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -184,7 +184,7 @@ function TechnicianQuarterlyReportList() {
           onClick={() => setIsFormModalOpen(true)}
           className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-darkergreen"
         >
-          Open Form
+          Open Technician Quarterly Calf Drop Form
         </button>
       </div>
 
@@ -219,21 +219,23 @@ function TechnicianQuarterlyReportList() {
                     {form.formStatus}
                   </td>
                   <td className="border border-gray-300 p-4 text-center">
+                    <div className="flex items-center justify-center flex-col lg:flex-row w-full gap-2">
                     <button
                       onClick={() => {
                         setSelectedForm(form);
                         setIsModalOpen(true);
                       }}
-                      className="px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen shadow-sm"
+                      className="lg:w-auto w-full px-2 py-1 bg-[#1b5b40] text-white rounded hover:bg-darkergreen shadow-sm"
                     >
                       Edit Status
                     </button>
                     <button
                       onClick={() => handleViewEntries(form.animalEntries)}
-                      className="ml-2 px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow shadow-sm"
+                      className="lg:w-auto w-full px-2 py-1 bg-pastelyellow text-black rounded hover:bg-darkerpastelyellow shadow-sm"
                     >
                       View Entries
                     </button>
+                    </div>
                   </td>
                 </tr>
               ))}

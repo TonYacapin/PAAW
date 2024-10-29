@@ -123,59 +123,81 @@ const VeterinaryShipmentList = () => {
       <div className="flex justify-between mb-4"></div>
 
       <div className="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <select
-          name="type"
-          value={filter.type}
-          onChange={handleFilterChange}
-          className="border border-gray-300 rounded p-2"
-        >
-          <option value="">All Shipment Types</option>
-          <option value="Outgoing">Outgoing</option>
-          <option value="Incoming">Incoming</option>
-        </select>
-        <input
-          type="text"
-          name="shipper"
-          value={filter.shipper}
-          onChange={handleFilterChange}
-          placeholder="Filter by Shipper"
-          className="border border-gray-300 rounded p-2"
-        />
-        <input
-          type="date"
-          name="date"
-          value={filter.date}
-          onChange={handleFilterChange}
-          className="border border-gray-300 rounded p-2"
-        />
-        <select
-          name="liveAnimal"
-          value={filter.liveAnimal}
-          onChange={handleFilterChange}
-          className="border border-gray-300 rounded p-2"
-        >
-          <option value="">Filter by Live Animal</option>
-          {shipments[0] &&
-            Object.keys(shipments[0].liveAnimals).map((animal) => (
-              <option key={animal} value={animal}>
-                {animal}
-              </option>
-            ))}
-        </select>
-        <select
-          name="animalByProduct"
-          value={filter.animalByProduct}
-          onChange={handleFilterChange}
-          className="border border-gray-300 rounded p-2"
-        >
-          <option value="">Filter by Animal By-Product</option>
-          {shipments[0] &&
-            Object.keys(shipments[0].animalByProducts).map((product) => (
-              <option key={product} value={product}>
-                {product}
-              </option>
-            ))}
-        </select>
+        <div>
+          <label className="block mb-1 text-black font-bold">
+            Shipment Type
+          </label>
+          <select
+            name="type"
+            value={filter.type}
+            onChange={handleFilterChange}
+            className="w-full border border-gray-300 rounded p-2"
+          >
+            <option value="">All Shipment Types</option>
+            <option value="Outgoing">Outgoing</option>
+            <option value="Incoming">Incoming</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-black font-bold">Shipper</label>
+          <input
+            type="text"
+            name="shipper"
+            value={filter.shipper}
+            onChange={handleFilterChange}
+            placeholder="Filter by Shipper"
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+
+        <div>
+        <label className="block mb-1 text-black font-bold">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={filter.date}
+            onChange={handleFilterChange}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+
+        <div>
+        <label className="block mb-1 text-black font-bold">Live Animal</label>
+          <select
+            name="liveAnimal"
+            value={filter.liveAnimal}
+            onChange={handleFilterChange}
+            className="w-full border border-gray-300 rounded p-2"
+          >
+            <option value="">Filter by Live Animal</option>
+            {shipments[0] &&
+              Object.keys(shipments[0].liveAnimals).map((animal) => (
+                <option key={animal} value={animal}>
+                  {animal}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        <div>
+        <label className="block mb-1 text-black font-bold">Animal Byproduct</label>
+
+          <select
+            name="animalByProduct"
+            value={filter.animalByProduct}
+            onChange={handleFilterChange}
+            className="w-full border border-gray-300 rounded p-2"
+          >
+            <option value="">Filter by Animal By-Product</option>
+            {shipments[0] &&
+              Object.keys(shipments[0].animalByProducts).map((product) => (
+                <option key={product} value={product}>
+                  {product}
+                </option>
+              ))}
+          </select>
+        </div>
       </div>
 
       {/* Analysis Section */}
@@ -188,7 +210,7 @@ const VeterinaryShipmentList = () => {
         </div>
       )}
 
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-col lg:flex-row gap-2">
         {" "}
         <button
           onClick={() => setModalOpen(true)}
@@ -210,6 +232,7 @@ const VeterinaryShipmentList = () => {
         <VeterinaryShipmentForm onSubmit={handleNewShipment} />
       </Modal>
 
+      <div className="overflow-x-auto rounded-md border border-gray-300">
       {/* Shipments Table */}
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
@@ -297,6 +320,7 @@ const VeterinaryShipmentList = () => {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

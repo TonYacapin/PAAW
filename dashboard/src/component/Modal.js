@@ -40,9 +40,10 @@ const Modal = ({ isOpen, onClose, children }) => {
           onClick={handleOutsideClose} // Trigger confirmation modal when clicking outside
         >
           <div
-            className="bg-white p-6 rounded-lg shadow-lg mx-auto relative w-full z-50 overflow-auto max-h-[90vh]
-                       sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-5xl 2xl:max-w-6xl"
+            className="bg-white p-4 lg:p-6 rounded-lg shadow-lg mx-auto relative w-full z-50 overflow-auto max-h-[90vh]
+                       sm:max-w-md md:w-full lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl"
           >
+            {/* sm:max-w-md md:w-full lg:max-w-3xl xl:max-w-5xl 2xl:max-w-6xl */}
             <button
               onClick={handleExitButtonClick} // Open confirmation modal when close button is clicked
               className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-2xl"

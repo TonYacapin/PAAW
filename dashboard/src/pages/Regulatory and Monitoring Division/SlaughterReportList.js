@@ -182,7 +182,7 @@ function SlaughterReportList() {
       )}
 
       {/* Button to Open Slaughter Report Form Modal */}
-      <div className="flex flex-row gap-4 mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 mb-6">
         <button
           onClick={() => setisAnalysisOpen(!isAnalysisOpen)}
           className="bg-darkgreen text-white py-3 px-6 rounded-md shadow-lg hover:bg-darkergreen transition duration-200"

@@ -37,11 +37,14 @@ function RequisitionIssueSlipList() {
     }, []);
 
     useEffect(() => {
+            fetchRequisitions();
+    }, [isSlipModalOpen,isEditModalOpen]); // Updates as soon as the modal is opened or closed
+
+    useEffect(() => {
         if (userRole && user) {
             fetchRequisitions();
         }
     }, [userRole, user]); // Fetch requisitions whenever userRole or user changes
-
     const fetchRequisitions = async () => {
         try {
             let endpoint = '/api/requisitions';
@@ -68,15 +71,6 @@ function RequisitionIssueSlipList() {
         }
     };
 
-    const handleRefresh = async () => {
-        setIsRefreshing(true);
-        try {
-            await fetchRequisitions();
-        } finally {
-            setIsRefreshing(false);
-        }
-    };
-    
     const updateInventory = async (requisition) => {
         try {
             console.log("Updating inventory for requisition:", requisition);
@@ -177,13 +171,6 @@ function RequisitionIssueSlipList() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Requisition Issue Slip List</h2>
-                <button
-                    onClick={handleRefresh}
-                    disabled={isRefreshing}
-                    className="px-4 py-2 bg-[#1b5b40] text-white rounded hover:bg-[#154632] disabled:bg-gray-400 flex items-center gap-2"
-                >
-                Refresh
-                </button>
             </div>
 
             <button

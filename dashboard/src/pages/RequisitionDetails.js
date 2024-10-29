@@ -127,18 +127,16 @@ function RequisitionDetails({ requisition: initialRequisition }) {
       setRequisitionData(response.data);
       handleEditToggle(rowId);
       setSaveError(null);
-    //   setSaveSuccess("Changes saved successfully!");
+      //   setSaveSuccess("Changes saved successfully!");
 
       // Show success modal with a message
-      setSuccessMessage(
-        `Changes saved successfully!`
-      );
+      setSuccessMessage(`Changes saved successfully!`);
 
       setIsSuccessModalOpen(true);
 
-    //   setTimeout(() => {
-    //     setSaveSuccess(null);
-    //   }, 3000);
+      //   setTimeout(() => {
+      //     setSaveSuccess(null);
+      //   }, 3000);
     } catch (error) {
       console.error(`Error saving changes for row ${rowId}:`, error);
       setErrorMessage(
@@ -159,173 +157,200 @@ function RequisitionDetails({ requisition: initialRequisition }) {
     switch (step) {
       case 0:
         return (
-          <div className="space-y-2">
-            <p>
-              <strong>Date:</strong>{" "}
-              {new Date(requisitionData.date).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Requisition ID:</strong> {requisitionData.risNo}
-            </p>
-            <p>
-              <strong>Division:</strong> {requisitionData.division}
-            </p>
-            <p>
-              <strong>Office:</strong> {requisitionData.office}
-            </p>
-            <p>
-              <strong>Responsibility Center:</strong>{" "}
-              {requisitionData.responsibilityCenter}
-            </p>
-            <p>
-              <strong>Code:</strong> {requisitionData.code}
-            </p>
-            <p>
-              <strong>SAI No.:</strong> {requisitionData.saiNo}
-            </p>
-            <p>
-              <strong>Purpose:</strong> {requisitionData.purpose}
-            </p>
-            <p>
-              <strong>Designation:</strong> {requisitionData.designation}
-            </p>
-            <p>
-              <strong>Form Status:</strong> {requisitionData.formStatus}
-            </p>
-            <p>
-              <strong>Sent by:</strong> {requisitionData.sentby}
-            </p>
-            <p>
-              <strong>Created At:</strong>{" "}
-              {new Date(requisitionData.createdAt).toLocaleString()}
-            </p>
-            <p>
-              <strong>Updated At:</strong>{" "}
-              {new Date(requisitionData.updatedAt).toLocaleString()}
-            </p>
-          </div>
+          <>
+            <h2 className="text-lg font-bold mb-6">
+              Form Status:{" "}
+              <div
+                className={`inline p-1 rounded-sm ${
+                  requisitionData.formStatus.includes("Pending")
+                    ? "bg-red-100 text-red-800"
+                    : requisitionData.formStatus.includes("Allotted")
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
+                {requisitionData.formStatus}
+              </div>
+            </h2>
+            <div className="w-full grid lg:grid-cols-3 grid-cols-1 gap-6">
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(requisitionData.date).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Requisition ID:</strong> {requisitionData.risNo}
+              </p>
+              <p>
+                <strong>Division:</strong> {requisitionData.division}
+              </p>
+              <p>
+                <strong>Office:</strong> {requisitionData.office}
+              </p>
+              <p>
+                <strong>Responsibility Center:</strong>{" "}
+                {requisitionData.responsibilityCenter}
+              </p>
+              <p>
+                <strong>Code:</strong> {requisitionData.code}
+              </p>
+              <p>
+                <strong>SAI No.:</strong> {requisitionData.saiNo}
+              </p>
+              <p className="lg:col-span-2">
+                <strong>Purpose:</strong> {requisitionData.purpose}
+              </p>
+              <p>
+                <strong>Sent by:</strong> {requisitionData.sentby}
+              </p>
+              <p className="lg:col-span-2">
+                <strong>Designation:</strong> {requisitionData.designation}
+              </p>
+              <p>
+                <strong>Created At:</strong>{" "}
+                {new Date(requisitionData.createdAt).toLocaleString()}
+              </p>
+              <p>
+                <strong>Updated At:</strong>{" "}
+                {new Date(requisitionData.updatedAt).toLocaleString()}
+              </p>
+            </div>
+          </>
         );
       case 1:
         return (
-          <table className="min-w-full border-collapse border border-gray-300 mt-2">
-            <thead>
-              <tr className="bg-[#1b5b40] text-white">
-                <th className="border border-gray-300 p-2">Stock No</th>
-                <th className="border border-gray-300 p-2">Unit</th>
-                <th className="border border-gray-300 p-2">Quantity</th>
-                <th className="border border-gray-300 p-2">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requisitionData.requisitionRows.map((row) => (
-                <tr key={row._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2">{row.stockNo}</td>
-                  <td className="border border-gray-300 p-2">{row.unit}</td>
-                  <td className="border border-gray-300 p-2">{row.quantity}</td>
-                  <td className="border border-gray-300 p-2">
-                    {row.description}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <>
+            {" "}
+            <h3 className="text-xl font-bold mb-4">Requisition</h3>
+            <div className="overflow-auto border rounded-lg">
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr className="bg-[#1b5b40] text-white">
+                    <th className="border border-gray-300 p-2">Stock No</th>
+                    <th className="border border-gray-300 p-2">Unit</th>
+                    <th className="border border-gray-300 p-2">Quantity</th>
+                    <th className="border border-gray-300 p-2">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {requisitionData.requisitionRows.map((row) => (
+                    <tr key={row._id} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 p-2">
+                        {row.stockNo}
+                      </td>
+                      <td className="border border-gray-300 p-2">{row.unit}</td>
+                      <td className="border border-gray-300 p-2">
+                        {row.quantity}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {row.description}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         );
       case 2:
         return (
           <div>
-            <table className="min-w-full border-collapse border border-gray-300 mt-2">
-              <thead>
-                <tr className="bg-[#1b5b40] text-white">
-                  <th className="border border-gray-300 p-2">Quantity</th>
-                  <th className="border border-gray-300 p-2">Description</th>
-                  <th className="border border-gray-300 p-2">Remarks</th>
-                  {userRole === "admin" &&
-                    requisitionData.formStatus !== "Distributed" && (
-                      <th className="border border-gray-300 p-2">Actions</th>
-                    )}
-                </tr>
-              </thead>
-              <tbody>
-                {requisitionData.issuanceRows.map((row) => (
-                  <tr key={row._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2">
-                      {editableRows[row._id] ? (
-                        <input
-                          type="number"
-                          value={row.quantity || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              row._id,
-                              "quantity",
-                              e.target.value
-                            )
-                          }
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                      ) : (
-                        row.quantity ?? "0"
-                      )}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {editableRows[row._id] ? (
-                        <input
-                          type="text"
-                          value={row.description || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              row._id,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                      ) : (
-                        row.description
-                      )}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {editableRows[row._id] ? (
-                        <input
-                          type="text"
-                          value={row.remarks || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              row._id,
-                              "remarks",
-                              e.target.value
-                            )
-                          }
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                      ) : (
-                        row.remarks || "N/A"
-                      )}
-                    </td>
+            <h3 className="text-xl font-bold mb-4">Issuance</h3>
+
+            <div className="overflow-auto border rounded-lg">
+              <table className="min-w-full border-collapse border">
+                <thead>
+                  <tr className="bg-[#1b5b40] text-white">
+                    <th className="border border-gray-300 p-2">Quantity</th>
+                    <th className="border border-gray-300 p-2">Description</th>
+                    <th className="border border-gray-300 p-2">Remarks</th>
                     {userRole === "admin" &&
                       requisitionData.formStatus !== "Distributed" && (
-                        <td className="border border-gray-300 p-2 text-center">
-                          {editableRows[row._id] ? (
-                            <button
-                              onClick={() => saveChanges(row._id)}
-                              className="px-4 py-2 bg-darkgreen text-white rounded"
-                            >
-                              Save Issuance
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleEditToggle(row._id)}
-                              className="px-4 py-2 bg-darkgreen text-white rounded"
-                            >
-                              Issue
-                            </button>
-                          )}
-                        </td>
+                        <th className="border border-gray-300 p-2">Actions</th>
                       )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {requisitionData.issuanceRows.map((row) => (
+                    <tr key={row._id} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 p-2">
+                        {editableRows[row._id] ? (
+                          <input
+                            type="number"
+                            value={row.quantity || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                row._id,
+                                "quantity",
+                                e.target.value
+                              )
+                            }
+                            className="w-full border border-gray-300 p-1 rounded"
+                          />
+                        ) : (
+                          row.quantity ?? "0"
+                        )}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {editableRows[row._id] ? (
+                          <input
+                            type="text"
+                            value={row.description || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                row._id,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            className="w-full border border-gray-300 p-1 rounded"
+                          />
+                        ) : (
+                          row.description
+                        )}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {editableRows[row._id] ? (
+                          <input
+                            type="text"
+                            value={row.remarks || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                row._id,
+                                "remarks",
+                                e.target.value
+                              )
+                            }
+                            className="w-full border border-gray-300 p-1 rounded"
+                          />
+                        ) : (
+                          row.remarks || "N/A"
+                        )}
+                      </td>
+                      {userRole === "admin" &&
+                        requisitionData.formStatus !== "Distributed" && (
+                          <td className="border border-gray-300 p-2 text-center">
+                            {editableRows[row._id] ? (
+                              <button
+                                onClick={() => saveChanges(row._id)}
+                                className="px-4 py-2 bg-darkgreen text-white rounded"
+                              >
+                                Save Issuance
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleEditToggle(row._id)}
+                                className="px-4 py-2 bg-darkgreen text-white rounded"
+                              >
+                                Issue
+                              </button>
+                            )}
+                          </td>
+                        )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         );
       default:
@@ -335,7 +360,7 @@ function RequisitionDetails({ requisition: initialRequisition }) {
 
   return (
     <div className="p-4">
-      <h3 className="text-xl font-bold mb-4">Requisition Details</h3>
+      <h3 className="text-2xl font-bold mb-4">Requisition Details</h3>
       {saveError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
           {saveError}
