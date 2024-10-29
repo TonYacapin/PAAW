@@ -21,7 +21,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 
-function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
+function Navbar({ onDivisionChange, selectedDivision, handleLogout }) {
   const [role, setRole] = useState(null); // State to store the decoded user role
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,15 +29,15 @@ function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
   const menuRef = useRef(null);
 
 
-   // Decode the token to get the user role
-   useEffect(() => {
+  // Decode the token to get the user role
+  useEffect(() => {
     const token = localStorage.getItem("token"); // Get the token from localStorage
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
         console.log(decodedToken)
         setRole(decodedToken.role); // Extract and set the user role from the token
-        
+
       } catch (error) {
         console.error("Invalid token", error);
         setRole(null);
@@ -139,6 +139,20 @@ function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
             </div>
           </>
         );
+      case "extensionworker":
+        return (
+          <>
+            <div className={baseClasses} onClick={() => onDivisionButtonClick("user")}>
+              <People /> <span>Clients</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionButtonClick("animalhealth")}>
+              <Agriculture /> <span>Animal Health</span>
+            </div>
+            <div className={baseClasses} onClick={() => onDivisionButtonClick("livestock")}>
+              <Agriculture /> <span>Livestock</span>
+            </div>
+          </>
+        );
       case "user":
       default:
         return (
@@ -179,9 +193,8 @@ function Navbar({ onDivisionChange, selectedDivision, handleLogout  }) {
           {/* Side Navbar */}
           <div
             ref={menuRef}
-            className={`lg:sticky 3xs:fixed 2xs:fixed 3md:fixed 2md:fixed md:fixed sm:fixed xs:fixed lg:translate-x-0 top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${
-              isMenuOpen ? "translate-x-0" : "-translate-x-full"
-            } z-20`}
+            className={`lg:sticky 3xs:fixed 2xs:fixed 3md:fixed 2md:fixed md:fixed sm:fixed xs:fixed lg:translate-x-0 top-0 left-0 h-screen w-64 bg-[#1b5b40] flex flex-col items-center justify-center shadow-lg p-6 transition-transform duration-300 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+              } z-20`}
           >
             {/* Logo */}
             <img src={Logo} alt="Logo" className="h-auto w-40 drop-shadow-lg" />
