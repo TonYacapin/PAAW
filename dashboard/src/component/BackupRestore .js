@@ -82,18 +82,18 @@ const BackupRestore = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
-      <h2 className="text-2xl font-bold text-black mb-6">Backup and Restore</h2>
-      <div className="flex flex-col sm:flex-row gap-4">
+      <h2 className="text-2xl font-bold text-black mb-6 text-center w-full">Backup and Restore</h2>
+      <div className="flex flex-col sm:flex-row gap-8 text-center w-full justify-center">
         <button
           onClick={handleBackup}
           disabled={isLoading}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-darkgreen text-white rounded-md hover:bg-darkergreen transition duration-200 ease-in-out disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-4 py-4 bg-darkgreen text-white rounded-md hover:bg-darkergreen transition duration-200 ease-in-out disabled:opacity-50 w-full p-5"
         >
           <DownloadIcon />
           Backup Database
         </button>
 
-        <label className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer transition duration-200 ease-in-out disabled:opacity-50">
+        <label className="flex items-center justify-center gap-2 px-4 py-4 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer transition duration-200 ease-in-out disabled:opacity-50 w-full p-5">
           <UploadIcon />
           Restore Database
           <input
