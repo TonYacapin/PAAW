@@ -27,7 +27,7 @@ const DiseaseInvestigationTable = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [formModalOpen, editStatusModalOpen, showSuccessModal]);
 
   const fetchData = () => {
     axiosInstance
@@ -324,17 +324,19 @@ const DiseaseInvestigationTable = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Reports</h1>
 
+    <div className="md:w-full">
       <button
         onClick={() => setFormModalOpen(true)}
-        className="px-4 py-2 bg-darkgreen text-white rounded"
+        className="lg:w-auto px-4 py-2 w-full bg-darkgreen text-white rounded"
       >
         Investigation Report Form
       </button>
+      </div>
 
       <div className="overflow-x-auto mt-4">
         <table className="min-w-full border border-gray-300 rounded-lg">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-darkgreen text-white">
               <th className="border border-gray-300 p-4">Investigator</th>
               <th className="border border-gray-300 p-4">Farm Type</th>
               <th className="border border-gray-300 p-4">Date Reported</th>
@@ -357,19 +359,21 @@ const DiseaseInvestigationTable = () => {
                 <td className="border border-gray-300 p-4">
                   {investigation.status}
                 </td>
-                <td className="border border-gray-300 p-4 text-center space-x-2">
+                <td className="border border-gray-300 p-4 text-center">
+                  <div className="flex items-center justify-center flex-col lg:flex-row w-full gap-2">
                   <button
                     onClick={() => handleOpenEditStatusModal(investigation)}
-                    className="px-4 py-2 bg-darkgreen text-white rounded"
+                    className="lg:w-auto w-full px-4 py-2 bg-darkgreen text-white rounded"
                   >
                     Edit Status
                   </button>
                   <button
                     onClick={() => handleOpenModal(investigation)}
-                    className="px-4 py-2 bg-pastelyellow text-black rounded"
+                    className="lg:w-auto w-full px-4 py-2 bg-pastelyellow text-black rounded"
                   >
                     View Details
                   </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -412,13 +416,13 @@ const DiseaseInvestigationTable = () => {
           <div className="flex justify-end mt-4 space-x-2">
             <button
               onClick={handleEditStatus}
-              className="px-4 py-2 bg-darkgreen text-white rounded"
+              className="md:w-full px-4 py-2 bg-darkgreen text-white rounded"
             >
               Save Changes
             </button>
             <button
               onClick={handleCancelEditStatus} // Call the cancel function here
-              className="px-4 py-2 bg-red-500 text-white rounded"
+              className="md:w-full px-4 py-2 bg-red-500 text-white rounded"
             >
               Cancel
             </button>
