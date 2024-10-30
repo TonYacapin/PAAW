@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StepperComponent from "../../component/StepperComponent";
 import FormSubmit from "../../component/FormSubmit";
 import Papa from "papaparse";
@@ -6,8 +6,10 @@ import axiosInstance from "../../component/axiosInstance";
 import { Add } from "@mui/icons-material";
 import CardBox from "../../component/CardBox";
 import BarangayDropDown from "../../component/BarangayDropDown";
+import { jwtDecode } from "jwt-decode";
 
 function AnimalHealthCareServices() {
+  const [userRole, setUserRole] = useState("");
   const [clientInfo, setClientInfo] = useState({
     name: "",
     barangay: "",
@@ -121,6 +123,20 @@ function AnimalHealthCareServices() {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const role = decodedToken.role;
+        console.log(role); // Adjust this key based on your token's structure
+        setUserRole(role);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, []);
+
   const handleImportCSV = (event) => {
     const file = event.target.files[0];
     Papa.parse(file, {
@@ -155,15 +171,15 @@ function AnimalHealthCareServices() {
           importedRabiesVaccinations.length > 0
             ? importedRabiesVaccinations
             : [
-                {
-                  petName: "",
-                  species: "",
-                  sex: "",
-                  age: "",
-                  color: "",
-                  remarks: "",
-                },
-              ]
+              {
+                petName: "",
+                species: "",
+                sex: "",
+                age: "",
+                color: "",
+                remarks: "",
+              },
+            ]
         );
 
         const importedVaccinations = data
@@ -181,16 +197,16 @@ function AnimalHealthCareServices() {
           importedVaccinations.length > 0
             ? importedVaccinations
             : [
-                {
-                  type: "",
-                  walkInSpecies: "",
-                  noOfHeads: "",
-                  sex: "",
-                  age: "",
-                  aewVaccine: "",
-                  aewQuantity: "",
-                },
-              ]
+              {
+                type: "",
+                walkInSpecies: "",
+                noOfHeads: "",
+                sex: "",
+                age: "",
+                aewVaccine: "",
+                aewQuantity: "",
+              },
+            ]
         );
 
         const importedRoutineServices = data
@@ -208,16 +224,16 @@ function AnimalHealthCareServices() {
           importedRoutineServices.length > 0
             ? importedRoutineServices
             : [
-                {
-                  serviceType: "",
-                  species: "",
-                  noOfHeads: "",
-                  sex: "",
-                  age: "",
-                  aewVaccine: "",
-                  aewQuantity: "",
-                },
-              ]
+              {
+                serviceType: "",
+                species: "",
+                noOfHeads: "",
+                sex: "",
+                age: "",
+                aewVaccine: "",
+                aewQuantity: "",
+              },
+            ]
         );
       },
     });
@@ -353,7 +369,7 @@ function AnimalHealthCareServices() {
 
                 <div>
                   <BarangayDropDown municipality={clientInfo.municipality} onChange={(e) =>
-                      handleInputChange(e, "clientInfo", setClientInfo)} />
+                    handleInputChange(e, "clientInfo", setClientInfo)} />
                 </div>
 
                 <div className="flex flex-col">
@@ -574,150 +590,163 @@ function AnimalHealthCareServices() {
             <CardBox>
               <h3 className="text-2xl font-bold mb-6">Vaccination</h3>
               <h3 className="text-md font-semibold mb-6">
-                Walk-in/Home Service
+                {userRole === "extensionworker" ? "Agricultural Extension Worker" : "Walk-in/Home Service"}
               </h3>
               <table className="min-w-full bg-white">
                 <thead className="bg-darkgreen text-white">
                   <tr>
-                    <th className="py-2">Vaccination Type</th>
-                    <th className="py-2">Species</th>
-                    <th className="py-2">No. of Heads</th>
-                    <th className="py-2">Gender</th>
-                    <th className="py-2">Age</th>
-                    <th className="py-2">Vaccine</th>
-                    <th className="py-2">Quantity</th>
+                    {userRole === "extensionworker" ? (
+                      <>
+                        <th className="py-2">Vaccine</th>
+                        <th className="py-2">Quantity</th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="py-2">Vaccination Type</th>
+                        <th className="py-2">Species</th>
+                        <th className="py-2">No. of Heads</th>
+                        <th className="py-2">Gender</th>
+                        <th className="py-2">Age</th>
+                      </>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   {vaccinations.map((vaccination, index) => (
                     <tr key={index}>
-                      <td className="border px-4 py-2">
-                        <select
-                          name="type"
-                          value={vaccination.type}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        >
-                          <option value="">Select Vaccination</option>
-                          <option value="hogCholera">Hog Cholera</option>
-                          <option value="hemosep">Hemosep</option>
-                          <option value="newCastleDisease">
-                            New Castle Disease
-                          </option>
-                          <option value="blackleg">Blackleg</option>
-                        </select>
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="walkInSpecies"
-                          placeholder="Species"
-                          value={vaccination.walkInSpecies}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="noOfHeads"
-                          placeholder="No. of Heads"
-                          value={vaccination.noOfHeads}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <select
-                          name="sex"
-                          value={vaccination.sex}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                        </select>
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="age"
-                          placeholder="Age"
-                          value={vaccination.age}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="aewVaccine"
-                          placeholder="Vaccine"
-                          value={vaccination.aewVaccine}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="aewQuantity"
-                          placeholder="Quantity"
-                          value={vaccination.aewQuantity}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "vaccinations",
-                              setVaccinations,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
+                      {userRole === "extensionworker" ? (
+                        <>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="aewVaccine"
+                              placeholder="Vaccine"
+                              value={vaccination.aewVaccine}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="aewQuantity"
+                              placeholder="Quantity"
+                              value={vaccination.aewQuantity}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="border px-4 py-2">
+                            <select
+                              name="type"
+                              value={vaccination.type}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            >
+                              <option value="">Select Vaccination</option>
+                              <option value="hogCholera">Hog Cholera</option>
+                              <option value="hemosep">Hemosep</option>
+                              <option value="newCastleDisease">New Castle Disease</option>
+                              <option value="blackleg">Blackleg</option>
+                            </select>
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="walkInSpecies"
+                              placeholder="Species"
+                              value={vaccination.walkInSpecies}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="noOfHeads"
+                              placeholder="No. of Heads"
+                              value={vaccination.noOfHeads}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <select
+                              name="sex"
+                              value={vaccination.sex}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            >
+                              <option value="">Select Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                            </select>
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="age"
+                              placeholder="Age"
+                              value={vaccination.age}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "vaccinations",
+                                  setVaccinations,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          {/* Don't render Vaccine and Quantity fields for non-extension workers */}
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -737,164 +766,179 @@ function AnimalHealthCareServices() {
                     },
                   ])
                 }
-                className="mt-4  bg-darkgreen hover:bg-darkergreen text-white p-2 rounded"
+                className="mt-4 bg-darkgreen hover:bg-darkergreen text-white p-2 rounded"
               >
                 <Add /> Add Another Entry
               </button>
             </CardBox>
           </>
         );
+        
+
       case 3:
         return (
           <>
             <CardBox>
-              {" "}
               <h3 className="text-2xl font-bold mb-6">Routine Services</h3>
               <h3 className="text-md font-semibold mb-6">
-                Walk-in/Home Service
+                {userRole === "extensionworker" ? "Agricultural Extension Worker" : "Walk-in/Home Service"}
               </h3>
               <table className="min-w-full bg-white">
                 <thead className="bg-darkgreen text-white">
                   <tr>
-                    <th className="py-2">Service Type</th>
-                    <th className="py-2">Species</th>
-                    <th className="py-2">No. of Heads</th>
-                    <th className="py-2">Gender</th>
-                    <th className="py-2">Age</th>
-                    <th className="py-2">Vaccine</th>
-                    <th className="py-2">Quantity</th>
+                    {userRole === "extensionworker" ? (
+                      <>
+                        <th className="py-2">Vaccine</th>
+                        <th className="py-2">Quantity</th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="py-2">Service Type</th>
+                        <th className="py-2">Species</th>
+                        <th className="py-2">No. of Heads</th>
+                        <th className="py-2">Gender</th>
+                        <th className="py-2">Age</th>
+                      </>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   {routineServices.map((routineService, index) => (
                     <tr key={index}>
-                      <td className="border px-4 py-2">
-                        <select
-                          name="serviceType"
-                          value={routineService.serviceType}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        >
-                          <option value="">Select Service</option>
-                          <option value="treatmentConsultation">
-                            Treatment/Consultation
-                          </option>
-                          <option value="deworming">Deworming</option>
-                          <option value="iecMaterials">IEC Materials</option>
-                          <option value="others">Others</option>
-                        </select>
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="species"
-                          placeholder="Species"
-                          value={routineService.species}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="noOfHeads"
-                          placeholder="No. of Heads"
-                          value={routineService.noOfHeads}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <select
-                          name="sex"
-                          value={routineService.sex}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                        </select>
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="age"
-                          placeholder="Age"
-                          value={routineService.age}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="aewVaccine"
-                          placeholder="Vaccine"
-                          value={routineService.aewVaccine}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="text"
-                          name="aewQuantity"
-                          placeholder="Quantity"
-                          value={routineService.aewQuantity}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "routineServices",
-                              setRoutineServices,
-                              index
-                            )
-                          }
-                          className="border w-full p-2 rounded"
-                        />
-                      </td>
+                      {userRole === "extensionworker" ? (
+                        <>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="aewVaccine"
+                              placeholder="Vaccine"
+                              value={routineService.aewVaccine}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="aewQuantity"
+                              placeholder="Quantity"
+                              value={routineService.aewQuantity}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="border px-4 py-2">
+                            <select
+                              name="serviceType"
+                              value={routineService.serviceType}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            >
+                              <option value="">Select Service</option>
+                              <option value="treatmentConsultation">
+                                Treatment/Consultation
+                              </option>
+                              <option value="deworming">Deworming</option>
+                              <option value="iecMaterials">IEC Materials</option>
+                              <option value="others">Others</option>
+                            </select>
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="species"
+                              placeholder="Species"
+                              value={routineService.species}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="noOfHeads"
+                              placeholder="No. of Heads"
+                              value={routineService.noOfHeads}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                          <td className="border px-4 py-2">
+                            <select
+                              name="sex"
+                              value={routineService.sex}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            >
+                              <option value="">Select Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                            </select>
+                          </td>
+                          <td className="border px-4 py-2">
+                            <input
+                              type="text"
+                              name="age"
+                              placeholder="Age"
+                              value={routineService.age}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e,
+                                  "routineServices",
+                                  setRoutineServices,
+                                  index
+                                )
+                              }
+                              className="border w-full p-2 rounded"
+                            />
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -921,6 +965,8 @@ function AnimalHealthCareServices() {
             </CardBox>
           </>
         );
+
+
       default:
         return null;
     }

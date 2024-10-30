@@ -6,12 +6,12 @@ import DALogo from "./assets/DALOGO.png";
 function AboutUs() {
   return (
     <>
-      <div className="flex flex-1 flex-col p-4 lg:p-8">
+      <div className="flex flex-1 flex-col p-4 lg:p-8 mb-4">
         <h1 className="lg:text-3xl sm:text-xl font-semibold text-black mb-2 sm:mb-4 text-left">
           About Us
         </h1>
         <CardBox>
-          <div className="h-[80vh] overflow-y-auto flex flex-col items-center gap-2 p-3">
+          <div className="lg:h-[80vh] lg:overflow-y-auto flex flex-col items-center gap-2 p-3">
             <div className="flex flex-row gap-6 w-fit h-auto">
               <img
                 src={NVLogo}
