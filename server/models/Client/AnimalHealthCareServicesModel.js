@@ -54,7 +54,7 @@ const rabiesVaccinationSchema = new Schema({
   },
   sex: {
     type: String,
-    enum: ['Male', 'Female']
+  
   },
   age: {
     type: String,
