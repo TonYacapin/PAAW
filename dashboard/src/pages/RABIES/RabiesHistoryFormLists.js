@@ -110,12 +110,13 @@ function RabiesHistoryFormLists() {
     }
   
     const renderTable = (data, fields) => (
-      <table className="min-w-full border-collapse border border-gray-300">
-        <tbody>
+      <div className="overflow-auto border rounded-lg border-gray-300">
+      <table className="min-w-full border-collapse ">
+        <tbody className="">
           {fields.map(([label, key]) => (
             <tr key={key}>
-              <td className="border border-gray-300 p-2">{label}</td>
-              <td className="border border-gray-300 p-2">
+              <td className="border border-gray-300 p-4">{label}</td>
+              <td className="border border-gray-300 p-4">
                 {data[key] !== undefined
                   ? Array.isArray(data[key])
                     ? data[key].join(', ')
@@ -126,6 +127,7 @@ function RabiesHistoryFormLists() {
           ))}
         </tbody>
       </table>
+      </div>
     );
   
     switch (step) {
@@ -277,15 +279,15 @@ function RabiesHistoryFormLists() {
         message="Status updated successfully!"
       />
       {/* List of Rabies Histories */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto rounded-lg border border-gray-300">
+        <table className="min-w-full ">
+          <thead className="bg-[#1b5b40] text-white">
             <tr>
-              <th className="px-4 py-2 border">Name of Victim</th>
-              <th className="px-4 py-2 border">Time of Bite</th>
-              <th className="px-4 py-2 border">Species</th>
-              <th className="px-4 py-2 border">Status</th>
-              <th className="px-4 py-2 border text-center">Actions</th>
+              <th className="p-4 border">Name of Victim</th>
+              <th className="p-4 border">Time of Bite</th>
+              <th className="p-4 border">Species</th>
+              <th className="p-4 border">Status</th>
+              <th className="p-4 border text-center">Actions</th>
 
             </tr>
           </thead>

@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../component/axiosInstance';
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../../component/axiosInstance";
 
-import placeholder1 from '../../pages/assets/NVLOGO.png';
-import placeholder2 from '../../pages/assets/ReportLogo2.png';
+import placeholder1 from "../../pages/assets/NVLOGO.png";
+import placeholder2 from "../../pages/assets/ReportLogo2.png";
 
 function OutgoingReportList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Year filter state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  
+
   // Generate array of years for dropdown (e.g., last 10 years)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
@@ -22,7 +22,7 @@ function OutgoingReportList() {
         const response = await axiosInstance.get(`/api/vetshipform`);
         setData(response.data);
       } catch (err) {
-        console.error('Error fetching data:', err.message);
+        console.error("Error fetching data:", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -45,28 +45,32 @@ function OutgoingReportList() {
     const filteredShipments = filterDataByYear(data, selectedYear);
 
     // Array to hold data for each month
-    const outgoingShipmentsByMonth = Array(12).fill(null).map(() => ({
-      Carabao: 0,
-      Cattle: 0,
-      Swine: 0,
-      Horse: 0,
-      Chicken: 0,
-      Duck: 0,
-      Other: 0,
-    }));
+    const outgoingShipmentsByMonth = Array(12)
+      .fill(null)
+      .map(() => ({
+        Carabao: 0,
+        Cattle: 0,
+        Swine: 0,
+        Horse: 0,
+        Chicken: 0,
+        Duck: 0,
+        Other: 0,
+      }));
 
     filteredShipments.forEach((shipment) => {
-      if (shipment.shipmentType === 'Outgoing') {
+      if (shipment.shipmentType === "Outgoing") {
         const shipmentDate = new Date(shipment.date);
         const monthIndex = shipmentDate.getMonth();
         const liveAnimals = shipment.liveAnimals || {};
 
         // Accumulate counts for each animal type in the appropriate month
-        outgoingShipmentsByMonth[monthIndex].Carabao += liveAnimals.Carabao || 0;
+        outgoingShipmentsByMonth[monthIndex].Carabao +=
+          liveAnimals.Carabao || 0;
         outgoingShipmentsByMonth[monthIndex].Cattle += liveAnimals.Cattle || 0;
         outgoingShipmentsByMonth[monthIndex].Swine += liveAnimals.Swine || 0;
         outgoingShipmentsByMonth[monthIndex].Horse += liveAnimals.Horse || 0;
-        outgoingShipmentsByMonth[monthIndex].Chicken += liveAnimals.Chicken || 0;
+        outgoingShipmentsByMonth[monthIndex].Chicken +=
+          liveAnimals.Chicken || 0;
         outgoingShipmentsByMonth[monthIndex].Duck += liveAnimals.Duck || 0;
         outgoingShipmentsByMonth[monthIndex].Other += liveAnimals.Other || 0;
       }
@@ -76,8 +80,8 @@ function OutgoingReportList() {
   };
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-  
+    const printWindow = window.open("", "_blank");
+
     printWindow.document.write(`
         <html>
             <head>
@@ -174,11 +178,17 @@ function OutgoingReportList() {
                         </tr>
                     </thead>
                     <tbody>
-                        ${getFilteredOutgoingShipmentsByMonth().map((monthlyShipments, index) => {
-                            const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+                        ${getFilteredOutgoingShipmentsByMonth()
+                          .map((monthlyShipments, index) => {
+                            const total = Object.values(
+                              monthlyShipments
+                            ).reduce((acc, count) => acc + count, 0);
                             return `
                                 <tr>
-                                    <td>${new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+                                    <td>${new Date(0, index).toLocaleString(
+                                      "default",
+                                      { month: "long" }
+                                    )}</td>
                                     <td>${monthlyShipments.Carabao}</td>
                                     <td>${monthlyShipments.Cattle}</td>
                                     <td>${monthlyShipments.Swine}</td>
@@ -189,13 +199,14 @@ function OutgoingReportList() {
                                     <td>${total}</td>
                                 </tr>
                             `;
-                        }).join('')}
+                          })
+                          .join("")}
                     </tbody>
                 </table>
             </body>
         </html>
     `);
-  
+
     printWindow.document.close();
     printWindow.onload = () => {
       printWindow.print();
@@ -203,39 +214,50 @@ function OutgoingReportList() {
     };
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center p-8 ">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   if (error) return <div>Error: {error}</div>;
 
   const outgoingShipmentsByMonth = getFilteredOutgoingShipmentsByMonth();
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h1 className="text-2xl font-bold text-black mb-8">Outgoing Report List</h1>
-      
+      <h1 className="text-2xl font-bold text-black mb-8">
+        Outgoing Report List
+      </h1>
+
       <div className="mb-4">
         <label className="mr-2">Select Year:</label>
-        <select 
+        <select
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value))}
           className="p-2 border rounded"
         >
-          {years.map(year => (
-            <option key={year} value={year}>{year}</option>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
       </div>
 
-      <button 
-        onClick={handlePrint} 
+      <button
+        onClick={handlePrint}
         className="mb-4 bg-darkgreen text-white p-2 rounded"
       >
         Print Report
       </button>
 
-      {outgoingShipmentsByMonth.every(month => Object.values(month).every(count => count === 0)) ? (
+      {outgoingShipmentsByMonth.every((month) =>
+        Object.values(month).every((count) => count === 0)
+      ) ? (
         <div>No shipments found for the selected year.</div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border rounded-lg">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-darkgreen text-white">
@@ -247,22 +269,43 @@ function OutgoingReportList() {
                 <th className="border border-gray-300 p-2">Chicken</th>
                 <th className="border border-gray-300 p-2">Duck</th>
                 <th className="border border-gray-300 p-2">Other</th>
-                <th className="border border-gray-300 p-2 bg-darkerpastelyellow">Total</th>
+                <th className="border border-gray-300 p-2">Total</th>
               </tr>
             </thead>
             <tbody>
               {outgoingShipmentsByMonth.map((monthlyShipments, index) => {
-                const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+                const total = Object.values(monthlyShipments).reduce(
+                  (acc, count) => acc + count,
+                  0
+                );
                 return (
                   <tr key={index} className="hover:bg-gray-100">
-                    <td className="border border-gray-300 p-2">{new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Carabao}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Cattle}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Swine}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Horse}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Chicken}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Duck}</td>
-                    <td className="border border-gray-300 p-2">{monthlyShipments.Other}</td>
+                    <td className="border border-gray-300 p-2">
+                      {new Date(0, index).toLocaleString("default", {
+                        month: "long",
+                      })}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Carabao}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Cattle}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Swine}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Horse}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Chicken}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Duck}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {monthlyShipments.Other}
+                    </td>
                     <td className="border border-gray-300 p-2">{total}</td>
                   </tr>
                 );

@@ -355,15 +355,15 @@ const DiseaseInvestigationTable = () => {
       </button>
       </div>
 
-      <div className="overflow-x-auto mt-4">
-        <table className="min-w-full border border-gray-300 rounded-lg">
+      <div className="overflow-x-auto mt-4 border border-gray-300 rounded-lg">
+        <table className="min-w-full ">
           <thead>
             <tr className="bg-darkgreen text-white">
-              <th className="border border-gray-300 p-2">Investigator</th>
-              <th className="border border-gray-300 p-2">Farm Type</th>
-              <th className="border border-gray-300 p-2">Date Reported</th>
-              <th className="border border-gray-300 p-2">Status</th>
-              <th className="border border-gray-300 p-2">Action</th>
+              <th className="border border-gray-300 p-4">Investigator</th>
+              <th className="border border-gray-300 p-4">Farm Type</th>
+              <th className="border border-gray-300 p-4">Date Reported</th>
+              <th className="border border-gray-300 p-4">Status</th>
+              <th className="border border-gray-300 p-4">Action</th>
             </tr>
           </thead>
           <tbody>

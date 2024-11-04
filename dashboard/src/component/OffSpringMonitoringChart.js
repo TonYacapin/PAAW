@@ -184,9 +184,11 @@ const OffspringMonitoringChart = ({ filterValues }) => {
     fetchData();
   }, [filterOptions.filters, filterOptions.showAll, selectedChart]);
 
-  if (loading) {
-    return <div className="text-center text-lg py-10">Loading chart data...</div>;
-  }
+  if (loading) return (
+    <div className="flex items-center justify-center ">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    </div>
+  );
 
   const charts = [
     {

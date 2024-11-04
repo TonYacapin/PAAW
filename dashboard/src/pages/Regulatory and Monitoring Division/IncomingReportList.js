@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../component/axiosInstance";
 
-import placeholder1 from '../../pages/assets/NVLOGO.png';
-import placeholder2 from '../../pages/assets/ReportLogo2.png';
+import placeholder1 from "../../pages/assets/NVLOGO.png";
+import placeholder2 from "../../pages/assets/ReportLogo2.png";
 
 function IncomingReportList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Year filter state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  
+
   // Generate array of years for dropdown (e.g., last 10 years)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
@@ -64,11 +64,13 @@ function IncomingReportList() {
         const liveAnimals = shipment.liveAnimals || {};
 
         // Accumulate counts for each animal type in the appropriate month
-        incomingShipmentsByMonth[monthIndex].Carabao += liveAnimals.Carabao || 0;
+        incomingShipmentsByMonth[monthIndex].Carabao +=
+          liveAnimals.Carabao || 0;
         incomingShipmentsByMonth[monthIndex].Cattle += liveAnimals.Cattle || 0;
         incomingShipmentsByMonth[monthIndex].Swine += liveAnimals.Swine || 0;
         incomingShipmentsByMonth[monthIndex].Horse += liveAnimals.Horse || 0;
-        incomingShipmentsByMonth[monthIndex].Chicken += liveAnimals.Chicken || 0;
+        incomingShipmentsByMonth[monthIndex].Chicken +=
+          liveAnimals.Chicken || 0;
         incomingShipmentsByMonth[monthIndex].Duck += liveAnimals.Duck || 0;
         incomingShipmentsByMonth[monthIndex].Other += liveAnimals.Other || 0;
       }
@@ -78,8 +80,8 @@ function IncomingReportList() {
   };
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-  
+    const printWindow = window.open("", "_blank");
+
     printWindow.document.write(`
         <html>
             <head>
@@ -176,11 +178,17 @@ function IncomingReportList() {
                         </tr>
                     </thead>
                     <tbody>
-                        ${getFilteredIncomingShipmentsByMonth().map((monthlyShipments, index) => {
-                            const total = Object.values(monthlyShipments).reduce((acc, count) => acc + count, 0);
+                        ${getFilteredIncomingShipmentsByMonth()
+                          .map((monthlyShipments, index) => {
+                            const total = Object.values(
+                              monthlyShipments
+                            ).reduce((acc, count) => acc + count, 0);
                             return `
                                 <tr>
-                                    <td>${new Date(0, index).toLocaleString('default', { month: 'long' })}</td>
+                                    <td>${new Date(0, index).toLocaleString(
+                                      "default",
+                                      { month: "long" }
+                                    )}</td>
                                     <td>${monthlyShipments.Carabao}</td>
                                     <td>${monthlyShipments.Cattle}</td>
                                     <td>${monthlyShipments.Swine}</td>
@@ -191,13 +199,14 @@ function IncomingReportList() {
                                     <td>${total}</td>
                                 </tr>
                             `;
-                        }).join('')}
+                          })
+                          .join("")}
                     </tbody>
                 </table>
             </body>
         </html>
     `);
-  
+
     printWindow.document.close();
     printWindow.onload = () => {
       printWindow.print();
@@ -205,41 +214,50 @@ function IncomingReportList() {
     };
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-10">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   if (error) return <div>Error: {error}</div>;
 
   const incomingShipmentsByMonth = getFilteredIncomingShipmentsByMonth();
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h1 className="text-2xl font-bold text-black mb-8">Incoming Report List</h1>
-      
+      <h1 className="text-2xl font-bold text-black mb-8">
+        Incoming Report List
+      </h1>
+
       <div className="mb-4">
         <label className="mr-2">Select Year:</label>
-        <select 
+        <select
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value))}
           className="p-2 border rounded"
         >
-          {years.map(year => (
-            <option key={year} value={year}>{year}</option>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
       </div>
 
-      <button 
-        onClick={handlePrint} 
+      <button
+        onClick={handlePrint}
         className="mb-4 bg-darkgreen text-white p-2 rounded"
       >
         Print Report
       </button>
 
-      {incomingShipmentsByMonth.every(month => 
-        Object.values(month).every(count => count === 0)
+      {incomingShipmentsByMonth.every((month) =>
+        Object.values(month).every((count) => count === 0)
       ) ? (
         <div>No shipments found for the selected year.</div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border rounded-lg">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-darkgreen text-white">
@@ -251,7 +269,9 @@ function IncomingReportList() {
                 <th className="border border-gray-300 p-2">Chicken</th>
                 <th className="border border-gray-300 p-2">Duck</th>
                 <th className="border border-gray-300 p-2">Other</th>
-                <th className="border border-gray-300 p-2 bg-darkerpastelyellow">Total</th>
+                <th className="border border-gray-300 p-2 bg-darkerpastelyellow">
+                  Total
+                </th>
               </tr>
             </thead>
             <tbody>
