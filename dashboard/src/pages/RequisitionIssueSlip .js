@@ -7,10 +7,11 @@ import { Add} from "@mui/icons-material";
 import Modal from "../component/Modal";
 import { jwtDecode } from "jwt-decode";
 import SuccessModal from "../component/SuccessModal";
-
+import Papa from "papaparse";
+ 
 const RequisitionIssueSlip = () => {
   const [sentby, setsentby] = useState("");
-
+ 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -24,20 +25,22 @@ const RequisitionIssueSlip = () => {
       }
     }
   }, []);
-
+ 
   const [requisitionRows, setRequisitionRows] = useState([
     { stockNo: 1, unit: "", quantity: "", description: "" }, // Start with stockNo = 1
   ]);
-
+ 
   const [issuanceRows, setIssuanceRows] = useState([
     { quantity: "", description: "", remarks: "" },
   ]);
-
+ 
   const [inventoryData, setInventoryData] = useState([]); // State to store inventory data
   const [supplyOptions, setSupplyOptions] = useState([]); //
-
+ 
   const [isStocksModalOpen, setStocksModalOpen] = useState(false); // State for stocks modal
-
+  const [error, setError] = useState("");
+  const [requisitions, setRequisitions] = useState([]);
+ 
   // State for additional text fields
   const [division, setDivision] = useState("");
   const [office, setOffice] = useState("");
@@ -48,10 +51,94 @@ const RequisitionIssueSlip = () => {
   const [date, setDate] = useState(""); // Date for the requisition
   const [purpose, setPurpose] = useState("");
   const [designation, setDesignation] = useState("");
-
+ 
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
   const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  
+  
+  const handleExportCSV = () => {
+    const dataToExport = requisitionRows.map((row, index) => ({
+      division,
+      office,
+      responsibilityCenter,
+      code,
+      risNo,
+      saiNo,
+      date,
+      purpose,
+      designation,
+      sentby,
+      stockNo: row.stockNo,
+      unit: row.unit,
+      quantity: row.quantity,
+      description: row.description,
+      issuanceQuantity: issuanceRows[index]?.quantity || "", // Safely access issuance quantity
+      issuanceDescription: issuanceRows[index]?.description || "", // Safely access issuance description
+      remarks: issuanceRows[index]?.remarks || "", // Safely access remarks
+    }));
+  
+    const csv = Papa.unparse(dataToExport);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "requisition_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
 
+  const handleImportCSV = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          // Here we should set the imported requisition and issuance rows
+          const importedRequisitionRows = results.data.map(row => ({
+            stockNo: row.stockNo,
+            unit: row.unit,
+            quantity: row.quantity,
+            description: row.description,
+          }));
+  
+          const importedIssuanceRows = results.data.map(row => ({
+            quantity: row.issuanceQuantity || "", // Map issuance quantity
+            description: row.issuanceDescription || "", // Map issuance description
+            remarks: row.remarks || "", // Map remarks
+          }));
+  
+          setRequisitionRows(importedRequisitionRows);
+          setIssuanceRows(importedIssuanceRows);
+          
+          // Set the other fields outside the loop
+          if (results.data.length > 0) {
+            const firstRow = results.data[0]; // Access the first row to get other values
+            setDivision(firstRow.division || "");
+            setOffice(firstRow.office || "");
+            setResponsibilityCenter(firstRow.responsibilityCenter || "");
+            setCode(firstRow.code || "");
+            setRisNo(firstRow.risNo || "");
+            setSaiNo(firstRow.saiNo || "");
+            setDate(firstRow.date || "");
+            setPurpose(firstRow.purpose || "");
+            setDesignation(firstRow.designation || "");
+            setsentby(firstRow.sentby || ""); // Set the sent by user
+          }
+        },
+        error: (error) => {
+          console.error("Error importing CSV:", error);
+          setError("Failed to import CSV. Please check the file format.");
+        },
+      });
+    }
+  };
+  
+  
+  
+ 
   const handleSubmit = async () => {
     // Create the payload based on the state values
     const requisitionIssuanceData = {
@@ -68,9 +155,9 @@ const RequisitionIssueSlip = () => {
       issuanceRows,
       sentby,
     };
-
+ 
     console.log(requisitionIssuanceData);
-
+ 
     try {
       // Send POST request to your backend
       const response = await axiosInstance.post(
@@ -81,7 +168,7 @@ const RequisitionIssueSlip = () => {
       // Handle successful submission (e.g., reset the form, show a success message)
       // Show success modal with a message
       setSuccessMessage(`Changes saved successfully!`);
-
+ 
       setIsSuccessModalOpen(true);
       resetForm();
     } catch (error) {
@@ -89,7 +176,7 @@ const RequisitionIssueSlip = () => {
       // Handle error (e.g., show an error message)
     }
   };
-
+ 
   // Function to reset the form after successful submission
   const resetForm = () => {
     setDivision("");
@@ -106,7 +193,7 @@ const RequisitionIssueSlip = () => {
     ]);
     setIssuanceRows([{ quantity: "", description: "", remarks: "" }]);
   };
-
+ 
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
@@ -114,7 +201,7 @@ const RequisitionIssueSlip = () => {
         const response = await axiosInstance.get("/api/inventory");
         setInventoryData(response.data); // Set the fetched data to state
         console.log("Inventory Data:", response.data); // For debugging
-
+ 
         // Extract supplies and units for dropdown options only if quantity is greater than 0
         const supplies = response.data
           .filter((item) => item.quantity > 0) // Filter items with quantity greater than 0
@@ -122,20 +209,20 @@ const RequisitionIssueSlip = () => {
             supply: item.supplies,
             unit: item.unit,
           }));
-
+ 
         setSupplyOptions(supplies);
       } catch (error) {
         console.error("Error fetching inventory data:", error);
       }
     };
-
+ 
     fetchInventoryData();
   }, []); // Fetch data only once when the component mounts
-
+ 
   const handleRequisitionChange = (index, field, value) => {
     const newRows = [...requisitionRows];
     newRows[index][field] = value;
-
+ 
     // If the description is changed, update the unit as well
     if (field === "description") {
       const selectedSupply = supplyOptions.find(
@@ -143,16 +230,16 @@ const RequisitionIssueSlip = () => {
       );
       newRows[index].unit = selectedSupply ? selectedSupply.unit : ""; // Set unit based on selected description
     }
-
+ 
     setRequisitionRows(newRows);
-
+ 
     if (field === "description") {
       const newIssuanceRows = [...issuanceRows];
       newIssuanceRows[index][field] = value;
       setIssuanceRows(newIssuanceRows);
     }
   };
-
+ 
   const addRequisitionRow = () => {
     setRequisitionRows((prevRows) => [
       ...prevRows,
@@ -168,23 +255,23 @@ const RequisitionIssueSlip = () => {
       { quantity: "", description: "", remarks: "" },
     ]);
   };
-
+ 
   const handleIssuanceChange = (index, field, value) => {
     const newRows = [...issuanceRows];
     newRows[index][field] = value;
     setIssuanceRows(newRows);
   };
-
+ 
   const removeRequisitionRow = (index) => {
     const newRequisitionRows = [...requisitionRows];
     newRequisitionRows.splice(index, 1);
     setRequisitionRows(newRequisitionRows);
-
+ 
     const newIssuanceRows = [...issuanceRows];
     newIssuanceRows.splice(index, 1);
     setIssuanceRows(newIssuanceRows);
   };
-
+ 
   const pages = [
     <CardBox>
       <div className="grid grid-cols-2 gap-4 mb-4 max-h-[55vh] overflow-auto">
@@ -350,7 +437,7 @@ const RequisitionIssueSlip = () => {
           Add Row
         </button>
         </div>
-
+ 
       </div>
     </CardBox>,
     <CardBox>
@@ -383,17 +470,17 @@ const RequisitionIssueSlip = () => {
     }
     return pages[step] || <div>No content available for this step.</div>;
   };
-
+ 
   return (
     <div className="p-4 max-w-4xl mx-auto bg-white">
       <h1 className="text-xl font-bold mb-4">Requisition and Issue Slip</h1>
       <StepperComponent pages={pages} renderStepContent={renderStepContent} />
       <FormSubmit
-        handleImportCSV={() => {}}
-        handleExportCSV={() => {}}
+        handleImportCSV={handleImportCSV}
+        handleExportCSV={handleExportCSV}
         handleSubmit={handleSubmit}
       />
-
+ 
       <Modal
         isOpen={isStocksModalOpen}
         onClose={() => setStocksModalOpen(false)}
@@ -426,7 +513,7 @@ const RequisitionIssueSlip = () => {
           </table>
         </div>
       </Modal>
-
+ 
       {/* Success Modal */}
       {isSuccessModalOpen && (
         <SuccessModal
@@ -438,5 +525,5 @@ const RequisitionIssueSlip = () => {
     </div>
   );
 };
-
+ 
 export default RequisitionIssueSlip;

@@ -6,22 +6,21 @@ function TablePagination(props) {
   const formsPerPage = 10;
 
   const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
-  const paginatedItems = props.children.slice(
+  const paginatedItems = props.filteredItems.slice(
     (currentPage - 1) * formsPerPage,
     currentPage * formsPerPage
   );
 
-  function HeaderDisplay({header}) {
+  function HeaderDisplay({ header }) {
     return (
-        <tr>
-          {Object.keys(header).map((key) => (
-            <th key={key} className="border border-gray-300 p-2">
-              {key}
-            </th>
-          ))}
-        </tr>
+      <tr>
+        {Object.keys(header).map((key) => (
+          <th key={key} className="border border-gray-300 p-2">
+            {key}
+          </th>
+        ))}
+      </tr>
     );
-    
   }
 
   function ObjectDisplay({ data }) {
@@ -36,6 +35,26 @@ function TablePagination(props) {
             )}
           </td>
         ))}
+        {props.onClickButton1 && (
+          <td className="border border-gray-300 p-2">
+            <div className="flex items-center justify-center flex-col lg:flex-row w-full gap-2">
+              <button
+                onClick={props.onClickButton1}
+                className="lg:w-auto w-full px-4 py-2 bg-darkgreen text-white rounded"
+              >
+                {props.button1Text}
+              </button>
+              {props.onClickButton2 && (
+                <button
+                  onClick={props.onClickButton2}
+                  className="lg:w-auto w-full px-4 py-2 bg-pastelyellow text-black rounded"
+                >
+                  {props.button1Text}
+                </button>
+              )}
+            </div>
+          </td>
+        )}
       </>
     );
   }
@@ -44,7 +63,9 @@ function TablePagination(props) {
     <>
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
-          <HeaderDisplay header={props.children[0]} />
+          <tr className="bg-darkgreen text-white">
+            <HeaderDisplay header={filteredItems.children[0]} />
+          </tr>
         </thead>
         <tbody>
           {paginatedItems.map((item, index) => (
