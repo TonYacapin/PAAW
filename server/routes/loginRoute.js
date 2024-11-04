@@ -28,21 +28,29 @@ async function createAuditLog(action, resource, resourceId, user, outcome, descr
         console.error('Error creating audit log:', error);
     }
 }
-
 // Ensure default admin account exists
 async function ensureAdminAccount() {
-    const adminExists = await User.findOne({ role: 'admin' });
-    if (!adminExists) {
-        const hashedPassword = await bcrypt.hash('defaultAdminPass123', 10); // Use a secure default password
-        const defaultAdmin = new User({
-            email: 'admin@default.com',
-            password: hashedPassword,
-            role: 'admin',
-            isActive: true,
-        });
+    try {
+        // Try to find an admin user
+        const adminExists = await User.findOne({ role: 'admin' });
 
-        await defaultAdmin.save();
-        console.log('Default admin account created with email: admin@default.com');
+        // If no admin user exists, create one
+        if (!adminExists) {
+            const hashedPassword = await bcrypt.hash('admin', 10); // Use a secure default password
+            const defaultAdmin = new User({
+                email: 'admin@gmail.com',
+                password: hashedPassword,
+                role: 'admin',
+                isActive: true,
+                firstname: 'Default', // Add firstname
+                lastname: 'Admin'      // Add lastname
+            });
+
+            await defaultAdmin.save();
+            console.log('Default admin account created with email: admin@gmail.com');
+        }
+    } catch (error) {
+        console.error('Error ensuring admin account:', error);
     }
 }
 
@@ -80,7 +88,7 @@ router.post('/login', async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign({ userId: user._id, role: user.role, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
-        
+
         // Log successful login
         await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'successful', 'Login successful', { ...details });
 
