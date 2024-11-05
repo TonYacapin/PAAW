@@ -14,20 +14,33 @@ router.post('/', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-// Get all inventory items with optional quantity filtering
+// Get all inventory items with optional filters
 router.get('/', async (req, res) => {
   try {
-    const { quantity } = req.query; // Destructure quantity from query
+    const { month, year, type, quantity } = req.query; // Extract all filters
 
-    // Initialize filter object
     const filter = {};
 
-    // Apply quantity filter if provided
-    if (quantity) {
-      filter.quantity = { $gte: Number(quantity) }; // Filter by quantity (greater than or equal to)
+    // Apply the type filter
+    if (type) {
+      filter.type = type;
     }
 
-    const inventories = await Inventory.find(filter); // Apply the filter
+    // Apply the quantity filter
+    if (quantity) {
+      filter.quantity = { $gte: Number(quantity) };
+    }
+
+    // Filter by createdAt month and year if both are provided
+    if (month && year) {
+      const startDate = new Date(`${year}-${month}-01`);
+      const endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + 1);
+
+      filter.createdAt = { $gte: startDate, $lt: endDate };
+    }
+
+    const inventories = await Inventory.find(filter); // Apply all filters
     res.status(200).json(inventories);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,6 +73,48 @@ router.delete('/:id', async (req, res) => {
     res.status(204).json(); // No content
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/options', async (req, res) => {
+  try {
+    // Get unique types directly from the 'type' field
+    const types = await Inventory.distinct('type');
+    
+    // Get unique months and years from 'createdAt' timestamps
+    const months = await Inventory.aggregate([
+      {
+        $group: {
+          _id: { month: { $month: "$createdAt" } },
+        },
+      },
+      {
+        $project: {
+          month: "$_id.month",
+          _id: 0
+        }
+      },
+      { $sort: { month: 1 } }
+    ]).then(results => results.map(result => result.month));
+
+    const years = await Inventory.aggregate([
+      {
+        $group: {
+          _id: { year: { $year: "$createdAt" } },
+        },
+      },
+      {
+        $project: {
+          year: "$_id.year",
+          _id: 0
+        }
+      },
+      { $sort: { year: 1 } }
+    ]).then(results => results.map(result => result.year));
+
+    res.json({ months, years, types });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching filter options', error: error.message });
   }
 });
 

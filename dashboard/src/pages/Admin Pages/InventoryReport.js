@@ -7,6 +7,7 @@ import placeholder2 from '../../pages/assets/ReportLogo2.png';
 const InventoryReport = () => {
     const [inventories, setInventories] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [filterOptions, setFilterOptions] = useState({ months: [], years: [], types: [] });
     const [filter, setFilter] = useState({
         month: '',
         year: '',
@@ -16,6 +17,7 @@ const InventoryReport = () => {
 
     useEffect(() => {
         fetchInventories();
+        fetchFilterOptions();
     }, [filter]);
 
     const fetchInventories = async () => {
@@ -33,6 +35,15 @@ const InventoryReport = () => {
         }
     };
 
+    const fetchFilterOptions = async () => {
+        try {
+            const response = await axiosInstance.get('/api/inventory/options');
+            setFilterOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching filter options:', error);
+        }
+    };
+
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilter((prevFilter) => ({
@@ -41,10 +52,9 @@ const InventoryReport = () => {
         }));
     };
 
-    const formattedDate = currentDate.toLocaleString('en-US', {
-        month: 'long',
-        year: 'numeric'
-    });
+    const formattedDate = filter.month && filter.year
+        ? new Date(`${filter.year}-${filter.month}-01`).toLocaleString('en-US', { month: 'long', year: 'numeric' })
+        : new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
     const handlePrint = () => {
         const printWindow = window.open('', '_blank');
@@ -121,46 +131,46 @@ const InventoryReport = () => {
                     </style>
                 </head>
                 <body onload="window.print(); "style="justify-content: center;">
-                    <div class="header" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-                        <div style="display: flex; flex-direction: row; justify-items: center;"> 
-                            <img src="${placeholder1}" alt="Left Logo" style="width: 70px; height: 70px;" />
-                            <div style="text-align: center; margin-top: 10px;">
-                                <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
-                                <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
-                                <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-                                <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
-                            </div>
-                            <img src="${placeholder2}" alt="Right Logo" style="width: 70px; height: 70px;" />
+                <div class="header" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                    <div style="display: flex; flex-direction: row; justify-items: center;"> 
+                        <img src="${placeholder1}" alt="Left Logo" style="width: 70px; height: 70px;" />
+                        <div style="text-align: center; margin-top: 10px;">
+                            <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
+                            <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
+                            <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+                            <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
                         </div>
+                        <img src="${placeholder2}" alt="Right Logo" style="width: 70px; height: 70px;" />
                     </div>
-                    <h1 class="title">MONTHLY INVENTORY and UTILIZATION REPORT</h1>
-                    <h2 class="subtitle">SUPPLIES</h2>
-                    <p style="font-size: 12px;">As of ${formattedDate}</p>
-                    <table>
-                        <thead>
+                </div>
+                <h1 class="title">MONTHLY INVENTORY and UTILIZATION REPORT</h1>
+                <h2 class="subtitle">${filter.type || 'SUPPLIES'}</h2>
+                <p style="font-size: 12px;">As of ${formattedDate}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Supplies</th>
+                            <th>UNIT</th>
+                            <th>QTY</th>
+                            <th>OUT</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${inventories.map(item => `
                             <tr>
-                                <th>Source</th>
-                                <th>Supplies</th>
-                                <th>UNIT</th>
-                                <th>QTY</th>
-                                <th>OUT</th>
-                                <th>TOTAL</th>
+                                <td>${item.source}</td>
+                                <td>${item.supplies}${item.description ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>` : ''}</td>
+                                <td>${item.unit}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.out}</td>
+                                <td>${item.total}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${inventories.map(item => `
-                                <tr>
-                                    <td>${item.source}</td>
-                                    <td>${item.supplies}${item.description ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>` : ''}</td>
-                                    <td>${item.unit}</td>
-                                    <td>${item.quantity}</td>
-                                    <td>${item.out}</td>
-                                    <td>${item.total}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </body>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </body>
             </html>
         `);
         printWindow.document.close();
@@ -182,52 +192,31 @@ const InventoryReport = () => {
                 </div>
                 <div className="text-center mt-6 mb-4">
                     <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
-                    <p className="font-bold">SUPPLIES</p>
+                    <p className="font-bold">{filter.type || 'SUPPLIES'}</p>
                     <p>As of {formattedDate}</p>
                 </div>
 
                 {/* Filter Section */}
                 <div className="flex justify-center gap-4 mb-4">
-                    <select
-                        name="month"
-                        value={filter.month}
-                        onChange={handleFilterChange}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                    >
+                    <select name="month" onChange={handleFilterChange} value={filter.month}>
                         <option value="">Select Month</option>
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <option value="April">April</option>
-                        <option value="May">May</option>
-                        <option value="June">June</option>
-                        <option value="July">July</option>
-                        <option value="August">August</option>
-                        <option value="September">September</option>
-                        <option value="October">October</option>
-                        <option value="November">November</option>
-                        <option value="December">December</option>
-                    </select>
-                    <select
-                        name="year"
-                        value={filter.year}
-                        onChange={handleFilterChange}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                    >
-                        <option value="">Select Year</option>
-                        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                            <option key={year} value={year}>{year}</option>
+                        {filterOptions.months.map((month, index) => (
+                            <option key={index} value={month}>{month}</option>
                         ))}
                     </select>
-                    <select
-                        name="type"
-                        value={filter.type}
-                        onChange={handleFilterChange}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                    >
+
+                    <select name="year" onChange={handleFilterChange} value={filter.year}>
+                        <option value="">Select Year</option>
+                        {filterOptions.years.map((year, index) => (
+                            <option key={index} value={year}>{year}</option>
+                        ))}
+                    </select>
+
+                    <select name="type" onChange={handleFilterChange} value={filter.type}>
                         <option value="">Select Type</option>
-                        <option value="equipment">Equipment</option>
-                        <option value="supplies">Supplies</option>
+                        {filterOptions.types.map((type, index) => (
+                            <option key={index} value={type}>{type}</option>
+                        ))}
                     </select>
                 </div>
 
