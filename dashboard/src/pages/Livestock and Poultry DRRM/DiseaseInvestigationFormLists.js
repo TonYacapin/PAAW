@@ -4,6 +4,7 @@ import Modal from "../../component/Modal";
 import SuccessModal from "../../component/SuccessModal";
 import StepperComponent from "../../component/StepperComponent";
 import DiseaseInvestigationForm from "./DiseaseInvestigationForm";
+import CardBox from "../../component/CardBox";
 
 const DiseaseInvestigationTable = () => {
   const [data, setData] = useState([]);
@@ -69,7 +70,7 @@ const DiseaseInvestigationTable = () => {
   const handleOpenEditStatusModal = (investigation) => {
     setSelectedInvestigation(investigation);
     setEditStatusModalOpen(true);
-    setNewStatus(investigation.status); // Set the current status for editing
+    setNewStatus(investigation.formStatus); // Set the current status for editing
   };
 
   const handleCancelEditStatus = () => {
@@ -89,7 +90,7 @@ const DiseaseInvestigationTable = () => {
     try {
       await axiosInstance.put(
         `/disease-investigation/${selectedInvestigation._id}`,
-        { status: newStatus }
+        { formStatus: newStatus }
       );
       fetchData(); // Fetch updated data
       handleCloseEditStatusModal();
@@ -100,185 +101,165 @@ const DiseaseInvestigationTable = () => {
     }
   };
 
+  const tableheader = "border p-2 font-semibold bg-[#1b5b40] text-white";
+
   const renderStepContent = (pages) => {
     if (!selectedInvestigation) return null;
 
     switch (pages) {
       case 0:
         return (
-          <div className="max-h-[70vh]">
+          <div className="max-h-[70vh] flex-col flex gap-4">
             <h2 className="text-xl font-bold mb-4">Basic Information</h2>
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <tbody>
-                <tr>
-                  <td className="border p-2 font-semibold">Status</td>
-                  <td className="border p-2">{selectedInvestigation.status}</td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">No. of Visits</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.noOfVisit}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Date Reported</td>
-                  <td className="border p-2">
-                    {new Date(
-                      selectedInvestigation.dateReported
-                    ).toLocaleDateString()}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Date of Visit</td>
-                  <td className="border p-2">
-                    {new Date(
-                      selectedInvestigation.dateOfVisit
-                    ).toLocaleDateString()}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Farmer Name</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.farmerName}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Farm Type</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.farmType.join(", ")}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Remarks</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.remarks}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+
+            {/* <div>
+              <strong>Status:</strong> {selectedInvestigation.status}
+            </div> */}
+          <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
+          <h2 className="text-lg font-bold">
+              Form Status:{" "}
+              <div
+                className={`inline p-1 rounded-sm ${
+                  selectedInvestigation.formStatus.includes("Deleted")
+                    ? "bg-red-100 text-red-800"
+                    : selectedInvestigation.formStatus.includes("Pending")
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
+                {selectedInvestigation.formStatus}
+              </div>
+            </h2>
+            <h2 className="text-lg font-bold mb-6">
+              Investigation Status:{" "}
+              <div
+                className={`inline p-1 rounded-sm ${
+                  selectedInvestigation.status.includes("new")
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                {selectedInvestigation.status}
+              </div>
+            </h2>
+            <div>
+              <strong>No. of Visits:</strong> {selectedInvestigation.noOfVisit}
+            </div>
+
+            <div>
+              <strong>Date Reported:</strong>{" "}
+              {new Date(
+                selectedInvestigation.dateReported
+              ).toLocaleDateString()}
+            </div>
+
+            <div>
+              <strong>Date of Visit:</strong>{" "}
+              {new Date(selectedInvestigation.dateOfVisit).toLocaleDateString()}
+            </div>
+
+            <div>
+              <strong>Farmer Name:</strong> {selectedInvestigation.farmerName}
+            </div>
+
+            <div>
+              <strong>Farm Type:</strong>{" "}
+              {selectedInvestigation.farmType.join(", ")}
+            </div>
+
+            <div>
+              <strong>Remarks:</strong> {selectedInvestigation.remarks}
+            </div>
+            </div>
           </div>
         );
       case 1:
         return (
-          <div>
+          <div className="max-h-[70vh] flex-col flex gap-4">
             <h2 className="text-xl font-bold mb-4">Investigation Details</h2>
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <tbody>
-                <tr>
-                  <td className="border p-2 font-semibold">Investigator</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.investigator}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Place Affected</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.placeAffected}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Latitude</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.latitude}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Longitude</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.longitude}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="mb-2">
+              <strong>Investigator:</strong>{" "}
+              {selectedInvestigation.investigator}
+            </div>
+            <div className="mb-2">
+              <strong>Place Affected:</strong>{" "}
+              {selectedInvestigation.placeAffected}
+            </div>
+            <div className="mb-2">
+              <strong>Latitude:</strong> {selectedInvestigation.latitude}
+            </div>
+            <div className="mb-2">
+              <strong>Longitude:</strong> {selectedInvestigation.longitude}
+            </div>
           </div>
         );
       case 2:
         return (
-          <div>
+          <div className="max-h-[70vh] flex-col flex gap-4">
             <h2 className="text-xl font-bold mb-4">Diagnosis & Measures</h2>
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <tbody>
-                <tr>
-                  <td className="border p-2 font-semibold">
-                    Probable Source of Infection
-                  </td>
-                  <td className="border p-2">
-                    {selectedInvestigation.propablesourceofinfection}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Control Measures</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.controlmeasures}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">
-                    Tentative Diagnosis
-                  </td>
-                  <td className="border p-2">
-                    {selectedInvestigation.tentativediagnosis}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">Final Diagnosis</td>
-                  <td className="border p-2">
-                    {selectedInvestigation.finaldiagnosis}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">
-                    Nature of Diagnosis
-                  </td>
-                  <td className="border p-2">
-                    {selectedInvestigation.natureofdiagnosis}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="mb-2">
+              <strong>Probable Source of Infection:</strong>{" "}
+              {selectedInvestigation.propablesourceofinfection}
+            </div>
+            <div className="mb-2">
+              <strong>Control Measures:</strong>{" "}
+              {selectedInvestigation.controlmeasures}
+            </div>
+            <div className="mb-2">
+              <strong>Tentative Diagnosis:</strong>{" "}
+              {selectedInvestigation.tentativediagnosis}
+            </div>
+            <div className="mb-2">
+              <strong>Final Diagnosis:</strong>{" "}
+              {selectedInvestigation.finaldiagnosis}
+            </div>
+            <div className="mb-2">
+              <strong>Nature of Diagnosis:</strong>{" "}
+              {selectedInvestigation.natureofdiagnosis}
+            </div>
           </div>
         );
       case 3:
         return (
-          <div className="p-6 bg-white rounded-lg shadow-md ">
+          <CardBox>
             <h2 className="text-2xl font-bold mb-6 text-black">
               Details of Investigation
             </h2>
 
             {/* Details Table */}
             <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
-              <thead>
-                <tr className="bg-darkgreen text-white">
-                  <th className="border p-2">Species</th>
-                  <th className="border p-2">Sex</th>
-                  <th className="border p-2">Age</th>
-                  <th className="border p-2">Population</th>
-                  <th className="border p-2">Cases</th>
-                  <th className="border p-2">Deaths</th>
-                  <th className="border p-2">Destroyed</th>
-                  <th className="border p-2">Slaughtered</th>
-                  <th className="border p-2">Vaccine History</th>
-                  <th className="border p-2">Remarks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedInvestigation.details.map((detail, idx) => (
-                  <tr key={idx} className="hover:bg-gray-100">
-                    <td className="border p-2">{detail.species}</td>
-                    <td className="border p-2">{detail.sex}</td>
-                    <td className="border p-2">{detail.age}</td>
-                    <td className="border p-2">{detail.population}</td>
-                    <td className="border p-2">{detail.cases}</td>
-                    <td className="border p-2">{detail.deaths}</td>
-                    <td className="border p-2">{detail.destroyed}</td>
-                    <td className="border p-2">{detail.slaughtered}</td>
-                    <td className="border p-2">{detail.vaccineHistory}</td>
-                    <td className="border p-2">{detail.remarks}</td>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
+                <thead>
+                  <tr className="bg-darkgreen text-white">
+                    <th className="border p-2">Species</th>
+                    <th className="border p-2">Sex</th>
+                    <th className="border p-2">Age</th>
+                    <th className="border p-2">Population</th>
+                    <th className="border p-2">Cases</th>
+                    <th className="border p-2">Deaths</th>
+                    <th className="border p-2">Destroyed</th>
+                    <th className="border p-2">Slaughtered</th>
+                    <th className="border p-2">Vaccine History</th>
+                    <th className="border p-2">Remarks</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {selectedInvestigation.details.map((detail, idx) => (
+                    <tr key={idx} className="hover:bg-gray-100">
+                      <td className="border p-2">{detail.species}</td>
+                      <td className="border p-2">{detail.sex}</td>
+                      <td className="border p-2">{detail.age}</td>
+                      <td className="border p-2">{detail.population}</td>
+                      <td className="border p-2">{detail.cases}</td>
+                      <td className="border p-2">{detail.deaths}</td>
+                      <td className="border p-2">{detail.destroyed}</td>
+                      <td className="border p-2">{detail.slaughtered}</td>
+                      <td className="border p-2">{detail.vaccineHistory}</td>
+                      <td className="border p-2">{detail.remarks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* Clinical Signs */}
@@ -286,55 +267,56 @@ const DiseaseInvestigationTable = () => {
               Clinical Signs
             </h2>
             <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
-              <thead>
-                <tr className="bg-darkgreen text-white">
-                  <th className="border p-2">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedInvestigation.clinicalSigns.map((sign, idx) => (
-                  <tr key={`clinicalSign-${idx}`} className="hover:bg-gray-100">
-                    <td className="border p-2">{sign.description}</td>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg mb-6 overflow-x-auto">
+                <thead>
+                  <tr className="bg-darkgreen text-white">
+                    <th className="border p-2">Description</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {selectedInvestigation.clinicalSigns.map((sign, idx) => (
+                    <tr
+                      key={`clinicalSign-${idx}`}
+                      className="hover:bg-gray-100"
+                    >
+                      <td className="border p-2">{sign.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            
 
             {/* Movement Table */}
             <h2 className="text-2xl font-bold mb-4 text-black">Movement</h2>
             <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-x-auto">
-              <thead>
-                <tr className="bg-darkgreen text-white">
-                  <th className="border p-2">Movement Date</th>
-                  <th className="border p-2">Mode</th>
-                  <th className="border p-2">Type</th>
-                  <th className="border p-2">Barangay</th>
-                  <th className="border p-2">Municipality</th>
-                  <th className="border p-2">Province</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedInvestigation.movement.map((move, idx) => (
-                  <tr key={`movement-${idx}`} className="hover:bg-gray-100">
-                    <td className="border p-2">
-                      {new Date(move.date).toLocaleDateString()}
-                    </td>
-                    <td className="border p-2">{move.mode}</td>
-                    <td className="border p-2">{move.type}</td>
-                    <td className="border p-2">{move.barangay}</td>
-                    <td className="border p-2">{move.municipality}</td>
-                    <td className="border p-2">{move.province}</td>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-x-auto">
+                <thead>
+                  <tr className="bg-darkgreen text-white">
+                    <th className="border p-2">Movement Date</th>
+                    <th className="border p-2">Mode</th>
+                    <th className="border p-2">Type</th>
+                    <th className="border p-2">Barangay</th>
+                    <th className="border p-2">Municipality</th>
+                    <th className="border p-2">Province</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {selectedInvestigation.movement.map((move, idx) => (
+                    <tr key={`movement-${idx}`} className="hover:bg-gray-100">
+                      <td className="border p-2">
+                        {new Date(move.date).toLocaleDateString()}
+                      </td>
+                      <td className="border p-2">{move.mode}</td>
+                      <td className="border p-2">{move.type}</td>
+                      <td className="border p-2">{move.barangay}</td>
+                      <td className="border p-2">{move.municipality}</td>
+                      <td className="border p-2">{move.province}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            
-          </div>
+          </CardBox>
         );
 
       default:
@@ -346,13 +328,13 @@ const DiseaseInvestigationTable = () => {
     <div className="container mx-auto p-2">
       <h1 className="text-2xl font-bold mb-6">Disease Investigation Reports</h1>
 
-    <div className="md:w-full">
-      <button
-        onClick={() => setFormModalOpen(true)}
-        className="lg:w-auto px-4 py-2 w-full bg-darkgreen text-white rounded"
-      >
-        Investigation Report Form
-      </button>
+      <div className="md:w-full">
+        <button
+          onClick={() => setFormModalOpen(true)}
+          className="lg:w-auto px-4 py-2 w-full bg-darkgreen text-white rounded"
+        >
+          Investigation Report Form
+        </button>
       </div>
 
       <div className="overflow-x-auto mt-4 border border-gray-300 rounded-lg">
@@ -362,7 +344,8 @@ const DiseaseInvestigationTable = () => {
               <th className="border border-gray-300 p-4">Investigator</th>
               <th className="border border-gray-300 p-4">Farm Type</th>
               <th className="border border-gray-300 p-4">Date Reported</th>
-              <th className="border border-gray-300 p-4">Status</th>
+              <th className="border border-gray-300 p-4">Invest. Status</th>
+              <th className="border border-gray-300 p-4">Form Status</th>
               <th className="border border-gray-300 p-4">Action</th>
             </tr>
           </thead>
@@ -381,20 +364,23 @@ const DiseaseInvestigationTable = () => {
                 <td className="border border-gray-300 p-2">
                   {investigation.status}
                 </td>
+                <td className="border border-gray-300 p-2">
+                  {investigation.formStatus}
+                </td>
                 <td className="border border-gray-300 p-2 text-center">
                   <div className="flex items-center justify-center flex-col lg:flex-row w-full gap-2">
-                  <button
-                    onClick={() => handleOpenEditStatusModal(investigation)}
-                    className="lg:w-auto w-full px-4 py-2 bg-darkgreen text-white rounded"
-                  >
-                    Edit Status
-                  </button>
-                  <button
-                    onClick={() => handleOpenModal(investigation)}
-                    className="lg:w-auto w-full px-4 py-2 bg-pastelyellow text-black rounded"
-                  >
-                    View Details
-                  </button>
+                    <button
+                      onClick={() => handleOpenEditStatusModal(investigation)}
+                      className="lg:w-auto w-full px-4 py-2 bg-darkgreen text-white rounded"
+                    >
+                      Edit Form Status
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(investigation)}
+                      className="lg:w-auto w-full px-4 py-2 bg-pastelyellow text-black rounded"
+                    >
+                      View Details
+                    </button>
                   </div>
                 </td>
               </tr>
