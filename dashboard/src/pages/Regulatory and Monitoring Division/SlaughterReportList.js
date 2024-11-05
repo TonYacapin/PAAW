@@ -136,16 +136,26 @@ function SlaughterReportList() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Month
             </label>
-            <input
-              type="number"
+            <select
               name="month"
               value={filter.month}
               onChange={handleFilterChange}
               className="w-full p-2 border border-gray-300 rounded-md"
-              placeholder="Month"
-              min="1"
-              max="12"
-            />
+            >
+              <option value="">Select Month</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -30,10 +30,9 @@ const slaughterReportSchema = new mongoose.Schema({
     ] // List of municipalities
   },
   month: {
-    type: Number,
+    type: String,
     required: true,
-    min: 1,
-    max: 12 // Month (1 to 12)
+    enum: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] // List of months
   },
   year: {
     type: Number,
