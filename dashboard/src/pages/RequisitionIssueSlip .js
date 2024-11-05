@@ -492,10 +492,8 @@ const RequisitionIssueSlip = () => {
               <tr>
                 <th>Supply</th>
                 <th>Unit</th>
-                <th>Quantity</th>
-                <th>Out</th>
                 <th>Total</th>
-                <th>Category</th>
+                <th>Type</th>
               </tr>
             </thead>
             <tbody>
@@ -503,10 +501,8 @@ const RequisitionIssueSlip = () => {
                 <tr key={index}>
                   <td>{item.supplies}</td>
                   <td>{item.unit}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.out}</td>
                   <td>{item.total}</td>
-                  <td>{item.category}</td>
+                  <td>{item.type}</td>
                 </tr>
               ))}
             </tbody>
