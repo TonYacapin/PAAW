@@ -36,9 +36,14 @@ function RequisitionIssueSlipList() {
     }
   }, []);
 
+
     useEffect(() => {
         fetchRequisitions();
-    }, [isSlipModalOpen, isEditModalOpen]); // Updates as soon as the modal is opened or closed
+    }, [isEditModalOpen]); // Updates as soon as the modal is opened or closed
+
+    useEffect(() => {
+        fetchRequisitions();
+    }, [isSlipModalOpen]);
 
     useEffect(() => {
         if (userRole && user) {
