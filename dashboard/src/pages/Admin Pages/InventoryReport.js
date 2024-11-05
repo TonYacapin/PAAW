@@ -7,25 +7,45 @@ import placeholder2 from '../../pages/assets/ReportLogo2.png';
 const InventoryReport = () => {
     const [inventories, setInventories] = useState([]);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [filter, setFilter] = useState({
+        month: '',
+        year: '',
+        type: ''
+    });
     const printRef = useRef(); // Create a ref for the printable section
 
     useEffect(() => {
         fetchInventories();
-    }, []);
+    }, [filter]);
 
     const fetchInventories = async () => {
         try {
-            const response = await axiosInstance.get('/api/inventory');
+            const response = await axiosInstance.get('/api/inventory', {
+                params: {
+                    month: filter.month,
+                    year: filter.year,
+                    type: filter.type
+                }
+            });
             setInventories(response.data);
         } catch (error) {
             console.error('Error fetching inventories:', error);
         }
     };
 
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilter((prevFilter) => ({
+            ...prevFilter,
+            [name]: value
+        }));
+    };
+
     const formattedDate = currentDate.toLocaleString('en-US', {
         month: 'long',
         year: 'numeric'
     });
+
     const handlePrint = () => {
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
@@ -100,17 +120,17 @@ const InventoryReport = () => {
                         }
                     </style>
                 </head>
-                <body onload="window.print(); window.close();">
-                    <div class="header">
-                        <div class="logo-container">
-                            <img src="${placeholder1}" alt="Left Logo" />
-                            <img src="${placeholder2}" alt="Right Logo" />
-                        </div>
-                        <div style="text-align: center; margin-top: 10px;">
-                            <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
-                            <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
-                            <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-                            <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+                <body onload="window.print(); "style="justify-content: center;">
+                    <div class="header" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                        <div style="display: flex; flex-direction: row; justify-items: center;"> 
+                            <img src="${placeholder1}" alt="Left Logo" style="width: 70px; height: 70px;" />
+                            <div style="text-align: center; margin-top: 10px;">
+                                <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
+                                <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
+                                <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+                                <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+                            </div>
+                            <img src="${placeholder2}" alt="Right Logo" style="width: 70px; height: 70px;" />
                         </div>
                     </div>
                     <h1 class="title">MONTHLY INVENTORY and UTILIZATION REPORT</h1>
@@ -140,14 +160,11 @@ const InventoryReport = () => {
                             `).join('')}
                         </tbody>
                     </table>
-                  
                 </body>
             </html>
         `);
         printWindow.document.close();
     };
-
-
 
     return (
         <div className="w-full max-w-4xl mx-auto p-8 bg-white">
@@ -167,6 +184,51 @@ const InventoryReport = () => {
                     <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
                     <p className="font-bold">SUPPLIES</p>
                     <p>As of {formattedDate}</p>
+                </div>
+
+                {/* Filter Section */}
+                <div className="flex justify-center gap-4 mb-4">
+                    <select
+                        name="month"
+                        value={filter.month}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                        <option value="">Select Month</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="August">August</option>
+                        <option value="September">September</option>
+                        <option value="October">October</option>
+                        <option value="November">November</option>
+                        <option value="December">December</option>
+                    </select>
+                    <select
+                        name="year"
+                        value={filter.year}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                        <option value="">Select Year</option>
+                        {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <option key={year} value={year}>{year}</option>
+                        ))}
+                    </select>
+                    <select
+                        name="type"
+                        value={filter.type}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                        <option value="">Select Type</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="supplies">Supplies</option>
+                    </select>
                 </div>
 
                 {/* Table Section */}
@@ -201,8 +263,6 @@ const InventoryReport = () => {
                         ))}
                     </tbody>
                 </table>
-
-
             </div>
 
             {/* Print Button */}
