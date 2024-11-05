@@ -153,7 +153,12 @@ function AnimalHealthCareServicesList() {
     return matchesSearch && matchesMunicipality && matchesStatus; // Include status filter in return
   });
 
-  if (loading) return <div className="flex justify-center p-8">Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-10">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   if (error) return <div className="text-red-500 p-8">{error}</div>;
 
   return (
@@ -248,66 +253,149 @@ function AnimalHealthCareServicesList() {
                   <tr key={service._id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 p-4">{index + 1}</td>
                     <td className="border border-gray-300 p-4">
-                      <div className="font-medium">{service.clientInfo.name}</div>
-                      <div className="text-sm text-gray-600">{service.clientInfo.municipality}</div>
+                      <div className="font-medium">
+                        {service.clientInfo.name}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {service.clientInfo.municipality}
+                      </div>
                     </td>
                     <td className="border border-gray-300 p-4">
                       {`${service.clientInfo.barangay}, ${service.clientInfo.municipality}, ${service.clientInfo.province}`}
                     </td>
 
                     <td className="border border-gray-300 p-4">
-                      {service.rabiesVaccinations.some(v => v.petName || v.species || v.sex || v.age || v.color || v.remarks) && (
+                      {service.rabiesVaccinations.some(
+                        (v) =>
+                          v.petName ||
+                          v.species ||
+                          v.sex ||
+                          v.age ||
+                          v.color ||
+                          v.remarks
+                      ) && (
                         <div>
-                          <h4 className="font-semibold">Rabies Vaccinations:</h4>
-                          {service.rabiesVaccinations.map((vaccination, idx) => (
-                            <div key={idx} className="mb-2">
-                              {vaccination.petName && <strong>Pet Name:</strong>} {vaccination.petName}
-                              {vaccination.species && <strong>, Species:</strong>} {vaccination.species}
-                              {vaccination.sex && <strong>, Sex:</strong>} {vaccination.sex}
-                              {vaccination.age && <strong>, Age:</strong>} {vaccination.age}
-                              {vaccination.color && <strong>, Color:</strong>} {vaccination.color}
-                              {vaccination.remarks && <strong>, Remarks:</strong>} {vaccination.remarks}
-                            </div>
-                          ))}
+                          <h4 className="font-semibold">
+                            Rabies Vaccinations:
+                          </h4>
+                          {service.rabiesVaccinations.map(
+                            (vaccination, idx) => (
+                              <div key={idx} className="mb-2">
+                                {vaccination.petName && (
+                                  <strong>Pet Name:</strong>
+                                )}{" "}
+                                {vaccination.petName}
+                                {vaccination.species && (
+                                  <strong>, Species:</strong>
+                                )}{" "}
+                                {vaccination.species}
+                                {vaccination.sex && (
+                                  <strong>, Sex:</strong>
+                                )}{" "}
+                                {vaccination.sex}
+                                {vaccination.age && (
+                                  <strong>, Age:</strong>
+                                )}{" "}
+                                {vaccination.age}
+                                {vaccination.color && (
+                                  <strong>, Color:</strong>
+                                )}{" "}
+                                {vaccination.color}
+                                {vaccination.remarks && (
+                                  <strong>, Remarks:</strong>
+                                )}{" "}
+                                {vaccination.remarks}
+                              </div>
+                            )
+                          )}
                         </div>
                       )}
 
-                      {service.vaccinations.some(v => v.type || v.aewVaccine || v.aewQuantity !== null) && (
+                      {service.vaccinations.some(
+                        (v) => v.type || v.aewVaccine || v.aewQuantity !== null
+                      ) && (
                         <div>
                           <h4 className="font-semibold">Vaccinations:</h4>
                           {service.vaccinations.map((vaccination, idx) => (
                             <div key={idx} className="mb-2">
-                              {vaccination.type && <strong>Type:</strong>} {vaccination.type}
-                              {vaccination.walkInSpecies && <strong>, Species:</strong>} {vaccination.walkInSpecies}
-                              {vaccination.noOfHeads !== null && <strong>, Heads:</strong>} {vaccination.noOfHeads}
-                              {vaccination.sex && <strong>, Sex:</strong>} {vaccination.sex}
-                              {vaccination.age && <strong>, Age:</strong>} {vaccination.age}
-                              {vaccination.aewVaccine && <strong>, AEW Vaccine:</strong>} {vaccination.aewVaccine}
-                              {vaccination.aewQuantity !== null && <strong>, AEW Quantity:</strong>} {vaccination.aewQuantity}
+                              {vaccination.type && <strong>Type:</strong>}{" "}
+                              {vaccination.type}
+                              {vaccination.walkInSpecies && (
+                                <strong>, Species:</strong>
+                              )}{" "}
+                              {vaccination.walkInSpecies}
+                              {vaccination.noOfHeads !== null && (
+                                <strong>, Heads:</strong>
+                              )}{" "}
+                              {vaccination.noOfHeads}
+                              {vaccination.sex && <strong>, Sex:</strong>}{" "}
+                              {vaccination.sex}
+                              {vaccination.age && <strong>, Age:</strong>}{" "}
+                              {vaccination.age}
+                              {vaccination.aewVaccine && (
+                                <strong>, AEW Vaccine:</strong>
+                              )}{" "}
+                              {vaccination.aewVaccine}
+                              {vaccination.aewQuantity !== null && (
+                                <strong>, AEW Quantity:</strong>
+                              )}{" "}
+                              {vaccination.aewQuantity}
                             </div>
                           ))}
                         </div>
                       )}
 
-                      {service.routineServices.some(rs => rs.serviceType || rs.aewVaccine || rs.aewQuantity !== null) && (
+                      {service.routineServices.some(
+                        (rs) =>
+                          rs.serviceType ||
+                          rs.aewVaccine ||
+                          rs.aewQuantity !== null
+                      ) && (
                         <div>
                           <h4 className="font-semibold">Routine Services:</h4>
-                          {service.routineServices.map((routineService, idx) => (
-                            <div key={idx} className="mb-2">
-                              {routineService.serviceType && <strong>Service Type:</strong>} {routineService.serviceType}
-                              {routineService.species && <strong>, Species:</strong>} {routineService.species}
-                              {routineService.noOfHeads !== null && <strong>, Heads:</strong>} {routineService.noOfHeads}
-                              {routineService.sex && <strong>, Sex:</strong>} {routineService.sex}
-                              {routineService.age && <strong>, Age:</strong>} {routineService.age}
-                              {routineService.aewVaccine && <strong>, AEW Vaccine:</strong>} {routineService.aewVaccine}
-                              {routineService.aewQuantity !== null && <strong>, AEW Quantity:</strong>} {routineService.aewQuantity}
-                            </div>
-                          ))}
+                          {service.routineServices.map(
+                            (routineService, idx) => (
+                              <div key={idx} className="mb-2">
+                                {routineService.serviceType && (
+                                  <strong>Service Type:</strong>
+                                )}{" "}
+                                {routineService.serviceType}
+                                {routineService.species && (
+                                  <strong>, Species:</strong>
+                                )}{" "}
+                                {routineService.species}
+                                {routineService.noOfHeads !== null && (
+                                  <strong>, Heads:</strong>
+                                )}{" "}
+                                {routineService.noOfHeads}
+                                {routineService.sex && (
+                                  <strong>, Sex:</strong>
+                                )}{" "}
+                                {routineService.sex}
+                                {routineService.age && (
+                                  <strong>, Age:</strong>
+                                )}{" "}
+                                {routineService.age}
+                                {routineService.aewVaccine && (
+                                  <strong>, AEW Vaccine:</strong>
+                                )}{" "}
+                                {routineService.aewVaccine}
+                                {routineService.aewQuantity !== null && (
+                                  <strong>, AEW Quantity:</strong>
+                                )}{" "}
+                                {routineService.aewQuantity}
+                              </div>
+                            )
+                          )}
                         </div>
                       )}
                     </td>
-                    <td className="border border-gray-300 p-4">{formatDate(service.createdAt)}</td>
-                    <td className="border border-gray-300 p-4">{service.status}</td>
+                    <td className="border border-gray-300 p-4">
+                      {formatDate(service.createdAt)}
+                    </td>
+                    <td className="border border-gray-300 p-4">
+                      {service.status}
+                    </td>
                     <td className="border border-gray-300 p-4">
                       <button
                         onClick={() => {
@@ -325,9 +413,6 @@ function AnimalHealthCareServicesList() {
             </tbody>
           </table>
         </div>
-
-
-
       )}
 
       {/* Status Edit Modal */}

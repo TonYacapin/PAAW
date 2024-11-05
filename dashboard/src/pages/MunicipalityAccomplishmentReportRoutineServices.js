@@ -185,72 +185,70 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
         </h1>
 
         <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
-              <div>
-                <label
-                  htmlFor="year"
-                  className="text-md font-semibold text-gray-700 mb-2"
-                >
-                  Year
-                </label>
-                <input
-                  type="number"
-                  id="year"
-                  value={selectedYear}
-                  min="2000" // Assuming a reasonable minimum year
-                  onChange={(e) => setSelectedYear(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="month"
-                  className="text-md font-semibold text-gray-700 mb-2 "
-                >
-                  Month
-                </label>
-
-                <select
-                  id="month"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                >
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {new Date(0, i).toLocaleString("default", {
-                        month: "long",
-                      })}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="species"
-                  className="text-md font-semibold text-gray-700 mb-2"
-                >
-                  Species
-                </label>
-                <select
-                  id="species"
-                  value={selectedSpecies}
-                  onChange={(e) => setSelectedSpecies(e.target.value)}
-                  className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
-                >
-                  <option value="Swine">Swine</option>
-                  <option value="Poultry">Poultry</option>
-                  <option value="Dog">Dog</option>
-                  <option value="Others">Others</option>
-                </select>
-              </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-6">
+            <div>
+              <label
+                htmlFor="year"
+                className="text-md font-semibold text-gray-700 mb-2"
+              >
+                Year
+              </label>
+              <input
+                type="number"
+                id="year"
+                value={selectedYear}
+                min="2000" // Assuming a reasonable minimum year
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+              />
             </div>
+            <div>
+              <label
+                htmlFor="month"
+                className="text-md font-semibold text-gray-700 mb-2 "
+              >
+                Month
+              </label>
+
+              <select
+                id="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+              >
+                {[...Array(12)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {new Date(0, i).toLocaleString("default", {
+                      month: "long",
+                    })}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label
+                htmlFor="species"
+                className="text-md font-semibold text-gray-700 mb-2"
+              >
+                Species
+              </label>
+              <select
+                id="species"
+                value={selectedSpecies}
+                onChange={(e) => setSelectedSpecies(e.target.value)}
+                className="border border-[#1b5b40] rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#ffe356] text-[#252525] bg-gray-100"
+              >
+                <option value="Swine">Swine</option>
+                <option value="Poultry">Poultry</option>
+                <option value="Dog">Dog</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
 
           {loading ? (
-            <div className="flex justify-center items-center h-32">
-              <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
-              <span className="ml-2 text-gray-700">Loading...</span>
+            <div className="flex items-center justify-center py-10">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             </div>
           ) : error ? (
             <div className="text-red-500 text-center">{error}</div>
