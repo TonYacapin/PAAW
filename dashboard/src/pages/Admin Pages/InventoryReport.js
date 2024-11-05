@@ -119,6 +119,7 @@ const InventoryReport = () => {
                     <table>
                         <thead>
                             <tr>
+                                <th>Source</th>
                                 <th>Supplies</th>
                                 <th>UNIT</th>
                                 <th>QTY</th>
@@ -129,6 +130,7 @@ const InventoryReport = () => {
                         <tbody>
                             ${inventories.map(item => `
                                 <tr>
+                                    <td>${item.source}</td>
                                     <td>${item.supplies}${item.description ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>` : ''}</td>
                                     <td>${item.unit}</td>
                                     <td>${item.quantity}</td>
@@ -171,7 +173,8 @@ const InventoryReport = () => {
                 <table className="w-full border-collapse border border-black">
                     <thead>
                         <tr>
-                            <th className="border border-black p-2 text-left bg-white font-bold">Supplies</th>
+                            <th className="border border-black p-2 text-center bg-white font-bold">Source</th>
+                            <th className="border border-black p-2 text-center bg-white font-bold">Supplies</th>
                             <th className="border border-black p-2 text-center bg-white font-bold w-24">UNIT</th>
                             <th className="border border-black p-2 text-center bg-white font-bold w-24">QTY</th>
                             <th className="border border-black p-2 text-center bg-white font-bold w-24">OUT</th>
@@ -181,6 +184,7 @@ const InventoryReport = () => {
                     <tbody>
                         {inventories.map((item, index) => (
                             <tr key={index} className="hover:bg-gray-50">
+                                <td className="border border-black p-2 text-center text-sm">{item.source}</td>
                                 <td className="border border-black p-2 text-sm">
                                     {item.supplies}
                                     {item.description && (

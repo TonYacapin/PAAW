@@ -5,6 +5,7 @@ const Inventory = require('../models/Inventory'); // Import the Inventory model
 
 // Create a new inventory item
 router.post('/', async (req, res) => {
+
   try {
     const newInventory = new Inventory(req.body);
     await newInventory.save();

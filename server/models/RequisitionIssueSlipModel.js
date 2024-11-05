@@ -19,6 +19,7 @@ const requisitionIssuanceSchema = new mongoose.Schema({
   issuanceRows: [{
     quantity: { type: Number,  },
     description: { type: String, required: true },
+    source: { type: String, default: '' },
     remarks: { type: String, default: '' },
   }],
 

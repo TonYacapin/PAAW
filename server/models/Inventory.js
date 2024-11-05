@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const InventorySchema = new mongoose.Schema({
+  source: String,
   type: String,
   supplies: String,
   unit: String,
