@@ -75,29 +75,34 @@ function RequisitionDetails({ requisition: initialRequisition }) {
   };
 
   const checkInventoryAvailability = (rowToUpdate) => {
-    // Find matching inventory item by type/supplies
-    const inventoryItem = inventoryData.find(
+    // Find all matching inventory items by type/supplies
+    const matchingInventoryItems = inventoryData.filter(
       (item) =>
-        item.supplies === rowToUpdate.description ||
-        item.type === rowToUpdate.description
+        (item.supplies === rowToUpdate.description ||
+          item.type === rowToUpdate.description) &&
+        item.source === rowToUpdate.source // Add source check
     );
 
-    if (!inventoryItem) {
-      throw new Error("Item not found in inventory");
+    if (matchingInventoryItems.length === 0) {
+      throw new Error(`Item not found in inventory for source: ${rowToUpdate.source}`);
     }
 
-    const requestedQuantity = parseInt(rowToUpdate.quantity);
-    const availableQuantity = inventoryItem.total;
+    // Calculate total available quantity from all matching sources
+    const totalAvailableQuantity = matchingInventoryItems.reduce(
+      (total, item) => total + item.total,
+      0
+    );
 
-    if (requestedQuantity > availableQuantity) {
+    const requestedQuantity = parseInt(rowToUpdate.quantity);
+
+    if (requestedQuantity > totalAvailableQuantity) {
       throw new Error(
-        `Insufficient inventory. Available: ${availableQuantity}, Issued: ${requestedQuantity}`
+        `Insufficient inventory. Available: ${totalAvailableQuantity}, Issued: ${requestedQuantity}`
       );
     }
 
     return true;
   };
-
   const saveChanges = async (rowId) => {
     try {
       const rowToUpdate = requisitionData.issuanceRows.find(
@@ -105,19 +110,45 @@ function RequisitionDetails({ requisition: initialRequisition }) {
       );
       if (!rowToUpdate) return;
 
-      // Check inventory availability before saving
-      checkInventoryAvailability(rowToUpdate);
-
       const updatedData = {
         ...requisitionData,
         issuanceRows: requisitionData.issuanceRows.map((row) => ({
           _id: row._id,
           quantity: row.quantity,
           description: row.description,
+          source: row.source,
           remarks: row.remarks,
         })),
-        formStatus: "Allotted",
       };
+
+      if (requisitionData.formStatus !== "Distributed") {
+        updatedData.formStatus = "Allotted";
+      } else {
+        checkInventoryAvailability(rowToUpdate);
+      }
+
+      const selectedSource = rowToUpdate.source;
+      const requestedQuantity = parseInt(rowToUpdate.quantity);
+
+      const matchingInventoryItem = inventoryData.find(
+        (item) => item.source === selectedSource &&
+          (item.supplies === rowToUpdate.description ||
+            item.type === rowToUpdate.description)
+      );
+
+      if (matchingInventoryItem) {
+        const availableQuantity = matchingInventoryItem.total;
+
+        if (requestedQuantity > availableQuantity) {
+          setErrorMessage(`Insufficient inventory for ${selectedSource}. Available: ${availableQuantity}, Issued: ${requestedQuantity}`);
+          setIsErrorModalOpen(true);
+          return;
+        }
+      } else {
+        setErrorMessage(`Source ${selectedSource} not found in inventory.`);
+        setIsErrorModalOpen(true);
+        return;
+      }
 
       const response = await axiosInstance.put(
         `/api/requisitions/${requisitionData._id}`,
@@ -126,26 +157,18 @@ function RequisitionDetails({ requisition: initialRequisition }) {
 
       setRequisitionData(response.data);
       handleEditToggle(rowId);
-      setSaveError(null);
-      //   setSaveSuccess("Changes saved successfully!");
-
-      // Show success modal with a message
       setSuccessMessage(`Changes saved successfully!`);
-
       setIsSuccessModalOpen(true);
 
-      //   setTimeout(() => {
-      //     setSaveSuccess(null);
-      //   }, 3000);
+      const inventoryResponse = await axiosInstance.get("/api/inventory");
+      setInventoryData(inventoryResponse.data);
     } catch (error) {
       console.error(`Error saving changes for row ${rowId}:`, error);
-      setErrorMessage(
-        error.message || "Failed to save changes. Please try again."
-      );
+      setErrorMessage(error.message || "Failed to save changes. Please try again.");
       setIsErrorModalOpen(true);
-      setSaveError(error.message);
     }
   };
+
 
   const stepPages = [
     "Requisition Information",
@@ -161,13 +184,12 @@ function RequisitionDetails({ requisition: initialRequisition }) {
             <h2 className="text-lg font-bold mb-6">
               Form Status:{" "}
               <div
-                className={`inline p-1 rounded-sm ${
-                  requisitionData.formStatus.includes("Pending")
-                    ? "bg-red-100 text-red-800"
-                    : requisitionData.formStatus.includes("Allotted")
+                className={`inline p-1 rounded-sm ${requisitionData.formStatus.includes("Pending")
+                  ? "bg-red-100 text-red-800"
+                  : requisitionData.formStatus.includes("Allotted")
                     ? "bg-yellow-100 text-yellow-800"
                     : "bg-green-100 text-green-800"
-                }`}
+                  }`}
               >
                 {requisitionData.formStatus}
               </div>
@@ -262,11 +284,11 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                   <tr className="bg-[#1b5b40] text-white">
                     <th className="border border-gray-300 p-2">Quantity</th>
                     <th className="border border-gray-300 p-2">Description</th>
+                    <th className="border border-gray-300 p-2">Source</th>
                     <th className="border border-gray-300 p-2">Remarks</th>
-                    {userRole === "admin" &&
-                      requisitionData.formStatus !== "Distributed" && (
-                        <th className="border border-gray-300 p-2">Actions</th>
-                      )}
+                    {userRole === "admin" && requisitionData.formStatus !== "Distributed" && (
+                      <th className="border border-gray-300 p-2">Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -278,11 +300,7 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                             type="number"
                             value={row.quantity || ""}
                             onChange={(e) =>
-                              handleInputChange(
-                                row._id,
-                                "quantity",
-                                e.target.value
-                              )
+                              handleInputChange(row._id, "quantity", e.target.value)
                             }
                             className="w-full border border-gray-300 p-1 rounded"
                           />
@@ -296,11 +314,7 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                             type="text"
                             value={row.description || ""}
                             onChange={(e) =>
-                              handleInputChange(
-                                row._id,
-                                "description",
-                                e.target.value
-                              )
+                              handleInputChange(row._id, "description", e.target.value)
                             }
                             className="w-full border border-gray-300 p-1 rounded"
                           />
@@ -310,15 +324,37 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                       </td>
                       <td className="border border-gray-300 p-2">
                         {editableRows[row._id] ? (
+                          <select
+                            value={row.source || ""}
+                            onChange={(e) =>
+                              handleInputChange(row._id, "source", e.target.value)
+                            }
+                            className="w-full border border-gray-300 p-1 rounded"
+                          >
+                            <option value="">Select Source</option>
+                            {inventoryData
+                              .filter(
+                                (item) =>
+                                  item.supplies === row.description ||
+                                  item.type === row.description
+                              )
+                              .map((item) => (
+                                <option key={item._id} value={item.source}>
+                                  {item.source} (Available: {item.total})
+                                </option>
+                              ))}
+                          </select>
+                        ) : (
+                          row.source || "N/A"
+                        )}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {editableRows[row._id] ? (
                           <input
                             type="text"
                             value={row.remarks || ""}
                             onChange={(e) =>
-                              handleInputChange(
-                                row._id,
-                                "remarks",
-                                e.target.value
-                              )
+                              handleInputChange(row._id, "remarks", e.target.value)
                             }
                             className="w-full border border-gray-300 p-1 rounded"
                           />
@@ -326,29 +362,30 @@ function RequisitionDetails({ requisition: initialRequisition }) {
                           row.remarks || "N/A"
                         )}
                       </td>
-                      {userRole === "admin" &&
-                        requisitionData.formStatus !== "Distributed" && (
-                          <td className="border border-gray-300 p-2 text-center">
-                            {editableRows[row._id] ? (
-                              <button
-                                onClick={() => saveChanges(row._id)}
-                                className="px-4 py-2 bg-darkgreen text-white rounded"
-                              >
-                                Save Issuance
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleEditToggle(row._id)}
-                                className="px-4 py-2 bg-darkgreen text-white rounded"
-                              >
-                                Issue
-                              </button>
-                            )}
-                          </td>
-                        )}
+
+                      {userRole === "admin" && requisitionData.formStatus !== "Distributed" && (
+                        <td className="border border-gray-300 p-2 text-center">
+                          {editableRows[row._id] ? (
+                            <button
+                              onClick={() => saveChanges(row._id)}
+                              className="px-4 py-2 bg-darkgreen text-white rounded"
+                            >
+                              Save Issuance
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleEditToggle(row._id)}
+                              className="px-4 py-2 bg-darkgreen text-white rounded"
+                            >
+                              Issue
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           </div>
@@ -371,6 +408,13 @@ function RequisitionDetails({ requisition: initialRequisition }) {
           {saveSuccess}
         </div>
       )}
+
+      {/* Error Modal for displaying save errors */}
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+        message={errorMessage}  // Changed from errorMessage to message
+      />
 
       <StepperComponent
         pages={stepPages}

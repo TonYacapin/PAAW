@@ -37,8 +37,8 @@ function RequisitionIssueSlipList() {
     }, []);
 
     useEffect(() => {
-            fetchRequisitions();
-    }, [isSlipModalOpen,isEditModalOpen]); // Updates as soon as the modal is opened or closed
+        fetchRequisitions();
+    }, [isSlipModalOpen, isEditModalOpen]); // Updates as soon as the modal is opened or closed
 
     useEffect(() => {
         if (userRole && user) {
@@ -48,19 +48,19 @@ function RequisitionIssueSlipList() {
     const fetchRequisitions = async () => {
         try {
             let endpoint = '/api/requisitions';
-    
+
             // Log the user role and user email for debugging
             console.log("User Role:", userRole);
             console.log("User Email:", user);
-    
+
             // If userRole is not admin, append the email as a query parameter
             if (userRole && userRole !== "admin") {
                 console.log("Appending user email to endpoint"); // Log this action
                 endpoint += `?userEmail=${encodeURIComponent(user)}`;
             }
-    
+
             console.log("Final Endpoint:", endpoint); // Log the final endpoint
-    
+
             const response = await axiosInstance.get(endpoint);
             setRequisitions(response.data);
             setLoading(false);
@@ -71,44 +71,41 @@ function RequisitionIssueSlipList() {
         }
     };
 
-    const updateInventory = async (requisition) => {
+    async function updateInventory(requisition) {
         try {
-            console.log("Updating inventory for requisition:", requisition);
+            // Fetch the inventory data
             const inventoryResponse = await axiosInstance.get('/api/inventory');
             const inventoryItems = inventoryResponse.data;
 
+            // Loop through the issuance rows
             for (const issuance of requisition.issuanceRows) {
-                const inventoryItem = inventoryItems.find(item => 
-                    item.supplies === issuance.description
+                const inventoryItem = inventoryItems.find(item =>
+                    (item.supplies === issuance.description || item.type === issuance.description) &&
+                    item.source === issuance.source
                 );
 
                 if (inventoryItem) {
-                    console.log("Found matching inventory item:", inventoryItem);
-                    const updatedTotal = inventoryItem.total - issuance.quantity;
+                    // Calculate the updated inventory quantities
+                    const updatedTotal = Math.max(inventoryItem.total - issuance.quantity, 0);
                     const updatedOut = inventoryItem.out + issuance.quantity;
                     const updatedQuantity = updatedTotal + updatedOut;
-                
 
-                    console.log("Updating inventory with:", {
-                        total: updatedTotal,
-                        out: updatedOut,
-                        quantity: updatedQuantity,
-                    });
-
+                    // Update the inventory item
                     await axiosInstance.put(`/api/inventory/${inventoryItem._id}`, {
                         ...inventoryItem,
                         total: updatedTotal,
                         out: updatedOut,
                         quantity: updatedQuantity
                     });
+                } else {
+                    throw new Error(`Inventory item not found for source: ${issuance.source}`);
                 }
             }
         } catch (err) {
             console.error("Error updating inventory:", err);
             throw new Error("Failed to update inventory");
         }
-    };
-
+    }
     const handleStatusUpdate = async () => {
         try {
             if (!selectedStatus) {
@@ -125,27 +122,25 @@ function RequisitionIssueSlipList() {
             await axiosInstance.put(`/api/requisitions/${selectedRequisition._id}`, {
                 formStatus: selectedStatus
             });
-            
-            setRequisitions(prevRequisitions => 
+
+            setRequisitions(prevRequisitions =>
                 prevRequisitions.map(req =>
                     req._id === selectedRequisition._id
                         ? { ...req, formStatus: selectedStatus }
                         : req
                 )
             );
-            
+
             setIsEditModalOpen(false);
             setSelectedRequisition(null);
             setSelectedStatus('');
 
             await fetchRequisitions();
-            
         } catch (err) {
             console.error("Error updating status:", err);
             setError("Failed to update status");
         }
     };
-
     const handleViewDetails = (requisition) => {
         setSelectedRequisition(requisition);
         setIsModalOpen(true);
