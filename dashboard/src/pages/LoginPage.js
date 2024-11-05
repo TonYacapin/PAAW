@@ -61,6 +61,11 @@ const LoginPage = ({ setIsAuthenticated }) => {
     return null;
   };
 
+  const isMobile = () => {
+    return window.matchMedia("(max-width: 1024px)").matches; // Adjust max-width as needed
+  };
+  
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (loginAttempts >= 5) {
@@ -68,7 +73,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       setIsErrorModalOpen(true);
       return;
     }
-
+  
     try {
       if (isOffline) {
         // Offline login logic
@@ -86,8 +91,14 @@ const LoginPage = ({ setIsAuthenticated }) => {
           email,
           password,
         });
-
+  
         const { token, userRole } = response.data;
+  
+        // Prevent admin login on mobile
+        if (isMobile() && userRole === "admin") {
+          throw new Error("Admin login is not allowed on mobile devices");
+        }
+  
         await storeCredentials(email, password, token, userRole);
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
