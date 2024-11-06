@@ -574,7 +574,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                           isOffline ? "VeterinaryInformationServices" : "VeterinaryInformationServiceList"
                         )
                       }
-                      className={buttonClasses + " lg:block hidden text-left"}
+                      className={buttonClasses + "text-left"}
                     >
                       <ReportIcon className="mr-2" /> Veterinary Information
                       Services

@@ -207,7 +207,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
             <span className="ml-1 lg:hover:text-darkgreen lg:text-black text-darkgreenb ">Sign Up</span>
           </a>
         </form>
-        <div className="mt-8 bg-gray-100 p-4 rounded-md">
+        {/* <div className="mt-8 bg-gray-100 p-4 rounded-md">
           <h3 className="text-lg font-semibold text-gray-800">
             Users for Debugging:
           </h3>
@@ -218,7 +218,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
             <li>Email: animalhealth@gmail.com | Password: animalhealth</li>
             <li>Email: livestock@gmail.com | Password: livestock</li>
           </ul>
-        </div>
+        </div> */}
       </div>
 
       {/* Error Modal */}
