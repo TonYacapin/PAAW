@@ -8,7 +8,7 @@ const InventorySchema = new mongoose.Schema({
   quantity: Number,
   out: Number,
   total: Number,
-  // category: { type: String, default: 'equipment' },
+  category: { type: String, default: 'equipment' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Inventory', InventorySchema);
