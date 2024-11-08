@@ -1,90 +1,86 @@
 const express = require('express');
 const router = express.Router();
-const { createBackup, restoreBackup } = require('../utils/backupRestore');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs').promises;
-const fsSync = require('fs');
+const fs = require('fs'); // Import fs directly
+const fsPromises = require('fs').promises; // For async operations
+const { createBackup, restoreBackup } = require('../utils/backupRestore');
 
-// Configure multer for large file uploads
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) { // Use fs.existsSync
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dir = path.join(__dirname, '../backups');
-    if (!fsSync.existsSync(dir)) {
-      fsSync.mkdirSync(dir, { recursive: true });
-    }
-    cb(null, dir);
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, `restore-${Date.now()}-${file.originalname}`);
+    // Keep original filename
+    cb(null, file.originalname);
   }
 });
 
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 200 // 200MB limit
+  fileFilter: function (req, file, cb) {
+    // Log incoming file details
+    console.log('Incoming file:', file);
+    
+    if (!file.originalname.endsWith('.gz')) {
+      return cb(new Error('Only .gz files are allowed'));
+    }
+    cb(null, true);
   }
-});
+}).single('backup'); // 'backup' is the field name
 
-// Create backup
+// Backup endpoint
 router.post('/backup', async (req, res) => {
   try {
     const fileName = await createBackup();
     const filePath = path.join(__dirname, '../backups', fileName);
-    const stat = await fs.stat(filePath);
-
-    res.writeHead(200, {
-      'Content-Type': 'application/gzip',
-      'Content-Length': stat.size,
-      'Content-Disposition': `attachment; filename="${fileName}"`,
-      'Transfer-Encoding': 'chunked'
-    });
-
-    const readStream = fsSync.createReadStream(filePath);
-    readStream.pipe(res);
-
-    readStream.on('end', async () => {
-      console.log('Backup file streamed successfully');
-    });
-
-    readStream.on('error', (error) => {
-      console.error('Error streaming backup file:', error);
-      if (!res.headersSent) {
-        res.status(500).json({ error: 'Failed to stream backup file' });
-      }
-    });
+    res.download(filePath, fileName);
   } catch (error) {
-    console.error('Error creating backup:', error);
-    res.status(500).json({ error: 'Failed to create backup' });
+    console.error('Backup creation failed:', error);
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Restore backup
-router.post('/restore', upload.single('backup'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No backup file provided' 
-      });
+// Restore endpoint
+router.post('/restore', (req, res) => {
+  upload(req, res, async function(err) {
+    try {
+      console.log('Headers:', req.headers);
+      console.log('Files:', req.files);
+      console.log('File:', req.file);
+
+      if (err instanceof multer.MulterError) {
+        console.error('Multer error:', err);
+        return res.status(400).json({ message: `Upload error: ${err.message}` });
+      } else if (err) {
+        console.error('Unknown error:', err);
+        return res.status(400).json({ message: err.message });
+      }
+
+      if (!req.file) {
+        console.error('No file received');
+        return res.status(400).json({ message: 'No backup file provided' });
+      }
+
+      console.log('File received:', req.file.path);
+      
+      await restoreBackup(req.file.path);
+      
+      await fsPromises.unlink(req.file.path); // Use fsPromises for async
+
+      res.json({ message: 'Database restored successfully' });
+    } catch (error) {
+      console.error('Restore failed:', error);
+      res.status(500).json({ message: error.message });
     }
-
-    await restoreBackup(req.file.path);
-
-    await fs.unlink(req.file.path);
-
-    res.json({ 
-      success: true, 
-      message: 'Backup restored successfully' 
-    });
-  } catch (error) {
-    console.error('Error restoring backup:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message || 'Failed to restore backup' 
-    });
-  }
+  });
 });
 
 module.exports = router;
