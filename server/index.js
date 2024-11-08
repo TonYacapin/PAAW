@@ -49,6 +49,8 @@ app.use(cors());
 
 app.use('/', auth);
 app.use('/api', user);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Use authMiddleware to authenticate users
 app.use(authMiddleware); // Ensure this is before the audit log middleware
