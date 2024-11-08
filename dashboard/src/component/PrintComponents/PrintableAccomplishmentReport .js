@@ -90,31 +90,31 @@ const PrintableAccomplishmentReport = ({
       </style>
 
       <div className="header">
-        <div className="logo-container">
-          <img src={placeholder1} alt="Left Logo" />
-          <img src={placeholder2} alt="Right Logo" />
-        </div>
-        <div className="text-center mt-2">
-          <p className="text">Republic of the Philippines</p>
-          <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
-          <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-          <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
-        </div>
-        <div className="text-center mb-4">
-          <h1 className="title">VACCINATION ACCOMPLISHMENT REPORT</h1>
-          <h2 className="subtitle">{format(new Date(selectedYear, selectedMonth - 1), 'MMMM yyyy')}</h2>
-          <p className="text">Vaccine: {selectedVaccine}</p>
-
-          <div>
-            <p className="text"><strong>Quarterly Target:</strong> {selectedVaccine === 'All' ? targets.totalTarget : targets[selectedVaccine]?.quarterly}</p>
-            <p className="text"><strong>Quarterly Accomplishment:</strong> {quarterlyPercentage}</p>
+        <div className="flex flex-row justify-center ">
+          <img src={placeholder1} alt="Left Logo" className='w-[70px] h-[70px]' />
+          <div className="text-center mt-2">
+            <p className="text">Republic of the Philippines</p>
+            <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
+            <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+            <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
           </div>
-          <div>
-            <p className="text"><strong>Semi-annual Target:</strong> {selectedVaccine === 'All' ? targets.totalSemiAnnualTarget : targets[selectedVaccine]?.semiAnnual}</p>
-            <p className="text"><strong>Semi-annual Accomplishment:</strong> {semiAnnualPercentage}</p>
-          </div>
-        </div>
+          <div className="text-center mb-4">
+            <h1 className="title">VACCINATION ACCOMPLISHMENT REPORT</h1>
+            <h2 className="subtitle">{format(new Date(selectedYear, selectedMonth - 1), 'MMMM yyyy')}</h2>
+            <p className="text">Vaccine: {selectedVaccine}</p>
 
+            <div>
+              <p className="text"><strong>Quarterly Target:</strong> {selectedVaccine === 'All' ? targets.totalTarget : targets[selectedVaccine]?.quarterly}</p>
+              <p className="text"><strong>Quarterly Accomplishment:</strong> {quarterlyPercentage}</p>
+            </div>
+            <div>
+              <p className="text"><strong>Semi-annual Target:</strong> {selectedVaccine === 'All' ? targets.totalSemiAnnualTarget : targets[selectedVaccine]?.semiAnnual}</p>
+              <p className="text"><strong>Semi-annual Accomplishment:</strong> {semiAnnualPercentage}</p>
+            </div>
+
+          </div>
+          <img src={placeholder2} alt="Right Logo" className='w-[70px] h-[70px]'/>
+        </div>
       </div>
 
 
