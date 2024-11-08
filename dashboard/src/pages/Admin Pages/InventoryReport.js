@@ -5,33 +5,44 @@ import placeholder1 from "../../pages/assets/NVLOGO.png";
 import placeholder2 from "../../pages/assets/ReportLogo2.png";
 
 const InventoryReport = () => {
-  const [inventories, setInventories] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [filter, setFilter] = useState({
-    month: "",
-    year: "",
-    type: "",
-  });
-  const printRef = useRef(); // Create a ref for the printable section
+    const [inventories, setInventories] = useState([]);
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [filterOptions, setFilterOptions] = useState({ months: [], years: [], types: [] });
+    const [filter, setFilter] = useState({
+        month: '',
+        year: '',
+        type: ''
+    });
+    const printRef = useRef(); // Create a ref for the printable section
 
-  useEffect(() => {
-    fetchInventories();
-  }, [filter]);
+    useEffect(() => {
+        fetchInventories();
+        fetchFilterOptions();
+    }, [filter]);
 
-  const fetchInventories = async () => {
-    try {
-      const response = await axiosInstance.get("/api/inventory", {
-        params: {
-          month: filter.month,
-          year: filter.year,
-          type: filter.type,
-        },
-      });
-      setInventories(response.data);
-    } catch (error) {
-      console.error("Error fetching inventories:", error);
-    }
-  };
+    const fetchInventories = async () => {
+        try {
+            const response = await axiosInstance.get('/api/inventory', {
+                params: {
+                    month: filter.month,
+                    year: filter.year,
+                    type: filter.type
+                }
+            });
+            setInventories(response.data);
+        } catch (error) {
+            console.error('Error fetching inventories:', error);
+        }
+    };
+
+    const fetchFilterOptions = async () => {
+        try {
+            const response = await axiosInstance.get('/api/inventory/options');
+            setFilterOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching filter options:', error);
+        }
+    };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -41,10 +52,9 @@ const InventoryReport = () => {
     }));
   };
 
-  const formattedDate = currentDate.toLocaleString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+    const formattedDate = filter.month && filter.year
+        ? new Date(`${filter.year}-${filter.month}-01`).toLocaleString('en-US', { month: 'long', year: 'numeric' })
+        : new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -175,78 +185,49 @@ const InventoryReport = () => {
     printWindow.document.close();
   };
 
-  return (
-    <div className="w-full max-w-4xl mx-auto p-8 bg-white">
-      <div className="text-center mb-6" ref={printRef}>
-        {/* Header Section */}
-        <p className="text-sm">Republic of the Philippines</p>
-        <div className="flex justify-center items-center gap-4 my-4">
-          <img src={placeholder1} alt="Left Logo" className="w-16 h-16" />
-          <div className="text-center">
-            <p className="font-bold">PROVINCE OF NUEVA VIZCAYA</p>
-            <p className="font-bold">PROVINCIAL VETERINARY SERVICES OFFICE</p>
-            <p className="text-sm italic">
-              3rd floor Agriculture Bldg, Capitol Compound, District IV,
-              Bayombong, Nueva Vizcaya
-            </p>
-          </div>
-          <img src={placeholder2} alt="Right Logo" className="w-16 h-16" />
-        </div>
-        <div className="text-center mt-6 mb-4">
-          <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
-          <p className="font-bold">SUPPLIES</p>
-          <p>As of {formattedDate}</p>
-        </div>
+    return (
+        <div className="w-full max-w-4xl mx-auto p-8 bg-white">
+            <div className="text-center mb-6" ref={printRef}>
+                {/* Header Section */}
+                <p className="text-sm">Republic of the Philippines</p>
+                <div className="flex justify-center items-center gap-4 my-4">
+                    <img src={placeholder1} alt="Left Logo" className="w-16 h-16" />
+                    <div className="text-center">
+                        <p className="font-bold">PROVINCE OF NUEVA VIZCAYA</p>
+                        <p className="font-bold">PROVINCIAL VETERINARY SERVICES OFFICE</p>
+                        <p className="text-sm italic">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+                    </div>
+                    <img src={placeholder2} alt="Right Logo" className="w-16 h-16" />
+                </div>
+                <div className="text-center mt-6 mb-4">
+                    <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
+                    <p className="font-bold">{filter.type || 'SUPPLIES'}</p>
+                    <p>As of {formattedDate}</p>
+                </div>
 
-        {/* Filter Section */}
-        <div className="flex justify-center gap-4 mb-4">
-          <select
-            name="month"
-            value={filter.month}
-            onChange={handleFilterChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
-          </select>
-          <select
-            name="year"
-            value={filter.year}
-            onChange={handleFilterChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">Select Year</option>
-            {Array.from(
-              { length: 10 },
-              (_, i) => new Date().getFullYear() - i
-            ).map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-          <select
-            name="type"
-            value={filter.type}
-            onChange={handleFilterChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">Select Type</option>
-            <option value="equipment">Equipment</option>
-            <option value="supplies">Supplies</option>
-          </select>
-        </div>
+                {/* Filter Section */}
+                <div className="flex justify-center gap-4 mb-4">
+                    <select name="month" onChange={handleFilterChange} value={filter.month}>
+                        <option value="">Select Month</option>
+                        {filterOptions.months.map((month, index) => (
+                            <option key={index} value={month}>{month}</option>
+                        ))}
+                    </select>
+
+                    <select name="year" onChange={handleFilterChange} value={filter.year}>
+                        <option value="">Select Year</option>
+                        {filterOptions.years.map((year, index) => (
+                            <option key={index} value={year}>{year}</option>
+                        ))}
+                    </select>
+
+                    <select name="type" onChange={handleFilterChange} value={filter.type}>
+                        <option value="">Select Type</option>
+                        {filterOptions.types.map((type, index) => (
+                            <option key={index} value={type}>{type}</option>
+                        ))}
+                    </select>
+                </div>
 
         {/* Table Section */}
         <table className="w-full border-collapse border border-black">

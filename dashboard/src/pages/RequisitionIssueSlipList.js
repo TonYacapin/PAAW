@@ -37,86 +37,90 @@ function RequisitionIssueSlipList() {
   }, []);
 
 
-    useEffect(() => {
-        fetchRequisitions();
-    }, [isEditModalOpen]); // Updates as soon as the modal is opened or closed
-
-    useEffect(() => {
-        fetchRequisitions();
-    }, [isSlipModalOpen]);
-
-    useEffect(() => {
-        if (userRole && user) {
-            fetchRequisitions();
-        }
-    }, [userRole, user]); // Fetch requisitions whenever userRole or user changes
-    const fetchRequisitions = async () => {
-        try {
-            let endpoint = '/api/requisitions';
-
-            // Log the user role and user email for debugging
-            console.log("User Role:", userRole);
-            console.log("User Email:", user);
-
-            // If userRole is not admin, append the email as a query parameter
-            if (userRole && userRole !== "admin") {
-                console.log("Appending user email to endpoint"); // Log this action
-                endpoint += `?userEmail=${encodeURIComponent(user)}`;
-            }
-
-            console.log("Final Endpoint:", endpoint); // Log the final endpoint
-
-            const response = await axiosInstance.get(endpoint);
-            setRequisitions(response.data);
-            setLoading(false);
-        } catch (err) {
-            console.error("Error fetching requisitions:", err);
-            setError("Failed to fetch requisitions");
-            setLoading(false);
-        }
-    };
-
-    async function updateInventory(requisition) {
-        try {
-            // Fetch the inventory data
-            const inventoryResponse = await axiosInstance.get('/api/inventory');
-            const inventoryItems = inventoryResponse.data;
-
-            // Loop through the issuance rows
-            for (const issuance of requisition.issuanceRows) {
-                const inventoryItem = inventoryItems.find(item =>
-                    (item.supplies === issuance.description || item.type === issuance.description) &&
-                    item.source === issuance.source
-                );
-
-                if (inventoryItem) {
-                    // Calculate the updated inventory quantities
-                    const updatedTotal = Math.max(inventoryItem.total - issuance.quantity, 0);
-                    const updatedOut = inventoryItem.out + issuance.quantity;
-                    const updatedQuantity = updatedTotal + updatedOut;
-
-                    // Update the inventory item
-                    await axiosInstance.put(`/api/inventory/${inventoryItem._id}`, {
-                        ...inventoryItem,
-                        total: updatedTotal,
-                        out: updatedOut,
-                        quantity: updatedQuantity
-                    });
-                } else {
-                    throw new Error(`Inventory item not found for source: ${issuance.source}`);
-                }
-            }
-        } catch (err) {
-            console.error("Error updating inventory:", err);
-            throw new Error("Failed to update inventory");
-        }
+  useEffect(() => {
+    if (userRole && user) {
+      fetchRequisitions();
     }
-    const handleStatusUpdate = async () => {
-        try {
-            if (!selectedStatus) {
-                console.error("No status selected");
-                return;
-            }
+  }, [isEditModalOpen]); // Updates as soon as the modal is opened or closed
+
+  useEffect(() => {
+    if (userRole && user) {
+      fetchRequisitions();
+    }
+  }, [isSlipModalOpen]);
+
+  useEffect(() => {
+    if (userRole && user) {
+      fetchRequisitions();
+    }
+  }, [userRole, user]); // Fetch requisitions whenever userRole or user changes
+  const fetchRequisitions = async () => {
+    try {
+      let endpoint = '/api/requisitions';
+
+      // Log the user role and user email for debugging
+      console.log("User Role:", userRole);
+      console.log("User Email:", user);
+
+      // If userRole is not admin, append the email as a query parameter
+      if (userRole && userRole !== "admin") {
+        console.log("Appending user email to endpoint"); // Log this action
+        endpoint += `?userEmail=${(user)}`;
+      }
+
+      console.log("Final Endpoint:", endpoint); // Log the final endpoint
+
+      const response = await axiosInstance.get(endpoint);
+      setRequisitions(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching requisitions:", err);
+      setError("Failed to fetch requisitions");
+      setLoading(false);
+    }
+  };
+
+  async function updateInventory(requisition) {
+    try {
+      // Fetch the inventory data
+      const inventoryResponse = await axiosInstance.get('/api/inventory');
+      const inventoryItems = inventoryResponse.data;
+
+      // Loop through the issuance rows
+      for (const issuance of requisition.issuanceRows) {
+        const inventoryItem = inventoryItems.find(item =>
+          (item.supplies === issuance.description || item.type === issuance.description) &&
+          item.source === issuance.source
+        );
+
+        if (inventoryItem) {
+          // Calculate the updated inventory quantities
+          const updatedTotal = Math.max(inventoryItem.total - issuance.quantity, 0);
+          const updatedOut = inventoryItem.out + issuance.quantity;
+          const updatedQuantity = updatedTotal + updatedOut;
+
+          // Update the inventory item
+          await axiosInstance.put(`/api/inventory/${inventoryItem._id}`, {
+            ...inventoryItem,
+            total: updatedTotal,
+            out: updatedOut,
+            quantity: updatedQuantity
+          });
+        } else {
+          throw new Error(`Inventory item not found for source: ${issuance.source}`);
+        }
+      }
+    } catch (err) {
+      console.error("Error updating inventory:", err);
+      throw new Error("Failed to update inventory");
+    }
+  }
+  const handleStatusUpdate = async () => {
+    try {
+      if (!selectedStatus) {
+        console.error("No status selected");
+        return;
+      }
 
       console.log("Updating status to:", selectedStatus);
 
@@ -124,32 +128,32 @@ function RequisitionIssueSlipList() {
         await updateInventory(selectedRequisition);
       }
 
-            await axiosInstance.put(`/api/requisitions/${selectedRequisition._id}`, {
-                formStatus: selectedStatus
-            });
+      await axiosInstance.put(`/api/requisitions/${selectedRequisition._id}`, {
+        formStatus: selectedStatus
+      });
 
-            setRequisitions(prevRequisitions =>
-                prevRequisitions.map(req =>
-                    req._id === selectedRequisition._id
-                        ? { ...req, formStatus: selectedStatus }
-                        : req
-                )
-            );
+      setRequisitions(prevRequisitions =>
+        prevRequisitions.map(req =>
+          req._id === selectedRequisition._id
+            ? { ...req, formStatus: selectedStatus }
+            : req
+        )
+      );
 
-            setIsEditModalOpen(false);
-            setSelectedRequisition(null);
-            setSelectedStatus('');
+      setIsEditModalOpen(false);
+      setSelectedRequisition(null);
+      setSelectedStatus('');
 
-            await fetchRequisitions();
-        } catch (err) {
-            console.error("Error updating status:", err);
-            setError("Failed to update status");
-        }
-    };
-    const handleViewDetails = (requisition) => {
-        setSelectedRequisition(requisition);
-        setIsModalOpen(true);
-    };
+      await fetchRequisitions();
+    } catch (err) {
+      console.error("Error updating status:", err);
+      setError("Failed to update status");
+    }
+  };
+  const handleViewDetails = (requisition) => {
+    setSelectedRequisition(requisition);
+    setIsModalOpen(true);
+  };
 
   const handleOpenSlipModal = () => {
     setIsSlipModalOpen(true);

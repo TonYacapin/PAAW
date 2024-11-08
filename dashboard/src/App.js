@@ -48,6 +48,7 @@ const App = () => {
     let periodicCheckInterval;
 
     const checkConnectionStatus = () => {
+      // First check navigator.onLine
       const isOnline = navigator.onLine;
 
       if (!isOnline) {
@@ -56,31 +57,63 @@ const App = () => {
         return;
       }
 
+      // Multiple endpoints to test
+      const endpoints = [
+        'https://www.google.com/favicon.ico',
+        'https://www.cloudflare.com/favicon.ico',
+        'https://www.microsoft.com/favicon.ico'
+      ];
+
+      let successfulChecks = 0;
+      let completedChecks = 0;
+      const totalEndpoints = endpoints.length;
       const timestamp = new Date().getTime();
-      const testImage = new Image();
 
-      networkCheckTimeout = setTimeout(() => {
-        testImage.src = "";
-        setIsOffline(true);
-        setShowIndicator(true);
-      }, 5000);
+      // Longer timeout for slower connections
+      const networkCheckTimeout = setTimeout(() => {
+        if (successfulChecks === 0) {
+          setIsOffline(true);
+          setShowIndicator(true);
+        }
+      }, 10000); // Increased to 10 seconds
 
-      testImage.onload = () => {
-        clearTimeout(networkCheckTimeout);
-        setIsOffline(false);
-        setShowIndicator(true);
-        setTimeout(() => setShowIndicator(false), 3000);
+      const handleSuccess = () => {
+        successfulChecks++;
+        completedChecks++;
+
+        // If any endpoint succeeds, consider it online
+        if (successfulChecks === 1) {
+          clearTimeout(networkCheckTimeout);
+          setIsOffline(false);
+          setShowIndicator(true);
+          setTimeout(() => setShowIndicator(false), 3000);
+        }
+
+        // Cleanup after all checks complete
+        if (completedChecks === totalEndpoints) {
+          clearTimeout(networkCheckTimeout);
+        }
       };
 
-      testImage.onerror = () => {
-        clearTimeout(networkCheckTimeout);
-        setIsOffline(true);
-        setShowIndicator(true);
+      const handleError = () => {
+        completedChecks++;
+
+        // Only set offline if all endpoints failed
+        if (completedChecks === totalEndpoints && successfulChecks === 0) {
+          clearTimeout(networkCheckTimeout);
+          setIsOffline(true);
+          setShowIndicator(true);
+        }
       };
 
-      testImage.src = `https://www.google.com/favicon.ico?t=${timestamp}`;
+      // Test multiple endpoints
+      endpoints.forEach(endpoint => {
+        const testImage = new Image();
+        testImage.onload = handleSuccess;
+        testImage.onerror = handleError;
+        testImage.src = `${endpoint}?t=${timestamp}`;
+      });
     };
-
     const handleOnline = () => {
       checkConnectionStatus();
     };
@@ -169,15 +202,13 @@ const App = () => {
   // Connection Status Indicator Component
   const ConnectionIndicator = () => (
     <div
-      className={`fixed bottom-4 right-4 sm:bottom-8 sm:right-8 transition-all duration-300 ease-in-out ${
-        showIndicator ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-      }`}
+      className={`fixed bottom-4 right-4 sm:bottom-8 sm:right-8 transition-all duration-300 ease-in-out ${showIndicator ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+        }`}
       style={{ zIndex: 1000 }}
     >
       <div
-        className={`flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 rounded-full shadow-lg transition-colors duration-300 ${
-          isOffline ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"
-        }`}
+        className={`flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 rounded-full shadow-lg transition-colors duration-300 ${isOffline ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"
+          }`}
       >
         {isOffline ? (
           <WifiOffIcon style={{ fontSize: 20 }} /> // Smaller font size for mobile
