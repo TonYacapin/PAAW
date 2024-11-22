@@ -530,7 +530,7 @@ function RabiesVaccinationReport() {
                   className="border p-2 rounded w-full"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="clientGender" className="block mb-1">
                   Gender
                 </label>
@@ -547,6 +547,29 @@ function RabiesVaccinationReport() {
                   }
                   className="border p-2 rounded w-full"
                 />
+              </div> */}
+              <div>
+                <label htmlFor="clientGender" className="block mb-1">
+                Gender
+                </label>
+                <select
+                  id="clientGender"
+                  value={entries[selectedEntry].clientInfo.gender}
+                  onChange={(e) =>
+                    handleClientInfoChange(
+                      selectedEntry,
+                      "gender",
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                >
+                  <option value="" disabled>
+                    Select Gender
+                  </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="clientBirthday" className="block mb-1">

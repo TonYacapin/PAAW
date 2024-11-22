@@ -222,7 +222,7 @@ function AccomplishmentReport() {
       </html>
     `);
   
-    printWindow.document.close(); // Close the document for writing
+    // printWindow.document.close(); // Close the document for writing
   
     // Wait for the content to load before calling print
     printWindow.onload = () => {

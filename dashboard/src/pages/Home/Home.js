@@ -1069,7 +1069,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       />
                     )}
 
-                    <div className="w-full h-[70vh] overflow-auto">
+                    <div className="w-full h-[90vh] overflow-auto">
                       {renderCharts()}
                     </div>
                   </FilterContext.Provider>

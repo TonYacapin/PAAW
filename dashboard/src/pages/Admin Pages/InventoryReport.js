@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axiosInstance from '../../component/axiosInstance';
+import React, { useState, useEffect, useRef } from "react";
+import axiosInstance from "../../component/axiosInstance";
 
-import placeholder1 from '../../pages/assets/NVLOGO.png';
-import placeholder2 from '../../pages/assets/ReportLogo2.png';
+import placeholder1 from "../../pages/assets/NVLOGO.png";
+import placeholder2 from "../../pages/assets/ReportLogo2.png";
 
 const InventoryReport = () => {
     const [inventories, setInventories] = useState([]);
@@ -44,21 +44,21 @@ const InventoryReport = () => {
         }
     };
 
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilter((prevFilter) => ({
-            ...prevFilter,
-            [name]: value
-        }));
-    };
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      [name]: value,
+    }));
+  };
 
     const formattedDate = filter.month && filter.year
         ? new Date(`${filter.year}-${filter.month}-01`).toLocaleString('en-US', { month: 'long', year: 'numeric' })
         : new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
-    const handlePrint = () => {
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
             <html>
                 <head>
                     <title>Inventory Report</title>
@@ -131,50 +131,59 @@ const InventoryReport = () => {
                     </style>
                 </head>
                 <body onload="window.print(); "style="justify-content: center;">
-                <div class="header" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-                    <div style="display: flex; flex-direction: row; justify-items: center;"> 
-                        <img src="${placeholder1}" alt="Left Logo" style="width: 70px; height: 70px;" />
-                        <div style="text-align: center; margin-top: 10px;">
-                            <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
-                            <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
-                            <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-                            <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+                    <div class="header" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                        <div style="display: flex; flex-direction: row; justify-items: center;"> 
+                            <img src="${placeholder1}" alt="Left Logo" style="width: 70px; height: 70px;" />
+                                <div style="text-align: center; margin-top: 10px;">
+                                    <p style="font-size: 12px; margin: 5px 0;">Republic of the Philippines</p>
+                                    <h1 class="title">PROVINCE OF NUEVA VIZCAYA</h1>
+                                    <h2 class="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+                                    <p class="subtitle" style="font-size: 12px; margin: 5px 0;">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+                                    <h1 class="title">MONTHLY INVENTORY and UTILIZATION REPORT</h1>
+                                    <h2 class="subtitle">SUPPLIES</h2>
+                                    <p style="font-size: 12px;">As of ${formattedDate}</p>
+                                </div>
+                            <img src="${placeholder2}" alt="Right Logo" style="width: 70px; height: 70px;" />
                         </div>
-                        <img src="${placeholder2}" alt="Right Logo" style="width: 70px; height: 70px;" />
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Supplies</th>
+                                    <th>UNIT</th>
+                                    <th>QTY</th>
+                                    <th>OUT</th>
+                                    <th>TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${inventories
+                                  .map(
+                                    (item) => `
+                                    <tr>
+                                        <td>${item.source}</td>
+                                        <td>${item.supplies}${
+                                      item.description
+                                        ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>`
+                                        : ""
+                                    }</td>
+                                        <td>${item.unit}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${item.out}</td>
+                                        <td>${item.total}</td>
+                                    </tr>
+                                `
+                                  )
+                                  .join("")}
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <h1 class="title">MONTHLY INVENTORY and UTILIZATION REPORT</h1>
-                <h2 class="subtitle">${filter.type || 'SUPPLIES'}</h2>
-                <p style="font-size: 12px;">As of ${formattedDate}</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Supplies</th>
-                            <th>UNIT</th>
-                            <th>QTY</th>
-                            <th>OUT</th>
-                            <th>TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${inventories.map(item => `
-                            <tr>
-                                <td>${item.source}</td>
-                                <td>${item.supplies}${item.description ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>` : ''}</td>
-                                <td>${item.unit}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.out}</td>
-                                <td>${item.total}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </body>
+                </body>
             </html>
         `);
-        printWindow.document.close();
-    };
+    printWindow.document.close();
+  };
 
     return (
         <div className="w-full max-w-4xl mx-auto p-8 bg-white">
@@ -220,51 +229,73 @@ const InventoryReport = () => {
                     </select>
                 </div>
 
-                {/* Table Section */}
-                <table className="w-full border-collapse border border-black">
-                    <thead>
-                        <tr>
-                            <th className="border border-black p-2 text-center bg-white font-bold">Source</th>
-                            <th className="border border-black p-2 text-center bg-white font-bold">Supplies</th>
-                            <th className="border border-black p-2 text-center bg-white font-bold w-24">UNIT</th>
-                            <th className="border border-black p-2 text-center bg-white font-bold w-24">QTY</th>
-                            <th className="border border-black p-2 text-center bg-white font-bold w-24">OUT</th>
-                            <th className="border border-black p-2 text-center bg-white font-bold w-24">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {inventories.map((item, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                                <td className="border border-black p-2 text-center text-sm">{item.source}</td>
-                                <td className="border border-black p-2 text-sm">
-                                    {item.supplies}
-                                    {item.description && (
-                                        <span className="text-xs text-gray-600 italic ml-1">
-                                            {item.description}
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="border border-black p-2 text-center text-sm">{item.unit}</td>
-                                <td className="border border-black p-2 text-center text-sm">{item.quantity}</td>
-                                <td className="border border-black p-2 text-center text-sm">{item.out}</td>
-                                <td className="border border-black p-2 text-center text-sm">{item.total}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        {/* Table Section */}
+        <table className="w-full border-collapse border border-black">
+          <thead>
+            <tr>
+              <th className="border border-black p-2 text-center bg-white font-bold">
+                Source
+              </th>
+              <th className="border border-black p-2 text-center bg-white font-bold">
+                Supplies
+              </th>
+              <th className="border border-black p-2 text-center bg-white font-bold w-24">
+                UNIT
+              </th>
+              <th className="border border-black p-2 text-center bg-white font-bold w-24">
+                QTY
+              </th>
+              <th className="border border-black p-2 text-center bg-white font-bold w-24">
+                OUT
+              </th>
+              <th className="border border-black p-2 text-center bg-white font-bold w-24">
+                TOTAL
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {inventories.map((item, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="border border-black p-2 text-center text-sm">
+                  {item.source}
+                </td>
+                <td className="border border-black p-2 text-sm">
+                  {item.supplies}
+                  {item.description && (
+                    <span className="text-xs text-gray-600 italic ml-1">
+                      {item.description}
+                    </span>
+                  )}
+                </td>
+                <td className="border border-black p-2 text-center text-sm">
+                  {item.unit}
+                </td>
+                <td className="border border-black p-2 text-center text-sm">
+                  {item.quantity}
+                </td>
+                <td className="border border-black p-2 text-center text-sm">
+                  {item.out}
+                </td>
+                <td className="border border-black p-2 text-center text-sm">
+                  {item.total}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-            {/* Print Button */}
-            <div className="text-center mt-8">
-                <button
-                    onClick={handlePrint}
-                    className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
-                >
-                    Print Report
-                </button>
-            </div>
-        </div>
-    );
+      {/* Print Button */}
+      <div className="text-center mt-8">
+        <button
+          onClick={handlePrint}
+          className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+        >
+          Print Report
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default InventoryReport;
