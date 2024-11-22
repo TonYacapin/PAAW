@@ -74,6 +74,7 @@ function RegulatoryCareServices() {
     try {
       const response = await axiosInstance.post("/api/regulatory-services", formData);
       console.log("Response from API:", response.data);
+      handleExportCSV()
       
       // Clear the form data upon successful submission
       setClientInfo({

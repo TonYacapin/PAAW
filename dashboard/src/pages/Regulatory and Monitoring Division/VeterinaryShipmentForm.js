@@ -135,6 +135,7 @@ const VeterinaryShipmentForm = () => {
         setIsSuccessModalOpen(true);
         // Optionally, reset the form state after submission
         resetForm();
+        handleExportCSV()
       } else {
         setError("Unexpected response from the server.");
       }

@@ -155,7 +155,9 @@ const RabiesHistoryForm = () => {
       setDateOfTreatmentReceived("");
       setStepperActiveStep(0); // Optionally reset the stepper to the first step
       setModalMessage("Form submitted successfully!");
+      handleExportCSV()
       setIsSuccessModalOpen(true); // Show success modal
+    
     } catch (error) {
       // Error handling
       let errorMessage = "Failed to save entries: An unexpected error occurred";

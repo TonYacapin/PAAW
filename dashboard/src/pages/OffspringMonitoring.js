@@ -93,6 +93,7 @@ const OffspringMonitoring = () => {
         setEntries([]);
         setMunicipality("");
         setDateReported("");
+        exportAsCSV()
       }
     } catch (error) {
       console.error("Error saving entries:", error);

@@ -105,6 +105,7 @@ function SlaughterReportForm() {
       const response = await axiosInstance.post(`/api/slaughterform`, formData);
       setSuccess("Slaughter report successfully submitted!");
       setisSuccessOpen(true);
+      handleExportCSV()
       // // Reset formData to initial state
       // setFormData({
       //   municipality: '',
