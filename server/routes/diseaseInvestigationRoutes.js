@@ -60,16 +60,7 @@ router.post(
     }
 
     try {
-      // Check for duplicate investigation based on unique fields
-      const existingInvestigation = await DiseaseInvestigation.findOne({
-        dateReported: req.body.dateReported,
-        farmerName: req.body.farmerName,
-        placeAffected: req.body.placeAffected,
-      });
-
-      if (existingInvestigation) {
-        return res.status(400).json({ message: 'Duplicate investigation entry detected.' });
-      }
+     
 
       // Create new disease investigation
       const diseaseInvestigation = new DiseaseInvestigation({

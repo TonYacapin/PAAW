@@ -70,17 +70,7 @@ router.post(
     } = req.body;
 
     try {
-      // Check for duplicates
-      const existingRecord = await RabiesHistory.findOne({
-        'victimProfile.name': victimName,
-        'victimProfile.dateOfBite': new Date(dateOfBite),
-        'animalProfile.species': species,
-        dateOfDeath: new Date(dateOfDeath)
-      });
-
-      if (existingRecord) {
-        return res.status(400).json({ message: 'Duplicate record detected. A similar entry already exists.' });
-      }
+    
 
       // Create a new RabiesHistory object, mapping fields to match the schema
       const rabiesHistory = new RabiesHistory({
