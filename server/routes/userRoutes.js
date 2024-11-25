@@ -63,12 +63,12 @@ router.get('/users', authMiddleware, async (req, res) => {
         const users = await User.find();
 
         // Log the successful retrieval of users
-        await createAuditLog('Viewed', translateResource(req.originalUrl), req.user.userId, req.user.email, 'successful', 'Retrieved user list.');
+    
 
         res.json(users);
     } catch (error) {
         // Log the failed attempt to retrieve users
-        await createAuditLog('Viewed', translateResource(req.originalUrl), req.user._id, req.user.email, 'failed', error.message);
+      
 
         res.status(500).json({ message: error.message });
     }
@@ -81,11 +81,10 @@ router.get('/users/:id', authMiddleware, async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         // Log the successful retrieval of user
-        await createAuditLog('Viewed', translateResource(req.originalUrl),  req.user.userId, req.user.email, 'successful' , `Retrieved details for user ID: ${user.email}.`);
-
+    
         res.json(user);
     } catch (error) {
-        await createAuditLog('Viewed', translateResource(req.originalUrl), null, req.user.email, 'failed', error.message);
+       
         res.status(500).json({ message: error.message });
     }
 });
