@@ -3,6 +3,7 @@ import axiosInstance from '../component/axiosInstance';
 import Papa from 'papaparse';
 import FormSubmit from '../component/FormSubmit';
 import ConfirmationModal from '../component/ConfirmationModal';
+import CardBox from '../component/CardBox';
 
 const TechnicianQuarterlyReportForm = () => {
     const [formData, setFormData] = useState({
@@ -203,9 +204,9 @@ const TechnicianQuarterlyReportForm = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-white shadow-md rounded p-8">
-                <h2 className="text-3xl font-bold mb-4 text-[#1b5b40]">Technician's Quarterly Calf Drop Report</h2>
-
+            <h2 className="text-2xl font-bold mb-4 text-black">Technician's Quarterly Calf Drop Report</h2>
+            <CardBox>
+            <form onSubmit={handleSubmit} className="">
                 {alert.show && (
                     <div className={`mb-4 p-4 rounded ${alert.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                         <p>{alert.message}</p>
@@ -215,7 +216,7 @@ const TechnicianQuarterlyReportForm = () => {
                 {/* General Information */}
                 <div className="border-b-2 border-gray-300 pb-4 mb-4">
                     <h2 className="text-xl font-semibold mb-4">Technician & Report Information</h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="technicianName">
                                 AI Technician Name
@@ -338,13 +339,15 @@ const TechnicianQuarterlyReportForm = () => {
                         </div>
                     ))}
                 </div>
+            </form>
+            </CardBox>
 
-                <FormSubmit
+            <FormSubmit
                     handleImportCSV={importCSV}
                     handleExportCSV={exportAsCSV}
                     handleSubmit={handleSubmit}
                 />
-            </form>
+        
 
             {/* Modal for Editing Entries */}
             {selectedEntry !== null && (
