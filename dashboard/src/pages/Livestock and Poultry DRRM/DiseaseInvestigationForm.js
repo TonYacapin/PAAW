@@ -243,7 +243,7 @@ const DiseaseInvestigationForm = () => {
 
     // Create a file name with a naming convention
     const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const fileName = `disease_investigation_form_${formData.municipality}_${formData.dateReported}.csv`;
+    const fileName = `disease_investigation_form_${formData.placeAffected}_${formData.dateReported}.csv`;
 
     a.download = fileName;
     a.click();
@@ -363,6 +363,7 @@ const DiseaseInvestigationForm = () => {
       // Handle successful response
       if (response.status === 201) {
         setModalMessage("Form saved successfully!");
+        exportToCSV();
         setSuccessModalOpen(true);
         // Clear form fields after successful save
         setFormData({

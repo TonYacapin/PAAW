@@ -36,22 +36,10 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Check for duplicate reports
-    const { province, municipality, reportingPeriod, livestockTechnician } = req.body;
-
     try {
-      const existingReport = await RoutineServicesMonitoringReport.findOne({
-        province,
-        municipality,
-        reportingPeriod,
-        livestockTechnician,
-      });
+    
 
-      if (existingReport) {
-        return res.status(409).json({ message: 'Duplicate report found. A report with the same details already exists.' });
-      }
-
-      // If no duplicates, create a new report
+   
       const report = new RoutineServicesMonitoringReport(req.body);
       await report.save();
       res.status(201).json(report);

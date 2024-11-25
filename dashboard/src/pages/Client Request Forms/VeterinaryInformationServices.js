@@ -31,6 +31,7 @@ function VeterinaryInformationService() {
         formData
       );
       console.log("Form Submitted Data:", response.data);
+      handleExportCSV()
 
       // Display success message
 

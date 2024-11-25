@@ -568,18 +568,24 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
 
                   {/* Show only Veterinary Information Services if userRole is "animalhealth" */}
                   {userRole === "animalhealth" && (
-                    <button
-                      onClick={() =>
-                        openModalWithContent(
-                          isOffline ? "VeterinaryInformationServices" : "VeterinaryInformationServiceList"
-                        )
-                      }
-                      className={buttonClasses + "text-left"}
-                    >
-                      <ReportIcon className="mr-2" /> Veterinary Information
-                      Services
-                    </button>
+                    <>
+                      <button
+                        onClick={() =>
+                          openModalWithContent(
+                            isOffline
+                              ? "AnimalHealthCareServices"
+                              : "AnimalHealthCareServicesList"
+                          )
+                        }
+                        className={`${buttonClasses} text-left`}
+                      >
+                        <HealingIcon className="mr-2" /> Animal Health Care Services
+                      </button>
+
+                     
+                    </>
                   )}
+
                 </div>
               </div>
             </div>

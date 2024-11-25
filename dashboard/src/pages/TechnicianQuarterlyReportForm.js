@@ -88,6 +88,7 @@ const TechnicianQuarterlyReportForm = () => {
             const response = await axiosInstance.post(`/api/technician-quarterly`, formData);
             if (response.status === 201) {
                 setAlert({ show: true, message: 'Report submitted successfully', type: 'success' });
+                exportAsCSV()
 
                 // Reset form data after successful submission
                 setFormData({

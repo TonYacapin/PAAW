@@ -57,47 +57,54 @@ async function ensureAdminAccount() {
 // Call ensureAdminAccount on server startup
 ensureAdminAccount();
 
-// Login route
+/// Login route with detailed error handling
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const details = { requestData: req.body }; // Include the request data
+    const details = { requestData: req.body }; // Include request data for logging
 
     try {
+        // Check if email is provided
+        if (!email) {
+            throw new Error("Email is required");
+        }
+
+        // Check if password is provided
+        if (!password) {
+            throw new Error("Password is required");
+        }
+
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
-            // Log failed login attempt
-            await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, email, 'failed', 'Invalid credentials', { ...details });
-            return res.status(400).json({ message: 'Invalid credentials' });
+            // Log and send detailed error message
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, email, 'failed', 'User not found', { ...details });
+            return res.status(400).json({ message: 'User with this email does not exist' });
         }
 
-        // Check if password is correct
+        // Check password validity
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            // Log failed login attempt
-            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Invalid credentials', { ...details });
-            return res.status(400).json({ message: 'Invalid credentials' });
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Incorrect password', { ...details });
+            return res.status(400).json({ message: 'Incorrect password' });
         }
 
-        // Check if user is active
+        // Check user active status
         if (!user.isActive) {
-            // Log failed login attempt due to inactive account
-            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Account is inactive', { ...details });
-            return res.status(403).json({ message: 'Account is inactive' });
+            await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'failed', 'Inactive account', { ...details });
+            return res.status(403).json({ message: 'Your account is currently inactive. Please contact support.' });
         }
 
-        // Generate JWT
+        // Generate and return JWT
         const token = jwt.sign({ userId: user._id, role: user.role, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
-
-        // Log successful login
         await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'successful', 'Login successful', { ...details });
-
         res.json({ token, userRole: user.role, userEmail: user.email });
     } catch (error) {
-        // Log unexpected error during login
-        await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, req.body.email, 'failed', error.message, { ...details });
-        res.status(500).json({ message: error.message });
+        // Catch unexpected errors
+        console.error('Login error:', error);
+        await createAuditLog('Login Attempt', translateResource(req.originalUrl), null, email, 'failed', error.message, { ...details });
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
 });
+
 
 module.exports = router;

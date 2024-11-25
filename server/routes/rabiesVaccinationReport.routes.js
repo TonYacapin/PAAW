@@ -44,19 +44,7 @@ router.post(
     try {
       const { municipality, dateReported, vaccineUsed, batchLotNo, vaccineSource } = req.body;
 
-      // Check for duplicate entries
-      const duplicateCheck = await RabiesVaccinationReport.findOne({
-        municipality,
-        dateReported,
-        vaccineUsed,
-        batchLotNo,
-        vaccineSource,
-
-      });
-
-      if (duplicateCheck) {
-        return res.status(409).json({ message: 'Duplicate entry found. Report already exists with the same details.' });
-      }
+     
 
       // Proceed to create a new report
       const newReport = new RabiesVaccinationReport(req.body);

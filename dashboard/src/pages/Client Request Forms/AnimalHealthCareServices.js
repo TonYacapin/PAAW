@@ -72,6 +72,7 @@ function AnimalHealthCareServices() {
         formData
       );
       console.log("Form submitted successfully:", response.data);
+      handleExportCSV()
 
       // Clear the form fields by resetting the state
       setClientInfo({

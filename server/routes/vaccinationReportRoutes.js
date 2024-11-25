@@ -56,26 +56,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      // Create an object to check for duplicates, excluding the entries field
-      const { vaccine, municipality, dateReported, vaccineType, batchLotNo, vaccineSource, agriculturalExtensionWorker } = req.body;
-      
-      // Find existing reports based on unique fields
-      const existingReport = await VaccinationReport.findOne({ 
-        vaccine,
-        municipality,
-        dateReported,
-        vaccineType,
-        batchLotNo,
-        vaccineSource,
-        agriculturalExtensionWorker,
-      });
-
-      // Check if a report already exists with the same unique fields
-      if (existingReport) {
-        return res.status(409).json({ message: 'Duplicate entry found. Report already exists with the same details.' });
-      }
-
-      console.log(req.body);
+     
       const vaccinationReportData = req.body;
       const vaccinationReport = new VaccinationReport(vaccinationReportData);
       await vaccinationReport.save();

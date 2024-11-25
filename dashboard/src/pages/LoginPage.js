@@ -64,7 +64,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
   const isMobile = () => {
     return window.matchMedia("(max-width: 1024px)").matches; // Adjust max-width as needed
   };
-  
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -73,10 +73,9 @@ const LoginPage = ({ setIsAuthenticated }) => {
       setIsErrorModalOpen(true);
       return;
     }
-  
+
     try {
       if (isOffline) {
-        // Offline login logic
         const credentials = await verifyStoredCredentials(email, password);
         if (credentials) {
           setIsAuthenticated(true);
@@ -86,28 +85,30 @@ const LoginPage = ({ setIsAuthenticated }) => {
           throw new Error("Invalid credentials or no offline data available");
         }
       } else {
-        // Online login logic
-        const response = await axiosInstance.post(`/login`, {
-          email,
-          password,
-        });
-  
+        const response = await axiosInstance.post(`/login`, { email, password });
+
         const { token, userRole } = response.data;
-  
-        // Prevent admin login on mobile
         if (isMobile() && userRole === "admin") {
           throw new Error("Admin login is not allowed on mobile devices");
         }
-  
+
         await storeCredentials(email, password, token, userRole);
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
         navigate("/home");
       }
     } catch (error) {
+      // Display detailed error messages
+      let errorMessage = "Login failed. Please try again.";
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Use error message from backend
+      }
+
       console.error("Login error:", error);
-      setError(error.message);
+      setError(errorMessage);
       setIsErrorModalOpen(true);
+
+      // Track login attempts and disable page if exceeded
       setLoginAttempts((prevAttempts) => {
         const newAttempts = prevAttempts + 1;
         if (newAttempts >= 5) {
@@ -117,6 +118,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       });
     }
   };
+
 
   const handleSignup = () => {
     navigate("/signup");
@@ -132,9 +134,8 @@ const LoginPage = ({ setIsAuthenticated }) => {
       )}
 
       <div
-        className={`w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10 ${
-          isPageDisabled && "opacity-50 pointer-events-none"
-        }`}
+        className={`w-full max-w-xs sm:max-w-md sm:w-auto sm:bg-white sm:rounded-xl sm:shadow-lg p-4 sm:p-10 ${isPageDisabled && "opacity-50 pointer-events-none"
+          }`}
       >
         <div className="text-center">
           <div className="flex justify-center space-x-4 mb-6">
@@ -228,9 +229,10 @@ const LoginPage = ({ setIsAuthenticated }) => {
         message={
           isPageDisabled
             ? "Too many failed login attempts. Please try again later."
-            : `Login attempt failed. ${error}. Attempts: ${loginAttempts}`
+            : error // Display the specific error message
         }
       />
+
     </div>
   );
 };

@@ -136,6 +136,7 @@ function RabiesVaccinationReport() {
 
         setSuccessMessage("Entries saved successfully"); // New state for success message
         setIsSuccessModalOpen(true); // Show success modal
+        exportAsCSV();
       }
     } catch (error) {
       console.error("Error saving entries:", error);

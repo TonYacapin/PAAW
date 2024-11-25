@@ -148,6 +148,7 @@ function AnimalProductionServices() {
         submissionData
       );
       console.log("Submission successful:", response.data);
+      handleExportCSV()
 
       // Reset form fields to initial state
       resetForm();
