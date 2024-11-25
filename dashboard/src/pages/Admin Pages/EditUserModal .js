@@ -9,47 +9,92 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
     lastname: "",
     middlename: "",
     email: "",
-    password: "", // Add password field here
+    password: "",
     role: "",
     isActive: false,
   });
-
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
+  const [isLastAdmin, setIsLastAdmin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (userId && isOpen) {
+      // Fetch current user data
       axios
         .get(`${process.env.REACT_APP_API_BASE_URL}/api/users/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Set the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
           setUserData({
             ...response.data,
-            password: "", // Keep password empty initially
+            password: "",
           });
+          
+          // Check if this is the last admin user
+          if (response.data.role === 'admin') {
+            checkLastAdmin(token, userId);
+          }
         })
         .catch((error) => {
           console.error("Error fetching user data", error);
+          setError("Error fetching user data");
         });
     }
   }, [userId, isOpen]);
 
+  const checkLastAdmin = async (token, currentUserId) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/api/users`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      // Count number of active admin users
+      const adminCount = response.data.filter(
+        user => user.role === 'admin' && user.isActive
+      ).length;
+      
+      setIsLastAdmin(adminCount === 1);
+    } catch (error) {
+      console.error("Error checking admin count", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
+    // Prevent changing role if this is the last admin
+    if (name === 'role' && isLastAdmin && userData.role === 'admin' && value !== 'admin') {
+      setError("Cannot change role: This is the last active admin user. Please create another admin user first.");
+      return;
+    }
+    
     setUserData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
+    setError(""); // Clear any previous errors
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Double-check that we're not removing the last admin
+    if (isLastAdmin && userData.role === 'admin' && 
+        (userData.role !== 'admin' || !userData.isActive)) {
+      setError("Cannot update: This is the last active admin user. Please create another admin user first.");
+      return;
+    }
 
-    const token = localStorage.getItem("token"); // Adjust based on how you store the token
+    const token = localStorage.getItem("token");
 
     axios
       .put(
@@ -57,22 +102,22 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
         userData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Set the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       )
       .then(() => {
-        setSuccessMessage("User updated successfully!"); // Set the success message
-        setIsSuccessModalOpen(true); // Open the success modal
-        onUserUpdated(); // Refresh the user list after the update
-        // Automatically close the modal after a brief delay
+        setSuccessMessage("User updated successfully!");
+        setIsSuccessModalOpen(true);
+        onUserUpdated();
         setTimeout(() => {
-          setIsSuccessModalOpen(false); // Close the success modal
-          onClose(); // Close the edit modal
+          setIsSuccessModalOpen(false);
+          onClose();
         }, 2000);
       })
       .catch((error) => {
         console.error("Error updating user", error);
+        setError("Error updating user. Please try again.");
       });
   };
 
@@ -81,8 +126,14 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <div className="p-6 bg-[#fffafa] rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-black">Edit User</h2>
+          {error && (
+            <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-2 ">
+            <div className="grid grid-cols-2 gap-2">
+              {/* Existing form fields remain the same */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-black">
                   First Name
@@ -161,6 +212,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
                   value={userData.role}
                   onChange={handleChange}
                   className="mt-1 p-2 border border-gray-300 rounded w-full bg-[#fffafa] text-black"
+                  disabled={isLastAdmin && userData.role === 'admin'}
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
@@ -168,6 +220,11 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
                   <option value="livestock">Livestock</option>
                   <option value="animalhealth">Animal Health</option>
                 </select>
+                {isLastAdmin && userData.role === 'admin' && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Role cannot be changed as this is the last admin user.
+                  </p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -177,6 +234,7 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
                     name="isActive"
                     checked={userData.isActive}
                     onChange={handleChange}
+                    disabled={isLastAdmin && userData.role === 'admin'}
                     className="form-checkbox text-[#1b5b40]"
                   />
                   <span className="ml-2 text-black">Active</span>
@@ -203,7 +261,6 @@ const EditUserModal = ({ isOpen, onClose, userId, onUserUpdated }) => {
         </div>
       </Modal>
 
-      {/* Success Modal */}
       <SuccessModal
         isOpen={isSuccessModalOpen}
         onClose={() => setIsSuccessModalOpen(false)}
