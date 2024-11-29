@@ -24,6 +24,7 @@ import RoutineServicesMonitoringReportChart from "../../component/RoutineService
 import RabiesHistoryCharts from "../../component/RabiesHistoryCharts";
 import VeterinaryShipmentChart from "../../component/VeterinaryShipmentChart";
 import SlaughterReportChart from "../../component/SlaughterReportChart";
+import InventoryChart from "../../component/InventoryChart";
 // Form components
 import RabiesVaccinationReport from "../RABIES/RabiesVaccinationReport";
 import VaccinationReport from "../Animal Disease Prevention Control and Eradication/VaccinationReport";
@@ -78,6 +79,7 @@ import DiseaseInvestigationFormLists from "../Livestock and Poultry DRRM/Disease
 import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
 import TechnicianQuarterlyReportList from "../../component/TechnicianQuarterlyReportList";
 import AboutUs from "../AboutUs";
+
 
 export const FilterContext = createContext(null);
 
@@ -338,6 +340,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
     { value: "technicianQuarterly", label: "Technician Quarterly Calf Drop Analysis" },
     { value: "slaughterReport", label: "Slaughter Report Overview" },
     { value: "veterinaryShipment", label: "Veterinary Shipment Overview" },
+    { value: "inventory", label: "PVSO Inventory Chart" },
   ];
 
   // Function to get chart options based on user role
@@ -437,6 +440,13 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               filterValues={appliedFilters}
             />
           )}
+          {selectedCharts.includes("inventory") && (
+            <InventoryChart
+              key={`inventory-${chartKey}`}
+              filterValues={appliedFilters}
+            />
+          )}
+
         </div>
       );
     }
@@ -582,7 +592,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                         <HealingIcon className="mr-2" /> Animal Health Care Services
                       </button>
 
-                     
+
                     </>
                   )}
 
