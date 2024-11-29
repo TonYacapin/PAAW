@@ -42,34 +42,37 @@ const clientInfoSchema = new Schema({
   }
 });
 
-// Rabies Vaccination Schema
 const rabiesVaccinationSchema = new Schema({
   petName: {
     type: String,
-    trim: true
+    trim: true,
   },
   species: {
     type: String,
-    trim: true
+    trim: true,
   },
   sex: {
     type: String,
-  
   },
   age: {
     type: String,
-    trim: true
+    trim: true,
   },
   color: {
     type: String,
-    trim: true
+    trim: true,
   },
   remarks: {
     type: String,
-    trim: true
-  }
+    trim: true,
+  },
+  noOfVisit: {
+    type: String,
+    trim: true,
+    default: '1', // Set default value to "1"
+  },
+  
 });
-
 // Vaccination Schema
 const vaccinationSchema = new Schema({
   type: {
