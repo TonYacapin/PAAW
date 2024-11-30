@@ -187,102 +187,102 @@ function EquipmentInventory() {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const { _id, ...updatedInventory } = newInventory;
-  updatedInventory.quantity = parseInt(updatedInventory.total) + parseInt(updatedInventory.out);
+    const { _id, ...updatedInventory } = newInventory;
+    updatedInventory.quantity = parseInt(updatedInventory.total) + parseInt(updatedInventory.out);
 
-  try {
-    let createdOrUpdatedInventory;
-    if (isEditing) {
-      const originalInventory = inventories.find(inv => inv._id === _id);
-
-      createdOrUpdatedInventory = await axiosInstance.put(`/api/inventory/${_id}`, updatedInventory);
-
-      // Log the update action to the audit log
-      await axiosInstance.post('/api/audit-logs-inventory', {
-        action: 'UPDATE',
-        inventoryId: _id,
-        user: user, // The logged-in user's email
-        changes: {
-          before: {
-            ...originalInventory,
-          },
-          after: {
-            ...updatedInventory,
-          },
-        },
-        timestamp: new Date().toISOString(),
-      });
-
-      setIsEditing(false);
-    } else {
-      const response = await axiosInstance.post(`/api/inventory`, updatedInventory);
-      createdOrUpdatedInventory = response.data;
-
-      // Log the create action to the audit log
-      await axiosInstance.post('/api/audit-logs-inventory', {
-        action: 'CREATE',
-        inventoryId: createdOrUpdatedInventory._id,
-        user: user, // The logged-in user's email
-        changes: {
-          newItem: {
-            ...updatedInventory,
-            _id: createdOrUpdatedInventory._id,
-          },
-        },
-        timestamp: new Date().toISOString(),
-      });
-    }
-
-    setSuccessMessage(isEditing ? 'Equipment updated successfully!' : 'Equipment added successfully!');
-    setIsSuccessModalOpen(true);
-    fetchInventories();
-    closeModal();
-  } catch (error) {
-    console.error(isEditing ? 'Error updating inventory:' : 'Error adding inventory:', error.response?.data || error.message);
-    setSuccessMessage(isEditing ? 'Failed to update equipment.' : 'Failed to add equipment.');
-    setIsSuccessModalOpen(true);
-  }
-};
-const handleDeleteConfirm = async () => {
-  if (inventoryToDelete) {
     try {
-      const inventoryToLog = inventories.find(inv => inv._id === inventoryToDelete);
+      let createdOrUpdatedInventory;
+      if (isEditing) {
+        const originalInventory = inventories.find(inv => inv._id === _id);
 
-      const auditLogData = {
-        action: 'DELETE',
-        inventoryId: inventoryToDelete,
-        user: user, // Logged-in user's email
-        changes: {
-          deletedItem: {
-            ...inventoryToLog,
+        createdOrUpdatedInventory = await axiosInstance.put(`/api/inventory/${_id}`, updatedInventory);
+
+        // Log the update action to the audit log
+        await axiosInstance.post('/api/audit-logs-inventory', {
+          action: 'UPDATE',
+          inventoryId: _id,
+          user: user, // The logged-in user's email
+          changes: {
+            before: {
+              ...originalInventory,
+            },
+            after: {
+              ...updatedInventory,
+            },
           },
-        },
-        timestamp: new Date().toISOString(),
-      };
+          timestamp: new Date().toISOString(),
+        });
 
-      await axiosInstance.post('/api/audit-logs-inventory', auditLogData);
-      await axiosInstance.delete(`/api/inventory/${inventoryToDelete}`);
+        setIsEditing(false);
+      } else {
+        const response = await axiosInstance.post(`/api/inventory`, updatedInventory);
+        createdOrUpdatedInventory = response.data;
 
-      setSuccessMessage('Equipment deleted successfully!');
+        // Log the create action to the audit log
+        await axiosInstance.post('/api/audit-logs-inventory', {
+          action: 'CREATE',
+          inventoryId: createdOrUpdatedInventory._id,
+          user: user, // The logged-in user's email
+          changes: {
+            newItem: {
+              ...updatedInventory,
+              _id: createdOrUpdatedInventory._id,
+            },
+          },
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      setSuccessMessage(isEditing ? 'Equipment updated successfully!' : 'Equipment added successfully!');
       setIsSuccessModalOpen(true);
-
-      setTimeout(() => {
-        setIsSuccessModalOpen(false);
-      }, 2000);
-
       fetchInventories();
+      closeModal();
     } catch (error) {
-      console.error('Error deleting inventory:', error.response?.data || error.message);
-      setSuccessMessage('Failed to delete equipment. Please try again.');
+      console.error(isEditing ? 'Error updating inventory:' : 'Error adding inventory:', error.response?.data || error.message);
+      setSuccessMessage(isEditing ? 'Failed to update equipment.' : 'Failed to add equipment.');
       setIsSuccessModalOpen(true);
     }
-    setInventoryToDelete(null);
-    closeConfirmDeleteModal();
-  }
-};
+  };
+  const handleDeleteConfirm = async () => {
+    if (inventoryToDelete) {
+      try {
+        const inventoryToLog = inventories.find(inv => inv._id === inventoryToDelete);
+
+        const auditLogData = {
+          action: 'DELETE',
+          inventoryId: inventoryToDelete,
+          user: user, // Logged-in user's email
+          changes: {
+            deletedItem: {
+              ...inventoryToLog,
+            },
+          },
+          timestamp: new Date().toISOString(),
+        };
+
+        await axiosInstance.post('/api/audit-logs-inventory', auditLogData);
+        await axiosInstance.delete(`/api/inventory/${inventoryToDelete}`);
+
+        setSuccessMessage('Equipment deleted successfully!');
+        setIsSuccessModalOpen(true);
+
+        setTimeout(() => {
+          setIsSuccessModalOpen(false);
+        }, 2000);
+
+        fetchInventories();
+      } catch (error) {
+        console.error('Error deleting inventory:', error.response?.data || error.message);
+        setSuccessMessage('Failed to delete equipment. Please try again.');
+        setIsSuccessModalOpen(true);
+      }
+      setInventoryToDelete(null);
+      closeConfirmDeleteModal();
+    }
+  };
 
 
   const openModal = (inventory = null) => {
@@ -627,13 +627,13 @@ const handleDeleteConfirm = async () => {
                     </button>
                     <button
                       onClick={() => openInModal(inventory)}
-                      className="flex items-center bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition-colors"
+                      className="flex items-center bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 transition-colors"
                     >
                       In
                     </button>
                     <button
                       onClick={() => openOutModal(inventory)}
-                      className="flex items-center bg-yellow-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-yellow-600 transition-colors"
+                      className="flex items-center bg-green-400 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-500 transition-colors"
                     >
                       Out
                     </button>
