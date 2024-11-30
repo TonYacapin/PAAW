@@ -10,11 +10,11 @@ const AuditLogsInventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch data from the API using axiosInstance
     const fetchAuditLogs = async () => {
       try {
         const response = await axiosInstance.get('/api/audit-logs-inventory');
-        setAuditLogs(response.data);
+        const sortedLogs = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        setAuditLogs(sortedLogs);
       } catch (error) {
         console.error('Error fetching audit logs:', error);
       } finally {
@@ -41,7 +41,7 @@ const AuditLogsInventory = () => {
     const headerStyles = "bg-darkgreen text-white py-2 px-4";
     const cellStyles = "border-t border-darkgreen py-2 px-4";
     const labelStyles = "font-bold text-darkgreen";
-  
+
     const renderChanges = (label, data) => (
       <div className="my-4">
         <p className={`${labelStyles} mb-2`}>{label}</p>
@@ -63,7 +63,7 @@ const AuditLogsInventory = () => {
         </table>
       </div>
     );
-  
+
     switch (action) {
       case "IN":
       case "OUT":
@@ -73,7 +73,7 @@ const AuditLogsInventory = () => {
             {renderChanges("After:", changes.after)}
           </div>
         );
-  
+
       case "UPDATE":
         return (
           <div className="space-y-6">
@@ -81,18 +81,18 @@ const AuditLogsInventory = () => {
             {renderChanges("After:", changes.after)}
           </div>
         );
-  
+
       case "CREATE":
         return renderChanges("New Item:", changes.newItem);
-  
+
       case "DELETE":
         return renderChanges("Deleted Item:", changes.deletedItem);
-  
+
       default:
         return <p className="text-darkergreen">No changes available.</p>;
     }
   };
-  
+
   // Function to render content for each step
   const renderStepContent = (activeStep) => {
     const logsToShow = auditLogsPages[activeStep];
