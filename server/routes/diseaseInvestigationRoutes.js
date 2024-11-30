@@ -60,7 +60,7 @@ router.post(
     }
 
     try {
-     
+
 
       // Create new disease investigation
       const diseaseInvestigation = new DiseaseInvestigation({
@@ -97,9 +97,9 @@ router.post(
 
 
 
-// Get all Disease Investigations with filters
+/// Get all Disease Investigations with filters
 router.get('/disease-investigation', async (req, res) => {
-  const { municipality, startDate, endDate, formStatus } = req.query;
+  const { municipality, startDate, endDate, formStatus, finalDiagnosis } = req.query; // Include finalDiagnosis
 
   try {
     // Create the query object dynamically based on the filters
@@ -112,18 +112,23 @@ router.get('/disease-investigation', async (req, res) => {
 
     // Apply date range filter if provided
     if (startDate || endDate) {
-      query.dateReported = {};
+      query.createdAt = {};
       if (startDate) {
-        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+        query.createdAt.$gte = new Date(startDate); // Greater than or equal to startDate
       }
       if (endDate) {
-        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+        query.createdAt.$lte = new Date(endDate); // Less than or equal to endDate
       }
     }
 
-     // Add form status filter if provided
-     if (formStatus) {
+    // Add form status filter if provided
+    if (formStatus) {
       query.formStatus = formStatus;
+    }
+
+    // Add final diagnosis filter if provided
+    if (finalDiagnosis) {
+      query.finaldiagnosis = finalDiagnosis; // Add finalDiagnosis to query
     }
 
     // Fetch the filtered investigations
@@ -133,6 +138,16 @@ router.get('/disease-investigation', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get('/final-diagnoses', async (req, res) => {
+  try {
+    // Fetch distinct final diagnoses where formStatus is 'Accepted'
+    const finalDiagnoses = await DiseaseInvestigation.distinct('finaldiagnosis', { formStatus: 'Accepted' });
+    res.json(finalDiagnoses);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // Get a single Disease Investigation by ID
 router.get('/disease-investigation/:id', async (req, res) => {
