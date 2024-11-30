@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axiosInstance from './axiosInstance';
+import ChartGroup from './ChartGroup'; // Import your ChartGroup component
 
 const InventoryChart = () => {
     const [barChartData, setBarChartData] = useState(null);
+    const [suppliesCountData, setSuppliesCountData] = useState(null); // New state for supplies count chart
+    const [outData, setOutData] = useState(null); // New state for 'out' chart data
     const [lowStockItems, setLowStockItems] = useState([]);
+    const [selectedChart, setSelectedChart] = useState(null); // State for selected chart
 
+    
     useEffect(() => {
         const fetchInventory = async () => {
             try {
@@ -33,6 +38,58 @@ const InventoryChart = () => {
                     ],
                 });
 
+                // Aggregate Quantities for Supplies Count Chart: Avoid duplicates
+                const aggregatedData = data.reduce((acc, item) => {
+                    if (acc[item.supplies]) {
+                        acc[item.supplies] += item.quantity; // Increment quantity if item already exists
+                    } else {
+                        acc[item.supplies] = item.quantity; // Add new item
+                    }
+                    return acc;
+                }, {});
+
+                const itemNames = Object.keys(aggregatedData);
+                const itemQuantities = Object.values(aggregatedData);
+
+                setSuppliesCountData({
+                    labels: itemNames,
+                    datasets: [
+                        {
+                            label: 'Supplies Count',
+                            data: itemQuantities,
+                            backgroundColor: ["#1b5b40", "#ffe459", "#123c29", "#e5cd50"],
+                            borderColor: "#4b97e3",
+                            borderWidth: 1,
+                        },
+                    ],
+                });
+
+                // Aggregate 'Out' Data for new chart: Avoid duplicates and sum 'out' quantities
+                const outAggregatedData = data.reduce((acc, item) => {
+                    if (acc[item.supplies]) {
+                        acc[item.supplies] += item.out; // Increment out value if item already exists
+                    } else {
+                        acc[item.supplies] = item.out; // Add new item
+                    }
+                    return acc;
+                }, {});
+
+                const outItemNames = Object.keys(outAggregatedData);
+                const outQuantities = Object.values(outAggregatedData);
+
+                setOutData({
+                    labels: outItemNames,
+                    datasets: [
+                        {
+                            label: 'Out Supplies Count',
+                            data: outQuantities,
+                            backgroundColor: ["#1b5b40", "#ffe459", "#123c29", "#e5cd50"],
+                            borderColor: "#c04e29",
+                            borderWidth: 1,
+                        },
+                    ],
+                });
+
                 // Identify Low Stock Items (threshold: quantity < 10)
                 const lowStockThreshold = 10;
                 const lowStock = data.filter(item => item.quantity < lowStockThreshold);
@@ -45,6 +102,45 @@ const InventoryChart = () => {
 
         fetchInventory();
     }, []);
+
+    // Ensure data is available before rendering charts
+    if (!barChartData || !suppliesCountData || !outData) {
+        return <div>Loading charts...</div>; // You can display a loading spinner here if needed
+    }
+
+    // Prepare charts array for ChartGroup component
+    const charts = [
+        {
+            label: 'Supplies Count by Item',
+            content: (
+                <Bar
+                    data={suppliesCountData}
+                    options={{
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'top' },
+                        },
+                    }}
+                />
+            ),
+            style: "col-span-2", // Added col-span-2 style
+        },
+        {
+            label: 'Out Supplies Count by Item',
+            content: (
+                <Bar
+                    data={outData}
+                    options={{
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'top' },
+                        },
+                    }}
+                />
+            ),
+            style: "col-span-2", // Added col-span-2 style
+        },
+    ];
 
     return (
         <div>
@@ -68,28 +164,15 @@ const InventoryChart = () => {
                 )}
             </div>
 
-
-
-            {/* Bar Chart */}
-            {barChartData && (
-                <div>
-
-                    <Bar
-                        data={barChartData}
-                        options={{
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                    position: 'top',
-                                },
-                            },
-                        }}
-                    />
-                </div>
+            {/* Chart Group Component to render all charts */}
+            {charts.length > 0 && (
+                <ChartGroup
+                    charts={charts}
+                    title="Inventory Charts"
+                    selectedChart={selectedChart}
+                    setSelectedChart={setSelectedChart} // Pass state and setter here
+                />
             )}
-
-
         </div>
     );
 };
