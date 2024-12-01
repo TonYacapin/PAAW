@@ -68,8 +68,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
 
 
         }
-        console.log(decodedToken)
-        console.log(userData)
+   
       } catch (error) {
         console.error('Error fetching user information:', error);
       }

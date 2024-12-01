@@ -80,7 +80,7 @@ const PrintableRabiesVaccinationReport = ({
           }
           .signature-line {
             border-top: 1px solid black;
-            width: 45%;
+            width: 20%;
             text-align: center;
             margin-top: 20px; /* Reduced margin */
           }
