@@ -3,20 +3,21 @@ import { format } from 'date-fns';
 import placeholder1 from '../../pages/assets/NVLOGO.png'; // Left Logo
 import placeholder2 from '../../pages/assets/ReportLogo2.png'; // Right Logo
 
-const PrintableRSMAccomplishmentReport = ({ 
-  selectedYear, 
-  selectedMonth, 
-  selectedActivity, 
-  filteredActivityData, 
-  totals, 
+const PrintableRSMAccomplishmentReport = ({
+  selectedYear,
+  selectedMonth,
+  selectedActivity,
+  filteredActivityData,
+  totals,
   targets,
   quarterlyPercentage,
-  semiAnnualPercentage
+  semiAnnualPercentage,
+  userFullName,
 }) => {
   return (
     <div className="print-container">
-    <style>
-      {`
+      <style>
+        {`
         @media print {
           @page {
             size: legal landscape; /* Set to legal size with landscape orientation */
@@ -87,32 +88,32 @@ const PrintableRSMAccomplishmentReport = ({
           }
         }
       `}
-    </style>
+      </style>
 
-    <div className="header">
-      <div className="logo-container">
-        <img src={placeholder1} alt="Left Logo" />
-        <img src={placeholder2} alt="Right Logo" />
+      <div className="header">
+        <div className="logo-container">
+          <img src={placeholder1} alt="Left Logo" />
+          <img src={placeholder2} alt="Right Logo" />
+        </div>
+        <div className="text-center mt-2">
+          <p className="text">Republic of the Philippines</p>
+          <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
+          <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+          <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+        </div>
+        <div className="text-center mb-4">
+          <h1 className="title">Routine Service Monitoring Accomplishment Report</h1>
+          <h2 className="title">{format(new Date(selectedYear, selectedMonth - 1), 'MMMM yyyy')}</h2>
+          <p className="text">Activity: {selectedActivity}</p>
+        </div>
+        <div className="mb-4">
+          <p className="text"><strong>Quarterly Target:</strong> {selectedActivity === 'All' ? targets.totalTarget : targets[selectedActivity]?.quarterly}</p>
+          <p className="text"><strong>Quarterly Accomplishment:</strong> {quarterlyPercentage}</p>
+          <p className="text"><strong>Semi-annual Target:</strong> {selectedActivity === 'All' ? targets.totalSemiAnnualTarget : targets[selectedActivity]?.semiAnnual}</p>
+          <p className="text"><strong>Semi-annual Accomplishment:</strong> {semiAnnualPercentage}</p>
+        </div>
+
       </div>
-      <div className="text-center mt-2">
-        <p className="text">Republic of the Philippines</p>
-        <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
-        <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-        <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
-      </div>
-      <div className="text-center mb-4">
-        <h1 className="title">Routine Service Monitoring Accomplishment Report</h1>
-        <h2 className="title">{format(new Date(selectedYear, selectedMonth - 1), 'MMMM yyyy')}</h2>
-        <p className="text">Activity: {selectedActivity}</p>
-      </div>
-      <div className="mb-4">
-        <p className="text"><strong>Quarterly Target:</strong> {selectedActivity === 'All' ? targets.totalTarget : targets[selectedActivity]?.quarterly}</p>
-        <p className="text"><strong>Quarterly Accomplishment:</strong> {quarterlyPercentage}</p>
-        <p className="text"><strong>Semi-annual Target:</strong> {selectedActivity === 'All' ? targets.totalSemiAnnualTarget : targets[selectedActivity]?.semiAnnual}</p>
-        <p className="text"><strong>Semi-annual Accomplishment:</strong> {semiAnnualPercentage}</p>
-      </div>
-    
-  </div>
 
       <table className="min-w-full border-collapse mb-4 shadow-lg">
         <thead>
@@ -152,10 +153,22 @@ const PrintableRSMAccomplishmentReport = ({
           </tr>
         </tbody>
       </table>
-      
-     
-      
-  
+
+
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
+
+
+
+
     </div>
   );
 };

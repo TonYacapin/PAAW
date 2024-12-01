@@ -7,7 +7,8 @@ const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
   selectedYear,
   selectedMonth,
   selectedSpecies,
-  semiAnnualTargets
+  semiAnnualTargets,
+  userFullName,
 }) => {
 
   const monthNames = [
@@ -113,6 +114,12 @@ const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
             margin: 0 auto;
             text-align: center;
           }
+          .signature-line {
+            border-top: 1px solid black;
+            width: 45%;
+            text-align: center;
+            margin-top: 20px; /* Reduced margin */
+          }
         }
       `}
       </style>
@@ -178,6 +185,18 @@ const PrintableMunicipalityAccomplishmentReportRoutineServices = ({
           </tr>
         </tfoot>
       </table>
+
+
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

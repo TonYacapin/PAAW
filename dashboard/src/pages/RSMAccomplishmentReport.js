@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { format, isSameMonth, subMonths } from "date-fns";
 import PrintableRSMAccomplishmentReport from "../component/PrintComponents/PrintableRSMAccomplishmentReport";
 import axiosInstance from "../component/axiosInstance";
+import { jwtDecode } from "jwt-decode";
  
 function RSMAccomplishmentReport() {
   const [activityData, setActivityData] = useState([]);
@@ -18,6 +19,8 @@ function RSMAccomplishmentReport() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
  
+  const [userFullName, setUserFullName] = useState('');
+
   const activityOptions = [
     "Deworming",
     "Wound Treatment",
@@ -47,6 +50,39 @@ function RSMAccomplishmentReport() {
   useEffect(() => {
     fetchData();
   }, [selectedYear, selectedMonth]);
+
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+        console.log(decodedToken)
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
  
   useEffect(() => {
     calculatePercentages();
@@ -220,6 +256,7 @@ function RSMAccomplishmentReport() {
           targets={targets}
           quarterlyPercentage={quarterlyPercentage}
           semiAnnualPercentage={semiAnnualPercentage}
+          userFullName={userFullName} 
         />
       </div>
       <h1 className="text-xl font-semibold mb-6 text-gray-700">
