@@ -627,13 +627,13 @@ function EquipmentInventory() {
                     </button>
                     <button
                       onClick={() => openInModal(inventory)}
-                      className="flex items-center bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 transition-colors"
+                      className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700 transition-colors"
                     >
                       In
                     </button>
                     <button
                       onClick={() => openOutModal(inventory)}
-                      className="flex items-center bg-green-400 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-500 transition-colors"
+                      className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-500 transition-colors"
                     >
                       Out
                     </button>
