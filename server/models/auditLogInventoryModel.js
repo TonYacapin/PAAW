@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const auditLogInventorySchema = new mongoose.Schema({
   action: {
     type: String,
-    enum: ['CREATE', 'UPDATE', 'DELETE', 'IN', 'OUT'], // Allowed actions
+    enum: ['CREATE', 'UPDATE', 'DELETE', 'IN', 'OUT', 'REMOVE_EXPIRED'], // Allowed actions
     required: true,
   },
   inventoryId: {

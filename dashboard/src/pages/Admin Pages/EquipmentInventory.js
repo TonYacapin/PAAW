@@ -37,7 +37,12 @@ function EquipmentInventory() {
   const [outQuantity, setOutQuantity] = useState(0);
   const [userRole, setUserRole] = useState("");
   const [user, setUser] = useState("");
+  const [expirationDate, setExpirationDate] = useState('');
+  const [isStockDetailsModalOpen, setIsStockDetailsModalOpen] = useState(false);
+  const [selectedInventoryStockDetails, setSelectedInventoryStockDetails] = useState(null);
 
+
+  
   // Open the Audit Logs modal
   const openAuditLogsModal = () => {
     setIsAuditLogsModalOpen(true);
@@ -46,6 +51,17 @@ function EquipmentInventory() {
   // Close the Audit Logs modal
   const closeAuditLogsModal = () => {
     setIsAuditLogsModalOpen(false);
+  };
+
+  const openStockDetailsModal = (inventory) => {
+    setSelectedInventoryStockDetails(inventory);
+    setIsStockDetailsModalOpen(true);
+  };
+
+  // Method to close stock details modal
+  const closeStockDetailsModal = () => {
+    setSelectedInventoryStockDetails(null);
+    setIsStockDetailsModalOpen(false);
   };
 
 
@@ -108,21 +124,39 @@ function EquipmentInventory() {
   };
   const handleIn = async () => {
     if (!selectedInventory || inQuantity <= 0) return;
-
+  
+    if (!expirationDate) {
+      setSuccessMessage('Expiration date is required.');
+      setIsSuccessModalOpen(true);
+      return;
+    }
+  
     try {
+      const parsedExpirationDate = new Date(expirationDate);
+  
       const updatedInventory = {
         ...selectedInventory,
         total: selectedInventory.total + inQuantity,
-        quantity: selectedInventory.quantity + inQuantity
+        quantity: selectedInventory.quantity + inQuantity,
+        expiration: [
+          ...(selectedInventory.expiration || []),
+          {
+            in: inQuantity,
+            date: parsedExpirationDate
+          }
+        ]
       };
-
+  
+      // Sort expiration batches to keep track of oldest first
+      updatedInventory.expiration.sort((a, b) => new Date(a.date) - new Date(b.date));
+  
       await axiosInstance.put(`/api/inventory/${selectedInventory._id}`, updatedInventory);
-
+  
       // Log the action to the audit log
       await axiosInstance.post('/api/audit-logs-inventory', {
         action: 'IN',
         inventoryId: selectedInventory._id,
-        user: user, // The logged-in user's email
+        user: user,
         changes: {
           before: {
             ...selectedInventory,
@@ -133,16 +167,20 @@ function EquipmentInventory() {
         },
         timestamp: new Date(),
       });
-
+  
       setSuccessMessage('Inventory added successfully!');
       setIsSuccessModalOpen(true);
       fetchInventories();
       setIsInModalOpen(false);
+      
+      // Reset expiration date
+      setExpirationDate('');
     } catch (error) {
       console.error('Error adding inventory:', error);
+      setSuccessMessage('Failed to add inventory.');
+      setIsSuccessModalOpen(true);
     }
   };
-
 
   const handleOut = async () => {
     if (!selectedInventory || outQuantity <= 0) return;
@@ -154,10 +192,25 @@ function EquipmentInventory() {
     }
 
     try {
+      let remainingQuantity = outQuantity;
+      const updatedExpiration = [...(selectedInventory.expiration || [])];
+
+      // Remove from oldest batches first
+      while (remainingQuantity > 0 && updatedExpiration.length > 0) {
+        if (updatedExpiration[0].in <= remainingQuantity) {
+          remainingQuantity -= updatedExpiration[0].in;
+          updatedExpiration.shift();
+        } else {
+          updatedExpiration[0].in -= remainingQuantity;
+          remainingQuantity = 0;
+        }
+      }
+
       const updatedInventory = {
         ...selectedInventory,
         total: selectedInventory.total - outQuantity,
         out: selectedInventory.out + outQuantity,
+        expiration: updatedExpiration,
       };
 
       await axiosInstance.put(`/api/inventory/${selectedInventory._id}`, updatedInventory);
@@ -166,7 +219,7 @@ function EquipmentInventory() {
       await axiosInstance.post('/api/audit-logs-inventory', {
         action: 'OUT',
         inventoryId: selectedInventory._id,
-        user: user, // The logged-in user's email
+        user: user,
         changes: {
           before: {
             ...selectedInventory,
@@ -342,47 +395,199 @@ function EquipmentInventory() {
     openModal(inventory); // Open the modal and set the inventory to be edited
   };
 
+  const StockDetailsModal = () => {
+    if (!selectedInventoryStockDetails) return null;
+  
+    const sortedExpirations = selectedInventoryStockDetails.expiration 
+      ? [...selectedInventoryStockDetails.expiration].sort((a, b) => {
+          // Handle null dates: sort null dates last
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return new Date(a.date) - new Date(b.date);
+        })
+      : [];
+  
+    const handleExpiredBatchOut = async (batchIndex) => {
+      if (!selectedInventoryStockDetails) return;
+  
+      try {
+        const batchToRemove = sortedExpirations[batchIndex];
+        const updatedExpiration = [...sortedExpirations];
+        const expiredQuantity = batchToRemove.in;
+  
+        // Remove the specific expired batch
+        updatedExpiration.splice(batchIndex, 1);
+  
+        const updatedInventory = {
+          ...selectedInventoryStockDetails,
+          total: selectedInventoryStockDetails.total - expiredQuantity,
+          out: selectedInventoryStockDetails.out + expiredQuantity,
+          expiration: updatedExpiration,
+        };
+  
+        await axiosInstance.put(`/api/inventory/${selectedInventoryStockDetails._id}`, updatedInventory);
+  
+        // Log the action to the audit log
+        await axiosInstance.post('/api/audit-logs-inventory', {
+          action: 'REMOVE_EXPIRED',
+          inventoryId: selectedInventoryStockDetails._id,
+          user: user,
+          changes: {
+            before: {
+              ...selectedInventoryStockDetails,
+            },
+            after: {
+              ...updatedInventory,
+            },
+          },
+          timestamp: new Date(),
+        });
+  
+        setSuccessMessage('Expired batch removed successfully!');
+        setIsSuccessModalOpen(true);
+        fetchInventories();
+        closeStockDetailsModal();
+      } catch (error) {
+        console.error('Error removing expired batch:', error);
+        setSuccessMessage('Failed to remove expired batch.');
+        setIsSuccessModalOpen(true);
+      }
+    };
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+          <h2 className="text-xl font-bold mb-4">Stock Details: {selectedInventoryStockDetails.type}</h2>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 font-semibold border-b pb-2">
+              <span>Batch</span>
+              <span>Quantity</span>
+              <span>Expiration Date</span>
+              <span>Action</span>
+            </div>
+            
+            {sortedExpirations.length > 0 ? (
+              sortedExpirations.map((batch, index) => (
+                <div 
+                  key={index} 
+                  className={`grid grid-cols-4 items-center py-2 ${
+                    batch.date && new Date(batch.date) < new Date() 
+                      ? 'text-red-600 bg-red-50' 
+                      : 'text-black'
+                  }`}
+                >
+                  <span>Batch {index + 1}</span>
+                  <span>{batch.in}</span>
+                  <span>
+                    {batch.date 
+                      ? new Date(batch.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })
+                      : 'N/A'}
+                  </span>
+                  <span>
+                    {batch.date && new Date(batch.date) < new Date() && (
+                      <button
+                        onClick={() => handleExpiredBatchOut(index)}
+                        className="bg-red-500 text-white px-2 py-1 rounded-md text-sm"
+                      >
+                        Out
+                      </button>
+                    )}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center">No expiration batches found</p>
+            )}
+          </div>
+          
+          <div className="flex justify-end mt-6">
+            <button
+              onClick={closeStockDetailsModal}
+              className="px-4 py-2 bg-darkgreen text-white rounded-md"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
   return (
     <div className="flex flex-col gap-4 p-4 bg-white text-black lg:max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-black mb-6">Equipment Inventory</h1>
 
-      {/* In Modal */}
-      {isInModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add Inventory</h2>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="inQuantity" className="block text-sm font-medium text-gray-700">
-                  Quantity to Add
-                </label>
-                <input
-                  type="number"
-                  id="inQuantity"
-                  value={inQuantity}
-                  onChange={(e) => setInQuantity(parseInt(e.target.value) || 0)}
-                  min="0"
-                  className="w-full border border-gray-300 p-2 rounded-md"
-                />
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  onClick={() => setIsInModalOpen(false)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleIn}
-                  className="px-4 py-2 bg-darkgreen text-white rounded-md"
-                >
-                  Add
-                </button>
-              </div>
+   {/* In Modal */}
+{isInModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h2 className="text-xl font-bold mb-4">Add Inventory</h2>
+      <div className="space-y-4">
+        <div>
+          <label htmlFor="inQuantity" className="block text-sm font-medium text-gray-700">
+            Quantity to Add
+          </label>
+          <input
+            type="number"
+            id="inQuantity"
+            value={inQuantity}
+            onChange={(e) => setInQuantity(parseInt(e.target.value) || 0)}
+            min="0"
+            className="w-full border border-gray-300 p-2 rounded-md"
+          />
+        </div>
+        <div>
+          <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-700">
+            Expiration Date
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="date"
+              id="expirationDate"
+              value={expirationDate}
+              onChange={(e) => setExpirationDate(e.target.value)}
+              className="w-full border border-gray-300 p-2 rounded-md"
+              disabled={expirationDate === 'N/A'}
+            />
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="naExpiration"
+                checked={expirationDate === 'N/A'}
+                onChange={(e) => setExpirationDate(e.target.checked ? 'N/A' : '')}
+                className="mr-2"
+              />
+              <label htmlFor="naExpiration" className="text-sm">N/A</label>
             </div>
           </div>
         </div>
-      )}
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={() => setIsInModalOpen(false)}
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleIn}
+            className="px-4 py-2 bg-darkgreen text-white rounded-md"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{isStockDetailsModalOpen && <StockDetailsModal />}
+
 
       {/* Out Modal */}
       {isOutModalOpen && (
@@ -637,6 +842,14 @@ function EquipmentInventory() {
                     >
                       Out
                     </button>
+
+                    <button
+                      onClick={() => openStockDetailsModal(inventory)}
+                      className="flex items-center bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition-colors"
+                    >
+                      View Stock Details
+                    </button>
+
                     <button
                       onClick={() => openConfirmDeleteModal(inventory._id)} // Open confirmation modal
                       className="flex items-center bg-red-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-800 transition-colors"
