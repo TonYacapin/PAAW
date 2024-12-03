@@ -219,7 +219,7 @@ function RabiesVaccinationReport() {
 
     // Create a file name with a naming convention
     const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const fileName = `rabies_vaccination_report_${municipality}_${date}.csv`;
+    const fileName = `rabies_vaccination_report_${municipality}_${dateReported}.csv`;
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
