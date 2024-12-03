@@ -1,48 +1,85 @@
 import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../component/axiosInstance";
+import { jwtDecode } from "jwt-decode";
+
 
 import placeholder1 from "../../pages/assets/NVLOGO.png";
 import placeholder2 from "../../pages/assets/ReportLogo2.png";
 
 const InventoryReport = () => {
-    const [inventories, setInventories] = useState([]);
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [filterOptions, setFilterOptions] = useState({ months: [], years: [], types: [] });
-    const [filter, setFilter] = useState({
-        month: '',
-        year: '',
-        type: ''
-    });
-    const printRef = useRef(); // Create a ref for the printable section
+  const [inventories, setInventories] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [filterOptions, setFilterOptions] = useState({ months: [], years: [], types: [] });
+  const [filter, setFilter] = useState({
+    month: '',
+    year: '',
+    type: ''
+  });
+  const printRef = useRef(); // Create a ref for the printable section
+  const [userFullName, setUserFullName] = useState('');
 
-    useEffect(() => {
-        fetchInventories();
-        fetchFilterOptions();
-    }, [filter]);
+  useEffect(() => {
+    fetchInventories();
+    fetchFilterOptions();
+  }, [filter]);
 
-    const fetchInventories = async () => {
-        try {
-            const response = await axiosInstance.get('/api/inventory', {
-                params: {
-                    month: filter.month,
-                    year: filter.year,
-                    type: filter.type
-                }
-            });
-            setInventories(response.data);
-        } catch (error) {
-            console.error('Error fetching inventories:', error);
+  const fetchInventories = async () => {
+    try {
+      const response = await axiosInstance.get('/api/inventory', {
+        params: {
+          month: filter.month,
+          year: filter.year,
+          type: filter.type
         }
+      });
+      setInventories(response.data);
+    } catch (error) {
+      console.error('Error fetching inventories:', error);
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+        console.log(decodedToken)
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
     };
 
-    const fetchFilterOptions = async () => {
-        try {
-            const response = await axiosInstance.get('/api/inventory/options');
-            setFilterOptions(response.data);
-        } catch (error) {
-            console.error('Error fetching filter options:', error);
-        }
-    };
+    fetchUserInfo();
+  }, []);
+
+  const fetchFilterOptions = async () => {
+    try {
+      const response = await axiosInstance.get('/api/inventory/options');
+      setFilterOptions(response.data);
+    } catch (error) {
+      console.error('Error fetching filter options:', error);
+    }
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -52,9 +89,9 @@ const InventoryReport = () => {
     }));
   };
 
-    const formattedDate = filter.month && filter.year
-        ? new Date(`${filter.year}-${filter.month}-01`).toLocaleString('en-US', { month: 'long', year: 'numeric' })
-        : new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  const formattedDate = filter.month && filter.year
+    ? new Date(`${filter.year}-${filter.month}-01`).toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    : new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -128,6 +165,12 @@ const InventoryReport = () => {
                             width: 180px; /* Adjusted width */
                             margin: 0 auto;
                         }
+                        .signature-line {
+                          border-top: 1px solid black;
+                          width: 45%;
+                          text-align: center;
+                          margin-top: 50px; /* Reduced margin */
+                        }
                     </style>
                 </head>
                 <body onload="window.print(); "style="justify-content: center;">
@@ -159,25 +202,38 @@ const InventoryReport = () => {
                             </thead>
                             <tbody>
                                 ${inventories
-                                  .map(
-                                    (item) => `
+        .map(
+          (item) => `
                                     <tr>
                                         <td>${item.source}</td>
-                                        <td>${item.supplies}${
-                                      item.description
-                                        ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>`
-                                        : ""
-                                    }</td>
+                                        <td>${item.supplies}${item.description
+              ? `<br><span style="font-size: 9px; color: gray;">${item.description}</span>`
+              : ""
+            }</td>
                                         <td>${item.unit}</td>
                                         <td>${item.quantity}</td>
                                         <td>${item.out}</td>
                                         <td>${item.total}</td>
                                     </tr>
                                 `
-                                  )
-                                  .join("")}
+        )
+        .join("")}
                             </tbody>
                         </table>
+
+                    
+                        <div class="footer" style="text-align: center; margin-top: 100px; width: 100%;">
+                        <div class="signature-section" style="display: inline-block; text-align: center; ">
+                        <div style="margin-top: 20px; border-bottom: 1px solid black; width: 200px; margin: 0 auto;"></div>
+                          <strong style= "margin-bottom: 20px;">Prepared by:</strong>
+                      
+                        
+                          <span style="display: block; margin-top: 5px;">${userFullName}</span>
+                        </div>
+                      </div>
+                      
+                      </div>
+                      
                     </div>
                 </body>
             </html>
@@ -185,49 +241,49 @@ const InventoryReport = () => {
     printWindow.document.close();
   };
 
-    return (
-        <div className="w-full max-w-4xl mx-auto p-8 bg-white">
-            <div className="text-center mb-6" ref={printRef}>
-                {/* Header Section */}
-                <p className="text-sm">Republic of the Philippines</p>
-                <div className="flex justify-center items-center gap-4 my-4">
-                    <img src={placeholder1} alt="Left Logo" className="w-16 h-16" />
-                    <div className="text-center">
-                        <p className="font-bold">PROVINCE OF NUEVA VIZCAYA</p>
-                        <p className="font-bold">PROVINCIAL VETERINARY SERVICES OFFICE</p>
-                        <p className="text-sm italic">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
-                    </div>
-                    <img src={placeholder2} alt="Right Logo" className="w-16 h-16" />
-                </div>
-                <div className="text-center mt-6 mb-4">
-                    <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
-                    <p className="font-bold">{filter.type || 'SUPPLIES'}</p>
-                    <p>As of {formattedDate}</p>
-                </div>
+  return (
+    <div className="w-full max-w-4xl mx-auto p-8 bg-white">
+      <div className="text-center mb-6" ref={printRef}>
+        {/* Header Section */}
+        <p className="text-sm">Republic of the Philippines</p>
+        <div className="flex justify-center items-center gap-4 my-4">
+          <img src={placeholder1} alt="Left Logo" className="w-16 h-16" />
+          <div className="text-center">
+            <p className="font-bold">PROVINCE OF NUEVA VIZCAYA</p>
+            <p className="font-bold">PROVINCIAL VETERINARY SERVICES OFFICE</p>
+            <p className="text-sm italic">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+          </div>
+          <img src={placeholder2} alt="Right Logo" className="w-16 h-16" />
+        </div>
+        <div className="text-center mt-6 mb-4">
+          <p className="font-bold">MONTHLY INVENTORY and UTILIZATION REPORT</p>
+          <p className="font-bold">{filter.type || 'SUPPLIES'}</p>
+          <p>As of {formattedDate}</p>
+        </div>
 
-                {/* Filter Section */}
-                <div className="flex justify-center gap-4 mb-4">
-                    <select name="month" onChange={handleFilterChange} value={filter.month}>
-                        <option value="">Select Month</option>
-                        {filterOptions.months.map((month, index) => (
-                            <option key={index} value={month}>{month}</option>
-                        ))}
-                    </select>
+        {/* Filter Section */}
+        <div className="flex justify-center gap-4 mb-4">
+          <select name="month" onChange={handleFilterChange} value={filter.month}>
+            <option value="">Select Month</option>
+            {filterOptions.months.map((month, index) => (
+              <option key={index} value={month}>{month}</option>
+            ))}
+          </select>
 
-                    <select name="year" onChange={handleFilterChange} value={filter.year}>
-                        <option value="">Select Year</option>
-                        {filterOptions.years.map((year, index) => (
-                            <option key={index} value={year}>{year}</option>
-                        ))}
-                    </select>
+          <select name="year" onChange={handleFilterChange} value={filter.year}>
+            <option value="">Select Year</option>
+            {filterOptions.years.map((year, index) => (
+              <option key={index} value={year}>{year}</option>
+            ))}
+          </select>
 
-                    <select name="type" onChange={handleFilterChange} value={filter.type}>
-                        <option value="">Select Type</option>
-                        {filterOptions.types.map((type, index) => (
-                            <option key={index} value={type}>{type}</option>
-                        ))}
-                    </select>
-                </div>
+          <select name="type" onChange={handleFilterChange} value={filter.type}>
+            <option value="">Select Type</option>
+            {filterOptions.types.map((type, index) => (
+              <option key={index} value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
 
         {/* Table Section */}
         <table className="w-full border-collapse border border-black">
@@ -283,6 +339,11 @@ const InventoryReport = () => {
             ))}
           </tbody>
         </table>
+
+
+
+
+
       </div>
 
       {/* Print Button */}
