@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from './axiosInstance';
 import Modal from './Modal';
+import StepperComponent from "../component/StepperComponent"; // Import StepperComponent
 
 const AuditLogsInventory = () => {
   const [auditLogs, setAuditLogs] = useState([]);
@@ -83,7 +84,6 @@ const AuditLogsInventory = () => {
         );
       };
 
-
       switch (action) {
         case 'CREATE':
           return renderChangeSection('New Item Details', changes.newItem);
@@ -123,6 +123,42 @@ const AuditLogsInventory = () => {
     );
   };
 
+  // Create a function to group the logs into pages of 10
+  const chunkLogs = (logs, size) => {
+    const result = [];
+    for (let i = 0; i < logs.length; i += size) {
+      result.push(logs.slice(i, i + size));
+    }
+    return result;
+  };
+
+  const logsPerPage = 10;
+  const logChunks = chunkLogs(auditLogs, logsPerPage);
+
+  const stepperPages = logChunks.map((chunk, index) => ({
+    title: `Page ${index + 1}`,
+    content: (
+      <>
+        {chunk.map((log) => (
+          <div key={log.timestamp} className="mb-4">
+            <p><strong>Action:</strong> {log.action}</p>
+            <p><strong>User:</strong> {log.user}</p>
+            <p><strong>Timestamp:</strong> {new Date(log.timestamp).toLocaleString()}</p>
+            <button
+              onClick={() => {
+                setSelectedLog(log);
+                setIsModalOpen(true);
+              }}
+              className="bg-darkgreen text-white py-2 px-4 rounded-md hover:bg-darkergreen transition-colors"
+            >
+              View Details
+            </button>
+          </div>
+        ))}
+      </>
+    ),
+  }));
+
   if (loading) {
     return <div className="text-center text-xl text-darkgreen p-4">Loading...</div>;
   }
@@ -131,42 +167,11 @@ const AuditLogsInventory = () => {
     <div className="flex flex-col gap-4 p-4 bg-white text-black lg:max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-black mb-6">Audit Logs</h1>
 
-      <div className="overflow-auto border rounded-lg border-gray-400 shadow-md">
-        <table className="min-w-full">
-          <thead>
-            <tr className="bg-[#1b5b40] text-white">
-              <th className="py-2 px-4 border-b">No.</th>
-              <th className="py-2 px-4 border-b">Action</th>
-              <th className="py-2 px-4 border-b">User</th>
-              <th className="py-2 px-4 border-b">Timestamp</th>
-              <th className="py-2 px-4 border-b">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {auditLogs.map((log, index) => (
-              <tr key={log._id} className="hover:bg-gray-100">
-                <td className="py-2 px-4 border-b">{index + 1}</td>
-                <td className="py-2 px-4 border-b">{log.action}</td>
-                <td className="py-2 px-4 border-b">{log.user}</td>
-                <td className="py-2 px-4 border-b">
-                  {new Date(log.timestamp).toLocaleString()}
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  <button
-                    onClick={() => {
-                      setSelectedLog(log);
-                      setIsModalOpen(true);
-                    }}
-                    className="bg-darkgreen text-white py-2 px-4 rounded-md hover:bg-darkergreen transition-colors"
-                  >
-                    View Details
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <StepperComponent
+        pages={stepperPages}
+        renderStepContent={(stepIndex) => stepperPages[stepIndex].content}
+        onStepChange={(newStepIndex) => console.log('Step changed to:', newStepIndex)}
+      />
 
       <Modal
         isOpen={isModalOpen}
