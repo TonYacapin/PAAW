@@ -2,7 +2,7 @@ import React from 'react';
 import placeholder1 from '../../pages/assets/NVLOGO.png'; // Left Logo
 import placeholder2 from '../../pages/assets/ReportLogo2.png'; // Right Logo
 
-const PrintableMunicipalityAccomplishmentReportRabies = ({ reportData, year, month, semiAnnualTargets }) => {
+const PrintableMunicipalityAccomplishmentReportRabies = ({ reportData, year, month, semiAnnualTargets, userFullName }) => {
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -87,6 +87,12 @@ const PrintableMunicipalityAccomplishmentReportRabies = ({ reportData, year, mon
             margin: 0 auto;
             text-align: center;
           }
+          .signature-line {
+            border-top: 1px solid black;
+            width: 45%;
+            text-align: center;
+            margin-top: 20px; /* Reduced margin */
+          }
         }
       `}
       </style>
@@ -152,6 +158,20 @@ const PrintableMunicipalityAccomplishmentReportRabies = ({ reportData, year, mon
           </tr>
         </tfoot>
       </table>
+
+
+
+
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
 
     </div>
   );

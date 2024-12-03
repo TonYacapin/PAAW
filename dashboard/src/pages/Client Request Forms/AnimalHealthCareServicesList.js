@@ -3,6 +3,7 @@ import axiosInstance from "../../component/axiosInstance";
 import Modal from "../../component/Modal";
 import AnimalHealthCareServices from "./AnimalHealthCareServices";
 import SuccessModal from "../../component/SuccessModal"; // Import the SuccessModal
+import RabbiesVaccinantionNumberOfVisits from "./RabbiesVaccinantionNumberOfVisits";
 
 function AnimalHealthCareServicesList() {
   const [services, setServices] = useState([]);
@@ -24,6 +25,7 @@ function AnimalHealthCareServicesList() {
   const [selectedService, setSelectedService] = useState(null); // State to hold selected service for editing
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
   const [isHealthCareModalOpen, setIsHealthCareModalOpen] = useState(false); // State for Health Care Modal
+  const [isRabbiesVaccinationOpen, setIsRabbiesVaccinationOpen] = useState(false); // State for Health Care Modal
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
   const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
@@ -174,6 +176,14 @@ function AnimalHealthCareServicesList() {
       >
         Open Animal Health Care Services Form
       </button>
+
+      <button
+        onClick={() => setIsRabbiesVaccinationOpen(true)}
+        className="mb-6 px-4 py-2 bg-darkgreen text-white rounded hover:bg-darkergreen"
+      >
+        Open Rabies Vaccination History
+      </button>
+      
 
       {/* Filters Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -474,7 +484,19 @@ function AnimalHealthCareServicesList() {
           <AnimalHealthCareServices />
         </Modal>
       )}
+
+         {/* Health Care Modal */}
+         {isRabbiesVaccinationOpen && (
+        <Modal
+          isOpen={isRabbiesVaccinationOpen}
+          onClose={() => setIsRabbiesVaccinationOpen(false)}
+        >
+          <RabbiesVaccinantionNumberOfVisits />
+        </Modal>
+      )}
     </div>
+
+    
   );
 }
 

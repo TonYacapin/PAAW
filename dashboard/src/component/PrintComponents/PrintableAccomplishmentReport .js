@@ -11,7 +11,8 @@ const PrintableAccomplishmentReport = ({
   totals,
   targets,
   quarterlyPercentage,
-  semiAnnualPercentage
+  semiAnnualPercentage,
+  userFullName,
 }) => {
   return (
     <div className="print-container">
@@ -113,7 +114,7 @@ const PrintableAccomplishmentReport = ({
             </div>
 
           </div>
-          <img src={placeholder2} alt="Right Logo" className='w-[70px] h-[70px]'/>
+          <img src={placeholder2} alt="Right Logo" className='w-[70px] h-[70px]' />
         </div>
       </div>
 
@@ -159,6 +160,18 @@ const PrintableAccomplishmentReport = ({
           </tr>
         </tbody>
       </table>
+
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
+
 
 
     </div>

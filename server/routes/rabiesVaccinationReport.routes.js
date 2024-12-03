@@ -56,6 +56,7 @@ router.post(
   }
 );
 // Retrieve filtered reports
+// Retrieve filtered reports
 router.get('/api/entries', async (req, res) => {
   const { municipality, startDate, endDate, formStatus } = req.query; // Get filters from the query parameters
 
@@ -70,14 +71,14 @@ router.get('/api/entries', async (req, res) => {
 
     // Add date range filter if startDate and endDate are provided
     if (startDate || endDate) {
-      filter.date = {};
+      filter.createdAt = {}; // Use createdAt instead of date
 
       if (startDate) {
-        filter.date.$gte = new Date(startDate); // Greater than or equal to startDate
+        filter.createdAt.$gte = new Date(startDate); // Greater than or equal to startDate
       }
 
       if (endDate) {
-        filter.date.$lte = new Date(endDate); // Less than or equal to endDate
+        filter.createdAt.$lte = new Date(endDate); // Less than or equal to endDate
       }
     }
 
@@ -93,6 +94,7 @@ router.get('/api/entries', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 // Update a specific report

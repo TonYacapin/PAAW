@@ -60,7 +60,7 @@ router.post(
     }
 
     try {
-     
+
 
       // Create new disease investigation
       const diseaseInvestigation = new DiseaseInvestigation({
@@ -96,10 +96,8 @@ router.post(
 
 
 
-
-// Get all Disease Investigations with filters
 router.get('/disease-investigation', async (req, res) => {
-  const { municipality, startDate, endDate, formStatus } = req.query;
+  const { municipality, startDate, endDate, formStatus, finalDiagnosis } = req.query;
 
   try {
     // Create the query object dynamically based on the filters
@@ -107,23 +105,33 @@ router.get('/disease-investigation', async (req, res) => {
 
     // Apply municipality filter if provided
     if (municipality) {
-      query.municipality = municipality;
+      // Updated to search within the movement array
+      query['movement.municipality'] = municipality;
     }
 
     // Apply date range filter if provided
     if (startDate || endDate) {
-      query.dateReported = {};
+      query.createdAt = {};
       if (startDate) {
-        query.dateReported.$gte = new Date(startDate); // Greater than or equal to startDate
+        query.createdAt.$gte = new Date(startDate);
       }
       if (endDate) {
-        query.dateReported.$lte = new Date(endDate); // Less than or equal to endDate
+        query.createdAt.$lte = new Date(endDate);
       }
     }
 
-     // Add form status filter if provided
-     if (formStatus) {
+    // Add form status filter if provided
+    if (formStatus) {
       query.formStatus = formStatus;
+    }
+
+    // Improved final diagnosis filter
+    if (finalDiagnosis) {
+      // Create a case-insensitive, partial match regex query
+      query.finaldiagnosis = {
+        $regex: finalDiagnosis,
+        $options: 'i'
+      };
     }
 
     // Fetch the filtered investigations
@@ -133,6 +141,37 @@ router.get('/disease-investigation', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get('/final-diagnoses', async (req, res) => {
+  try {
+    // Fetch distinct final diagnoses where formStatus is 'Accepted', removing duplicates
+    const finalDiagnoses = await DiseaseInvestigation.aggregate([
+      { $match: { formStatus: 'Accepted' } },
+      {
+        $group: {
+          _id: {
+            $toLower: {
+              $trim: {
+                input: "$finaldiagnosis",
+                chars: " "
+              }
+            }
+          }
+        }
+      },
+      { $project: { diagnosis: "$_id" } }
+    ]).exec();
+
+    // Extract unique diagnoses and filter out empty strings
+    const uniqueDiagnoses = finalDiagnoses
+      .map(item => item.diagnosis)
+      .filter(diagnosis => diagnosis && diagnosis.length > 0);
+
+    res.json(uniqueDiagnoses);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // Get a single Disease Investigation by ID
 router.get('/disease-investigation/:id', async (req, res) => {

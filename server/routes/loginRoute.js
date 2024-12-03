@@ -95,7 +95,11 @@ router.post('/login', async (req, res) => {
         }
 
         // Generate and return JWT
-        const token = jwt.sign({ userId: user._id, role: user.role, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+        const token = jwt.sign(
+            { userId: user._id, role: user.role, email: user.emai  }, 
+            'your_jwt_secret', 
+            { expiresIn: '7d' }  // Changed from '1h' to '7d'
+          );
         await createAuditLog('Login Attempt', translateResource(req.originalUrl), user._id, email, 'successful', 'Login successful', { ...details });
         res.json({ token, userRole: user.role, userEmail: user.email });
     } catch (error) {

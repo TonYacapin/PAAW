@@ -25,6 +25,7 @@ const animalProductionServicesRoutes = require('./routes/Client/animalproduction
 const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryinformationserviceRoutes");
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
 const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
+const auditLogInventoryRoutes = require('./routes/auditLogInventoryRoutes'); 
 
 const backupRestoreRoutes = require('./routes/backupRestore.routes');
 
@@ -79,6 +80,7 @@ app.use('/api/regulatory-services', regulatoryCareServiceRoutes);
 app.use('/api/requisitions', requisitionIssuanceRoutes);
 app.use('/api', auditLogRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/audit-logs-inventory', auditLogInventoryRoutes);
 
 // Start server and set timeout
 const server = app.listen(PORT, () => {

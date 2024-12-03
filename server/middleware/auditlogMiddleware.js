@@ -16,6 +16,11 @@ const createAuditLog = async (action, resource, resourceId, user, outcome, descr
 
 // Middleware for logging requests in a user-friendly way
 const auditLogMiddleware = async (req, res, next) => {
+    // Skip logging for GET requests
+    if (req.method === 'GET') {
+        return next();
+    }
+
     const userEmail = req.user?.email || 'Guest'; // Get user email if available
     const action = translateAction(req.method); // Convert HTTP method to a simpler action
     const resource = translateResource(req.originalUrl); // Make the URL more descriptive
@@ -40,8 +45,6 @@ const auditLogMiddleware = async (req, res, next) => {
 // Function to translate HTTP methods into simpler actions
 const translateAction = (method) => {
     switch (method) {
-        case 'GET':
-            return 'Viewed';
         case 'POST':
             return 'Added';
         case 'PUT':
@@ -79,11 +82,6 @@ const translateResource = (url) => {
     if (url.includes('/api/veterinary-information-service')) return 'Veterinary Information Service';
     if (url.includes('/api/animal-production-services')) return 'Animal Production Services';
     
-    
-    
-
-
-
     // Default case if none of the patterns match
     return url;
 };

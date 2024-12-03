@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import axiosInstance from "../component/axiosInstance";
 import { format, isSameMonth, subMonths } from "date-fns";
 import PrintableAccomplishmentReport from "../component/PrintComponents/PrintableAccomplishmentReport ";
+import { jwtDecode } from "jwt-decode";
 
 function AccomplishmentReport() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -12,6 +13,7 @@ function AccomplishmentReport() {
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
   const [selectedVaccine, setSelectedVaccine] = useState("All");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [userFullName, setUserFullName] = useState('');
 
   const vaccineGroups = {
     "Hemorrhagic Septicemia": ["Carabao", "Cattle", "Goat/Sheep"],
@@ -20,6 +22,42 @@ function AccomplishmentReport() {
   };
 
   const vaccineTypes = Object.keys(vaccineGroups);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+        console.log(decodedToken)
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  useEffect(() => {
+    console.log("User full name updated:", userFullName);
+  }, [userFullName]);
 
   useEffect(() => {
     fetchData();
@@ -33,7 +71,7 @@ function AccomplishmentReport() {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-  
+
       const [speciesCountResponse, targetsResponse] = await Promise.all([
         axiosInstance.get(
           `/species-count?year=${selectedYear}&month=${selectedMonth}&vaccine=all`,
@@ -52,14 +90,14 @@ function AccomplishmentReport() {
           }
         ),
       ]);
-  
+
       processSpeciesCount(speciesCountResponse.data);
       processTargets(targetsResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   const processTargets = (targetsData) => {
     if (
       !targetsData ||
@@ -205,7 +243,7 @@ function AccomplishmentReport() {
   const handlePrint = () => {
     const printContent = document.getElementById("printable-content");
     const printWindow = window.open("", "_blank");
-  
+
     printWindow.document.write(`
       <html>
         <head>
@@ -221,16 +259,16 @@ function AccomplishmentReport() {
         </body>
       </html>
     `);
-  
+
     // printWindow.document.close(); // Close the document for writing
-  
+
     // Wait for the content to load before calling print
     printWindow.onload = () => {
       printWindow.print();
       printWindow.close(); // Close the window after printing
     };
   };
-  
+
 
   return (
     <div className="p-6 bg-[#FFFAFA]">
@@ -251,7 +289,9 @@ function AccomplishmentReport() {
             targets={targets}
             quarterlyPercentage={quarterlyPercentage}
             semiAnnualPercentage={semiAnnualPercentage}
+            userFullName={userFullName} // Pass the user's full name here
           />
+
         </div>
         <div className="flex flex-col">
           <h2 className="text-md font-semibold text-gray-700 mb-2">
@@ -342,7 +382,7 @@ function AccomplishmentReport() {
         </div>
 
         <div className="flex flex-col items-center justify-center text-center">
-        <p className="text-md font-semibold text-gray-700 mb-2 text-center">
+          <p className="text-md font-semibold text-gray-700 mb-2 text-center">
             Semi Annual Percentage: {semiAnnualPercentage}
           </p>
           <p className="text-md font-semibold text-gray-700 mb-2 text-center">

@@ -5,7 +5,7 @@ const AnimalProductionServices = require('../../models/Client/AnimalProductionSe
 
 // Create a new Animal Production Services record
 router.post('/', async (req, res) => {
-    console.log("this is AnimalProductionServices " + JSON.stringify(req.body, null, 2))
+  
   try {
    
     const newService = new AnimalProductionServices(req.body);
