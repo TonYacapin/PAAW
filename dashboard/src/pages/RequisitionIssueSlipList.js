@@ -79,59 +79,118 @@ function RequisitionIssueSlipList() {
       setLoading(false);
     }
   };
-
-  async function updateInventory(requisition) {
+  async function updateInventory(requisition, user) {
     try {
       // Fetch the inventory data
       const inventoryResponse = await axiosInstance.get('/api/inventory');
       const inventoryItems = inventoryResponse.data;
-
+  
+      // Store audit log actions
+      const auditLogActions = [];
+  
       // Loop through the issuance rows
       for (const issuance of requisition.issuanceRows) {
         const inventoryItem = inventoryItems.find(item =>
           (item.supplies === issuance.description || item.type === issuance.description) &&
           item.source === issuance.source
         );
-
+  
         if (inventoryItem) {
+          // Create a copy of the current inventory item for comparison
+          const originalInventoryItem = { ...inventoryItem };
+  
+          // Use the FIFO (First In, First Out) method for reducing inventory
+          let remainingQuantity = issuance.quantity;
+          const updatedExpiration = [...(inventoryItem.expiration || [])];
+  
+          // Remove from oldest batches first
+          while (remainingQuantity > 0 && updatedExpiration.length > 0) {
+            if (updatedExpiration[0].in <= remainingQuantity) {
+              remainingQuantity -= updatedExpiration[0].in;
+              updatedExpiration.shift();
+            } else {
+              updatedExpiration[0].in -= remainingQuantity;
+              remainingQuantity = 0;
+            }
+          }
+  
           // Calculate the updated inventory quantities
           const updatedTotal = Math.max(inventoryItem.total - issuance.quantity, 0);
           const updatedOut = inventoryItem.out + issuance.quantity;
           const updatedQuantity = updatedTotal + updatedOut;
-
-          // Update the inventory item
-          await axiosInstance.put(`/api/inventory/${inventoryItem._id}`, {
+  
+          // Prepare the updated inventory item
+          const updatedInventory = {
             ...inventoryItem,
             total: updatedTotal,
             out: updatedOut,
-            quantity: updatedQuantity
+            quantity: updatedQuantity,
+            expiration: updatedExpiration
+          };
+  
+          // Update the inventory item
+          await axiosInstance.put(`/api/inventory/${inventoryItem._id}`, updatedInventory);
+  
+          // Prepare audit log for this inventory update
+          auditLogActions.push({
+            action: 'OUT',
+            inventoryId: inventoryItem._id,
+            user: user,
+            changes: {
+              before: originalInventoryItem,
+              after: updatedInventory
+            },
+            timestamp: new Date()
           });
         } else {
           throw new Error(`Inventory item not found for source: ${issuance.source}`);
         }
+      }
+  
+      // Batch create audit logs
+      if (auditLogActions.length > 0) {
+        await Promise.all(
+          auditLogActions.map(logAction => 
+            axiosInstance.post('/api/audit-logs-inventory', logAction)
+          )
+        );
       }
     } catch (err) {
       console.error("Error updating inventory:", err);
       throw new Error("Failed to update inventory");
     }
   }
+  
   const handleStatusUpdate = async () => {
     try {
       if (!selectedStatus) {
         console.error("No status selected");
         return;
       }
-
+  
       console.log("Updating status to:", selectedStatus);
-
+  
+      // Get the current user (assuming you have a way to retrieve the logged-in user)
+      const token = localStorage.getItem("token");
+      const user = token ? jwtDecode(token).email : 'unknown';
+  
       if (selectedStatus === "Distributed") {
-        await updateInventory(selectedRequisition);
+        await updateInventory(selectedRequisition, user);
       }
-
+  
+      // Prepare data for audit log of requisition status change
+      const originalRequisition = { ...selectedRequisition };
+      const updatedRequisition = { 
+        ...selectedRequisition, 
+        formStatus: selectedStatus 
+      };
+  
+      // Update requisition status
       await axiosInstance.put(`/api/requisitions/${selectedRequisition._id}`, {
         formStatus: selectedStatus
       });
-
+  
+      // Update local state
       setRequisitions(prevRequisitions =>
         prevRequisitions.map(req =>
           req._id === selectedRequisition._id
@@ -139,17 +198,30 @@ function RequisitionIssueSlipList() {
             : req
         )
       );
-
+  
+      // Reset modal and selection states
       setIsEditModalOpen(false);
       setSelectedRequisition(null);
       setSelectedStatus('');
-
+  
       await fetchRequisitions();
     } catch (err) {
       console.error("Error updating status:", err);
       setError("Failed to update status");
     }
   };
+  
+  const handleEditStatus = (requisition) => {
+    // Only allow status update for 'Allotted' requisitions
+    if (requisition.formStatus !== "Allotted") {
+      return;
+    }
+  
+    setSelectedRequisition(requisition);
+    setSelectedStatus("Distributed");
+    setIsEditModalOpen(true);
+  };
+
   const handleViewDetails = (requisition) => {
     setSelectedRequisition(requisition);
     setIsModalOpen(true);
@@ -159,14 +231,7 @@ function RequisitionIssueSlipList() {
     setIsSlipModalOpen(true);
   };
 
-  const handleEditStatus = (requisition) => {
-    if (requisition.formStatus !== "Allotted") {
-      return;
-    }
-    setSelectedRequisition(requisition);
-    setSelectedStatus("Distributed");
-    setIsEditModalOpen(true);
-  };
+
 
   if (loading)
     return (
