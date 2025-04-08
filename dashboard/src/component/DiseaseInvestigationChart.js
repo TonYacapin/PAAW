@@ -1,18 +1,35 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import React, { useState, useEffect } from 'react';
+import { Bar, Pie } from 'react-chartjs-2';
 import axiosInstance from '../component/axiosInstance';
 import { Chart as ChartJS } from 'chart.js/auto';
 import ChartGroup from './ChartGroup';
-import { FilterContext } from '../pages/Home/Home';
 
 function DiseaseInvestigationChart({ filterValues }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedChart, setSelectedChart] = useState(null);
-  const { filters, showAll } = useContext(FilterContext);
   const [analysis, setAnalysis] = useState("");
+  const [finalDiagnoses, setFinalDiagnoses] = useState([]);
+  const [diagnose, setDiagnose] = useState([]);
 
+  useEffect(() => {
+    async function fetchFinalDiagnoses() {
+      try {
+        const response = await axiosInstance.get('/final-diagnoses'); // Replace with your API endpoint
+        setFinalDiagnoses(response.data); // Use `response.data` directly
+      } catch (error) {
+        console.error('Error fetching final diagnoses:', error);
+        setError('Error fetching final diagnoses');
+      }
+    }
+
+    fetchFinalDiagnoses();
+  }, []);
+
+  const handleDiagnosisChange = (e) => {
+    setDiagnose(e.target.value); // Update `diagnose` directly
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,6 +39,7 @@ function DiseaseInvestigationChart({ filterValues }) {
             municipality: filterValues.municipality || undefined,
             startDate: filterValues.startDate || undefined,
             endDate: filterValues.endDate || undefined,
+            finalDiagnosis: diagnose || undefined, // Include the diagnose state
           },
         });
         setData(response.data);
@@ -33,13 +51,11 @@ function DiseaseInvestigationChart({ filterValues }) {
     };
 
     fetchData();
-  }, []);
+  }, [filterValues, diagnose]); // Re-fetch when `diagnose` changes
 
-  
   useEffect(() => {
     if (data.length > 0) {
-      const filteredData = filterData(data);
-      const speciesDetails = filteredData.flatMap(item =>
+      const speciesDetails = data.flatMap(item =>
         item.details.map(detail => ({
           species: detail.species,
           population: parseInt(detail.population) || 0,
@@ -51,49 +67,93 @@ function DiseaseInvestigationChart({ filterValues }) {
         }))
       );
 
-      // Calculate statistics for analysis
+      // Recalculate analysis
       const totalCases = speciesDetails.reduce((sum, item) => sum + item.cases, 0);
       const totalDeaths = speciesDetails.reduce((sum, item) => sum + item.deaths, 0);
       const mortalityRate = totalCases > 0 ? ((totalDeaths / totalCases) * 100).toFixed(2) : 0;
-      
+
       const speciesCounts = speciesDetails.reduce((acc, item) => {
         acc[item.species] = (acc[item.species] || 0) + item.cases;
         return acc;
       }, {});
-      
-      const mostAffectedSpecies = Object.entries(speciesCounts)
-        .sort(([,a], [,b]) => b - a)[0];
 
-      const vaccinated = speciesDetails.filter(item => 
-        item.vaccineHistory.toLowerCase().includes('vaccinated')).length;
-      const vaccinationRate = ((vaccinated / speciesDetails.length) * 100).toFixed(2);
+      const mostAffectedSpecies = Object.entries(speciesCounts).length > 0
+        ? Object.entries(speciesCounts).sort(([, a], [, b]) => b - a)[0]
+        : null;
 
-      // Set analysis content
+      const vaccinated = speciesDetails.filter(item =>
+        item.vaccineHistory && item.vaccineHistory.toLowerCase() === 'yes').length;
+
+      const vaccinationRate = speciesDetails.length > 0
+        ? ((vaccinated / speciesDetails.length) * 100).toFixed(2)
+        : 0;
+
+      // Generate analysis only if data exists
+      if (totalCases > 0) {
+        setAnalysis(
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto space-y-6">
+            <h2 className="text-xl font-semibold text-darkgreen">Analysis Summary</h2>
+
+            <div className="space-y-4 text-black">
+              <p className="text-lg">
+                <strong className="font-semibold text-darkgreen">Total Cases:</strong> {totalCases} cases reported across all species.
+              </p>
+              <p className="text-lg">
+                <strong className="font-semibold text-darkgreen">Mortality Rate:</strong> {mortalityRate}% ({totalDeaths} deaths out of {totalCases} cases).
+              </p>
+              {mostAffectedSpecies && (
+                <p className="text-lg">
+                  <strong className="font-semibold text-darkgreen">Most Affected Species:</strong> {mostAffectedSpecies[0]} with {mostAffectedSpecies[1]} cases.
+                </p>
+              )}
+              <p className="text-lg">
+                <strong className="font-semibold text-darkgreen">Vaccination Status:</strong> {vaccinationRate}% of affected animals had vaccination history.
+              </p>
+              <p className="text-lg">
+                <strong className="font-semibold text-darkgreen">Control Measures:</strong> Total of {speciesDetails.reduce((sum, item) => sum + item.destroyed + item.slaughtered, 0)} animals were either destroyed or slaughtered as control measures.
+              </p>
+            </div>
+
+            {/* Prescriptive Analysis */}
+            <div className="space-y-4 bg-pastelyellow p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-darkgreen">Prescriptive Recommendations</h3>
+              <ul className="list-disc pl-6 text-black space-y-2">
+                <li>Increase vaccination efforts, especially for the most affected species ({mostAffectedSpecies ? mostAffectedSpecies[0] : 'N/A'}), to reduce future case rates.</li>
+                <li>Consider implementing stronger quarantine and monitoring protocols for species with high mortality rates.</li>
+                <li>Explore alternatives to animal destruction and slaughter where feasible, focusing on sterilization or other humane control methods.</li>
+                <li>Invest in public awareness campaigns for controlling disease outbreaks in wildlife populations.</li>
+              </ul>
+            </div>
+
+            {/* Predictive Analysis */}
+            <div className="space-y-4 bg-darkgreen p-4 rounded-lg text-white">
+              <h3 className="text-lg font-semibold">Predictive Trends</h3>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>If the vaccination rate continues to increase at the current pace, we might see a {vaccinationRate}% reduction in cases within the next year, provided that the coverage reaches 80%.</li>
+                <li>Assuming the current mortality rate holds steady, we may expect a further {mortalityRate}% increase in fatalities unless control measures (such as vaccinations or population management) are strengthened.</li>
+                <li>If the trend of most affected species remains unchanged, further interventions are required to manage outbreaks more effectively within the next 3-6 months.</li>
+              </ul>
+            </div>
+          </div>
+        );
+      } else {
+        // Clear analysis if no cases
+        setAnalysis(
+          <div className="text-center text-gray-600 p-6">
+            No data available for the selected diagnosis.
+          </div>
+        );
+      }
+    } else {
+      // Clear analysis if no data
       setAnalysis(
-        <>
-          <p>
-            <strong>Total Cases:</strong> {totalCases} cases reported across all species.
-          </p>
-          <p>
-            <strong>Mortality Rate:</strong> {mortalityRate}% ({totalDeaths} deaths out of {totalCases} cases).
-          </p>
-          {mostAffectedSpecies && (
-            <p>
-              <strong>Most Affected Species:</strong> {mostAffectedSpecies[0]} with {mostAffectedSpecies[1]} cases.
-            </p>
-          )}
-          <p>
-            <strong>Vaccination Status:</strong> {vaccinationRate}% of affected animals had vaccination history.
-          </p>
-          <p>
-            <strong>Control Measures:</strong> Total of {
-              speciesDetails.reduce((sum, item) => sum + item.destroyed + item.slaughtered, 0)
-            } animals were either destroyed or slaughtered as control measures.
-          </p>
-        </>
+        <div className="text-center text-gray-600 p-6">
+          No data available for the selected diagnosis.
+        </div>
       );
     }
-  }, [data, filters, showAll]);
+  }, [data]);
+
 
   if (loading) return (
     <div className="flex items-center justify-center ">
@@ -102,20 +162,7 @@ function DiseaseInvestigationChart({ filterValues }) {
   );
   if (error) return <div>{error}</div>;
 
-  const filterData = (data) => {
-    if (showAll) return data;
-    return data.filter(item => {
-      return (
-        (!filters.dateFrom || new Date(item.dateReported) >= new Date(filters.dateFrom)) &&
-        (!filters.dateTo || new Date(item.dateReported) <= new Date(filters.dateTo)) &&
-        (!filters.status || item.status === filters.status)
-      );
-    });
-  };
-
-  const filteredData = filterData(data);
-
-  const speciesDetails = filteredData.flatMap(item =>
+  const speciesDetails = data.flatMap(item =>
     item.details.map(detail => ({
       species: detail.species,
       population: parseInt(detail.population) || 0,
@@ -154,16 +201,14 @@ function DiseaseInvestigationChart({ filterValues }) {
     return acc;
   }, {});
 
-  const confirmedCases = filteredData.filter(item => item.finaldiagnosis).length;
+  const confirmedCases = data.filter(item => item.finaldiagnosis).length;
 
-  const natureOfDiagnosisCounts = filteredData.reduce((acc, item) => {
+  const natureOfDiagnosisCounts = data.reduce((acc, item) => {
     if (item.finaldiagnosis) {
       acc[item.natureofdiagnosis] = (acc[item.natureofdiagnosis] || 0) + 1;
     }
     return acc;
   }, {});
-
-  
 
   const charts = [
     {
@@ -387,29 +432,51 @@ function DiseaseInvestigationChart({ filterValues }) {
 
   return (
     <div className="container mx-auto px-4 py-6">
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
-        Disease Investigation Report
-      </h2>
-      
-      {/* Analysis Section */}
-      <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
-        <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
-          Analysis
-        </h3>
-        <div className="text-gray-800 mt-4 text-lg leading-relaxed">
-          {analysis}
-        </div>
-      </div>
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-darkgreen mb-4 text-center">
+          Disease Investigation Report
+        </h2>
 
-      <ChartGroup
-        charts={charts}
-        title="Disease Investigation Analytics Dashboard"
-        selectedChart={selectedChart}
-        setSelectedChart={setSelectedChart}
-      />
+
+        {/* Diagnosis Selector */}
+        <div className="mb-6 max-w-xl mx-auto">
+          <label htmlFor="finalDiagnosis" className="block text-sm font-medium text-darkgreen mb-2">
+            Select Disease
+          </label>
+          <select
+            id="finalDiagnosis"
+            value={diagnose}
+            onChange={handleDiagnosisChange} // Update the handler
+            className="block w-full rounded-md border-2 border-gray-300 text-gray-900 bg-white py-2 px-4 focus:outline-none focus:ring-2 focus:ring-darkgreen focus:border-darkgreen sm:text-sm"
+          >
+            <option value="" className="text-gray-400">All Disease</option>
+            {finalDiagnoses.map((diagnosis) => (
+              <option key={diagnosis} value={diagnosis} className="text-darkgreen">
+                {diagnosis}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Analysis Section */}
+        <div className="mt-8 p-6 bg-white border border-gray-200 shadow-md rounded-lg">
+          <h3 className="text-2xl font-bold text-darkgreen border-b-2 border-darkgreen pb-2">
+            Analysis
+          </h3>
+          <div className="text-gray-800 mt-4 text-lg leading-relaxed">
+            {analysis}
+          </div>
+        </div>
+
+        <ChartGroup
+          charts={charts}
+          title="Disease Investigation Analytics Dashboard"
+          selectedChart={selectedChart}
+          setSelectedChart={setSelectedChart}
+        />
+
+      </div>
     </div>
-  </div>
   );
 }
 

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../component/axiosInstance";
 import PrintableMunicipalityAccomplishmentReportRoutineServices from "../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRoutineServices";
+import { jwtDecode } from "jwt-decode";
 
 const MunicipalityAccomplishmentReportRoutineServices = () => {
   const [reportData, setReportData] = useState([]);
@@ -11,6 +12,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [semiAnnualTargets, setSemiAnnualTargets] = useState([]); // State to store semi-annual targets
+  const [userFullName, setUserFullName] = useState('');
 
   const municipalitiesList = [
     "Aritao",
@@ -29,6 +31,39 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
     "Solano",
     "Villaverde",
   ];
+
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+     
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   const fetchData = async (year, month, species) => {
     setLoading(true);
@@ -179,6 +214,7 @@ const MunicipalityAccomplishmentReportRoutineServices = () => {
               selectedMonth={selectedMonth}
               selectedSpecies={selectedSpecies}
               semiAnnualTargets={semiAnnualTargets}
+              userFullName={userFullName} 
             />
           </div>
           Municipality Routine Services Accomplishment Report

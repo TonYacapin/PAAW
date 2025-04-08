@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../component/axiosInstance";
 import PrintableMunicipalityAccomplishmentReportRabies from "../component/PrintComponents/PrintableMunicipalityAccomplishmentReportRabies";
+import { jwtDecode } from "jwt-decode";
 
 const MunicipalityAccomplishmentReportRabies = () => {
   const [reportData, setReportData] = useState([]);
@@ -8,7 +9,7 @@ const MunicipalityAccomplishmentReportRabies = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [semiAnnualTargets, setSemiAnnualTargets] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [userFullName, setUserFullName] = useState('');
   const municipalitiesList = [
     "Ambaguio",
     "Bagabag",
@@ -41,6 +42,40 @@ const MunicipalityAccomplishmentReportRabies = () => {
     "November",
     "December",
   ];
+
+
+
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+   
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -150,6 +185,8 @@ const MunicipalityAccomplishmentReportRabies = () => {
             year={year}
             month={month}
             semiAnnualTargets={semiAnnualTargets}
+            userFullName={userFullName} 
+
           />
         </div>
         <h1 className="text-xl font-semibold text-gray-700">

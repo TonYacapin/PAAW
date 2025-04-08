@@ -4,6 +4,9 @@ import { format } from "date-fns";
 import PrintableRabiesVaccinationReport from "../component/PrintComponents/PrintableRabiesVaccinationReport";
 import axiosInstance from "../component/axiosInstance";
 
+
+import { jwtDecode } from "jwt-decode";
+
 function RabiesVaccinationAccomplishmentReport() {
   const [immunizationData, setImmunizationData] = useState({
     previousMonthCount: 0,
@@ -18,6 +21,40 @@ function RabiesVaccinationAccomplishmentReport() {
   const [semiAnnualPercentage, setSemiAnnualPercentage] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // 1-12
+  const [userFullName, setUserFullName] = useState('');
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+     
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   useEffect(() => {
     fetchData();
@@ -96,7 +133,7 @@ function RabiesVaccinationAccomplishmentReport() {
   const handlePrint = () => {
     const printContent = document.getElementById("printable-content");
     const printWindow = window.open("", "_blank");
-  
+
     printWindow.document.write(`
       <html>
         <head>
@@ -112,16 +149,16 @@ function RabiesVaccinationAccomplishmentReport() {
         </body>
       </html>
     `);
-  
+
     printWindow.document.close(); // Close the document for writing
-  
+
     // Wait for the content to load before calling print
     printWindow.onload = () => {
       printWindow.print();
       printWindow.close(); // Close the window after printing
     };
   };
- 
+
 
   return (
     <div className="p-6 bg-[#FFFAFA]">
@@ -135,6 +172,7 @@ function RabiesVaccinationAccomplishmentReport() {
           targets={targets}
           quarterlyPercentage={quarterlyPercentage}
           semiAnnualPercentage={semiAnnualPercentage}
+          userFullName={userFullName}
         />
       </div>
 

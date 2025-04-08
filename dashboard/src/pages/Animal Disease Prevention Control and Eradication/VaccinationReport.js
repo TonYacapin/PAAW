@@ -95,7 +95,7 @@ function VaccinationReport() {
 
     // Create a file name with a naming convention
     const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const fileName = `vaccination_report_${municipality}_${date}.csv`;
+    const fileName = `vaccination_report_${municipality}_${dateReported}.csv`;
 
     link.href = url;
     link.setAttribute("download", fileName);

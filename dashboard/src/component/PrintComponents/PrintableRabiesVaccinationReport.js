@@ -10,6 +10,7 @@ const PrintableRabiesVaccinationReport = ({
   targets,
   quarterlyPercentage,
   semiAnnualPercentage,
+  userFullName,
 }) => {
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -77,12 +78,11 @@ const PrintableRabiesVaccinationReport = ({
             margin-top: 15px; /* Reduce margin */
             width: 100%;
           }
-          .signature {
-            margin-top: 15px; /* Reduce margin */
+          .signature-line {
             border-top: 1px solid black;
-            width: 150px; /* Reduced signature width */
-            margin: 0 auto;
+            width: 20%;
             text-align: center;
+            margin-top: 20px; /* Reduced margin */
           }
         }
       `}
@@ -139,7 +139,22 @@ const PrintableRabiesVaccinationReport = ({
 
 
 
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
+
+
+
     </div >
+
+
   );
 };
 

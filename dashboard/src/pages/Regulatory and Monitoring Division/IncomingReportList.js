@@ -3,6 +3,7 @@ import axiosInstance from "../../component/axiosInstance";
 
 import placeholder1 from "../../pages/assets/NVLOGO.png";
 import placeholder2 from "../../pages/assets/ReportLogo2.png";
+import { jwtDecode } from "jwt-decode";
 
 function IncomingReportList() {
   const [data, setData] = useState([]);
@@ -11,6 +12,7 @@ function IncomingReportList() {
 
   // Year filter state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [userFullName, setUserFullName] = useState('');
 
   // Generate array of years for dropdown (e.g., last 10 years)
   const currentYear = new Date().getFullYear();
@@ -31,6 +33,42 @@ function IncomingReportList() {
 
     fetchData();
   }, []);
+
+  
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+        console.log(decodedToken)
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   // Filter data by year
   const filterDataByYear = (shipments, year) => {
@@ -203,6 +241,16 @@ function IncomingReportList() {
                           .join("")}
                     </tbody>
                 </table>
+
+                <div class="footer" style="text-align: center; margin-top: 1px; width: 100%;">
+                <div class="signature-section" style="display: inline-block; text-align: center; ">
+                <div style="margin-top: 20px; border-bottom: 1px solid black; width: 200px; margin: 0 auto;"></div>
+                  <strong style= "margin-bottom: 20px;">Prepared by:</strong>
+              
+                
+                  <span style="display: block; margin-top: 5px;">${userFullName}</span>
+                </div>
+              </div>
             </body>
         </html>
     `);

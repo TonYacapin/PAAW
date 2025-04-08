@@ -2,16 +2,18 @@ import React from 'react';
 import placeholder1 from '../../pages/assets/NVLOGO.png'; // Left Logo
 import placeholder2 from '../../pages/assets/ReportLogo2.png'; // Right Logo
 
-const PrintableMunicipalityAccomplishmentReportVaccination = ({ 
-  reportData, 
-  selectedYear, 
-  selectedMonth, 
-  selectedSpecies, 
+const PrintableMunicipalityAccomplishmentReportVaccination = ({
+  reportData,
+  selectedYear,
+  selectedMonth,
+  selectedSpecies,
   semiAnnualTargets,
-  submittedBy
+  submittedBy,
+  userFullName,
+
 }) => {
   const monthNames = [
-    "January", "February", "March", "April", "May", "June", 
+    "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
 
@@ -40,8 +42,8 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-lg print-container">
-    <style>
-      {`
+      <style>
+        {`
         @media print {
           @page {
             size: legal landscape; /* Set page size to landscape */
@@ -106,32 +108,39 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
             margin: 0 auto;
             text-align: center;
           }
+
+          .signature-line {
+            border-top: 1px solid black;
+            width: 20%;
+            text-align: center;
+            margin-top: 20px; /* Reduced margin */
+          }
         }
       `}
-    </style>
+      </style>
 
-    <div className="header">
-      <div className="logo-container">
-        <img src={placeholder1} alt="Left Logo" />
-        <img src={placeholder2} alt="Right Logo" />
-      </div>
-      <div className="text-center mt-2">
-        <p className="text">Republic of the Philippines</p>
-        <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
-        <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
-        <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
-      </div>
-      <div className="text-center mb-4">
-        <h1 className="title">Municipality Rabies Vaccination Accomplishment Report</h1>
-        <div className="mb-4 text-center">
-          <p className="text"><strong>Year:</strong> {selectedYear}</p>
-          <p className="text"><strong>Month:</strong> {monthNames[selectedMonth - 1]}</p>
+      <div className="header">
+        <div className="logo-container">
+          <img src={placeholder1} alt="Left Logo" />
+          <img src={placeholder2} alt="Right Logo" />
+        </div>
+        <div className="text-center mt-2">
+          <p className="text">Republic of the Philippines</p>
+          <h1 className="title">PROVINCE OF NUEVA VIZCAYA</h1>
+          <h2 className="subtitle">PROVINCIAL VETERINARY SERVICES OFFICE</h2>
+          <p className="text">3rd floor Agriculture Bldg, Capitol Compound, District IV, Bayombong, Nueva Vizcaya</p>
+        </div>
+        <div className="text-center mb-4">
+          <h1 className="title">Municipality Rabies Vaccination Accomplishment Report</h1>
+          <div className="mb-4 text-center">
+            <p className="text"><strong>Year:</strong> {selectedYear}</p>
+            <p className="text"><strong>Month:</strong> {monthNames[selectedMonth - 1]}</p>
+          </div>
         </div>
       </div>
-    </div>
 
 
-      
+
 
       <table className="w-full border-collapse border border-gray-300 mb-6">
         <thead>
@@ -173,7 +182,19 @@ const PrintableMunicipalityAccomplishmentReportVaccination = ({
         </tfoot>
       </table>
 
-    
+
+      {/* Footer Section */}
+      <div className="footer">
+        <div className="signature-section">
+          <div className="signature-line" style={{ fontSize: "10px", marginTop: "5px", textAlign: "left" }}>
+            <span><strong>Prepared by:</strong></span>
+            <br />
+            <span>{userFullName}</span>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   );
 };

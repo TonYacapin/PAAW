@@ -208,7 +208,7 @@ const UpgradingServices = () => {
 
     const csv = Papa.unparse(data);
     const date = new Date().toISOString().split("T")[0];
-    const fileName = `upgrading_report_${municipality}_${date}.csv`;
+    const fileName = `upgrading_report_${municipality}_${dateReported}.csv`;
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);

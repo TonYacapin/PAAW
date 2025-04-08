@@ -3,6 +3,7 @@ import axiosInstance from "../../component/axiosInstance";
 
 import placeholder1 from "../../pages/assets/NVLOGO.png";
 import placeholder2 from "../../pages/assets/ReportLogo2.png";
+import { jwtDecode } from "jwt-decode";
 
 function OutgoingReportList() {
   const [data, setData] = useState([]);
@@ -11,10 +12,49 @@ function OutgoingReportList() {
 
   // Year filter state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [userFullName, setUserFullName] = useState('');
 
   // Generate array of years for dropdown (e.g., last 10 years)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+
+
+
+
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+        console.log(decodedToken)
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,16 +219,16 @@ function OutgoingReportList() {
                     </thead>
                     <tbody>
                         ${getFilteredOutgoingShipmentsByMonth()
-                          .map((monthlyShipments, index) => {
-                            const total = Object.values(
-                              monthlyShipments
-                            ).reduce((acc, count) => acc + count, 0);
-                            return `
+        .map((monthlyShipments, index) => {
+          const total = Object.values(
+            monthlyShipments
+          ).reduce((acc, count) => acc + count, 0);
+          return `
                                 <tr>
                                     <td>${new Date(0, index).toLocaleString(
-                                      "default",
-                                      { month: "long" }
-                                    )}</td>
+            "default",
+            { month: "long" }
+          )}</td>
                                     <td>${monthlyShipments.Carabao}</td>
                                     <td>${monthlyShipments.Cattle}</td>
                                     <td>${monthlyShipments.Swine}</td>
@@ -199,10 +239,21 @@ function OutgoingReportList() {
                                     <td>${total}</td>
                                 </tr>
                             `;
-                          })
-                          .join("")}
+        })
+        .join("")}
                     </tbody>
                 </table>
+
+                
+                <div class="footer" style="text-align: center; margin-top: 1px; width: 100%;">
+                <div class="signature-section" style="display: inline-block; text-align: center; ">
+                <div style="margin-top: 20px; border-bottom: 1px solid black; width: 200px; margin: 0 auto;"></div>
+                  <strong style= "margin-bottom: 20px;">Prepared by:</strong>
+              
+                
+                  <span style="display: block; margin-top: 5px;">${userFullName}</span>
+                </div>
+              </div>
             </body>
         </html>
     `);

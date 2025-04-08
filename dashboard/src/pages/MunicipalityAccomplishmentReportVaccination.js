@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "../component/axiosInstance";
 import PrintableMunicipalityAccomplishmentReportVaccination from "../component/PrintComponents/PrintableMunicipalityAccomplishmentReportVaccination";
-
+import { jwtDecode } from "jwt-decode";
 const MunicipalityAccomplishmentReportVaccination = () => {
   const [reportData, setReportData] = useState([]);
   const [selectedYear, setSelectedYear] = useState("2024"); // Default year
@@ -9,6 +9,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
   const [selectedSpecies, setSelectedSpecies] = useState("Carabao"); // Default species
   const [loading, setLoading] = useState(false); // Loading state
   const [semiAnnualTargets, setSemiAnnualTargets] = useState([]); // State to store semi-annual targets
+  const [userFullName, setUserFullName] = useState('');
   // Predefined list of municipalities
   const municipalitiesList = [
     "Aritao",
@@ -27,6 +28,39 @@ const MunicipalityAccomplishmentReportVaccination = () => {
     "Solano",
     "Villaverde",
   ];
+
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token); // Decodes the token
+        const userId = decodedToken.userId; // Adjust based on your token structure
+
+        const response = await axiosInstance.get('/api/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Find the user based on the decoded userId
+        const userData = response.data.find(user => user._id === userId);
+        if (userData) {
+          const fullName = `${userData.firstname} ${userData.middlename ? userData.middlename + ' ' : ''
+            }${userData.lastname}`;
+          setUserFullName(fullName);
+
+
+        }
+     
+      } catch (error) {
+        console.error('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   const fetchData = async (year, month, species) => {
     setLoading(true);
@@ -181,6 +215,7 @@ const MunicipalityAccomplishmentReportVaccination = () => {
             selectedMonth={selectedMonth}
             selectedSpecies={selectedSpecies}
             semiAnnualTargets={semiAnnualTargets}
+            userFullName={userFullName} 
           />
         </div>
         <h1 className="text-xl font-semibold text-gray-700">
