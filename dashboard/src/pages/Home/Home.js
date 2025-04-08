@@ -86,6 +86,8 @@ import RabiesHistoryFormLists from "../RABIES/RabiesHistoryFormLists";
 import TechnicianQuarterlyReportList from "../../component/TechnicianQuarterlyReportList";
 import AboutUs from "../AboutUs";
 
+import { FilterAltOutlined, FilterAltOff } from '@mui/icons-material';
+
 
 export const FilterContext = createContext(null);
 
@@ -471,7 +473,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
     const buttonBaseClasses = "group relative w-full flex items-center justify-between bg-gradient-to-r from-darkgreen to-emerald-700 text-white py-3 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out";
     const iconClasses = "flex items-center justify-center p-2 rounded-full bg-white/20 group-hover:bg-white/30 transition-all duration-200";
     const textClasses = "flex-grow font-medium text-left ml-3 group-hover:ml-4 transition-all duration-200";
-    
+
     switch (selectedDivision) {
       case "user":
         return (
@@ -482,7 +484,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </span>
               Client Forms
             </h3>
-            
+
             <div className="space-y-6">
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-3 pb-2 border-b">
@@ -491,7 +493,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </span>
                   Request Services
                 </h4>
-                
+
                 <div className="grid gap-3">
                   {/* Show all buttons if userRole is "admin" or "client" */}
                   {(userRole === "admin" || userRole === "user" || userRole === "extensionworker") && (
@@ -514,7 +516,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                         <span className={textClasses}>Animal Health Care Services</span>
                         <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                       </button>
-  
+
                       <button
                         onClick={() =>
                           openModalWithContent(
@@ -533,7 +535,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                         <span className={textClasses}>Animal Production Services</span>
                         <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                       </button>
-  
+
                       <button
                         onClick={() =>
                           openModalWithContent(
@@ -552,7 +554,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                         <span className={textClasses}>Veterinary Information Services</span>
                         <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                       </button>
-  
+
                       <button
                         onClick={() =>
                           openModalWithContent(
@@ -573,7 +575,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       </button>
                     </>
                   )}
-  
+
                   {/* Show only Regulatory Services if userRole is "regulatory" */}
                   {userRole === "regulatory" && (
                     <button
@@ -591,7 +593,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                     </button>
                   )}
-  
+
                   {/* Show only Animal Production Services if userRole is "livestock" */}
                   {userRole === "livestock" && (
                     <button
@@ -609,7 +611,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                     </button>
                   )}
-  
+
                   {/* Show only Veterinary Information Services if userRole is "animalhealth" */}
                   {userRole === "animalhealth" && (
                     <button
@@ -634,7 +636,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </div>
         );
-        
+
       case "admin":
         return (
           <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
@@ -644,7 +646,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </span>
               Admin Actions
             </h3>
-            
+
             <div className="grid gap-3">
               <button
                 className={buttonBaseClasses}
@@ -659,7 +661,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 <span className={textClasses}>Backup and Restore</span>
                 <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
               </button>
-              
+
               <button
                 className={buttonBaseClasses}
                 onClick={() =>
@@ -673,7 +675,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 <span className={textClasses}>Manage Users</span>
                 <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
               </button>
-              
+
               <button
                 className={buttonBaseClasses}
                 onClick={() =>
@@ -687,7 +689,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 <span className={textClasses}>AuditLog</span>
                 <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
               </button>
-              
+
               <button
                 className={buttonBaseClasses}
                 onClick={() => openModalWithContent(
@@ -700,7 +702,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                 <span className={textClasses}>Manage Requisition Forms</span>
                 <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
               </button>
-              
+
               <button
                 className={buttonBaseClasses}
                 onClick={() =>
@@ -717,7 +719,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </div>
         );
-  
+
       case "animalhealth":
         return (
           <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
@@ -727,7 +729,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </span>
               Animal Health Forms
             </h3>
-            
+
             <div className="space-y-6">
               {userRole !== "admin" && userRole !== "extensionworker" && (
                 <div>
@@ -755,7 +757,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </div>
                 </div>
               )}
-              
+
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-3 pb-2 border-b">
                   <span className="text-darkgreen mr-2">
@@ -782,7 +784,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Rabies Vaccination</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -803,7 +805,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </button>
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-3 pb-2 border-b">
                   <span className="text-darkgreen mr-2">
@@ -830,7 +832,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Disease Investigation Form</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -849,7 +851,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Rabies History</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -868,7 +870,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Routine Service Monitoring</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   {userRole !== "extensionworker" && (
                     <button
                       onClick={() =>
@@ -890,7 +892,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </div>
         );
-  
+
       case "livestock":
         return (
           <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
@@ -900,7 +902,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </span>
               Livestock Forms
             </h3>
-            
+
             <div className="space-y-6">
               {userRole !== "admin" && userRole !== "extensionworker" && (
                 <div>
@@ -928,7 +930,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </div>
                 </div>
               )}
-  
+
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-800 mb-3 pb-2 border-b">
                   <span className="text-darkgreen mr-2">
@@ -955,7 +957,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Upgrading Service</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -974,7 +976,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Offspring Monitoring</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -993,7 +995,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Quarterly Calf Drop Report</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-  
+
                   {/* Conditional rendering for the Accomplishment Report button */}
                   {userRole !== "extensionworker" && (
                     <button
@@ -1016,7 +1018,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </div>
         );
-  
+
       case "regulatory":
         return (
           <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
@@ -1026,7 +1028,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
               </span>
               Regulatory Forms
             </h3>
-            
+
             <div className="space-y-6">
               {userRole !== "admin" && (
                 <div>
@@ -1037,7 +1039,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     Requisition Forms
                   </h4>
                   <div className="grid gap-3">
-                    <button 
+                    <button
                       className={buttonBaseClasses}
                       onClick={() => openModalWithContent(
                         isOffline ? "OfflinePage" : "RequisitionIssueSlipList"
@@ -1052,7 +1054,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </div>
                 </div>
               )}
-              
+
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-3 pb-2 border-b">
                   <span className="text-darkgreen mr-2">
@@ -1075,7 +1077,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Incoming Report</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       openModalWithContent(
@@ -1092,7 +1094,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                   </button>
                 </div>
               </div>
-                
+
               <div>
                 <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-3 pb-2 border-b">
                   <span className="text-darkgreen mr-2">
@@ -1115,7 +1117,7 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                     <span className={textClasses}>Slaughter Report (consolidated)</span>
                     <ChevronRight className="text-white/70 group-hover:text-white transition-colors" />
                   </button>
-                  
+
                   <button
                     onClick={() => openModalWithContent(
                       isOffline ? "VeterinaryShipmentForm" : "VeterinaryShipmentList"
@@ -1133,58 +1135,133 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
             </div>
           </div>
         );
-  
+
       default:
         return null;
     }
   }
 
   const customSelectStyles = {
-    control: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
-      backgroundColor: "#FFFAFA",
-      borderColor: "#1b5b40",
-      borderRadius: "0.5rem",
-      padding: "0.5rem",
-      fontSize: "1rem",
-      boxShadow: "none",
-      zIndex: 1, // Ensure the select is behind the navbar
+      backgroundColor: "#ffffff",
+      borderColor: state.isFocused ? "#1b5b40" : "#e2e8f0",
+      borderWidth: "1px",
+      borderRadius: "0.75rem",
+      padding: "0.35rem 0.5rem",
+      boxShadow: state.isFocused
+        ? "0 0 0 2px rgba(27, 91, 64, 0.2)"
+        : "0 1px 3px rgba(0, 0, 0, 0.05)",
+      fontSize: "0.925rem",
+      transition: "all 0.2s ease",
+      zIndex: 1,
       "&:hover": {
         borderColor: "#1b5b40",
       },
     }),
+
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: "#1b5b40",
-      color: "#FFFAFA",
-      borderRadius: "0.25rem",
-      padding: "0.25rem 0.5rem",
+      backgroundColor: "rgba(27, 91, 64, 0.08)",
+      borderRadius: "0.5rem",
+      margin: "0.15rem",
+      overflow: "hidden",
+      border: "1px solid rgba(27, 91, 64, 0.15)",
+      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+      transition: "all 0.15s ease",
     }),
+
     multiValueLabel: (provided) => ({
       ...provided,
-      color: "#FFFAFA",
+      color: "#1b5b40",
+      fontWeight: 500,
+      fontSize: "0.875rem",
+      padding: "0.15rem 0.2rem 0.15rem 0.5rem",
     }),
+
     multiValueRemove: (provided) => ({
       ...provided,
-      color: "#FFFAFA",
+      color: "#1b5b40",
+      borderRadius: "0 0.375rem 0.375rem 0",
+      padding: "0 0.5rem",
+      transition: "all 0.2s ease",
       "&:hover": {
-        backgroundColor: "#ffe356",
-        color: "#252525",
+        backgroundColor: "#f87171",
+        color: "white",
       },
     }),
+
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#94a3b8",
+      fontSize: "0.925rem",
+    }),
+
+    input: (provided) => ({
+      ...provided,
+      color: "#334155",
+      fontSize: "0.925rem",
+    }),
+
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#1b5b40" : "#FFFAFA",
-      color: state.isSelected ? "#FFFAFA" : "#252525",
-      "&:hover": {
+      backgroundColor: state.isSelected
+        ? "#1b5b40"
+        : state.isFocused
+          ? "rgba(27, 91, 64, 0.08)"
+          : "#ffffff",
+      color: state.isSelected ? "#ffffff" : "#334155",
+      fontSize: "0.925rem",
+      padding: "0.65rem 1rem",
+      cursor: "pointer",
+      transition: "background-color 0.15s ease",
+      "&:active": {
         backgroundColor: "#1b5b40",
-        color: "#FFFAFA",
       },
     }),
+
     menu: (provided) => ({
       ...provided,
-      backgroundColor: "#FFFAFA",
-      border: "1px solid #1b5b40",
+      backgroundColor: "#ffffff",
+      borderRadius: "0.75rem",
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      overflow: "hidden",
+      border: "none",
+      padding: "0.5rem 0",
+      marginTop: "0.5rem",
+    }),
+
+    menuList: (provided) => ({
+      ...provided,
+      padding: "0.25rem",
+    }),
+
+    indicatorSeparator: (provided) => ({
+      ...provided,
+      backgroundColor: "rgba(226, 232, 240, 0.8)",
+    }),
+
+    dropdownIndicator: (provided, state) => ({
+      ...provided,
+      color: state.isFocused ? "#1b5b40" : "#94a3b8",
+      transition: "all 0.2s ease",
+      transform: state.selectProps.menuIsOpen ? "rotate(180deg)" : null,
+      "&:hover": {
+        color: "#1b5b40",
+      },
+    }),
+
+    clearIndicator: (provided) => ({
+      ...provided,
+      color: "#94a3b8",
+      "&:hover": {
+        color: "#ef4444",
+      },
+    }),
+
+    valueContainer: (provided) => ({
+      ...provided,
+      padding: "0.15rem 0.5rem",
     }),
   };
 
@@ -1226,13 +1303,19 @@ function Home({ handleLogout, setIsAuthenticated, isOffline }) {
                       />
 
                     </div>
-                    <div className="flex items-center col-span-1 justify-center">
+                    <div>
                       {!isOffline && (
                         <button
                           onClick={() => toggleFilterShow()}
-                          className="bg-darkgreen text-white py-2 px-4 rounded-md shadow-sm hover:bg-darkergreen transition-colors"
+                          className="bg-darkgreen hover:bg-emerald-700 text-white p-2.5 rounded-full shadow-sm transition-all duration-300 flex items-center justify-center"
+                          aria-label={showAll ? "Show filters" : "Hide filters"}
+                          title={showAll ? "Show filters" : "Hide filters"}
                         >
-                          {showAll ? "Show Filters" : "Hide Filters"}
+                          {showAll ? (
+                            <FilterAltOutlined fontSize="small" />
+                          ) : (
+                            <FilterAltOff fontSize="small" />
+                          )}
                         </button>
                       )}
 
