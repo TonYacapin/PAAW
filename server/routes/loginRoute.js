@@ -36,18 +36,38 @@ async function ensureAdminAccount() {
 
         // If no admin user exists, create one
         if (!adminExists) {
-            const hashedPassword = await bcrypt.hash('admin', 10); // Use a secure default password
+            // Use environment variables or generate a strong random password
+            const defaultEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@gmail.com';
+            const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD || require('crypto').randomBytes(12).toString('hex');
+            
+            const hashedPassword = await bcrypt.hash(defaultPassword, 10);
             const defaultAdmin = new User({
-                email: 'admin@gmail.com',
+                email: defaultEmail,
                 password: hashedPassword,
                 role: 'admin',
                 isActive: true,
-                firstname: 'Default', // Add firstname
-                lastname: 'Admin'      // Add lastname
+                firstname: 'Default',
+                lastname: 'Admin',
+                mustChangePassword: true // Add this field to userModel schema
             });
 
             await defaultAdmin.save();
-            console.log('Default admin account created with email: admin@gmail.com');
+            console.log(`Default admin account created with email: ${defaultEmail}`);
+            
+            if (!process.env.DEFAULT_ADMIN_PASSWORD) {
+                console.log(`Generated password: ${defaultPassword}`);
+                console.log('IMPORTANT: Save this password as it will not be displayed again');
+            }
+            
+            // Create audit log
+            await createAuditLog(
+                'System Setup', 
+                'User Management', 
+                defaultAdmin._id, 
+                'system', 
+                'successful', 
+                'Default admin account created'
+            );
         }
     } catch (error) {
         console.error('Error ensuring admin account:', error);
