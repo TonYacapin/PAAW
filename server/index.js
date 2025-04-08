@@ -20,13 +20,14 @@ const vetshipformroutes = require('./routes/vetshipformroutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const user = require('./routes/userRoutes');
-const loginRoute = require('./routes/loginRoute');
+const auth = require('./routes/loginRoute');
 const animalhealthcareservicesRoutes = require('./routes/Client/animalhealthcareservicesRoutes');
 const animalProductionServicesRoutes = require('./routes/Client/animalproductionservicesRoutes'); 
 const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryinformationserviceRoutes");
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
 const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
 const auditLogInventoryRoutes = require('./routes/auditLogInventoryRoutes'); 
+
 const backupRestoreRoutes = require('./routes/backupRestore.routes');
 
 // Import the audit log middleware
@@ -36,62 +37,35 @@ const authMiddleware = require('./middleware/authMiddleware'); // Import your au
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB with improved connection handling
+// Connect to MongoDB
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/PAAW', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  // Add these options for MongoDB Atlas connections
-  ssl: process.env.MONGODB_URI ? true : false,
-  tls: process.env.MONGODB_URI ? true : false,
-  retryWrites: true,
-  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
-})
-.then(async () => {
-  console.log('Connected to MongoDB');
-  
-  // Access the ensureAdminAccount function from the loginRoute module
-  // Since we're importing the router, we need to remove the immediate function call in loginRoute.js
-  try {
-    // Move the ensureAdminAccount function call to here
-    await loginRoute.ensureAdminAccount();
-    console.log('Admin account check completed');
-  } catch (error) {
-    console.error('Error during admin account setup:', error.message);
-  }
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err.message);
-  
-  // Provide helpful troubleshooting info
-  if (err.message.includes('ssl') || err.message.includes('tls')) {
-    console.log('\nSSL/TLS ERROR: Check your MongoDB Atlas connection string and certificates');
-  }
-  if (err.name === 'MongooseServerSelectionError') {
-    console.log('\nTROUBLESHOOTING STEPS:');
-    console.log('1. Verify your IP address is whitelisted in MongoDB Atlas');
-    console.log('2. Check if your connection string in .env is correct');
-    console.log('3. Try connecting with a different network');
-  }
+});
+console.log("connection",process.env.MONGODB_URI)
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+    console.log('Connected to MongoDB');
 });
 
 // Middleware
 app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
-app.use(cors());
+app.use(cors()); 
 
-// These routes don't need authentication
-app.use('/', loginRoute);
+app.use('/', auth);
 app.use('/api', user);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use authMiddleware for protected routes
+// Use authMiddleware to authenticate users
 app.use(authMiddleware); // Ensure this is before the audit log middleware
 
 // Use audit log middleware
 app.use(auditLogMiddleware);
 
-// Use routes (all of these routes require authentication)
+// Use routes
 app.use('/api/backup-restore', backupRestoreRoutes);
 app.use('/api/vetshipform', vetshipformroutes);
 app.use('/api/slaughterform', slaughterformRoutes);
@@ -116,7 +90,7 @@ app.use('/api/audit-logs-inventory', auditLogInventoryRoutes);
 
 // Start server and set timeout
 const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
-server.timeout = 0; // Disable timeout
+server.timeout = 120000;  // Disable timeout
