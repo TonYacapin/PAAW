@@ -1,3 +1,4 @@
+// index.js (main entry point)
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -27,45 +28,45 @@ const veterinaryInformationServiceRoutes = require("./routes/Client/veterinaryin
 const regulatoryCareServiceRoutes = require('./routes/Client/regulatorycareserviceRoutes');
 const requisitionIssuanceRoutes = require('./routes/requisitionIssuanceRoutes');
 const auditLogInventoryRoutes = require('./routes/auditLogInventoryRoutes'); 
-
 const backupRestoreRoutes = require('./routes/backupRestore.routes');
 
 // Import the audit log middleware
 const auditLogMiddleware = require('./middleware/auditlogMiddleware');
-const authMiddleware = require('./middleware/authMiddleware'); // Import your auth middleware
+const authMiddleware = require('./middleware/authMiddleware');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB
-
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/PAAW', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-console.log("connection",process.env.MONGODB_URI)
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+// Database connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/PAAW', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log('Connected to MongoDB');
-});
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+};
+
+// Initialize app
+const app = express();
 
 // Middleware
-app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
-app.use(cors()); 
+app.use(bodyParser.json({ limit: '150mb' }));
+app.use(cors());
 
 app.use('/', auth);
 app.use('/api', user);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use authMiddleware to authenticate users
-app.use(authMiddleware); // Ensure this is before the audit log middleware
+// Authentication middleware
+app.use(authMiddleware);
 
-// Use audit log middleware
+// Audit log middleware
 app.use(auditLogMiddleware);
 
-// Use routes
+// Routes
 app.use('/api/backup-restore', backupRestoreRoutes);
 app.use('/api/vetshipform', vetshipformroutes);
 app.use('/api/slaughterform', slaughterformRoutes);
@@ -88,9 +89,16 @@ app.use('/api', auditLogRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/audit-logs-inventory', auditLogInventoryRoutes);
 
-// Start server and set timeout
-const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Connect to the database
+connectDB();
 
-server.timeout = 120000;  // Disable timeout
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export for Vercel
+module.exports = app;
